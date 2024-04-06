@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "fastparking"
+version = "0.1.0"
+description = "GoIT DataScience Team Project - Fast Parking"
+authors = ["neuron_curva_bobr <info@neuron.curva.bobr.app>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Django = "^5.0.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
