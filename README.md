@@ -12,7 +12,7 @@ Plate license recognition
 ### run database postgres docker container
 `scripts/docker_db.cmd`
 Данні бази будуть створенні у теці `Database\postgres-data\`
-Тека додана у виключення git - не виладувати, у кожного вона своя!
+Тека додана у виключення git - не викладати у git, у кожного вона своя!
 
 ### stop database postgres docker container
 `scripts\docker_db_stop.cmd`
@@ -36,6 +36,8 @@ poetry export --without-hashes > requirements.txt
 #### run project (db+code) docker container
 Данні бази будуть створенні у теці `Database\postgres-data\`
 `scripts\docker_app_run.cmd`
+
+Режим DEBUG - консолі 
 
 #### rebuild project (code) docker container
 `scripts\docker_app_build.cmd`
