@@ -17,6 +17,8 @@ services:
 
   code :
     build: ../FRONTEND
+
+
     ports:
       - "8000:8000"
     environment:
