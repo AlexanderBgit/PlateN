@@ -1,0 +1,14 @@
+# docker-compose --file docker-compose-db.yml --env-file .env  up -d 
+version: '3'
+name: fastparking-db
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - ../database/postgres-data:/var/lib/postgresql/data
