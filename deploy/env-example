@@ -1,0 +1,15 @@
+POSTGRES_DB=fastparking_app
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=XXXXXXXXX
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+
+
+MAIL_USERNAME=username@example.com
+MAIL_PASSWORD=paswword_to_email
+MAIL_FROM=username@example.com
+MAIL_PORT=465
+MAIL_SERVER=smtp.example.com
+MAIL_FROM_NAME="Education GoIT. Fast Parking proj"
+
+
