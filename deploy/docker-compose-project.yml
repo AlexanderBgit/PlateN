@@ -21,8 +21,6 @@ services:
     tty: true        # docker run -t
     ports:
       - "8000:8000"
-    volumes:
-      - ../database/pip-cache:/root/.cache
       
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
