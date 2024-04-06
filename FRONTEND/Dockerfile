@@ -11,7 +11,7 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 
 # Скопіюємо інші файли в робочу директорію контейнера
-COPY $APP_BASE  .
+COPY $APP_BASE  ./
 # COPY .env .env
 #COPY run.sh run.sh 
 #COPY src/ src/
@@ -28,9 +28,9 @@ COPY ${APP_BASE}requirements.txt requirements.txt
 # RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
 RUN pip install -r requirements.txt 
 
-#CMD bash ./run.sh 
+CMD bash ./run.sh 
 
-CMD bash
+#CMD bash
 
 #CMD ["python", "-u", "src/main.py"]
 
