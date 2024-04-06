@@ -23,13 +23,23 @@ Plate license recognition
 cd FRONTEND/fastparking
 python manage.py runserver 0.0.0.0:8000
 ```
+`scripts\run_dev_app.cmd`
+
 ### export poetry package to requirements.txt
 Запускати з віртуального оточення poetry
 ```
 cd FRONTEND
 poetry export --without-hashes > requirements.txt
 ```
-`scripts\run_dev_app.cmd`
+`scripts\gen_req_txt.cmd`
+
+### migrate db changes
+```
+cd FRONTEND/fastparking
+python manage.py migrate
+```
+
+`scripts\migrate_dev_app.cmd`
 
 ### DOCKER ALL PROJECT
 
