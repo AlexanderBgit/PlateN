@@ -37,7 +37,7 @@ def user_id_by_username(updates: list[dict], username: str):
             return message["from"].get("id")
 
 
-def get_all_users(updates: list[dict]) -> list[tuple]:
+def get_all_users(updates: list[dict]) -> set[tuple]:
     users = set()
     for update in updates:
         message = update.get("message")
