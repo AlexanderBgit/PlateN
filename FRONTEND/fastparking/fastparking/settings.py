@@ -27,10 +27,12 @@ else:
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-9sfv2a&vi+bjynroy4cy5rw9r438crw9c8cp02ml*hfgbgw995"
+# SECRET_KEY = "django-insecure-9sfv2a&vi+bjynroy4cy5rw9r438crw9c8cp02ml*hfgbgw995"
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-9sfv2a&vi+bjynroy4cy5rw9r438crw9c8cp02ml*hfgbgw995')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = bool( os.environ.get('DJANGO_DEBUG', True) )
 
 ALLOWED_HOSTS = []
 

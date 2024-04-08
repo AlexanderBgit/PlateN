@@ -9,16 +9,74 @@ Plate license recognition
 
 ## LOCAL DEVELOPMENT
 
-### run database postgres docker container
+- git проекту: https://github.com/AlexanderBgit/PlateN , default branch `dev`
+
+- кожен створює власні гілки від `dev` і оновлює їх через `merge`. Іменна гілок `usernmae` - постійна користувача, `usernmae-feature` тимчасова, після об'єднання з іншими гілками знищується.
+
+- merge to `dev` тільки через `pull-request` і запит користувачам на підтвердження, мінімум один має підтвердити, і тоді розблокується кнопка `Merge`, і можна об'єднати у `dev`.
+
+- Python >=3.11
+
+- poetry
+
+- Django 5
+
+- Скрипти `.cmd` для виконання у операційній системі Windows тільки.
+
+- Скрипти `.sh` для виконання у операційній системі Linux, Mac.
+
+- Корінь git проекту має декілька незалежних підпроєктів:
+    - BACKEND
+    - FRONTEND
+    - Database
+
+- Кожен підпроєкт - незалежний продукт, і відповідно має свій незалежний Docker. 
+
+- Спілкуються через спільну базу даних, при розробці це може бути локальна з Docker або віддалена у elephantsql.
+
+- Налаштування змінних середовища - спільні у файлі /deploy/.env. Локальна розробка використовує тільки відносний шлях до цього файлу. Наприклад код з `fastparking\fastparking\settings.py`: 
+```
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_file = BASE_DIR.parent.parent.joinpath("deploy").joinpath(".env")
+if env_file.exists():
+    load_dotenv(env_file) 
+else:
+    print("ENV file not found:", env_file)
+```
+
+- _Security_. Кожен докер при старті бере налаштування з .env котрі йому тільки потрібні, а не весь файл. Розміщується .env файл тільки за межами докер контейнера.
+
+- FRONTEND має власне віртуальне оточення poetry.
+
+- BACKEND має власне віртуальне оточення poetry
+
+- Для роботи з FRONTEND:
+    - переходимо у теку FRONTEND, активуємо віртуальне сердобине `poetry shell`
+    - Далі `poetry update` встановить або оновить пакунки субпроєкту.
+
+- Для роботи з BACKEND:
+    - переходимо у теку BACKEND, активуємо віртуальне сердобине `poetry shell`
+    - Далі `poetry update` встановить або оновить пакунки субпроєкту.
+
+- Якщо у VC Code створити Workspace, додати до нього підпроєкти як (File->Add folder to WorkSpace), то при запуску терміналу буде запити з якої теки ви це хочете зробити.
+
+ - Для роботи з локальною базою даних використовуємо настуні кроки (Local Database postgres). Для роботи з віддаленою базою даних пропускаємо ці кроки.
+### Local Database postgres
+#### run database postgres docker container
+
 `scripts/docker_db.cmd`
+
 Данні бази будуть створенні у теці `Database\postgres-data\`
 
 Тека додана у виключення git - не викладати у git, у кожного вона своя!
 
-### stop database postgres docker container
+#### stop database postgres docker container
 `scripts\docker_db_stop.cmd`
 
-### run app locally
+
+### Запуск та обслуговування застосунку в докер
+
+#### run app locally
 Запускати з віртуального оточення poetry
 ```
 cd FRONTEND/fastparking
@@ -26,7 +84,7 @@ python manage.py runserver 0.0.0.0:8000
 ```
 `scripts\run_dev_app.cmd`
 
-### export poetry package to requirements.txt
+#### export poetry package to requirements.txt
 Запускати з віртуального оточення poetry
 ```
 cd FRONTEND
@@ -34,7 +92,7 @@ poetry export --without-hashes > requirements.txt
 ```
 `scripts\gen_req_txt.cmd`
 
-### migrate db changes
+#### migrate db changes
 ```
 cd FRONTEND/fastparking
 python manage.py migrate
@@ -42,14 +100,14 @@ python manage.py migrate
 
 `scripts\migrate_dev_app.cmd`
 
-### DOCKER ALL PROJECT
+#### Запуск всього проєкту з підпроєктами у докер
 
-#### run project (db+code) docker container
+##### run project (db+code) docker container
 Данні бази будуть створенні у теці `Database\postgres-data\`
 
 `scripts\docker_app_run.cmd`
 
 Режим DEBUG - консолі 
 
-#### rebuild project (code) docker container
+##### rebuild project (code) docker container
 `scripts\docker_app_build.cmd`
