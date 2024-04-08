@@ -15,14 +15,14 @@ TOKEN = settings.TELEGRAM_TOKEN
 TELEGRAM_NEWS_ID = settings.TELEGRAM_NEWS_ID
 
 
-def get_updates() -> list[dict]:
+def get_updates() -> list[dict] | None:
     url_getUpdates = f"https://api.telegram.org/bot{TOKEN}/getUpdates"
     response = requests.get(url_getUpdates)
     data = response.json()
-    if data["ok"]:
-        return data["result"]
+    if data.get("ok"):
+        return data.get("result")
     else:
-        print("Error:", data["description"])
+        print("Error:", data.get("description"))
         return None
 
 
@@ -76,12 +76,14 @@ def send_message_to_all_users(text: str) -> None:
         username = user[1]
         if username:
             text_parsed = text.replace("<username>", username)
-            print(text_parsed, username)
-        # if username:
-        #     send_message(
-        #         text=text,
-        #         chat_id=chat_id,
-        #     )
+            # print(text_parsed, username)
+        else:
+            text_parsed = text
+        if username:
+            send_message(
+                text=text_parsed,
+                chat_id=chat_id,
+            )
 
 
 if __name__ == "__main__":
