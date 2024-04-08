@@ -7,10 +7,10 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fastparking.settings")
 django.setup()
 
 
-
-
 if __name__ == "__main__":
     # main()
     print(f"{settings.POSTGRES_DB=}")
-    TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN', "????")
-    print(f"{TELEGRAM_TOKEN=}")
+    print(f"{settings.TELEGRAM_TOKEN=}")
+    print(f"{settings.TELEGRAM_BOT_NAME=}")
+    print(f"{settings.TELEGRAM_NEWS_NAME=}")
+    print(f"{settings.TELEGRAM_NEWS_ID=}")
