@@ -147,3 +147,8 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN', "")
+TELEGRAM_BOT_NAME = os.getenv('TELEGRAM_BOT_NAME', "")
+TELEGRAM_NEWS_NAME = os.getenv('TELEGRAM_NEWS_NAME', "")
+TELEGRAM_NEWS_ID = os.getenv('TELEGRAM_NEWS_ID', "")
