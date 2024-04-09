@@ -204,7 +204,7 @@ def get_last_update_id() -> str:
 
 
 def save_latest_update_id(last_update_id: str) -> None:
-    cache.set("last_update_id", last_update_id)
+    cache.set("last_update_id", last_update_id, timeout=None)
     return None
 
 
@@ -293,10 +293,10 @@ COMMANDS = {
 
 if __name__ == "__main__":
     # main()
-    print(f"{settings.POSTGRES_DB=}")
-    print(f"{settings.TELEGRAM_TOKEN=}")
-    print(f"{settings.TELEGRAM_BOT_NAME=}")
-    print(f"{settings.TELEGRAM_NEWS_NAME=}")
+    # print(f"{settings.POSTGRES_DB=}")
+    # print(f"{settings.TELEGRAM_TOKEN=}")
+    # print(f"{settings.TELEGRAM_BOT_NAME=}")
+    # print(f"{settings.TELEGRAM_NEWS_NAME=}")
 
     # nickname = "LeX4Xai"
 
