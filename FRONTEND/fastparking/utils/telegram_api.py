@@ -281,15 +281,24 @@ def handler_pushin(user_id: str):
 
 
 def handler_pushout(user_id: str):
-    answer_to_user(user_id, parse_text("FastParking system accept PUSH OUT <datetime>"))
+    print_text = [parse_text("FastParking system accept PUSH OUT <datetime>")]
+    payed_uniq_id = cache.get("payed_uniq_id")
+    if not payed_uniq_id:
+        print_text.append(f"Ви маєте оплатити послугу з паркування")
+        answer_to_user(user_id, "\n".join(print_text))
+        return
+    cache.set("payed_uniq_id", None)
+    print_text.append(f"Все добре, послуга оплачена можете виїжджати.\n")
+    print_text.append(f"Номер послуги: {payed_uniq_id}")
     car_number = "AA0001BB"
-    answer_to_user(user_id, f"Your car number: {car_number}")
+    print_text.append(f"Your car number: {car_number}")
     duration = 2
-    answer_to_user(user_id, f"Час перебування: {duration} год.")
+    print_text.append(f"Час перебування: {duration} год.")
     amount = 20
-    answer_to_user(user_id, f"До сплати: {amount} грн.")
+    print_text.append(f"Оплачено: {amount} грн.")
     gumoreska = get_random_block()
-    answer_to_user(user_id, f"Гумореска для Вас:\n{gumoreska}")
+    print_text.append(f"\nГумореска для Вас:\n{gumoreska}")
+    answer_to_user(user_id, "\n".join(print_text))
 
 
 def send_qrcode(chat_id: int | str, data: str = "FastParking") -> None:
@@ -341,6 +350,7 @@ def check_payments():
         user_id = cache.get("user_id")
         cache.set("payment_id", None)
         cache.set("user_id", None)
+
         payments_info = qr_data.split("|")
         print_text = [
             parse_text("FastParking ОПЛАТА за послугу паркування отримана. <datetime>")
@@ -352,6 +362,7 @@ def check_payments():
         uniq_id = payments_info[0]
         print_text.append(f"Номер послуги: {uniq_id}")
         answer_to_user(user_id, "\n".join(print_text))
+        cache.set("payed_uniq_id", uniq_id, timeout=None)
 
 
 def crone_pool():
