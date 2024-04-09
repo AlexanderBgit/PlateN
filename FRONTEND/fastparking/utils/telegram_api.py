@@ -326,13 +326,36 @@ def handler_pay(user_id: str):
     answer_to_user(user_id, "\n".join(print_text))
     qr_data = f"{uniq_id}|{amount}|{car_number}"
     send_qrcode(user_id, qr_data)
+    cache.set("payment_id", qr_data)
+    cache.set("user_id", user_id)
 
 
 def handler_help(user_id: str):
     answer_to_user(user_id, "\n".join(COMMANDS.keys()))
 
 
+def check_payments():
+    qr_data = cache.get("payment_id")
+    # print(qr_data)
+    if qr_data:
+        user_id = cache.get("user_id")
+        cache.set("payment_id", None)
+        cache.set("user_id", None)
+        payments_info = qr_data.split("|")
+        print_text = [
+            parse_text("FastParking ОПЛАТА за послугу паркування отримана. <datetime>")
+        ]
+        car_number = payments_info[2]
+        print_text.append(f"Your car number: {car_number}")
+        amount = payments_info[1]
+        print_text.append(f"Сплачено: {amount} грн.")
+        uniq_id = payments_info[0]
+        print_text.append(f"Номер послуги: {uniq_id}")
+        answer_to_user(user_id, "\n".join(print_text))
+
+
 def crone_pool():
+    check_payments()
     # get latest updates
     last_update_id = get_last_update_id()
     print(f"{last_update_id=}")
