@@ -5,6 +5,7 @@ import pytz
 import requests
 import django
 from django.conf import settings
+from django.core.cache import cache
 
 # import settings from Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fastparking.settings")
@@ -95,6 +96,31 @@ def find_usernames(updates: list[dict], usernames: list[str]) -> set[tuple[str, 
     return users
 
 
+def find_unknown_contacts(
+    updates: list[dict], usernames: list[str], phones: list[str]
+) -> set[tuple[str, str]]:
+    users = set()
+    for update in updates:
+        message = update.get("message")
+        if message and message.get("from") and message["from"].get("id"):
+            username = message["from"].get("username")
+            if username:
+                username = "@" + username
+                print(username, usernames)
+                if username in usernames:
+                    user = (message["from"].get("id"), username)
+                    users.add(user)
+                    usernames.remove(username)
+            else:
+                text: str = message["text"]
+                print(f"{text=}")
+                if text.startswith("+") and (text in phones):
+                    user = (message["from"].get("id"), text)
+                    users.add(user)
+                    phones.remove(text)
+    return users
+
+
 def send_message(text: str, chat_id: int | str) -> None:
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     _ = requests.post(url, json={"chat_id": chat_id, "text": text}, timeout=10)
@@ -163,10 +189,12 @@ def get_updated_id(updates: list[dict]):
 
 
 def get_latest_update_id() -> str:
-    return ""
+    latest_update_id = cache.get("latest_update_id")
+    return latest_update_id
 
 
 def save_latest_update_id(last_update_id: str) -> None:
+    cache.set("last_update_id", last_update_id)
     return None
 
 
@@ -185,24 +213,21 @@ def get_unknown_usernames() -> list[str]:
     return unknown_usernames
 
 
-def find_users(updates: list[dict]):
+def save_unknown_users(updates: list[dict]):
     unknown_phones = get_unknown_phones_users()
-    if unknown_phones:
-        users = find_phones_users(updates, unknown_phones)
-        save_users_id(users)
     unknown_usernames = get_unknown_usernames()
-    if unknown_usernames:
-        # print(f"{unknown_usernames=}")
-        users = find_usernames(updates, unknown_usernames)
+    if unknown_phones or unknown_usernames:
+        users = find_unknown_contacts(updates, unknown_usernames, unknown_phones)
         save_users_id(users)
 
 
 def crone_pool():
     # get latest updates
     last_update_id = get_latest_update_id()
+    print(f"{last_update_id=}")
     updates = get_updates(offset=last_update_id)
     save_latest_update_id(get_updated_id(updates)[-1])
-    find_users(updates)
+    save_unknown_users(updates)
 
 
 if __name__ == "__main__":
