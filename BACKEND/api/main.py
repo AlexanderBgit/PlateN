@@ -4,6 +4,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
+# https://salaivv.com/2023/01/04/telegram-bot-fastapi
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 env_file = BASE_DIR.parent.joinpath("deploy").joinpath(".env")
 if env_file.exists():
