@@ -11,14 +11,15 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from dotenv import load_dotenv 
+from dotenv import load_dotenv
 import os
+import tempfile
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 env_file = BASE_DIR.parent.parent.joinpath("deploy").joinpath(".env")
 if env_file.exists():
-    load_dotenv(env_file) 
+    load_dotenv(env_file)
 else:
     print("ENV file not found:", env_file)
 
@@ -148,7 +149,22 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN', "")
-TELEGRAM_BOT_NAME = os.getenv('TELEGRAM_BOT_NAME', "")
-TELEGRAM_NEWS_NAME = os.getenv('TELEGRAM_NEWS_NAME', "")
-TELEGRAM_NEWS_ID = os.getenv('TELEGRAM_NEWS_ID', "")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "")
+TELEGRAM_BOT_NAME = os.getenv("TELEGRAM_BOT_NAME", "")
+TELEGRAM_NEWS_NAME = os.getenv("TELEGRAM_NEWS_NAME", "")
+TELEGRAM_NEWS_ID = os.getenv("TELEGRAM_NEWS_ID", "")
+
+# Generate a temporary directory name
+TEMP_DIR_NAME = "django_cache"
+
+# Get a temporary directory
+TEMP_DIR_PATH = os.path.join(tempfile.gettempdir(), TEMP_DIR_NAME)
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": TEMP_DIR_PATH,
+    }
+}
+
+print(f"{CACHES=}")
