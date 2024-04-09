@@ -15,12 +15,13 @@ django.setup()
 # https://t.me/fastparking_bobr_bot
 
 TOKEN = settings.TELEGRAM_TOKEN
+BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 TELEGRAM_NEWS_NAME = settings.TELEGRAM_NEWS_NAME
 TZ = "Europe/Kyiv"
 
 
 def get_updates(offset: str = "") -> list[dict] | None:
-    url_getUpdates = f"https://api.telegram.org/bot{TOKEN}/getUpdates?offset={offset}"
+    url_getUpdates = f"{BASE_URL}/getUpdates?offset={offset}"
     response = requests.get(url_getUpdates)
     data = response.json()
     if data.get("ok"):
@@ -127,9 +128,9 @@ def find_unknown_contacts(
 
 
 def send_message(text: str, chat_id: int | str) -> None:
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    url = f"{BASE_URL}/sendMessage"
     _ = requests.post(url, json={"chat_id": chat_id, "text": text}, timeout=10)
-    print(_)
+    # print(_)
 
 
 def send_message_user(text: str, n_name: str) -> None:
