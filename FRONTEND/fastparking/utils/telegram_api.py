@@ -1,7 +1,12 @@
+import base64
 import os
+import tempfile
 from datetime import datetime
+from pathlib import Path
+
 import pytz
 
+import qrcode
 import requests
 import django
 from django.conf import settings
@@ -287,6 +292,47 @@ def handler_pushout(user_id: str):
     answer_to_user(user_id, f"Гумореска для Вас:\n{gumoreska}")
 
 
+def send_qrcode(chat_id: int | str, data: str = "FastParking"):
+    qr = qrcode.make(data)
+    # Save the QR code image to a file
+    TEMP_DIR_PATH = Path(tempfile.gettempdir()).joinpath("qr_code.jpg")
+    # qr_path = "qr_code.png"
+    print(TEMP_DIR_PATH)
+    qr.save(str(TEMP_DIR_PATH))
+
+    data = {"chat_id": chat_id}
+    url = f"{BASE_URL}/sendPhoto"
+
+    with TEMP_DIR_PATH.open("rb") as photo:
+        files = {"photo": photo}
+        _ = requests.post(url, data=data, files=files)
+
+    print(_.json(), url)
+
+    TEMP_DIR_PATH.unlink()
+
+
+def handler_pay(user_id: str):
+    print_text = []
+    print_text.append(
+        parse_text("FastParking ОПЛАТА за послугу паркування. <datetime>")
+    )
+    car_number = "AA0001BB"
+    print_text.append(f"Your car number: {car_number}")
+    duration = 2
+    print_text.append(f"Час перебування: {duration} год.")
+    tarif_id = "1"
+    print_text.append(f"Ваш номер тарифу: {tarif_id}")
+    amount = 20
+    print_text.append(f"До сплати: {amount} грн.")
+    uniq_id = "0002302032"
+    print_text.append(f"Номер послуги: {uniq_id}")
+    print_text.append(f"QR CODE оплати в терміналі парковки:")
+    answer_to_user(user_id, "\n".join(print_text))
+    qr_data = f"{uniq_id}|{amount}|{car_number}"
+    send_qrcode(user_id, qr_data)
+
+
 def crone_pool():
     # get latest updates
     last_update_id = get_last_update_id()
@@ -302,6 +348,7 @@ COMMANDS = {
     "/start": handler_start,
     "/pushin": handler_pushin,
     "/pushout": handler_pushout,
+    "/pay": handler_pay,
 }
 
 if __name__ == "__main__":

@@ -29,11 +29,14 @@ else:
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = "django-insecure-9sfv2a&vi+bjynroy4cy5rw9r438crw9c8cp02ml*hfgbgw995"
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-9sfv2a&vi+bjynroy4cy5rw9r438crw9c8cp02ml*hfgbgw995')
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-9sfv2a&vi+bjynroy4cy5rw9r438crw9c8cp02ml*hfgbgw995",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = bool( os.environ.get('DJANGO_DEBUG', True) )
+DEBUG = bool(os.environ.get("DJANGO_DEBUG", True))
 
 ALLOWED_HOSTS = []
 
@@ -96,7 +99,7 @@ POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "XXXXXXXX")
 POSTGRES_HOST = os.getenv("POSTGRES_HOST", "127.0.0.1")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
 
-print(f"{POSTGRES_DB=}")
+# print(f"{POSTGRES_DB=}")
 
 DATABASES = {
     "default": {
@@ -169,4 +172,4 @@ CACHES = {
     }
 }
 
-print(f"{CACHES=}")
+# print(f"{CACHES=}")
