@@ -18,6 +18,11 @@ TOKEN = settings.TELEGRAM_TOKEN
 TELEGRAM_NEWS_NAME = settings.TELEGRAM_NEWS_NAME
 TZ = "Europe/Kyiv"
 
+COMMANDS = {
+    "/start" "/pushin",
+    "/pushout",
+}
+
 
 def get_updates(offset: str = "") -> list[dict] | None:
     url_getUpdates = f"https://api.telegram.org/bot{TOKEN}/getUpdates?offset={offset}"
@@ -141,6 +146,11 @@ def send_message_news(text: str, chat_id: int | str = TELEGRAM_NEWS_NAME) -> Non
         send_message(text=text, chat_id=chat_id)
 
 
+def answer_to_user(user_id: str, text: str):
+    print(f"answer_to_user: {user_id=} {text=}")
+    send_message(text, user_id)
+
+
 def get_local_time_now() -> datetime:
     # Get the current UTC time
     utc_datetime = datetime.utcnow()
@@ -221,6 +231,47 @@ def save_unknown_users(updates: list[dict]):
         save_users_id(users)
 
 
+def command_actions(user_id, command):
+    command_handler = COMMANDS.get(command)
+    if command_handler:
+        # command_handler(user_id)
+        answer_to_user(user_id, f"command found {command=}")
+    else:
+        answer_to_user(user_id, "command not found")
+
+
+def parse_commands(updates: list[dict]):
+    for update in updates:
+        message = update.get("message")
+        if message:
+            if message.get("from") and message["from"].get("id"):
+                user_id = message["from"].get("id")
+            if message.get("entities"):
+                entities = message.get("entities")[0]
+                if entities:
+                    entities_type = entities.get("type")
+                    print(f"{entities_type=}")
+                    if entities_type == "bot_command":
+                        command: str = message["text"]
+                        print(f"{command=}")
+
+
+def handler_start(user_id: str):
+    answer_to_user(user_id, "Welcome to FastParking system")
+
+
+def handler_pushin(user_id: str):
+    answer_to_user(user_id, "FastParking system accept PUSH IN")
+    car_number = "AA0001BB"
+    answer_to_user(user_id, f"Your car number: {car_number}")
+
+
+def handler_pushout(user_id: str):
+    answer_to_user(user_id, "FastParking system accept PUSH OUT")
+    car_number = "AA0001BB"
+    answer_to_user(user_id, f"Your car number: {car_number}")
+
+
 def crone_pool():
     # get latest updates
     last_update_id = get_last_update_id()
@@ -228,6 +279,7 @@ def crone_pool():
     updates = get_updates(offset=last_update_id)
     save_latest_update_id(get_updated_id(updates)[-1])
     save_unknown_users(updates)
+    parse_commands(updates)
 
 
 if __name__ == "__main__":
@@ -237,7 +289,7 @@ if __name__ == "__main__":
     print(f"{settings.TELEGRAM_BOT_NAME=}")
     print(f"{settings.TELEGRAM_NEWS_NAME=}")
 
-    nickname = "LeX4Xai"
+    # nickname = "LeX4Xai"
 
     # send_message_user("Hello, user of FastParking System!\nI know about you.", nickname)
     # send_message_news(parse_text("First news for FastParking System! <datetime>"))
