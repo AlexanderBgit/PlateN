@@ -1,0 +1,13 @@
+# docker-compose --file docker-compose-db.yml --env-file .env  up -d 
+version: '3'
+name: fastparking-api
+services:
+  api:
+    build: ../BACKEND
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    ports:
+      - "9000:9000"
+    environment:
+      TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
+
