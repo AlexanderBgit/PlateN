@@ -7,15 +7,15 @@ STORE_FILE = Path(__file__).resolve().parent.joinpath("anekdots.txt")
 def read_store():
     store = []
     if STORE_FILE.exists():
-        text = STORE_FILE.read_text()
         with STORE_FILE.open("r") as text:
             block = []
             for line in text:
-                if line.strip() == "@@@@@":
+                line = line.strip()
+                if line == "@@@@@":
                     store.append(block)
                     block = []
                     continue
-                block.append(line.strip())
+                block.append(line)
     return store
 
 

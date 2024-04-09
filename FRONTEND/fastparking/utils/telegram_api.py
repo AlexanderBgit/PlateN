@@ -7,6 +7,8 @@ import django
 from django.conf import settings
 from django.core.cache import cache
 
+from get_anekdot import get_random_block
+
 # import settings from Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fastparking.settings")
 django.setup()
@@ -238,7 +240,7 @@ def command_actions(user_id, command):
         command_handler(user_id)
         # answer_to_user(user_id, f"command found {command=}")
     else:
-        answer_to_user(user_id, "{command=} not found")
+        answer_to_user(user_id, f"{command=} not found")
 
 
 def parse_commands(updates: list[dict]):
@@ -264,15 +266,25 @@ def handler_start(user_id: str):
 
 
 def handler_pushin(user_id: str):
-    answer_to_user(user_id, "FastParking system accept PUSH IN")
+    answer_to_user(user_id, parse_text("FastParking system accept PUSH IN <datetime>"))
     car_number = "AA0001BB"
     answer_to_user(user_id, f"Your car number: {car_number}")
+    tarif_id = "1"
+    answer_to_user(user_id, f"Ваш номер тарифу: {tarif_id}")
+    parking_id = "L01-34"
+    answer_to_user(user_id, f"Ваше місце парковки: {parking_id}")
 
 
 def handler_pushout(user_id: str):
-    answer_to_user(user_id, "FastParking system accept PUSH OUT")
+    answer_to_user(user_id, parse_text("FastParking system accept PUSH OUT <datetime>"))
     car_number = "AA0001BB"
     answer_to_user(user_id, f"Your car number: {car_number}")
+    duration = 2
+    answer_to_user(user_id, f"Час перебування: {duration} год.")
+    amount = 20
+    answer_to_user(user_id, f"До сплати: {amount} грн.")
+    gumoreska = get_random_block()
+    answer_to_user(user_id, f"Гумореска для Вас:\n{gumoreska}")
 
 
 def crone_pool():
