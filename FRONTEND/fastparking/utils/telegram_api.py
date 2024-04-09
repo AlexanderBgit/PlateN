@@ -24,7 +24,12 @@ def get_updates(offset: str = "") -> list[dict] | None:
     response = requests.get(url_getUpdates)
     data = response.json()
     if data.get("ok"):
-        return data.get("result")
+        results = data.get("result")
+        if offset:
+            results = [
+                result for result in results if result.get("update_id") != offset
+            ]
+        return results
     else:
         print("Error:", data.get("description"))
         return None
@@ -274,9 +279,10 @@ def crone_pool():
     last_update_id = get_last_update_id()
     print(f"{last_update_id=}")
     updates = get_updates(offset=last_update_id)
-    save_latest_update_id(get_updated_id(updates)[-1])
-    save_unknown_users(updates)
-    parse_commands(updates)
+    if updates:
+        save_latest_update_id(get_updated_id(updates)[-1])
+        save_unknown_users(updates)
+        parse_commands(updates)
 
 
 COMMANDS = {
