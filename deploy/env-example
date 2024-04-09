@@ -15,7 +15,5 @@ MAIL_FROM_NAME="Education GoIT. Fast Parking proj"
 
 TELEGRAM_TOKEN=""
 TELEGRAM_BOT_NAME="fastparking_bobr_bot"
-TELEGRAM_NEWS_NAME="fastparking_news"
-TELEGRAM_NEWS_ID="-100XXXXXXXX"
-
+TELEGRAM_NEWS_NAME="@fastparking_news"
 

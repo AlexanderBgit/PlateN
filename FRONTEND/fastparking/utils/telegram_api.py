@@ -1,6 +1,8 @@
 import os
-import requests
+from datetime import datetime
+import pytz
 
+import requests
 import django
 from django.conf import settings
 
@@ -12,7 +14,8 @@ django.setup()
 # https://t.me/fastparking_bobr_bot
 
 TOKEN = settings.TELEGRAM_TOKEN
-TELEGRAM_NEWS_ID = settings.TELEGRAM_NEWS_ID
+TELEGRAM_NEWS_NAME = settings.TELEGRAM_NEWS_NAME
+TZ = "Europe/Kyiv"
 
 
 def get_updates() -> list[dict] | None:
@@ -50,6 +53,7 @@ def get_all_users(updates: list[dict]) -> set[tuple]:
 def send_message(text: str, chat_id: int | str) -> None:
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     _ = requests.post(url, json={"chat_id": chat_id, "text": text}, timeout=10)
+    print(_)
 
 
 def send_message_user(text: str, n_name: str) -> None:
@@ -61,9 +65,31 @@ def send_message_user(text: str, n_name: str) -> None:
         send_message(text=text, chat_id=chat_id)
 
 
-def send_message_news(text: str, chat_id: int | str = TELEGRAM_NEWS_ID) -> None:
+def send_message_news(text: str, chat_id: int | str = TELEGRAM_NEWS_NAME) -> None:
     if chat_id:
         send_message(text=text, chat_id=chat_id)
+
+
+def get_local_time_now() -> datetime:
+    # Get the current UTC time
+    utc_datetime = datetime.utcnow()
+    # Convert UTC time to your local time zone
+    local_timezone = pytz.timezone(TZ)
+    local_datetime = utc_datetime.replace(tzinfo=pytz.utc).astimezone(local_timezone)
+    return local_datetime
+
+
+def parse_text(text: str, username: str | None = None) -> str:
+    if username:
+        text_parsed = text.replace("<username>", username)
+    else:
+        text_parsed = text
+
+    # current_datetime = datetime.now()
+    formatted_datetime = get_local_time_now().strftime("%Y-%m-%d %H:%M:%S")
+
+    text_parsed = text_parsed.replace("<datetime>", formatted_datetime)
+    return text_parsed
 
 
 def send_message_to_all_users(text: str) -> None:
@@ -75,7 +101,7 @@ def send_message_to_all_users(text: str) -> None:
         chat_id = user[0]
         username = user[1]
         if username:
-            text_parsed = text.replace("<username>", username)
+            text_parsed = parse_text(text, username=username)
             # print(text_parsed, username)
         else:
             text_parsed = text
@@ -92,15 +118,14 @@ if __name__ == "__main__":
     print(f"{settings.TELEGRAM_TOKEN=}")
     print(f"{settings.TELEGRAM_BOT_NAME=}")
     print(f"{settings.TELEGRAM_NEWS_NAME=}")
-    print(f"{settings.TELEGRAM_NEWS_ID=}")
 
     nickname = "LeX4Xai"
 
-    # send_message_user("Hello, user of FastParking System!\nI know about you.", nickname)
-    # send_message_news("First news for FastParking System!")
-    send_message_to_all_users(
-        "Message for all registered users.\nHello user:<username>."
-    )
+    send_message_user("Hello, user of FastParking System!\nI know about you.", nickname)
+    # send_message_news(parse_text("First news for FastParking System! <datetime>"))
+    # send_message_to_all_users(
+    #     "Message for all registered users.\nHello user:<username>."
+    # )
     # updates = get_updates()
     # print(updates)
     # chat_id = user_id_by_username(updates, nickname)

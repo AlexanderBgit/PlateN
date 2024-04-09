@@ -12,6 +12,7 @@ Django = "^5.0.4"
 python-dotenv = "^1.0.1"
 psycopg2 = "^2.9.9"
 requests = "^2.31.0"
+pytz = "^2024.1"
 
 
 [build-system]
