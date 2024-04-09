@@ -188,9 +188,9 @@ def get_updated_id(updates: list[dict]):
     return update_list
 
 
-def get_latest_update_id() -> str:
-    latest_update_id = cache.get("latest_update_id")
-    return latest_update_id
+def get_last_update_id() -> str:
+    last_update_id = cache.get("last_update_id")
+    return last_update_id
 
 
 def save_latest_update_id(last_update_id: str) -> None:
@@ -223,7 +223,7 @@ def save_unknown_users(updates: list[dict]):
 
 def crone_pool():
     # get latest updates
-    last_update_id = get_latest_update_id()
+    last_update_id = get_last_update_id()
     print(f"{last_update_id=}")
     updates = get_updates(offset=last_update_id)
     save_latest_update_id(get_updated_id(updates)[-1])
