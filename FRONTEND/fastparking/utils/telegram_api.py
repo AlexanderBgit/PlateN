@@ -18,11 +18,6 @@ TOKEN = settings.TELEGRAM_TOKEN
 TELEGRAM_NEWS_NAME = settings.TELEGRAM_NEWS_NAME
 TZ = "Europe/Kyiv"
 
-COMMANDS = {
-    "/start" "/pushin",
-    "/pushout",
-}
-
 
 def get_updates(offset: str = "") -> list[dict] | None:
     url_getUpdates = f"https://api.telegram.org/bot{TOKEN}/getUpdates?offset={offset}"
@@ -234,19 +229,20 @@ def save_unknown_users(updates: list[dict]):
 def command_actions(user_id, command):
     command_handler = COMMANDS.get(command)
     if command_handler:
-        # command_handler(user_id)
-        answer_to_user(user_id, f"command found {command=}")
+        command_handler(user_id)
+        # answer_to_user(user_id, f"command found {command=}")
     else:
-        answer_to_user(user_id, "command not found")
+        answer_to_user(user_id, "{command=} not found")
 
 
 def parse_commands(updates: list[dict]):
+    user_id = None
     for update in updates:
         message = update.get("message")
         if message:
             if message.get("from") and message["from"].get("id"):
                 user_id = message["from"].get("id")
-            if message.get("entities"):
+            if user_id and message.get("entities"):
                 entities = message.get("entities")[0]
                 if entities:
                     entities_type = entities.get("type")
@@ -254,6 +250,7 @@ def parse_commands(updates: list[dict]):
                     if entities_type == "bot_command":
                         command: str = message["text"]
                         print(f"{command=}")
+                        command_actions(user_id, command)
 
 
 def handler_start(user_id: str):
@@ -281,6 +278,12 @@ def crone_pool():
     save_unknown_users(updates)
     parse_commands(updates)
 
+
+COMMANDS = {
+    "/start": handler_start,
+    "/pushin": handler_pushin,
+    "/pushout": handler_pushout,
+}
 
 if __name__ == "__main__":
     # main()
