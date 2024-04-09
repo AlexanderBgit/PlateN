@@ -292,7 +292,7 @@ def handler_pushout(user_id: str):
     answer_to_user(user_id, f"Гумореска для Вас:\n{gumoreska}")
 
 
-def send_qrcode(chat_id: int | str, data: str = "FastParking"):
+def send_qrcode(chat_id: int | str, data: str = "FastParking") -> None:
     qr = qrcode.make(data)
     # Save the QR code image to a file
     TEMP_DIR_PATH = Path(tempfile.gettempdir()).joinpath("qr_code.jpg")
@@ -306,17 +306,12 @@ def send_qrcode(chat_id: int | str, data: str = "FastParking"):
     with TEMP_DIR_PATH.open("rb") as photo:
         files = {"photo": photo}
         _ = requests.post(url, data=data, files=files)
-
-    print(_.json(), url)
-
+    # print(_.json(), url)
     TEMP_DIR_PATH.unlink()
 
 
 def handler_pay(user_id: str):
-    print_text = []
-    print_text.append(
-        parse_text("FastParking ОПЛАТА за послугу паркування. <datetime>")
-    )
+    print_text = [parse_text("FastParking ОПЛАТА за послугу паркування. <datetime>")]
     car_number = "AA0001BB"
     print_text.append(f"Your car number: {car_number}")
     duration = 2
@@ -331,6 +326,10 @@ def handler_pay(user_id: str):
     answer_to_user(user_id, "\n".join(print_text))
     qr_data = f"{uniq_id}|{amount}|{car_number}"
     send_qrcode(user_id, qr_data)
+
+
+def handler_help(user_id: str):
+    answer_to_user(user_id, "\n".join(COMMANDS.keys()))
 
 
 def crone_pool():
@@ -349,6 +348,7 @@ COMMANDS = {
     "/pushin": handler_pushin,
     "/pushout": handler_pushout,
     "/pay": handler_pay,
+    "/help": handler_help,
 }
 
 if __name__ == "__main__":
