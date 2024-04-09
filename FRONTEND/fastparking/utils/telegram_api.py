@@ -18,8 +18,8 @@ TELEGRAM_NEWS_NAME = settings.TELEGRAM_NEWS_NAME
 TZ = "Europe/Kyiv"
 
 
-def get_updates() -> list[dict] | None:
-    url_getUpdates = f"https://api.telegram.org/bot{TOKEN}/getUpdates"
+def get_updates(offset: str = "") -> list[dict] | None:
+    url_getUpdates = f"https://api.telegram.org/bot{TOKEN}/getUpdates?offset={offset}"
     response = requests.get(url_getUpdates)
     data = response.json()
     if data.get("ok"):
@@ -47,6 +47,51 @@ def get_all_users(updates: list[dict]) -> set[tuple]:
         if message and message.get("from") and message["from"].get("id"):
             user = (message["from"].get("id"), message["from"].get("username"))
             users.add(user)
+    return users
+
+
+def find_phone_user(updates: list[dict], phone: str) -> tuple[str, str]:
+    for update in updates:
+        message = update.get("message")
+        if message and message.get("from") and message["from"].get("id"):
+            username = message["from"].get("username")
+            if not username:
+                text: str = message["text"]
+                print(f"{text=}")
+                if text.startswith("+") and text == phone:
+                    user = (message["from"].get("id"), phone)
+                    return user
+
+
+def find_phones_users(updates: list[dict], phones: list[str]) -> set[tuple[str, str]]:
+    users = set()
+    for update in updates:
+        message = update.get("message")
+        if message and message.get("from") and message["from"].get("id"):
+            username = message["from"].get("username")
+            if not username:
+                text: str = message["text"]
+                print(f"{text=}")
+                if text.startswith("+") and (text in phones):
+                    user = (message["from"].get("id"), text)
+                    users.add(user)
+                    phones.remove(text)
+    return users
+
+
+def find_usernames(updates: list[dict], usernames: list[str]) -> set[tuple[str, str]]:
+    users = set()
+    for update in updates:
+        message = update.get("message")
+        if message and message.get("from") and message["from"].get("id"):
+            username = message["from"].get("username")
+            if username:
+                username = "@" + username
+                print(username, usernames)
+                if username in usernames:
+                    user = (message["from"].get("id"), username)
+                    users.add(user)
+                    usernames.remove(username)
     return users
 
 
@@ -112,6 +157,54 @@ def send_message_to_all_users(text: str) -> None:
             )
 
 
+def get_updated_id(updates: list[dict]):
+    update_list = [update.get("update_id") for update in updates]
+    return update_list
+
+
+def get_latest_update_id() -> str:
+    return ""
+
+
+def save_latest_update_id(last_update_id: str) -> None:
+    return None
+
+
+def get_unknown_phones_users() -> list[str]:
+    unknown_phones = ["+3807712345678"]
+    return unknown_phones
+
+
+def save_users_id(users: set):
+    for user in users:
+        print(f"saving user: {user}")
+
+
+def get_unknown_usernames() -> list[str]:
+    unknown_usernames = ["@LeX4Xai"]
+    return unknown_usernames
+
+
+def find_users(updates: list[dict]):
+    unknown_phones = get_unknown_phones_users()
+    if unknown_phones:
+        users = find_phones_users(updates, unknown_phones)
+        save_users_id(users)
+    unknown_usernames = get_unknown_usernames()
+    if unknown_usernames:
+        # print(f"{unknown_usernames=}")
+        users = find_usernames(updates, unknown_usernames)
+        save_users_id(users)
+
+
+def crone_pool():
+    # get latest updates
+    last_update_id = get_latest_update_id()
+    updates = get_updates(offset=last_update_id)
+    save_latest_update_id(get_updated_id(updates)[-1])
+    find_users(updates)
+
+
 if __name__ == "__main__":
     # main()
     print(f"{settings.POSTGRES_DB=}")
@@ -121,7 +214,7 @@ if __name__ == "__main__":
 
     nickname = "LeX4Xai"
 
-    send_message_user("Hello, user of FastParking System!\nI know about you.", nickname)
+    # send_message_user("Hello, user of FastParking System!\nI know about you.", nickname)
     # send_message_news(parse_text("First news for FastParking System! <datetime>"))
     # send_message_to_all_users(
     #     "Message for all registered users.\nHello user:<username>."
@@ -130,3 +223,4 @@ if __name__ == "__main__":
     # print(updates)
     # chat_id = user_id_by_username(updates, nickname)
     # print(chat_id)
+    crone_pool()
