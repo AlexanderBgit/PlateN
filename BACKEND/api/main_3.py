@@ -1,4 +1,4 @@
-# main.py
+# main_4.py
 # https://www.freecodecamp.org/news/how-to-build-and-deploy-python-telegram-bot-v20-webhooks/
 
 from contextlib import asynccontextmanager
@@ -9,8 +9,8 @@ from telegram.ext._contexttypes import ContextTypes
 from fastapi import FastAPI, Request, Response
 
 
-TELEGRAM_TOKEN="6635051450:AAE288gRD9RjA8y4wzLiwYgRmJq1mYklzHo"
-webhook_url= 'https://edu202415.aacom.net:8443/pushin'
+TELEGRAM_TOKEN=""
+webhook_url= 'https:///pushin'
 
 # Initialize python telegram bot
 ptb = (

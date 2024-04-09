@@ -1,36 +1,64 @@
-from fastapi import FastAPI, Request, Response
-# from pydantic import BaseModel
-from telegram import Update
-from telegram.ext import Dispatcher, MessageHandler, Filters
-from telegram.ext.webhookcontext import WebhookContext
-from telegram.utils.request import Request as TGRequest
+import httpx
+from fastapi import FastAPI, Request
+from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_file = BASE_DIR.parent.joinpath("deploy").joinpath(".env")
+if env_file.exists():
+    load_dotenv(env_file)
+else:
+    print("ENV file not found:", env_file)
+
+TOKEN = os.getenv("TELEGRAM_TOKEN", "")
+
+BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
+
+client = httpx.AsyncClient()
 
 app = FastAPI()
 
-# Set up the Telegram bot
-BOT_TOKEN="6635051450:AAE288gRD9RjA8y4wzLiwYgRmJq1mYklzHo"
+@app.post("/webhook/")
+async def webhook(req: Request):
+    data = await req.json()
+    chat_id = data['message']['chat']['id']
+    text = data['message']['text'] + " :)"
 
-REQUEST = TGRequest(connect_timeout=0.5, read_timeout=1.0)
-dispatcher = Dispatcher(bot_token=BOT_TOKEN, request=REQUEST)
+    await client.get(f"{BASE_URL}/sendMessage?chat_id={chat_id}&text={text}")
 
-# Define a webhook endpoint for receiving messages
-@app.post("/webhook")
-async def telegram_webhook(request: Request, response: Response):
-    update = await request.json()
-    webhook_context = WebhookContext(update, dispatcher.bot)
+    return data
 
-    # Pass the update to the dispatcher for processing
-    dispatcher.process_update(Update.de_json(update, dispatcher.bot))
+@app.post("/start/")
+async def webhook(req: Request):
+    data = await req.json()
+    chat_id = data['message']['chat']['id']
+    text = data['message']['text'] + " start :)"
 
-    return {"status": "ok"}
+    await client.get(f"{BASE_URL}/sendMessage?chat_id={chat_id}&text={text}")
 
-# Handle incoming messages
-@dispatcher.message_handler(filters=Filters.text)
-def echo_message(update: Update, context: WebhookContext):
-    text = update.message.text
-    chat_id = update.message.chat_id
+    return data
 
-    context.bot.send_message(chat_id=chat_id, text=f"You said: {text}")
+
+@app.post("/pushin/")
+async def webhook(req: Request):
+    data = await req.json()
+    chat_id = data['message']['chat']['id']
+    text = data['message']['text'] + " pushin :)"
+
+    await client.get(f"{BASE_URL}/sendMessage?chat_id={chat_id}&text={text}")
+
+    return data
+
+@app.post("/pushout/")
+async def webhook(req: Request):
+    data = await req.json()
+    chat_id = data['message']['chat']['id']
+    text = data['message']['text'] + " pushout :)"
+
+    await client.get(f"{BASE_URL}/sendMessage?chat_id={chat_id}&text={text}")
+
+    return data
 
 if __name__ == "__main__":
     import uvicorn
