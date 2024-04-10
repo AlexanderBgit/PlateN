@@ -375,20 +375,22 @@ def handler_cabinet(user_id: str):
 
     print_text = [parse_text("Команду CABINET прийнято: <datetime>")]
     if user_name:
-        print_text.append(f"Ваше ім'я: {user_name}")
+        print_text.append(f'Ваше ім\'я: "{user_name}"')
     print_text.append(f"Ваші зареєстровані номери: {car_numbers}")
     if uniq_id:
         print_text.append(f"Номер послуги: {uniq_id}")
-    if car_number:
-        print_text.append(f"Ваш номер на парковці: {car_number}")
     if parking_id:
-        print_text.append(f"Ваше паркомісце: {parking_id}")
+        print_text.append(
+            f'Ваше паркомісце: {parking_id}. <a href="https://github.com/AlexanderBgit/PlateN/wiki/parking#{parking_id.lower()}">План парковки</a>'
+        )
+    if car_number:
+        print_text.append(f"Зараз на парковці номер: {car_number}")
     if tariff_id:
         print_text.append(
             f'Ваше тариф: {tariff_id}. <a href="https://github.com/AlexanderBgit/PlateN/wiki/tariffs">Опис тарифів</a>'
         )
     if date_incoming:
-        print_text.append(f"Час заізду: {date_incoming}.")
+        print_text.append(f"Час заїзду: {date_incoming}.")
     if date_outdoing:
         print_text.append(f"Час виїзду: {date_outdoing}.")
     if duration:
