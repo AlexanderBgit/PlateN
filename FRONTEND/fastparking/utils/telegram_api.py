@@ -26,6 +26,7 @@ BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
 TELEGRAM_NEWS_NAME = settings.TELEGRAM_NEWS_NAME
 TZ = "Europe/Kyiv"
 
+COMMANDS = {}
 
 def get_updates(offset: str = "") -> list[dict] | None:
     url_getUpdates = f"{BASE_URL}/getUpdates?offset={offset}"
@@ -240,10 +241,12 @@ def save_unknown_users(updates: list[dict]):
 
 
 def command_actions(user_id, command):
-    command_handler = COMMANDS.get(command)
-    if command_handler:
-        command_handler(user_id)
-        # answer_to_user(user_id, f"command found {command=}")
+    command = COMMANDS.get(command)
+    if command:
+        command_handler = command.get('handler')
+        if command_handler:
+            command_handler(user_id)
+            # answer_to_user(user_id, f"command found {command=}")
     else:
         answer_to_user(user_id, f"{command=} not found")
 
@@ -267,42 +270,43 @@ def parse_commands(updates: list[dict]):
 
 
 def handler_start(user_id: str):
-    answer_to_user(user_id, "Welcome to FastParking system")
+    print_text = [parse_text("Welcome to FastParking system: <datetime>")]
+    answer_to_user(user_id, "\n".join(print_text))
 
 
-def handler_pushin(user_id: str):
-    answer_to_user(user_id, parse_text("FastParking system accept PUSH IN <datetime>"))
+def handler_begin(user_id: str):
     car_number = "AA0001BB"
-    answer_to_user(user_id, f"Your car number: {car_number}")
-    tarif_id = "1"
-    answer_to_user(user_id, f"Ваш номер тарифу: {tarif_id}")
+    tariff_id = "1"
     parking_id = "L01-34"
-    answer_to_user(user_id, f"Ваше місце парковки: {parking_id}")
+    print_text = [parse_text("Команду BEGIN прийнято: <datetime>")]
+    print_text.append( f"Your car number: {car_number}")
+    print_text.append( f"Ваш номер тарифу: {tariff_id}")
+    print_text.append(f"Ваше місце парковки: {parking_id}")
+    answer_to_user(user_id, "\n".join(print_text))
 
-
-def handler_pushout(user_id: str):
-    print_text = [parse_text("FastParking system accept PUSH OUT <datetime>")]
+def handler_stop(user_id: str):
+    print_text = [parse_text("Команду STOP прийнято: <datetime>")]
     payed_uniq_id = cache.get("payed_uniq_id")
     if not payed_uniq_id:
         print_text.append(f"Ви маєте оплатити послугу з паркування")
         answer_to_user(user_id, "\n".join(print_text))
         return
     cache.set("payed_uniq_id", None)
+    car_number = "AA0001BB"
+    duration = 2
+    amount = 20
+    gumoreska = get_random_block()
     print_text.append(f"Все добре, послуга оплачена можете виїжджати.\n")
     print_text.append(f"Номер послуги: {payed_uniq_id}")
-    car_number = "AA0001BB"
     print_text.append(f"Your car number: {car_number}")
-    duration = 2
     print_text.append(f"Час перебування: {duration} год.")
-    amount = 20
     print_text.append(f"Оплачено: {amount} грн.")
-    gumoreska = get_random_block()
     print_text.append(f"\nГумореска для Вас:\n{gumoreska}")
     answer_to_user(user_id, "\n".join(print_text))
 
 
-def send_qrcode(chat_id: int | str, data: str = "FastParking") -> None:
-    qr = qrcode.make(data)
+def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
+    qr = qrcode.make(qr_data)
     # Save the QR code image to a file
     TEMP_DIR_PATH = Path(tempfile.gettempdir()).joinpath("qr_code.jpg")
     # qr_path = "qr_code.png"
@@ -320,16 +324,16 @@ def send_qrcode(chat_id: int | str, data: str = "FastParking") -> None:
 
 
 def handler_pay(user_id: str):
-    print_text = [parse_text("FastParking ОПЛАТА за послугу паркування. <datetime>")]
     car_number = "AA0001BB"
-    print_text.append(f"Your car number: {car_number}")
     duration = 2
-    print_text.append(f"Час перебування: {duration} год.")
-    tarif_id = "1"
-    print_text.append(f"Ваш номер тарифу: {tarif_id}")
+    tariff_id = "1"
     amount = 20
-    print_text.append(f"До сплати: {amount} грн.")
     uniq_id = "0002302032"
+    print_text = [parse_text("FastParking ОПЛАТА за послугу паркування. <datetime>")]
+    print_text.append(f"Your car number: {car_number}")
+    print_text.append(f"Час перебування: {duration} год.")
+    print_text.append(f"Ваш номер тарифу: {tariff_id}")
+    print_text.append(f"До сплати: {amount} грн.")
     print_text.append(f"Номер послуги: {uniq_id}")
     print_text.append(f"QR CODE оплати в терміналі парковки:")
     answer_to_user(user_id, "\n".join(print_text))
@@ -340,7 +344,8 @@ def handler_pay(user_id: str):
 
 
 def handler_help(user_id: str):
-    answer_to_user(user_id, "\n".join(COMMANDS.keys()))
+    helps = [ f"{k} - {v.get('help')}" for k, v in COMMANDS.items() if v.get('help') ]
+    answer_to_user(user_id, "\n".join(helps))
 
 
 def check_payments():
@@ -378,29 +383,14 @@ def crone_pool():
 
 
 COMMANDS = {
-    "/start": handler_start,
-    "/pushin": handler_pushin,
-    "/pushout": handler_pushout,
-    "/pay": handler_pay,
-    "/help": handler_help,
+    "/start": {"handler": handler_start, help: "Підключення до бота"},
+    "/begin": {"handler": handler_begin, help: "Почати"},
+    "/stop": {"handler": handler_stop, help: "Завершити"},
+    "/pay": {"handler": handler_pay, help: "Оплата"},
+    "/help": {"handler": handler_help, help: "Допомога"},
+    "/cabinet ": {"handler": handler_cabinet, help: "Інформація"},
+    "/feedback  ": {"handler": handler_feedback , help: "Відгуки"},
 }
 
 if __name__ == "__main__":
-    # main()
-    # print(f"{settings.POSTGRES_DB=}")
-    # print(f"{settings.TELEGRAM_TOKEN=}")
-    # print(f"{settings.TELEGRAM_BOT_NAME=}")
-    # print(f"{settings.TELEGRAM_NEWS_NAME=}")
-
-    # nickname = "LeX4Xai"
-
-    # send_message_user("Hello, user of FastParking System!\nI know about you.", nickname)
-    # send_message_news(parse_text("First news for FastParking System! <datetime>"))
-    # send_message_to_all_users(
-    #     "Message for all registered users.\nHello user:<username>."
-    # )
-    # updates = get_updates()
-    # print(updates)
-    # chat_id = user_id_by_username(updates, nickname)
-    # print(chat_id)
     crone_pool()
