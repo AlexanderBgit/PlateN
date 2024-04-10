@@ -45,10 +45,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "parking",
-    "accounts",
+    "users",
+    "cars",
     "communications",
     "finance",
-    "images",
+    "photo",
 ]
 
 MIDDLEWARE = [

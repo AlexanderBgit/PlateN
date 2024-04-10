@@ -37,13 +37,62 @@
           <span class="nav-item mx-auto">Home</span>
         </a>
       </li>
+      {% if user.is_authenticated %}
+      <li>
+        <a class="nav-link text-white" href="{% url 'cars:dashboard' %}">
+          <i class="fa-solid fa-users"></i>
+          <span class="nav-item">Cars</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link text-white" href="{% url 'finance:main' %}">
+          <i class="fa-solid fa-table-list"></i>
+          <span class="nav-item">Finance</span>
+        </a>
+      </li>
       
+      <li>
+        <a class="nav-link text-white" href="{% url 'Communications:form_news' %}">
+          <i class="fa-solid fa-earth-americas"></i>
+          <span class="nav-item">Messages</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link text-white" href="{% url 'photo:files_browser' %}">
+          <i class="fa-solid fa-folders"></i>
+          <span class="nav-item">Pictures</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link text-white" href="{% url 'users:logout' %}">
+          <i class="fa-solid fa-sign-out"></i>
+          <span class="nav-item">Logout</span>
+        </a>
+      </li>
+      {% else %}
+      <li>
+        <a class="nav-link text-white" href="{% url 'users:login' %}">
+          <i class="fa-solid fa-user"></i>
+          <span class="nav-item">SignIn</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link text-white" href="{% url 'users:register' %}">
+          <i class="fa-solid fa-user-check"></i>
+          <span class="nav-item">SignUp</span>
+        </a>
+      </li>
+      {% endif %}
     </ul>
     <hr>
     <div class="dropdown">
       <a href="#" class="d-flex align-items-center text-white text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
         <img src="{% static 'parking/mdo.png' %}" alt="" width="32" height="32" class="rounded-circle me-2">
-        
+        {% if user.is_authenticated %}
+        <strong>{{user.username}}</strong><span style="color: #00d000"> &#9679;</span>
+     {% else %}
+        <strong>Username </strong>
+     {% endif %}
       </a>
     </div>
   </div>
