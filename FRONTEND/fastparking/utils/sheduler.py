@@ -8,6 +8,7 @@ from telegram_api import crone_pool
 
 def handler_telegram_pool():
     print("handler_telegram_pool")
+    crone_pool()
 
 def handler_limit_check():
     print("handler_limit_check")
@@ -30,18 +31,20 @@ if __name__ == "__main__":
         }
 
         times = { period_name: time_now for period_name in periods.keys()}
+        try:
+            while True:
+                time_now = time.time()
 
-        while True:
-            time_now = time.time()
+                deltas: dict = { period_name: time_now - times[period_name]  for period_name in periods.keys() }
+                for period_name in periods.keys():
+                    if deltas[period_name] > periods[period_name]:
+                        times[period_name] = time_now
+                        actions[period_name]()
 
-            deltas: dict = { period_name: time_now - times[period_name]  for period_name in periods.keys() }
-            for period_name in periods.keys():
-                if deltas[period_name] > periods[period_name]:
-                    times[period_name] = time_now
-                    actions[period_name]()
-
-            print(f"Loop... {loop_delay}")
-            time.sleep(loop_delay)
+                print(f"Loop... {loop_delay}")
+                time.sleep(loop_delay)
+        except KeyboardInterrupt:
+            print("*** Terminated by user pressing: Ctrl-C")
 
 
 
