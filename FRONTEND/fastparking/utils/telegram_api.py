@@ -28,6 +28,7 @@ TZ = "Europe/Kyiv"
 
 COMMANDS = {}
 
+
 def get_updates(offset: str = "") -> list[dict] | None:
     url_getUpdates = f"{BASE_URL}/getUpdates?offset={offset}"
     response = requests.get(url_getUpdates)
@@ -65,7 +66,7 @@ def get_all_users(updates: list[dict]) -> set[tuple]:
     return users
 
 
-def find_phone_user(updates: list[dict], phone: str) -> tuple[str, str]:
+def find_phone_user(updates: list[dict], phone: str) -> tuple[str, str] | None:
     for update in updates:
         message = update.get("message")
         if message and message.get("from") and message["from"].get("id"):
@@ -135,9 +136,18 @@ def find_unknown_contacts(
     return users
 
 
-def send_message(text: str, chat_id: int | str) -> None:
+def send_message(text: str, chat_id: int | str, parse_mode: bool = False) -> None:
     url = f"{BASE_URL}/sendMessage"
-    _ = requests.post(url, json={"chat_id": chat_id, "text": text}, timeout=10)
+    if parse_mode:
+        json = {
+            "chat_id": chat_id,
+            "text": text,
+            "parse_mode": "HTML",
+            "link_preview_options": {"is_disabled": True},
+        }
+    else:
+        json = {"chat_id": chat_id, "text": text}
+    _ = requests.post(url, json=json, timeout=10)
     # print(_)
 
 
@@ -155,9 +165,9 @@ def send_message_news(text: str, chat_id: int | str = TELEGRAM_NEWS_NAME) -> Non
         send_message(text=text, chat_id=chat_id)
 
 
-def answer_to_user(user_id: str, text: str):
+def answer_to_user(user_id: str, text: str, parse_mode: bool = False):
     print(f"answer_to_user: {user_id=} {text=}")
-    send_message(text, user_id)
+    send_message(text, user_id, parse_mode=parse_mode)
 
 
 def get_local_time_now() -> datetime:
@@ -202,7 +212,7 @@ def send_message_to_all_users(text: str) -> None:
             )
 
 
-def get_updated_id(updates: list[dict]):
+def get_updated_id(updates: list[dict]) -> list | None:
     update_list = [update.get("update_id") for update in updates]
     return update_list
 
@@ -212,7 +222,7 @@ def get_last_update_id() -> str:
     return last_update_id
 
 
-def save_latest_update_id(last_update_id: str) -> None:
+def save_latest_update_id(last_update_id: str | None) -> None:
     cache.set("last_update_id", last_update_id, timeout=None)
     return None
 
@@ -243,7 +253,7 @@ def save_unknown_users(updates: list[dict]):
 def command_actions(user_id, command):
     command = COMMANDS.get(command)
     if command:
-        command_handler = command.get('handler')
+        command_handler = command.get("handler")
         if command_handler:
             command_handler(user_id)
             # answer_to_user(user_id, f"command found {command=}")
@@ -269,6 +279,24 @@ def parse_commands(updates: list[dict]):
                         command_actions(user_id, command)
 
 
+def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
+    qr = qrcode.make(qr_data)
+    # Save the QR code image to a file
+    TEMP_DIR_PATH = Path(tempfile.gettempdir()).joinpath("qr_code.jpg")
+    # qr_path = "qr_code.png"
+    print(TEMP_DIR_PATH)
+    qr.save(str(TEMP_DIR_PATH))
+
+    data = {"chat_id": chat_id}
+    url = f"{BASE_URL}/sendPhoto"
+
+    with TEMP_DIR_PATH.open("rb") as photo:
+        files = {"photo": photo}
+        _ = requests.post(url, data=data, files=files)
+    # print(_.json(), url)
+    TEMP_DIR_PATH.unlink()
+
+
 def handler_start(user_id: str):
     print_text = [parse_text("Welcome to FastParking system: <datetime>")]
     answer_to_user(user_id, "\n".join(print_text))
@@ -279,10 +307,11 @@ def handler_begin(user_id: str):
     tariff_id = "1"
     parking_id = "L01-34"
     print_text = [parse_text("Команду BEGIN прийнято: <datetime>")]
-    print_text.append( f"Your car number: {car_number}")
-    print_text.append( f"Ваш номер тарифу: {tariff_id}")
+    print_text.append(f"Your car number: {car_number}")
+    print_text.append(f"Ваш номер тарифу: {tariff_id}")
     print_text.append(f"Ваше місце парковки: {parking_id}")
     answer_to_user(user_id, "\n".join(print_text))
+
 
 def handler_stop(user_id: str):
     print_text = [parse_text("Команду STOP прийнято: <datetime>")]
@@ -303,24 +332,6 @@ def handler_stop(user_id: str):
     print_text.append(f"Оплачено: {amount} грн.")
     print_text.append(f"\nГумореска для Вас:\n{gumoreska}")
     answer_to_user(user_id, "\n".join(print_text))
-
-
-def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
-    qr = qrcode.make(qr_data)
-    # Save the QR code image to a file
-    TEMP_DIR_PATH = Path(tempfile.gettempdir()).joinpath("qr_code.jpg")
-    # qr_path = "qr_code.png"
-    print(TEMP_DIR_PATH)
-    qr.save(str(TEMP_DIR_PATH))
-
-    data = {"chat_id": chat_id}
-    url = f"{BASE_URL}/sendPhoto"
-
-    with TEMP_DIR_PATH.open("rb") as photo:
-        files = {"photo": photo}
-        _ = requests.post(url, data=data, files=files)
-    # print(_.json(), url)
-    TEMP_DIR_PATH.unlink()
 
 
 def handler_pay(user_id: str):
@@ -344,8 +355,60 @@ def handler_pay(user_id: str):
 
 
 def handler_help(user_id: str):
-    helps = [ f"{k} - {v.get('help')}" for k, v in COMMANDS.items() if v.get('help') ]
+    helps = [f"{k} - {v.get('help')}" for k, v in COMMANDS.items() if v.get("help")]
+    print(f"{helps=}, {COMMANDS=}")
     answer_to_user(user_id, "\n".join(helps))
+
+
+def handler_cabinet(user_id: str):
+    user_name = "Jon Travolta"
+    cars_list = ["AA0001BB", "AA0002CC"]
+    car_numbers = ", ".join(cars_list)
+    car_number = cars_list[0]
+    tariff_id = "1"
+    parking_id = "L01-34"
+    duration = 2
+    amount = 20
+    uniq_id = "0002302032"
+    date_incoming = "2024-04-09 12:33"
+    date_outdoing = None
+
+    print_text = [parse_text("Команду CABINET прийнято: <datetime>")]
+    if user_name:
+        print_text.append(f"Ваше ім'я: {user_name}")
+    print_text.append(f"Ваші зареєстровані номери: {car_numbers}")
+    if uniq_id:
+        print_text.append(f"Номер послуги: {uniq_id}")
+    if car_number:
+        print_text.append(f"Ваш номер на парковці: {car_number}")
+    if parking_id:
+        print_text.append(f"Ваше паркомісце: {parking_id}")
+    if tariff_id:
+        print_text.append(
+            f'Ваше тариф: {tariff_id}. <a href="https://github.com/AlexanderBgit/PlateN/wiki/tariffs">Опис тарифів</a>'
+        )
+    if date_incoming:
+        print_text.append(f"Час заізду: {date_incoming}.")
+    if date_outdoing:
+        print_text.append(f"Час виїзду: {date_outdoing}.")
+    if duration:
+        print_text.append(f"Поточний час перебування: {duration} год.")
+    if amount:
+        print_text.append(f"Поточні нараховання до сплати: {amount} грн.")
+
+    answer_to_user(user_id, "\n".join(print_text), parse_mode=True)
+
+
+def handler_feedback(user_id: str):
+    print_text = [parse_text("Команду FEEDBACK прийнято: <datetime>")]
+    print_text.append(
+        '<a href="https://t.me/fastparking_news">Канал новин парковки @fastparking_news</a>'
+    )
+    print_text.append(
+        '<a href="https://github.com/AlexanderBgit/PlateN/issues">Зауваження розробникам</a>'
+    )
+
+    answer_to_user(user_id, "\n".join(print_text), parse_mode=True)
 
 
 def check_payments():
@@ -377,19 +440,21 @@ def crone_pool():
     print(f"{last_update_id=}")
     updates = get_updates(offset=last_update_id)
     if updates:
-        save_latest_update_id(get_updated_id(updates)[-1])
-        save_unknown_users(updates)
-        parse_commands(updates)
+        list_id = get_updated_id(updates)
+        if list_id:
+            save_latest_update_id(list_id[-1])
+            save_unknown_users(updates)
+            parse_commands(updates)
 
 
 COMMANDS = {
-    "/start": {"handler": handler_start, help: "Підключення до бота"},
-    "/begin": {"handler": handler_begin, help: "Почати"},
-    "/stop": {"handler": handler_stop, help: "Завершити"},
-    "/pay": {"handler": handler_pay, help: "Оплата"},
-    "/help": {"handler": handler_help, help: "Допомога"},
-    "/cabinet ": {"handler": handler_cabinet, help: "Інформація"},
-    "/feedback  ": {"handler": handler_feedback , help: "Відгуки"},
+    "/start": {"handler": handler_start, "help": "Підключення до бота"},
+    "/begin": {"handler": handler_begin, "help": "Почати"},
+    "/stop": {"handler": handler_stop, "help": "Завершити"},
+    "/pay": {"handler": handler_pay, "help": "Оплата"},
+    "/help": {"handler": handler_help, "help": "Допомога"},
+    "/cabinet": {"handler": handler_cabinet, "help": "Інформація"},
+    "/feedback": {"handler": handler_feedback, "help": "Відгуки"},
 }
 
 if __name__ == "__main__":
