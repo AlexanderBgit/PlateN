@@ -263,12 +263,12 @@ def save_unknown_users(updates: list[dict]):
         save_users_id(users)
 
 
-def command_actions(user_id, command):
+def command_actions(user_id: str | int, command: str, username: str | None = None):
     command = COMMANDS.get(command)
     if command:
         command_handler = command.get("handler")
         if command_handler:
-            command_handler(user_id)
+            command_handler(user_id, username)
             # answer_to_user(user_id, f"command found {command=}")
     else:
         answer_to_user(user_id, f"{command=} not found")
@@ -281,6 +281,8 @@ def parse_commands(updates: list[dict]):
         if message:
             if message.get("from") and message["from"].get("id"):
                 user_id = message["from"].get("id")
+                username = message["from"].get("username")
+
             if user_id and message.get("entities"):
                 entities = message.get("entities")[0]
                 if entities:
@@ -289,13 +291,14 @@ def parse_commands(updates: list[dict]):
                     if entities_type == "bot_command":
                         command: str = message["text"]
                         print(f"{command=}")
-                        command_actions(user_id, command)
+                        command_actions(user_id, command, username)
         else:
             callback_query = update.get("callback_query")
             if callback_query:
                 call_from = callback_query.get("from")
                 if call_from:
                     user_id = call_from.get("id")
+                    username = call_from.get("username")
                     print(user_id)
                     if user_id and callback_query.get("data"):
                         command: str = callback_query["data"]
@@ -321,11 +324,11 @@ def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
     TEMP_DIR_PATH.unlink()
 
 
-def handler_start(user_id: str):
-    print_text = [parse_text("Welcome to FastParking system: <datetime>")]
+def handler_with_button(user_id: str, username: str | None = None):
+    print_text = [parse_text("TEST <datetime>")]
     reply_markup = {"inline_keyboard": []}
     inlineRow = [
-        {"text": "one", "callback_data": "/one:one_text"},
+        {"text": "begin", "callback_data": "/begin"},
         {"text": "help", "callback_data": "/help"},
         {"text": "News", "url": "https://t.me/fastparking_news"},
     ]
@@ -333,7 +336,30 @@ def handler_start(user_id: str):
     send_button_message("\n".join(print_text), user_id, reply_markup)
 
 
-def handler_begin(user_id: str):
+def handler_start(user_id: str, username: str | None = None):
+    print_text = [parse_text("Welcome to FastParking system: <datetime>")]
+    if username is None:
+        print_text.append(
+            "Ваш обліковий запис telegram не має інформацію про Ваш @nickname, "
+            "тому Ви Маєте поділитися з нами своїм номером телефону. Натиснув відповідну кнопку."
+            "\nАбо додати @nickname до telegram, і внести зміни в особистому кабінеті нашої системи. "
+            "\nІ повторити реєстрацію за допомоги команди /start. "
+            "Це необхідно для сповіщення Вас системою паркування про важливі події."
+        )
+
+        reply_markup_keyboard_phone = {
+            "keyboard": [
+                [{"text": "Надіслати Ваш номер телефону", "request_contact": True}]
+            ],
+            "resize_keyboard": True,
+            "one_time_keyboard": True,
+        }
+        send_button_message("\n".join(print_text), user_id, reply_markup_keyboard_phone)
+    else:
+        answer_to_user(user_id, "\n".join(print_text))
+
+
+def handler_begin(user_id: str, username: str | None = None):
     car_number = "AA0001BB"
     tariff_id = "1"
     parking_id = "L01-34"
@@ -344,7 +370,7 @@ def handler_begin(user_id: str):
     answer_to_user(user_id, "\n".join(print_text))
 
 
-def handler_stop(user_id: str):
+def handler_stop(user_id: str, username: str | None = None):
     print_text = [parse_text("Команду STOP прийнято: <datetime>")]
     payed_uniq_id = cache.get("payed_uniq_id")
     if not payed_uniq_id:
@@ -365,7 +391,7 @@ def handler_stop(user_id: str):
     answer_to_user(user_id, "\n".join(print_text))
 
 
-def handler_pay(user_id: str):
+def handler_pay(user_id: str, username: str | None = None):
     car_number = "AA0001BB"
     duration = 2
     tariff_id = "1"
@@ -385,13 +411,13 @@ def handler_pay(user_id: str):
     cache.set("user_id", user_id)
 
 
-def handler_help(user_id: str):
+def handler_help(user_id: str, username: str | None = None):
     helps = [f"{k} - {v.get('help')}" for k, v in COMMANDS.items() if v.get("help")]
     print(f"{helps=}, {COMMANDS=}")
     answer_to_user(user_id, "\n".join(helps))
 
 
-def handler_cabinet(user_id: str):
+def handler_cabinet(user_id: str, username: str | None = None):
     user_name = "Jon Travolta"
     cars_list = ["AA0001BB", "AA0002CC"]
     car_numbers = ", ".join(cars_list)
