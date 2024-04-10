@@ -247,7 +247,16 @@ def get_unknown_phones_users() -> list[str]:
 
 def save_users_id(users: set):
     for user in users:
-        print(f"saving user: {user}")
+        print(f"saving user to DB: {user}")
+
+
+def save_user_id(user_id: str, username: str) -> None:
+    print(f"saving user to DB: {user_id=} {username=}")
+
+
+def get_user_profile(user_id: str) -> dict | None:
+    data = {"user_id": user_id, "username": "username"}
+    return data
 
 
 def get_unknown_usernames() -> list[str]:
@@ -263,6 +272,10 @@ def save_unknown_users(updates: list[dict]):
         save_users_id(users)
 
 
+def save_user_phone_number(user_id, phone_number):
+    print(f"save_user_phone_number to DB: {user_id}, {phone_number}")
+
+
 def command_actions(user_id: str | int, command: str, username: str | None = None):
     command = COMMANDS.get(command)
     if command:
@@ -274,17 +287,25 @@ def command_actions(user_id: str | int, command: str, username: str | None = Non
         answer_to_user(user_id, f"{command=} not found")
 
 
-def parse_commands(updates: list[dict]):
+def parse_commands(updates: list[dict]) -> None:
     user_id = None
     for update in updates:
         message = update.get("message")
         if message:
             if message.get("from") and message["from"].get("id"):
                 user_id = message["from"].get("id")
-                username = message["from"].get("username")
 
-            if user_id and message.get("entities"):
-                entities = message.get("entities")[0]
+            contacts = message.get("contacts")
+            if user_id and contacts:
+                phone_number = contacts.get("phone_number")
+                if phone_number:
+                    save_user_phone_number(user_id, phone_number)
+                    return
+
+            entities = message.get("entities")
+            if user_id and entities:
+                username = message["from"].get("username")
+                entities = entities[0]
                 if entities:
                     entities_type = entities.get("type")
                     print(f"{entities_type=}")
@@ -292,18 +313,20 @@ def parse_commands(updates: list[dict]):
                         command: str = message["text"]
                         print(f"{command=}")
                         command_actions(user_id, command, username)
-        else:
-            callback_query = update.get("callback_query")
-            if callback_query:
-                call_from = callback_query.get("from")
-                if call_from:
-                    user_id = call_from.get("id")
-                    username = call_from.get("username")
-                    print(user_id)
-                    if user_id and callback_query.get("data"):
-                        command: str = callback_query["data"]
-                        print(f"DATA: {command=}")
-                        command_actions(user_id, command)
+                        return
+
+        callback_query = update.get("callback_query")
+        if callback_query:
+            call_from = callback_query.get("from")
+            if call_from:
+                user_id = call_from.get("id")
+                username = call_from.get("username")
+                print(user_id)
+                if user_id and callback_query.get("data"):
+                    command: str = callback_query["data"]
+                    print(f"DATA: {command=}")
+                    command_actions(user_id, command, username)
+                    return
 
 
 def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
@@ -338,10 +361,13 @@ def handler_with_button(user_id: str, username: str | None = None):
 
 def handler_start(user_id: str, username: str | None = None):
     print_text = [parse_text("Welcome to FastParking system: <datetime>")]
+    user_profile = get_user_profile(user_id)
+    if user_profile:
+        username = user_profile.get("username")
     if username is None:
         print_text.append(
             "Ваш обліковий запис telegram не має інформацію про Ваш @nickname, "
-            "тому Ви Маєте поділитися з нами своїм номером телефону. Натиснув відповідну кнопку."
+            "тому Ви можете поділитися з нами своїм номером телефону. Натиснув відповідну кнопку."
             "\nАбо додати @nickname до telegram, і внести зміни в особистому кабінеті нашої системи. "
             "\nІ повторити реєстрацію за допомоги команди /start. "
             "Це необхідно для сповіщення Вас системою паркування про важливі події."
@@ -356,7 +382,17 @@ def handler_start(user_id: str, username: str | None = None):
         }
         send_button_message("\n".join(print_text), user_id, reply_markup_keyboard_phone)
     else:
-        answer_to_user(user_id, "\n".join(print_text))
+        if user_profile is None:
+            save_user_id(user_id, username)
+        reply_markup = {"inline_keyboard": []}
+        inlineRow = [
+            {"text": "Почати", "callback_data": "/begin"},
+            {"text": "Допомога", "callback_data": "/help"},
+            {"text": "Канал новин", "url": "https://t.me/fastparking_news"},
+        ]
+        reply_markup["inline_keyboard"].append(inlineRow)
+        send_button_message("\n".join(print_text), user_id, reply_markup)
+        # answer_to_user(user_id, "\n".join(print_text))
 
 
 def handler_begin(user_id: str, username: str | None = None):
@@ -502,7 +538,7 @@ def crone_pool():
         list_id = get_updated_id(updates)
         if list_id:
             save_latest_update_id(list_id[-1])
-            save_unknown_users(updates)
+            # save_unknown_users(updates)
             parse_commands(updates)
 
 
