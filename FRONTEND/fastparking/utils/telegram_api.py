@@ -251,7 +251,14 @@ def save_users_id(users: set):
 
 
 def save_user_id(user_id: str, username: str) -> None:
+    if username:
+        username = f"@{username}"
     print(f"saving user to DB: {user_id=} {username=}")
+
+def save_user_phone_number(user_id: str, phone_number: str) -> None:
+    if phone_number:
+        phone_number = f"+{phone_number}"
+    print(f"save_user_phone_number to DB: {user_id}, {phone_number}")
 
 
 def get_user_profile(user_id: str) -> dict | None:
@@ -273,10 +280,6 @@ def save_unknown_users(updates: list[dict]):
         save_users_id(users)
 
 
-def save_user_phone_number(user_id: str, phone_number: str) -> None:
-    if phone_number:
-        phone_number = f"+{phone_number}"
-    print(f"save_user_phone_number to DB: {user_id}, {phone_number}")
 
 
 def command_actions(user_id: str | int, command: str, username: str | None = None):
