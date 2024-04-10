@@ -5,7 +5,7 @@ from .views import CarListView
 
 # from .forms import LoginForm
 
-app_name = "users"
+app_name = "cars"
 
 urlpatterns = [
     path('cars/', CarListView.as_view(), name='car_list'),

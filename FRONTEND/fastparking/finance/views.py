@@ -1,3 +1,7 @@
+
 from django.shortcuts import render
 
-# Create your views here.
+def main(request):
+    # ваш код для обробки запиту тут
+    return render(request, 'finance/main.html')  # або інша логіка відповідно до вашого проекту
+

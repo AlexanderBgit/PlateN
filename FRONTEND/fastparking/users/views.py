@@ -16,7 +16,7 @@ def logout_view(request):
         username = request.user.username
         logout(request)
         return render(request, "users/signout.html", {"title":"Logout user", "username": username})
-    redirect(to="app_assistant:main")
+    redirect(to="parking:main")
 
 
 class RegisterView(View):
