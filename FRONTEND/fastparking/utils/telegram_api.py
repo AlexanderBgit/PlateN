@@ -273,7 +273,9 @@ def save_unknown_users(updates: list[dict]):
         save_users_id(users)
 
 
-def save_user_phone_number(user_id, phone_number):
+def save_user_phone_number(user_id: str, phone_number: str) -> None:
+    if phone_number:
+        phone_number = f"+{phone_number}"
     print(f"save_user_phone_number to DB: {user_id}, {phone_number}")
 
 
