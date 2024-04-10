@@ -18,13 +18,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
+      working-directory: ./FRONTEND
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Dependencies
+      working-directory: ./FRONTEND
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run Tests
+      working-directory: ./FRONTEND
       run: |
         python manage.py test
