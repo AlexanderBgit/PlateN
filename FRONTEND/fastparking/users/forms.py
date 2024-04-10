@@ -2,58 +2,49 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms import CharField, TextInput, EmailField, EmailInput, PasswordInput
+from django import forms
 
 
-# class RegisterForm(UserCreationForm):
-#     username = CharField(max_length=100, required=True, widget=TextInput(attrs={"class": "form-control"}))
-#     first_name = CharField(max_length=150, required=False, widget=TextInput(attrs={"class": "form-control"}))
-#     last_name = CharField(max_length=150, required=False, widget=TextInput(attrs={"class": "form-control"}))
-#     email = EmailField(max_length=150, required=True, widget=EmailInput(attrs={"class": "form-control"}))
-#     password1 = CharField(max_length=20, min_length=8, required=True,
-#                           widget=PasswordInput(attrs={"class": "form-control"}))
-#     password2 = CharField(max_length=20, min_length=8, required=True,
-#                           widget=PasswordInput(attrs={"class": "form-control"}))
-
-#     class Meta:
-#         model = User
-#         fields = ("username", "first_name", "last_name", "email", "password1", "password2")
-
-
-# class LoginForm(AuthenticationForm):
-#     username = CharField(max_length=100, required=True, widget=TextInput(attrs={"class": "form-control"}))
-#     password = CharField(max_length=20, min_length=8, required=True,
-#                          widget=PasswordInput(attrs={"class": "form-control"}))
-
-#     class Meta:
-#         model = User
-#         fields = ("username", "password")
-from django import forms  # Додано імпорт
-
-class RegisterForm(UserCreationForm):
-    id = forms.IntegerField(required=True, widget=forms.HiddenInput())  # Додано поле id
-    login = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={"class": "form-control"}))  # Додано поле login
-    fullname = forms.CharField(max_length=150, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))  # Додано поле fullname
-    email = forms.EmailField(max_length=150, required=True, widget=forms.EmailInput(attrs={"class": "form-control"}))  # Виправлено опис поля email
-    phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))  # Додано поле phone_number
-    telegram_id = forms.IntegerField(required=True, widget=forms.HiddenInput())  # Додано поле telegram_id
-    telegram_contact = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))  # Додано поле telegram_contact
-    role = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={"class": "form-control"}))  # Додано поле role
-    accept_oferta = forms.BooleanField(required=True)  # Додано поле accept_oferta
-
+class RegisterForm(forms.ModelForm):
+    id = forms.IntegerField(required=True, widget=forms.HiddenInput())
+    login = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={"class": "form-control"}))
+    fullname = forms.CharField(max_length=150, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
+    email = forms.EmailField(max_length=150, required=True, widget=forms.EmailInput(attrs={"class": "form-control"}))
+    phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
+    accept_oferta = forms.BooleanField(required=True)
     password1 = forms.CharField(max_length=20, min_length=8, required=True,
-                                 widget=forms.PasswordInput(attrs={"class": "form-control"}))  # Зберігаємо вашу реалізацію поля password1
+                                 widget=forms.PasswordInput(attrs={"class": "form-control"}))
     password2 = forms.CharField(max_length=20, min_length=8, required=True,
-                                 widget=forms.PasswordInput(attrs={"class": "form-control"}))  # Зберігаємо вашу реалізацію поля password2
-    car_numbers = forms.CharField(required=False, widget=forms.Textarea(attrs={"class": "form-control", "rows": 3}))  
+                                 widget=forms.PasswordInput(attrs={"class": "form-control"}))
+    car_numbers = forms.CharField(required=False, widget=forms.Textarea(attrs={"class": "form-control", "rows": 3}))
+    telegram_id = forms.IntegerField(required=False, widget=forms.HiddenInput())
+    telegram_contact = forms.CharField(max_length=20, required=False, widget=forms.HiddenInput())
 
     class Meta:
         model = User
-        fields = ("id", "username", "login", "fullname", "email", "phone_number", "telegram_id", "telegram_contact", "role", "accept_oferta", "password1", "password2", "car_numbers")
+        fields = ("id", "username", "login", "fullname", "email", "phone_number", "accept_oferta", "password1", "password2", "car_numbers", "telegram_id", "telegram_contact")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['telegram_id'].widget = forms.HiddenInput()  # Приховуємо поле "telegram_id"
+        self.fields['telegram_contact'].widget = forms.HiddenInput()  # Приховуємо поле "telegram_contact"
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        # Отримуємо номер телефону з форми
+        phone_number = self.cleaned_data.get('phone_number')
+        # Тут реалізуйте логіку для отримання telegram_id та telegram_contact за допомогою номера телефону
+        # user.telegram_id = ваше_значення_для_telegram_id
+        # user.telegram_contact = ваше_значення_для_telegram_contact
+        if commit:
+            user.save()
+        return user
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={"class": "form-control"}))
     password = forms.CharField(max_length=20, min_length=8, required=True,
                                widget=forms.PasswordInput(attrs={"class": "form-control"}))
+
 
     class Meta:
         model = User
