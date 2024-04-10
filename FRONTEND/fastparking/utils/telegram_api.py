@@ -255,7 +255,8 @@ def save_user_id(user_id: str, username: str) -> None:
 
 
 def get_user_profile(user_id: str) -> dict | None:
-    data = {"user_id": user_id, "username": "username"}
+    # data = {"user_id": user_id, "username": "username"}
+    data = None
     return data
 
 
@@ -295,9 +296,9 @@ def parse_commands(updates: list[dict]) -> None:
             if message.get("from") and message["from"].get("id"):
                 user_id = message["from"].get("id")
 
-            contacts = message.get("contacts")
-            if user_id and contacts:
-                phone_number = contacts.get("phone_number")
+            contact = message.get("contact")
+            if user_id and contact:
+                phone_number = contact.get("phone_number")
                 if phone_number:
                     save_user_phone_number(user_id, phone_number)
                     return
