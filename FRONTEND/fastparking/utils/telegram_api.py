@@ -151,6 +151,19 @@ def send_message(text: str, chat_id: int | str, parse_mode: bool = False) -> Non
     # print(_)
 
 
+def send_button_message(text: str, chat_id: int | str, reply_markup: dict) -> None:
+    url = f"{BASE_URL}/sendMessage"
+    json = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": "Markdown",
+        "reply_markup": reply_markup,
+        "link_preview_options": {"is_disabled": True},
+    }
+    _ = requests.post(url, json=json, timeout=10)
+    print(_)
+
+
 def send_message_user(text: str, n_name: str) -> None:
     updates = get_updates()
     if not updates:
@@ -277,6 +290,17 @@ def parse_commands(updates: list[dict]):
                         command: str = message["text"]
                         print(f"{command=}")
                         command_actions(user_id, command)
+        else:
+            callback_query = update.get("callback_query")
+            if callback_query:
+                call_from = callback_query.get("from")
+                if call_from:
+                    user_id = call_from.get("id")
+                    print(user_id)
+                    if user_id and callback_query.get("data"):
+                        command: str = callback_query["data"]
+                        print(f"DATA: {command=}")
+                        command_actions(user_id, command)
 
 
 def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
@@ -299,7 +323,14 @@ def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
 
 def handler_start(user_id: str):
     print_text = [parse_text("Welcome to FastParking system: <datetime>")]
-    answer_to_user(user_id, "\n".join(print_text))
+    reply_markup = {"inline_keyboard": []}
+    inlineRow = [
+        {"text": "one", "callback_data": "/one:one_text"},
+        {"text": "help", "callback_data": "/help"},
+        {"text": "News", "url": "https://t.me/fastparking_news"},
+    ]
+    reply_markup["inline_keyboard"].append(inlineRow)
+    send_button_message("\n".join(print_text), user_id, reply_markup)
 
 
 def handler_begin(user_id: str):
