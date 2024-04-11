@@ -1,8 +1,8 @@
-import base64
+from io import BytesIO
 import os
-import tempfile
+
 from datetime import datetime
-from pathlib import Path
+# from pathlib import Path
 
 import pytz
 
@@ -340,23 +340,16 @@ def parse_commands(updates: list[dict]) -> None:
                     command_actions(user_id, command, username)
                     return
 
-
 def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
-    qr = qrcode.make(qr_data)
-    # Save the QR code image to a file
-    TEMP_DIR_PATH = Path(tempfile.gettempdir()).joinpath("qr_code.jpg")
-    # qr_path = "qr_code.png"
-    print(TEMP_DIR_PATH)
-    qr.save(str(TEMP_DIR_PATH))
+    img = qrcode.make(qr_data, border=2)
+    mem_file = BytesIO()
+    img.save(mem_file)
+    mem_file.seek(0)
 
     data = {"chat_id": chat_id}
     url = f"{BASE_URL}/sendPhoto"
 
-    with TEMP_DIR_PATH.open("rb") as photo:
-        files = {"photo": photo}
-        _ = requests.post(url, data=data, files=files)
-    # print(_.json(), url)
-    TEMP_DIR_PATH.unlink()
+    _ = requests.post(url, data=data, files={"photo": mem_file})
 
 
 def handler_with_button(user_id: str, username: str | None = None):
