@@ -1,1 +1,1 @@
-python utils\sheduler.py --loop
+python utils\sheduler.py --loop -q

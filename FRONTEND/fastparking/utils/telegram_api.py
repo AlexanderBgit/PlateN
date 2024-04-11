@@ -151,6 +151,19 @@ def send_message(text: str, chat_id: int | str, parse_mode: bool = False) -> Non
     # print(_)
 
 
+def send_button_message(text: str, chat_id: int | str, reply_markup: dict) -> None:
+    url = f"{BASE_URL}/sendMessage"
+    json = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": "Markdown",
+        "reply_markup": reply_markup,
+        "link_preview_options": {"is_disabled": True},
+    }
+    _ = requests.post(url, json=json, timeout=10)
+    # print(_)
+
+
 def send_message_user(text: str, n_name: str) -> None:
     updates = get_updates()
     if not updates:
@@ -165,7 +178,7 @@ def send_message_news(text: str, chat_id: int | str = TELEGRAM_NEWS_NAME) -> Non
         send_message(text=text, chat_id=chat_id)
 
 
-def answer_to_user(user_id: str, text: str, parse_mode: bool = False):
+def answer_to_user(user_id: str | int, text: str, parse_mode: bool = False):
     print(f"answer_to_user: {user_id=} {text=}")
     send_message(text, user_id, parse_mode=parse_mode)
 
@@ -234,7 +247,25 @@ def get_unknown_phones_users() -> list[str]:
 
 def save_users_id(users: set):
     for user in users:
-        print(f"saving user: {user}")
+        print(f"saving user to DB: {user}")
+
+
+def save_user_id(user_id: str, username: str) -> None:
+    if username:
+        username = f"@{username}"
+    print(f"saving user to DB: {user_id=} {username=}")
+
+
+def save_user_phone_number(user_id: str, phone_number: str) -> None:
+    if phone_number:
+        phone_number = f"+{phone_number}"
+    print(f"save_user_phone_number to DB: {user_id}, {phone_number}")
+
+
+def get_user_profile(user_id: str) -> dict | None:
+    # data = {"user_id": user_id, "username": "username"}
+    data = None
+    return data
 
 
 def get_unknown_usernames() -> list[str]:
@@ -250,33 +281,59 @@ def save_unknown_users(updates: list[dict]):
         save_users_id(users)
 
 
-def command_actions(user_id, command):
-    command = COMMANDS.get(command)
+def command_actions(
+    user_id: str | int, command_action: str, username: str | None = None
+):
+    command = COMMANDS.get(command_action)
     if command:
         command_handler = command.get("handler")
         if command_handler:
-            command_handler(user_id)
+            command_handler(user_id, username)
             # answer_to_user(user_id, f"command found {command=}")
     else:
         answer_to_user(user_id, f"{command=} not found")
 
 
-def parse_commands(updates: list[dict]):
+def parse_commands(updates: list[dict]) -> None:
     user_id = None
     for update in updates:
         message = update.get("message")
         if message:
             if message.get("from") and message["from"].get("id"):
                 user_id = message["from"].get("id")
-            if user_id and message.get("entities"):
-                entities = message.get("entities")[0]
+
+            contact = message.get("contact")
+            if user_id and contact:
+                phone_number = contact.get("phone_number")
+                if phone_number:
+                    save_user_phone_number(user_id, phone_number)
+                    return
+
+            entities = message.get("entities")
+            if user_id and entities:
+                username = message["from"].get("username")
+                entities = entities[0]
                 if entities:
                     entities_type = entities.get("type")
                     print(f"{entities_type=}")
                     if entities_type == "bot_command":
                         command: str = message["text"]
                         print(f"{command=}")
-                        command_actions(user_id, command)
+                        command_actions(user_id, command, username)
+                        return
+
+        callback_query = update.get("callback_query")
+        if callback_query:
+            call_from = callback_query.get("from")
+            if call_from:
+                user_id = call_from.get("id")
+                username = call_from.get("username")
+                print(user_id)
+                if user_id and callback_query.get("data"):
+                    command: str = callback_query["data"]
+                    print(f"DATA: {command=}")
+                    command_actions(user_id, command, username)
+                    return
 
 
 def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
@@ -297,12 +354,55 @@ def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
     TEMP_DIR_PATH.unlink()
 
 
-def handler_start(user_id: str):
+def handler_with_button(user_id: str, username: str | None = None):
+    print_text = [parse_text("TEST <datetime>")]
+    reply_markup = {"inline_keyboard": []}
+    inlineRow = [
+        {"text": "begin", "callback_data": "/begin"},
+        {"text": "help", "callback_data": "/help"},
+        {"text": "News", "url": "https://t.me/fastparking_news"},
+    ]
+    reply_markup["inline_keyboard"].append(inlineRow)
+    send_button_message("\n".join(print_text), user_id, reply_markup)
+
+
+def handler_start(user_id: str, username: str | None = None):
     print_text = [parse_text("Welcome to FastParking system: <datetime>")]
-    answer_to_user(user_id, "\n".join(print_text))
+    user_profile = get_user_profile(user_id)
+    if user_profile:
+        username = user_profile.get("username")
+    if username is None:
+        print_text.append(
+            "Ваш обліковий запис telegram не має інформацію про Ваш @nickname, "
+            "тому Ви можете поділитися з нами своїм номером телефону. Натиснув відповідну кнопку."
+            "\nАбо додати @nickname до telegram, і внести зміни в особистому кабінеті нашої системи. "
+            "\nІ повторити реєстрацію за допомоги команди /start. "
+            "Це необхідно для сповіщення Вас системою паркування про важливі події."
+        )
+
+        reply_markup_keyboard_phone = {
+            "keyboard": [
+                [{"text": "Надіслати Ваш номер телефону", "request_contact": True}]
+            ],
+            "resize_keyboard": True,
+            "one_time_keyboard": True,
+        }
+        send_button_message("\n".join(print_text), user_id, reply_markup_keyboard_phone)
+    else:
+        if user_profile is None:
+            save_user_id(user_id, username)
+        reply_markup = {"inline_keyboard": []}
+        inlineRow = [
+            {"text": "Почати", "callback_data": "/begin"},
+            {"text": "Допомога", "callback_data": "/help"},
+            {"text": "Канал новин", "url": "https://t.me/fastparking_news"},
+        ]
+        reply_markup["inline_keyboard"].append(inlineRow)
+        send_button_message("\n".join(print_text), user_id, reply_markup)
+        # answer_to_user(user_id, "\n".join(print_text))
 
 
-def handler_begin(user_id: str):
+def handler_begin(user_id: str, username: str | None = None):
     car_number = "AA0001BB"
     tariff_id = "1"
     parking_id = "L01-34"
@@ -313,7 +413,7 @@ def handler_begin(user_id: str):
     answer_to_user(user_id, "\n".join(print_text))
 
 
-def handler_stop(user_id: str):
+def handler_stop(user_id: str, username: str | None = None):
     print_text = [parse_text("Команду STOP прийнято: <datetime>")]
     payed_uniq_id = cache.get("payed_uniq_id")
     if not payed_uniq_id:
@@ -334,7 +434,7 @@ def handler_stop(user_id: str):
     answer_to_user(user_id, "\n".join(print_text))
 
 
-def handler_pay(user_id: str):
+def handler_pay(user_id: str, username: str | None = None):
     car_number = "AA0001BB"
     duration = 2
     tariff_id = "1"
@@ -354,13 +454,13 @@ def handler_pay(user_id: str):
     cache.set("user_id", user_id)
 
 
-def handler_help(user_id: str):
+def handler_help(user_id: str, username: str | None = None):
     helps = [f"{k} - {v.get('help')}" for k, v in COMMANDS.items() if v.get("help")]
     print(f"{helps=}, {COMMANDS=}")
     answer_to_user(user_id, "\n".join(helps))
 
 
-def handler_cabinet(user_id: str):
+def handler_cabinet(user_id: str, username: str | None = None):
     user_name = "Jon Travolta"
     cars_list = ["AA0001BB", "AA0002CC"]
     car_numbers = ", ".join(cars_list)
@@ -375,20 +475,22 @@ def handler_cabinet(user_id: str):
 
     print_text = [parse_text("Команду CABINET прийнято: <datetime>")]
     if user_name:
-        print_text.append(f"Ваше ім'я: {user_name}")
+        print_text.append(f'Ваше ім\'я: "{user_name}"')
     print_text.append(f"Ваші зареєстровані номери: {car_numbers}")
     if uniq_id:
         print_text.append(f"Номер послуги: {uniq_id}")
-    if car_number:
-        print_text.append(f"Ваш номер на парковці: {car_number}")
     if parking_id:
-        print_text.append(f"Ваше паркомісце: {parking_id}")
+        print_text.append(
+            f'Ваше паркомісце: {parking_id}. <a href="https://github.com/AlexanderBgit/PlateN/wiki/parking#{parking_id.lower()}">План парковки</a>'
+        )
+    if car_number:
+        print_text.append(f"Зараз на парковці номер: {car_number}")
     if tariff_id:
         print_text.append(
             f'Ваше тариф: {tariff_id}. <a href="https://github.com/AlexanderBgit/PlateN/wiki/tariffs">Опис тарифів</a>'
         )
     if date_incoming:
-        print_text.append(f"Час заізду: {date_incoming}.")
+        print_text.append(f"Час заїзду: {date_incoming}.")
     if date_outdoing:
         print_text.append(f"Час виїзду: {date_outdoing}.")
     if duration:
@@ -399,7 +501,7 @@ def handler_cabinet(user_id: str):
     answer_to_user(user_id, "\n".join(print_text), parse_mode=True)
 
 
-def handler_feedback(user_id: str):
+def handler_feedback(user_id: str, username: str | None = None):
     print_text = [parse_text("Команду FEEDBACK прийнято: <datetime>")]
     print_text.append(
         '<a href="https://t.me/fastparking_news">Канал новин парковки @fastparking_news</a>'
@@ -437,13 +539,13 @@ def crone_pool():
     check_payments()
     # get latest updates
     last_update_id = get_last_update_id()
-    print(f"{last_update_id=}")
+    # print(f"{last_update_id=}")
     updates = get_updates(offset=last_update_id)
     if updates:
         list_id = get_updated_id(updates)
         if list_id:
             save_latest_update_id(list_id[-1])
-            save_unknown_users(updates)
+            # save_unknown_users(updates)
             parse_commands(updates)
 
 
