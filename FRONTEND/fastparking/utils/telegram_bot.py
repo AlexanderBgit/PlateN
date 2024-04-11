@@ -5,7 +5,7 @@ from pathlib import Path
 
 # import pytz
 
-# import qrcode
+import qrcode
 # import requests
 import django
 from django.conf import settings
@@ -19,13 +19,23 @@ from telegram_api import (
     get_user_profile,
     save_user_id,
     answer_to_user,
-    send_qrcode,
     get_last_update_id, 
     get_updates,
     get_updated_id,
     save_latest_update_id,
-    parse_commands
+    parse_commands,
+    send_qrcode
 )
+
+# import settings from Django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fastparking.settings")
+django.setup()
+
+TOKEN = settings.TELEGRAM_TOKEN
+TELEGRAM_NEWS_NAME = settings.TELEGRAM_NEWS_NAME
+
+BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
+
 
 
 def handler_with_button(user_id: str, username: str | None = None):
@@ -209,7 +219,7 @@ def check_payments():
         cache.set("payed_uniq_id", uniq_id, timeout=None)
 
 
-def crone_pool():
+def crone_pool(commands: dict | None = None):
     check_payments()
     # get latest updates
     last_update_id = get_last_update_id()
@@ -220,7 +230,7 @@ def crone_pool():
         if list_id:
             save_latest_update_id(list_id[-1])
             # save_unknown_users(updates)
-            parse_commands(updates)
+            parse_commands(updates, commands=commands)
 
 
 COMMANDS = {
@@ -234,4 +244,4 @@ COMMANDS = {
 }
 
 if __name__ == "__main__":
-    crone_pool()
+    crone_pool(commands=COMMANDS)
