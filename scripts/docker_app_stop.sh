@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 pushd "../deploy"
 echo "STOPPING SEPARATED DEV DB CONTAINER"

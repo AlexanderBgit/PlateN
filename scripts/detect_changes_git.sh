@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 SOURCE=${HOME}/PlateN/PlateN
 GIT_CMD="git --git-dir=${SOURCE}/.git --work-tree=${SOURCE}"
