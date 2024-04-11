@@ -111,3 +111,18 @@ python manage.py migrate
 
 ##### rebuild project (code) docker container
 `scripts\docker_app_build.cmd`
+
+
+## Процедура підключення dev - Django з нуля:
+1. git checkout dev
+1. git pull
+1. cd FRONTEND
+1. poetry shell
+1. poetry update
+1. cd ..
+1. cd scripts
+1. docker_db.cmd - run DB local docker, skip if remote used postgres
+1. migrate_dev_app.cmd - migrate DB
+1. create_django_admin.cmd - create admin
+1. run_dev_app.cmd - run app
+1. open browser: http://127.0.0.1:8000
