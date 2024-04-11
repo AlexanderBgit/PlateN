@@ -9,7 +9,7 @@ ${GIT_CMD} checkout ${BRANCH} --quiet
 ${GIT_CMD} stash --quiet
 ${GIT_CMD} fetch --quiet
 
-if ! ${GIT_CMD} diff --quiet
+if ! ${GIT_CMD} diff origin/${BRANCH} --quiet
 then
         ## for changes to stick, you need to pull them otherwise it will always have changes
         ${GIT_CMD} pull --quiet
