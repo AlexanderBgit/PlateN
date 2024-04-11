@@ -1,3 +1,4 @@
+from io import BytesIO
 import os
 import tempfile
 from datetime import datetime
@@ -6,6 +7,10 @@ from pathlib import Path
 import pytz
 
 import qrcode
+
+# from qrcode.main import QRCode
+import qrcode.base
+import qrcode.main
 import requests
 import django
 from django.conf import settings
@@ -16,6 +21,11 @@ from get_anekdot import get_random_block
 # import settings from Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fastparking.settings")
 django.setup()
+
+
+class TelegramParkingAPI:
+    def __init__(self) -> None:
+        pass
 
 
 # https://t.me/fastparking_bobr_bot
@@ -347,21 +357,15 @@ def parse_commands(updates: list[dict], commands: dict | None = None) -> None:
 
 
 def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
-    qr = qrcode.make(qr_data)
-    # Save the QR code image to a file
-    TEMP_DIR_PATH = Path(tempfile.gettempdir()).joinpath("qr_code.jpg")
-    # qr_path = "qr_code.png"
-    print(TEMP_DIR_PATH)
-    qr.save(str(TEMP_DIR_PATH))
+    img = qrcode.make(qr_data, border=2)
+    mem_file = BytesIO()
+    img.save(mem_file)
+    mem_file.seek(0)
 
     data = {"chat_id": chat_id}
     url = f"{BASE_URL}/sendPhoto"
 
-    with TEMP_DIR_PATH.open("rb") as photo:
-        files = {"photo": photo}
-        _ = requests.post(url, data=data, files=files)
-    # print(_.json(), url)
-    TEMP_DIR_PATH.unlink()
+    _ = requests.post(url, data=data, files={"photo": mem_file})
 
 
 # def handler_with_button(user_id: str, username: str | None = None):
