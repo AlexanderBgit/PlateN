@@ -13,14 +13,32 @@ import tensorflow as tf
 from sklearn.metrics import f1_score 
 from keras import optimizers
 from keras.models import Sequential
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.models import load_model
+# from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Dense, Flatten, MaxPooling2D, Dropout, Conv2D
 
-original = cv2.imread('D:\Python\github\PlateN\DS\img\AM0074BB.png')
-# original = cv2.imread('ai-indian-license-plate-recognition-data/car-3-hd.jpg')
-#original = cv2.imread('failed/auto_dp_22.png')
-#original = cv2.imread('test/bmw-x5.jpg')
-#original = cv2.imread('test/2/audi-1.jpg')
+models_file_path = './models/'
+file_model = 'ua-license-plate-recognition-model-37x.h5'
+file_cascad = 'haarcascade_russian_plate_number.xml'
+
+full_path_models = os.path.join(models_file_path, file_model)  
+full_path_cascad = os.path.join(models_file_path, file_cascad)
+
+model = load_model(full_path_models)
+# model = cv2.imread(full_path_models)
+# cascade = cv2.imread(full_path_cascad)
+
+img_file_path = './img/'
+file_img = 'AM0074BB.png'
+full_path_img = os.path.join(img_file_path, file_img)
+
+original = cv2.imread(full_path_img)
+if original is None:
+    print("Помилка завантаження зображення. Перевірте шлях до файлу.")
+    exit(1)
+
+
 img = original.copy()
 
 # зменшення зображення по висоті 720
@@ -39,7 +57,8 @@ def resize_img(img, target_height=720):
 # Визначає та виконує розмиття на номерних знаках
 def extract_plate(img, text=''):
     # Завантажує дані, необхідні для виявлення номерних знаків, з каскадного класифікатора.
-    plate_cascade = cv2.CascadeClassifier('D:\Python\github\PlateN\DS\models\haarcascade_russian_plate_number.xml')
+    plate_cascade = cv2.CascadeClassifier(full_path_cascad)
+    # plate_cascade = cv2.CascadeClassifier('D:\Python\github\PlateN\DS\models\haarcascade_russian_plate_number.xml')
 
     plate_img = img.copy()
     roi = img.copy()
@@ -203,73 +222,73 @@ def segment_to_contours(image):
 
 ################################################################################
 
-train_datagen = ImageDataGenerator(rescale=1./255, width_shift_range=0.1, height_shift_range=0.1)
-path = 'ai-indian-license-plate-recognition-data/data/data'
+# train_datagen = ImageDataGenerator(rescale=1./255, width_shift_range=0.1, height_shift_range=0.1)
+# path = 'ai-indian-license-plate-recognition-data/data/data'
 
-train_generator = train_datagen.flow_from_directory(
-        path + '/train',        # this is the target directory
-        target_size=(28, 28),   # all images will be resized to 28x28
-        batch_size=1,
-        class_mode='categorical')
+# train_generator = train_datagen.flow_from_directory(
+#         path + '/train',        # this is the target directory
+#         target_size=(28, 28),   # all images will be resized to 28x28
+#         batch_size=1,
+#         class_mode='categorical')
 
-validation_generator = train_datagen.flow_from_directory(
-        path + '/val',          # this is the target directory
-        target_size=(28, 28),   # all images will be resized to 28x28 batch_size=1,
-        class_mode='categorical')
+# validation_generator = train_datagen.flow_from_directory(
+#         path + '/val',          # this is the target directory
+#         target_size=(28, 28),   # all images will be resized to 28x28 batch_size=1,
+#         class_mode='categorical')
 
-# Metrics for checking the model performance while training
-def f1score(y, y_pred):
-    return f1_score(y, tf.math.argmax(y_pred, axis=1), average='micro') 
+# # Metrics for checking the model performance while training
+# def f1score(y, y_pred):
+#     return f1_score(y, tf.math.argmax(y_pred, axis=1), average='micro') 
 
-def custom_f1score(y, y_pred):
-    return tf.py_function(f1score, (y, y_pred), tf.double)
+# def custom_f1score(y, y_pred):
+#     return tf.py_function(f1score, (y, y_pred), tf.double)
 
 ################################ create model ##################################
 
-model = Sequential()
+# model = Sequential()
 
-model.add(Conv2D(16, (24,24), input_shape=(28, 28, 3), activation='relu', padding='same'))
+# model.add(Conv2D(16, (24,24), input_shape=(28, 28, 3), activation='relu', padding='same'))
 
-# model.add(Conv2D(32, (16,16), input_shape=(28, 28, 3), activation='relu', padding='same'))
-# model.add(Conv2D(64, (8,8), input_shape=(28, 28, 3), activation='relu', padding='same'))
+# # model.add(Conv2D(32, (16,16), input_shape=(28, 28, 3), activation='relu', padding='same'))
+# # model.add(Conv2D(64, (8,8), input_shape=(28, 28, 3), activation='relu', padding='same'))
 
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.4))
-model.add(Flatten())
-model.add(Dense(128, activation='relu'))
-model.add(Dense(37, activation='softmax'))
+# model.add(MaxPooling2D(pool_size=(2, 2)))
+# model.add(Dropout(0.4))
+# model.add(Flatten())
+# model.add(Dense(128, activation='relu'))
+# model.add(Dense(37, activation='softmax'))
 
-model.compile(
-    loss='categorical_crossentropy',
-    optimizer=optimizers.Adam(learning_rate=0.00005),
-    metrics=['accuracy'])
-    #metrics=[custom_f1score])
+# model.compile(
+#     loss='categorical_crossentropy',
+#     optimizer=optimizers.Adam(learning_rate=0.00005),
+#     metrics=['accuracy'])
+#     #metrics=[custom_f1score])
 
-model.summary()
+# model.summary()
 ################################################################################
 
-class stop_training_callback(tf.keras.callbacks.Callback):
-    def on_epoch_end(self, epoch, logs={}):
-        if (logs.get('accuracy', 0) > 0.9975):
-            self.model.stop_training = True
+# class stop_training_callback(tf.keras.callbacks.Callback):
+#     def on_epoch_end(self, epoch, logs={}):
+#         if (logs.get('accuracy', 0) > 0.9975):
+#             self.model.stop_training = True
 
-callbacks = [stop_training_callback()]
+# callbacks = [stop_training_callback()]
 
-def train_model(model, file_path: str):
-    batch_size = 1
-    model.fit(
-          train_generator,
-          steps_per_epoch = train_generator.samples // batch_size,
-          validation_data = validation_generator,
-          validation_steps = validation_generator.samples // batch_size,
-          epochs = 80,
-          verbose=1,
-          callbacks=callbacks)
+# def train_model(model, file_path: str):
+#     batch_size = 1
+#     model.fit(
+#           train_generator,
+#           steps_per_epoch = train_generator.samples // batch_size,
+#           validation_data = validation_generator,
+#           validation_steps = validation_generator.samples // batch_size,
+#           epochs = 80,
+#           verbose=1,
+#           callbacks=callbacks)
 
-    model.save(filepath=file_path)
+#     model.save(filepath=file_path)
 
-def load_model(file_path: str):
-    return tf.keras.models.load_model(filepath=file_path)
+# def load_model(file_path: str):
+#     return tf.keras.models.load_model(filepath=file_path)
 
 ################################################################################
 def fix_dimension(img): 
@@ -324,10 +343,10 @@ if __name__ == '__main__':
 
 
     # perform model loading before prediction
-    file_path = "D:\Python\github\PlateN\DS\models\ua-license-plate-recognition-model-37x.h5"
+    # file_path = "D:\Python\github\PlateN\DS\models\ua-license-plate-recognition-model-37x.h5"
 
     #train_model(model, file_path)
-    model = load_model(file_path)
+    # model = load_model(file_path)
 
 
     #show predicted string chars number
