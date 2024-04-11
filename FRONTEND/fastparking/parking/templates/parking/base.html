@@ -71,7 +71,7 @@
       </li>
       {% else %}
       <li>
-        <a class="nav-link text-white" href="{% url 'users:login' %}">
+        <a class="nav-link text-white" href="{% url 'users:username' %}">
           <i class="fa-solid fa-user"></i>
           <span class="nav-item">SignIn</span>
         </a>
@@ -106,6 +106,22 @@
   </div>
 
 </main>
+<script>
+  // Отримуємо посилання на поля форми
+  var phoneNumberInput = document.getElementById("id_phone_number");
+  var telegramNicknameInput = document.getElementById("id_telegram_nickname");
 
+  // Додаємо обробник події для поля "Phone Number"
+  phoneNumberInput.addEventListener("blur", function() {
+      // Отримуємо номер телефону, введений користувачем
+      var phoneNumber = phoneNumberInput.value;
+
+      // Тут можна реалізувати логіку для отримання телеграм нікнейму на основі номера телефону
+      // Наприклад, якщо користувач згодом підтвердить доступ до свого аккаунту Telegram, ви можете отримати його нікнейм.
+
+      // Поки що ми просто присвоюємо значення поля "Telegram nickname" номеру телефону
+      telegramNicknameInput.value = phoneNumber;
+  });
+</script>
 </body>
 </html>

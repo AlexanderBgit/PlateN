@@ -33,7 +33,7 @@ class RegisterView(View):
             form.save()
             username = form.cleaned_data["username"]
             messages.success(request, f'Вітаємо, {username}! Ваш акаунт успішно створений')
-            return redirect(to='users:login')
+            return redirect(to='users:username')
         return render(request, self.template_name, {"form": form})
 
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):

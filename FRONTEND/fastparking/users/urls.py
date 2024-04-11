@@ -10,7 +10,7 @@ app_name = "users"
 urlpatterns = [
     path("signup/", RegisterView.as_view(), name='register'),
     path("login/", LoginView.as_view(template_name='users/signin.html', authentication_form=LoginForm,
-                                     redirect_authenticated_user=True), name='login'),
+                                     redirect_authenticated_user=True), name='username'),
     path("logout/", logout_view, name="logout"),
 
     path('reset-password/', ResetPasswordView.as_view(), name='password_reset'),

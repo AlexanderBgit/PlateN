@@ -4,19 +4,12 @@
 <h1>SignUp</h1>
 <form method="post">
     {% csrf_token %}
-    <div class="form-row">
+        <div class="form-row">
         <div class="mb-3">
             <label class="form-label">Username</label>
             {{ form.username }}
         </div>
         <span>{{ form.errors.username }}</span>
-    </div>
-    <div class="form-row">
-        <div class="mb-3">
-            <label class="form-label">Login</label>
-            {{ form.login }}
-        </div>
-        <span>{{ form.errors.login }}</span>
     </div>
     <div class="form-row">
         <div class="mb-3">
@@ -38,13 +31,6 @@
             {{ form.phone_number }}
         </div>
         <span>{{ form.errors.phone_number }}</span>
-    </div>
-    <div class="form-row">
-        <div class="mb-3">
-            <label class="form-label">Car Numbers</label>
-            {{ form.car_numbers }}
-        </div>
-        <span>{{ form.errors.car_numbers }}</span>
     </div>
     <div class="form-row">
         <div class="mb-3 form-check">
