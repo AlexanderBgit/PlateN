@@ -1,7 +1,6 @@
-import random
 from pathlib import Path
 
-STORE_FILE = Path(__file__).resolve().parent.joinpath("anekdots.txt")
+STORE_FILE = Path(__file__).resolve().parent.joinpath("news.txt")
 
 
 def read_store():
@@ -16,16 +15,19 @@ def read_store():
                     block = []
                     continue
                 block.append(line)
+            if block:
+                store.append(block)
     return store
 
 
-def get_random_block():
+def get_latest_block():
     store = read_store()
-    len_store = len(store)
-    id = random.randint(0, len_store - 1)
-    return "\n".join(store[id])
+    if store:
+        return "\n".join(store[-1])
+    else:
+        return "Новин немає"
 
 
 if __name__ == "__main__":
-    block = get_random_block()
+    block = get_latest_block()
     print(block)
