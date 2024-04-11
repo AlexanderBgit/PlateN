@@ -161,7 +161,7 @@ def send_button_message(text: str, chat_id: int | str, reply_markup: dict) -> No
         "link_preview_options": {"is_disabled": True},
     }
     _ = requests.post(url, json=json, timeout=10)
-    print(_)
+    # print(_)
 
 
 def send_message_user(text: str, n_name: str) -> None:
@@ -255,6 +255,7 @@ def save_user_id(user_id: str, username: str) -> None:
         username = f"@{username}"
     print(f"saving user to DB: {user_id=} {username=}")
 
+
 def save_user_phone_number(user_id: str, phone_number: str) -> None:
     if phone_number:
         phone_number = f"+{phone_number}"
@@ -278,8 +279,6 @@ def save_unknown_users(updates: list[dict]):
     if unknown_phones or unknown_usernames:
         users = find_unknown_contacts(updates, unknown_usernames, unknown_phones)
         save_users_id(users)
-
-
 
 
 def command_actions(user_id: str | int, command: str, username: str | None = None):
@@ -538,7 +537,7 @@ def crone_pool():
     check_payments()
     # get latest updates
     last_update_id = get_last_update_id()
-    print(f"{last_update_id=}")
+    # print(f"{last_update_id=}")
     updates = get_updates(offset=last_update_id)
     if updates:
         list_id = get_updated_id(updates)
