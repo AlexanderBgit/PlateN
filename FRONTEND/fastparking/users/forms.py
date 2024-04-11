@@ -11,7 +11,8 @@ from django import forms
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={"class": "form-control"}))
-    fullname = forms.CharField(max_length=150, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
+    first_name = CharField(max_length=150, required=False, widget=TextInput(attrs={"class": "form-control"}))
+    last_name = CharField(max_length=150, required=False, widget=TextInput(attrs={"class": "form-control"}))
     email = forms.EmailField(max_length=150, required=True, widget=forms.EmailInput(attrs={"class": "form-control"}))
     phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
     accept_oferta = forms.BooleanField(required=True)
@@ -19,7 +20,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ("username", "fullname", "email", "phone_number", "accept_oferta", "password1", "password2", "telegram_nickname")
+        fields = ("username", "first_name", "last_name", "email", "phone_number", "accept_oferta", "password1", "password2", "telegram_nickname")
 
     def save(self, commit=True):
         user = super().save(commit=False)
