@@ -1,8 +1,8 @@
-import base64
+from io import BytesIO
 import os
-import tempfile
+
 from datetime import datetime
-from pathlib import Path
+# from pathlib import Path
 
 import pytz
 
@@ -250,16 +250,21 @@ def save_users_id(users: set):
         print(f"saving user to DB: {user}")
 
 
+
 def save_user_id(user_id: str, username: str) -> None:
     if username:
         username = f"@{username}"
-    print(f"saving user to DB: {user_id=} {username=}")
+        # print(f"saving user to DB: {user_id=} {username=}")
+        # debug info
+        answer_to_user(user_id, f"For {username=} saving to DB their ID: {user_id=}")
 
 
 def save_user_phone_number(user_id: str, phone_number: str) -> None:
     if phone_number:
         phone_number = f"+{phone_number}"
-    print(f"save_user_phone_number to DB: {user_id}, {phone_number}")
+        # print(f"save_user_phone_number to DB: {user_id}, {phone_number}")
+        # debug info
+        answer_to_user(user_id, f"For {phone_number=} saving to DB their ID: {user_id=}")
 
 
 def get_user_profile(user_id: str) -> dict | None:
@@ -335,23 +340,16 @@ def parse_commands(updates: list[dict]) -> None:
                     command_actions(user_id, command, username)
                     return
 
-
 def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
-    qr = qrcode.make(qr_data)
-    # Save the QR code image to a file
-    TEMP_DIR_PATH = Path(tempfile.gettempdir()).joinpath("qr_code.jpg")
-    # qr_path = "qr_code.png"
-    print(TEMP_DIR_PATH)
-    qr.save(str(TEMP_DIR_PATH))
+    img = qrcode.make(qr_data, border=2)
+    mem_file = BytesIO()
+    img.save(mem_file)
+    mem_file.seek(0)
 
     data = {"chat_id": chat_id}
     url = f"{BASE_URL}/sendPhoto"
 
-    with TEMP_DIR_PATH.open("rb") as photo:
-        files = {"photo": photo}
-        _ = requests.post(url, data=data, files=files)
-    # print(_.json(), url)
-    TEMP_DIR_PATH.unlink()
+    _ = requests.post(url, data=data, files={"photo": mem_file})
 
 
 def handler_with_button(user_id: str, username: str | None = None):
