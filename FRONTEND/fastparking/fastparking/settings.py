@@ -20,8 +20,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env_file = BASE_DIR.parent.parent.joinpath("deploy").joinpath(".env")
 if env_file.exists():
     load_dotenv(env_file)
-else:
-    print("ENV file not found:", env_file)
 
 
 # Quick-start development settings - unsuitable for production
@@ -43,7 +41,7 @@ if DJANGO_ALLOWED_HOSTS:
     ALLOWED_HOSTS = DJANGO_ALLOWED_HOSTS.split(",")
 else:
     ALLOWED_HOSTS = []
-print(ALLOWED_HOSTS)
+
 
 # Application definition
 

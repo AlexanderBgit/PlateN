@@ -1,5 +1,5 @@
 # docker-compose  --file docker-compose-project.yml --env-file .env_prod  up -d 
-
+version: '3'
 name: fastparking
 services:
   pg:
@@ -40,6 +40,6 @@ services:
       TELEGRAM_NEWS_NAME: ${TELEGRAM_NEWS_NAME}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
       DJANGO_DEBUG: ${DJANGO_DEBUG}
-      DJANGO_ALLOWED_HOSTS: ${DJANGO_DEBUG}
+      DJANGO_ALLOWED_HOSTS: {DJANGO_ALLOWED_HOSTS}
 
  
