@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 ./docker_app_build.sh
 ./docker_app_stop.sh

@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # simulate poetry shell
 pushd "../FRONTEND"
