@@ -1,0 +1,72 @@
+{% extends "parking/base.html" %}
+
+{% block content %}
+<h1>SignUp</h1>
+<form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            {{ form.username }}
+        </div>
+        <span>{{ form.errors.username }}</span>
+    </div>
+    <div class="form-row">
+        <div class="mb-3">
+            <label class="form-label">Login</label>
+            {{ form.login }}
+        </div>
+        <span>{{ form.errors.login }}</span>
+    </div>
+    <div class="form-row">
+        <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            {{ form.fullname }}
+        </div>
+        <span>{{ form.errors.fullname }}</span>
+    </div>
+    <div class="form-row">
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            {{ form.email }}
+        </div>
+        <span>{{ form.errors.email }}</span>
+    </div>
+    <div class="form-row">
+        <div class="mb-3">
+            <label class="form-label">Phone Number</label>
+            {{ form.phone_number }}
+        </div>
+        <span>{{ form.errors.phone_number }}</span>
+    </div>
+    <div class="form-row">
+        <div class="mb-3">
+            <label class="form-label">Car Numbers</label>
+            {{ form.car_numbers }}
+        </div>
+        <span>{{ form.errors.car_numbers }}</span>
+    </div>
+    <div class="form-row">
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="accept_oferta" name="accept_oferta">
+            <label class="form-check-label" for="accept_oferta">Accept Oferta</label>
+        </div>
+        <span>{{ form.errors.accept_oferta }}</span>
+    </div>
+    <div class="form-row">
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            {{ form.password1 }}
+        </div>
+        <span>{{ form.errors.password1 }}</span>
+    </div>
+    <div class="form-row">
+        <div class="mb-3">
+            <label class="form-label">Confirm password</label>
+            {{ form.password2 }}
+        </div>
+        <span>{{ form.errors.password2 }}</span>
+    </div>
+    <button type="submit" class="btn btn-primary">Sign Up</button>
+</form>
+{% endblock %}
