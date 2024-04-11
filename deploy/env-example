@@ -12,8 +12,14 @@ MAIL_PORT=465
 MAIL_SERVER=smtp.example.com
 MAIL_FROM_NAME="Education GoIT. Fast Parking proj"
 
+DJANGO_SECRET_KEY="some_secret_key_for_production_k$adsk;lhPUO*R*P"
+DJANGO_DEBUG=1
+DJANGO_ALLOWED_HOSTS=""
 
 TELEGRAM_TOKEN=""
 TELEGRAM_BOT_NAME="fastparking_bobr_bot"
 TELEGRAM_NEWS_NAME="@fastparking_news"
+
+
+
 

@@ -1,5 +1,5 @@
 # docker-compose --file docker-compose-db.yml --env-file .env  up -d 
-version: '3'
+
 name: fastparking-db
 services:
   postgres:
