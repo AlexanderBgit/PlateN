@@ -13,7 +13,7 @@ services:
     ports:
        - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     volumes:
-      - ../database/postgres-data:/var/lib/postgresql/data
+      - ../Database/postgres-data:/var/lib/postgresql/data
 
   code :
     build: ../FRONTEND
@@ -40,6 +40,6 @@ services:
       TELEGRAM_NEWS_NAME: ${TELEGRAM_NEWS_NAME}
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
       DJANGO_DEBUG: ${DJANGO_DEBUG}
-      DJANGO_ALLOWED_HOSTS: {DJANGO_ALLOWED_HOSTS}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
 
  
