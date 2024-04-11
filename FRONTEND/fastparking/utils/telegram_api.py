@@ -178,7 +178,7 @@ def send_message_news(text: str, chat_id: int | str = TELEGRAM_NEWS_NAME) -> Non
         send_message(text=text, chat_id=chat_id)
 
 
-def answer_to_user(user_id: str, text: str, parse_mode: bool = False):
+def answer_to_user(user_id: str | int, text: str, parse_mode: bool = False):
     print(f"answer_to_user: {user_id=} {text=}")
     send_message(text, user_id, parse_mode=parse_mode)
 
@@ -281,8 +281,10 @@ def save_unknown_users(updates: list[dict]):
         save_users_id(users)
 
 
-def command_actions(user_id: str | int, command: str, username: str | None = None):
-    command = COMMANDS.get(command)
+def command_actions(
+    user_id: str | int, command_action: str, username: str | None = None
+):
+    command = COMMANDS.get(command_action)
     if command:
         command_handler = command.get("handler")
         if command_handler:
@@ -499,7 +501,7 @@ def handler_cabinet(user_id: str, username: str | None = None):
     answer_to_user(user_id, "\n".join(print_text), parse_mode=True)
 
 
-def handler_feedback(user_id: str):
+def handler_feedback(user_id: str, username: str | None = None):
     print_text = [parse_text("Команду FEEDBACK прийнято: <datetime>")]
     print_text.append(
         '<a href="https://t.me/fastparking_news">Канал новин парковки @fastparking_news</a>'
