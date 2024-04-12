@@ -61,7 +61,9 @@ INSTALLED_APPS = [
     "finance",
     "photo",
 ]
+
 AUTH_USER_MODEL = 'users.CustomUser'
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -108,7 +110,7 @@ POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "XXXXXXXX")
 POSTGRES_HOST = os.getenv("POSTGRES_HOST", "127.0.0.1")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
-
+SECRET_KEY = os.getenv("SECRET_KEY", "XXXXXX")
 # print(f"{POSTGRES_DB=}")
 
 DATABASES = {
