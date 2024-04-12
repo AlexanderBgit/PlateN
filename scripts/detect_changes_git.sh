@@ -18,5 +18,6 @@ then
         chmod +x *.sh
         ./re_deploy_docker.sh
         popd
+        `date` > ${SOURCE}/../last_deployed.txt
 fi
 
