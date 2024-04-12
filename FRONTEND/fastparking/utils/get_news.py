@@ -1,4 +1,6 @@
 from pathlib import Path
+from utils.telegram_api import send_message_news
+
 
 STORE_FILE = Path(__file__).resolve().parent.joinpath("news.txt")
 TELEGRAM_CHANEL_FILE = 'telegram_channel.txt'
@@ -47,7 +49,7 @@ def publish_latest_news():
 
     if latest_news != last_published_news:
         write_telegram_chanel(latest_news)
-        print(latest_news)
+        send_message_news(latest_news)
 
 
 if __name__ == "__main__":
