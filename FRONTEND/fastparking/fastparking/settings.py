@@ -39,10 +39,10 @@ DEBUG = bool(os.environ.get("DJANGO_DEBUG", True))
 DJANGO_ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS")
 if DJANGO_ALLOWED_HOSTS:
     ALLOWED_HOSTS = DJANGO_ALLOWED_HOSTS.split(",")
+    CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in DJANGO_ALLOWED_HOSTS.split(",")]
 else:
     ALLOWED_HOSTS = []
 
-CSRF_TRUSTED_ORIGINS = [ f"https://{host}" for host in DJANGO_ALLOWED_HOSTS.split(",")]
 
 # Application definition
 
@@ -160,7 +160,7 @@ STATIC_URL = "static/"
 LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "/users/login"
 
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
 

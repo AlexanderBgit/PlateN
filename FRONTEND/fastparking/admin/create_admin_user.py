@@ -16,6 +16,7 @@ if DJANGO_SUPERUSER_PASSWORD and DJANGO_SUPERUSER_EMAIL and DJANGO_SUPERUSER_USE
         User.objects.create_superuser(
             DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL, DJANGO_SUPERUSER_PASSWORD
         )
+        print(f"Created admin: {DJANGO_SUPERUSER_USERNAME=}")
         # print(
         #     f"Created admin {DJANGO_SUPERUSER_USERNAME=}, {DJANGO_SUPERUSER_EMAIL=}, {DJANGO_SUPERUSER_PASSWORD=}"
         # )

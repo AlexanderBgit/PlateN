@@ -1,7 +1,7 @@
 #!/bin/sh
 
-echo Sleep for 10 seconds to wait for the database to be ready
-sleep 10
+echo Sleep for 15 seconds to wait for the database to be ready
+sleep 15
 cd fastparking
 pwd
 echo RUN MIGRATION
