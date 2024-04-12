@@ -1,5 +1,4 @@
 # docker-compose  --file docker-compose-project.yml --env-file .env_prod  up -d 
-version: '3'
 name: fastparking
 services:
   pg:
@@ -14,6 +13,11 @@ services:
        - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     volumes:
       - ../Database/postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   code :
     build: ../FRONTEND
@@ -22,7 +26,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - pg
+      pg:
+        condition: service_healthy
     environment:
       POSTGRES_HOST: pg
       POSTGRES_DB: ${POSTGRES_DB}
@@ -41,5 +46,9 @@ services:
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
       DJANGO_DEBUG: ${DJANGO_DEBUG}
       DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      
 
  

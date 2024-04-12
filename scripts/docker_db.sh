@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/env bash
 
 pushd "../deploy"
 docker-compose --file docker-compose-db.yml --env-file .env  up -d 
