@@ -19,7 +19,9 @@ def handler_limit_check(print_log: bool = False):
 def handler_news_check(print_log: bool = False):
     if print_log:
         print("- handler_news_check")
-    send_message_news("Simulation news sending, every 15 mins since start app: <datetime>")
+    send_message_news(
+        "Simulation news sending, every 15 mins since start app: <datetime>"
+    )
 
 
 if __name__ == "__main__":
