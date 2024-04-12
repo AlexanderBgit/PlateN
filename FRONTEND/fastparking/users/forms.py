@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms import CharField, TextInput, EmailField, EmailInput, PasswordInput
@@ -13,9 +14,9 @@ class RegisterForm(UserCreationForm):
     phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
     accept_oferta = forms.BooleanField(required=True)
     telegram_nickname = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
-
+    telegram_id = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
     class Meta:
-        model = CustomUser  # Змінено з User на CustomUser
+        model = get_user_model()  # Змінено з User на CustomUser
         fields = ("username", "first_name", "last_name", "email", "phone_number", "accept_oferta", "password1", "password2", "telegram_nickname")
 
 
@@ -38,5 +39,5 @@ class LoginForm(AuthenticationForm):
 
 
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ("username", "password")
