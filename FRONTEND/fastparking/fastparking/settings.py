@@ -22,6 +22,7 @@ if env_file.exists():
     load_dotenv(env_file)
 
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -39,6 +40,7 @@ DEBUG = bool(os.environ.get("DJANGO_DEBUG", True))
 DJANGO_ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS")
 if DJANGO_ALLOWED_HOSTS:
     ALLOWED_HOSTS = DJANGO_ALLOWED_HOSTS.split(",")
+    CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in DJANGO_ALLOWED_HOSTS.split(",")]
 else:
     ALLOWED_HOSTS = []
 
@@ -59,7 +61,7 @@ INSTALLED_APPS = [
     "finance",
     "photo",
 ]
-
+AUTH_USER_MODEL = 'users.CustomUser'
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -159,7 +161,7 @@ STATIC_URL = "static/"
 LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "/users/login"
 
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
 

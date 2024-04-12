@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env sh
 
 python ./utils/sheduler.py --loop -q
 

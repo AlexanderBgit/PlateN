@@ -1,18 +1,17 @@
 #!/bin/sh
 
-echo Sleep 10 Waiting DB...
-sleep 10
-ls -la *
+echo Sleep for 15 seconds to wait for the database to be ready
+sleep 15
 cd fastparking
+pwd
 echo RUN MIGRATION
 python manage.py migrate
-echo Sleep 2 Migration...
-sleep 2
-pwd
 export PYTHONPATH=${PYTHONPATH}:./:./fastparking:/app/fastparking:/app
-echo RUN BACKGROUND CRON-BOT
+echo CREATE_SPUREUSER
+python ./admin/create_admin_user.py
+echo RUN BACKGROUND SHEDULER
 ./cron_loop.sh &
-echo RUN FRONTEND DJANGO
+echo RUN FRONTEND - DJANGO
 python manage.py runserver 0.0.0.0:8000
 
 #bash
