@@ -16,6 +16,11 @@ def handler_limit_check(print_log: bool = False):
         print("- handler_limit_check")
 
 
+def handler_news_check(print_log: bool = False):
+    if print_log:
+        print("- handler_news_check")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Infinite loop of service app events")
     parser.add_argument("--loop", action="store_true")
@@ -36,6 +41,13 @@ if __name__ == "__main__":
         default=300,
         help="Limit Check period in seconds, default 300 sec",
     )
+    parser.add_argument(
+        "-l",
+        "--news_period",
+        type=int,
+        default=60 * 15,
+        help="Limit Check period in seconds, default 900 sec (15 mins)",
+    )
     parser.add_argument("-q", "--quite", action="store_true", help="Quite")
     args = parser.parse_args()
 
@@ -45,10 +57,12 @@ if __name__ == "__main__":
         periods = {
             "telegram_pool": args.telegram_period,
             "limit_check": args.limit_period,
+            "news_check": args.news_period,
         }
         actions = {
             "telegram_pool": handler_telegram_pool,
             "limit_check": handler_limit_check,
+            "news_check": handler_news_check,
         }
 
         times = {period_name: time_now for period_name in periods.keys()}
