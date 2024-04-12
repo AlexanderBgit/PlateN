@@ -1,5 +1,8 @@
 #!/bin/env bash
 
+export PATH=/usr/local/bin:${PATH}
+
+
 SOURCE=${HOME}/PlateN/PlateN
 GIT_CMD="git --git-dir=${SOURCE}/.git --work-tree=${SOURCE}"
 BRANCH=dev
