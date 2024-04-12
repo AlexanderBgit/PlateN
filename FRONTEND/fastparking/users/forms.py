@@ -3,11 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms import CharField, TextInput, EmailField, EmailInput, PasswordInput
 from django import forms
-
-
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from django import forms
+from .models import CustomUser
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={"class": "form-control"}))
@@ -19,8 +15,9 @@ class RegisterForm(UserCreationForm):
     telegram_nickname = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
 
     class Meta:
-        model = User
+        model = CustomUser  # Змінено з User на CustomUser
         fields = ("username", "first_name", "last_name", "email", "phone_number", "accept_oferta", "password1", "password2", "telegram_nickname")
+
 
     def save(self, commit=True):
         user = super().save(commit=False)
