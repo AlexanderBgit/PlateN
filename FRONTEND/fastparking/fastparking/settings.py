@@ -42,6 +42,7 @@ if DJANGO_ALLOWED_HOSTS:
 else:
     ALLOWED_HOSTS = []
 
+CSRF_TRUSTED_ORIGINS = [ f"https://{host}" for host in DJANGO_ALLOWED_HOSTS.split(",")]
 
 # Application definition
 
