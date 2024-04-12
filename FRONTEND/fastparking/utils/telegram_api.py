@@ -2,6 +2,7 @@ from io import BytesIO
 import os
 
 from datetime import datetime
+
 # from pathlib import Path
 
 import pytz
@@ -175,6 +176,9 @@ def send_message_user(text: str, n_name: str) -> None:
 
 def send_message_news(text: str, chat_id: int | str = TELEGRAM_NEWS_NAME) -> None:
     if chat_id:
+        if text.find("<") != -1 and text.find(">") != -1:
+            text = parse_text(text)
+        # print(f"send_message_news: {chat_id=}, {text=}")
         send_message(text=text, chat_id=chat_id)
 
 
@@ -250,7 +254,6 @@ def save_users_id(users: set):
         print(f"saving user to DB: {user}")
 
 
-
 def save_user_id(user_id: str, username: str) -> None:
     if username:
         username = f"@{username}"
@@ -264,7 +267,9 @@ def save_user_phone_number(user_id: str, phone_number: str) -> None:
         phone_number = f"+{phone_number}"
         # print(f"save_user_phone_number to DB: {user_id}, {phone_number}")
         # debug info
-        answer_to_user(user_id, f"For {phone_number=} saving to DB their ID: {user_id=}")
+        answer_to_user(
+            user_id, f"For {phone_number=} saving to DB their ID: {user_id=}"
+        )
 
 
 def get_user_profile(user_id: str) -> dict | None:
@@ -339,6 +344,7 @@ def parse_commands(updates: list[dict]) -> None:
                     print(f"DATA: {command=}")
                     command_actions(user_id, command, username)
                     return
+
 
 def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
     img = qrcode.make(qr_data, border=2)
