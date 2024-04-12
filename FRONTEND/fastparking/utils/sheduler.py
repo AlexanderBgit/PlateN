@@ -2,7 +2,7 @@ import time
 import argparse
 
 
-from telegram_api import crone_pool
+from telegram_api import crone_pool, send_message_news
 
 
 def handler_telegram_pool(print_log: bool = False):
@@ -53,6 +53,9 @@ if __name__ == "__main__":
 
         times = {period_name: time_now for period_name in periods.keys()}
         print_log = not args.quite
+        send_message_news(
+            "Hosting server just applied new changes of git branch at: <datetime>"
+        )
         try:
             while True:
                 time_now = time.time()
