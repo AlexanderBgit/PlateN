@@ -175,8 +175,10 @@ def send_message_user(text: str, n_name: str) -> None:
 
 
 def send_message_news(text: str, chat_id: int | str = TELEGRAM_NEWS_NAME) -> None:
-    print(f"send_message_news: {chat_id=}")
     if chat_id:
+        if text.find("<") != -1 and text.find(">") != -1:
+            text = parse_text(text)
+        # print(f"send_message_news: {chat_id=}, {text=}")
         send_message(text=text, chat_id=chat_id)
 
 
