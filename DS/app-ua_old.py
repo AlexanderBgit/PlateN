@@ -15,31 +15,11 @@ from keras import optimizers
 from keras.models import Sequential
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import load_model
+
 # from keras.preprocessing.image import ImageDataGenerator
+
 from keras.layers import Dense, Flatten, MaxPooling2D, Dropout, Conv2D
 
-models_file_path = './models/'
-file_model = 'ua-license-plate-recognition-model-37x.h5'
-file_cascad = 'haarcascade_russian_plate_number.xml'
-
-full_path_models = os.path.join(models_file_path, file_model)  
-full_path_cascad = os.path.join(models_file_path, file_cascad)
-
-model = load_model(full_path_models)
-# model = cv2.imread(full_path_models)
-# cascade = cv2.imread(full_path_cascad)
-
-img_file_path = './img/'
-file_img = 'AM0074BB.png'
-full_path_img = os.path.join(img_file_path, file_img)
-
-original = cv2.imread(full_path_img)
-if original is None:
-    print("Помилка завантаження зображення. Перевірте шлях до файлу.")
-    exit(1)
-
-
-img = original.copy()
 
 # зменшення зображення по висоті 720
 def resize_img(img, target_height=720):
@@ -100,49 +80,49 @@ def extract_plate(img, text=''):
 
 
 # Testing the above function
-def display(img_, title=''):
-    img = cv2.cvtColor(img_, cv2.COLOR_BGR2RGB)
-    fig = plt.figure(figsize=(10, 6))
-    ax = plt.subplot(111)
-    ax.imshow(img)
-    plt.axis('off')
-    plt.title(title)
-    plt.show()
+# def display(img_, title=''):
+#     img = cv2.cvtColor(img_, cv2.COLOR_BGR2RGB)
+#     fig = plt.figure(figsize=(10, 6))
+#     ax = plt.subplot(111)
+#     ax.imshow(img)
+#     plt.axis('off')
+#     plt.title(title)
+#     plt.show()
 
 
-# Match contours to license plate or character template
+# Відповідність контурів номерному або символьному шаблону
 def find_contours(dimensions, img):
 
-    i_width_threshold = 6 #7
+    i_width_threshold = 6 
 
-    # Find all contours in the image
+    # Знайдіть всі контури на зображенні
     cntrs, _ = cv2.findContours(img.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    # Retrieve potential dimensions
+    # Отримайте потенційні розміри
     lower_width = dimensions[0]
     upper_width = dimensions[1]
     lower_height = dimensions[2]
     upper_height = dimensions[3]
     
-    # Check largest 16 contours for license plate or character respectively
+    # Перевірте найбільші 16 контурів на номерний або символьний шаблон
     cntrs = sorted(cntrs, key=cv2.contourArea, reverse=True)[:16]
     
-    # input image binary plate: to convert img.shape(h,w) to img.shape(h,w,3)
+    # бінарне зображення номерного знака на вхід: щоб перетворити img.shape(h,w) на img.shape(h,w,3)
     ii = np.dstack([img] * 3)
     
     x_cntr_list = []
     target_contours = []
     img_res = []
     for cntr in cntrs:
-        # detects contour in binary image and returns the coordinates of rectangle enclosing it
+        # виявлення контуру на бінарному зображенні і повернення координат прямокутника, який його оточує
         intX, intY, intWidth, intHeight = cv2.boundingRect(cntr)
         
-        # checking the dimensions of the contour to filter out the characters by contour's size
+        # перевірка розмірів контуру для фільтрації символів за розміром контуру
         if (intWidth >= i_width_threshold and intWidth < upper_width and intHeight > lower_height and intHeight < upper_height) :
             x_cntr_list.append(intX) #stores the x coordinate of the character's contour, to used later for indexing the contours
 
             char_copy = np.zeros((44, 24))
-            # extracting each character using the enclosing rectangle's coordinates.
+            # видобуття кожного символу, використовуючи координати прямокутника, що його оточує.
             char = img[intY:intY + intHeight, intX:intX + intWidth]
 
             if (intWidth >=i_width_threshold and intWidth < lower_width) :
@@ -155,7 +135,7 @@ def find_contours(dimensions, img):
                 char = cv2.resize(char, (22, 42), interpolation=cv2.INTER_LINEAR_EXACT)
             
             cv2.rectangle(ii, (intX, intY), (intWidth + intX, intY + intHeight), (50,21,200), 2)
-            plt.imshow(ii, cmap='gray')
+            # plt.imshow(ii, cmap='gray')
 
             # Make result formatted for classification: invert colors
             char = cv2.subtract(255, char)
@@ -187,7 +167,7 @@ def find_contours(dimensions, img):
 def segment_to_contours(image):
 
     new_height = 75 # set fixed height
-    print("original plate[w,h]:", image.shape[1], image.shape[0], "new_shape:333,", new_height)
+    # print("original plate[w,h]:", image.shape[1], image.shape[0], "new_shape:333,", new_height)
 
     # Preprocess cropped license plate image
     img_lp = cv2.resize(image, (333, new_height), interpolation=cv2.INTER_LINEAR_EXACT)
@@ -212,9 +192,9 @@ def segment_to_contours(image):
                 LP_WIDTH/8,
                 LP_HEIGHT/3,
                 2*LP_HEIGHT/3]
-    plt.imshow(img_binary_lp, cmap='gray')
-    plt.title("original plate contour (binary)")
-    plt.show()
+    # plt.imshow(img_binary_lp, cmap='gray')
+    # plt.title("original plate contour (binary)")
+    # plt.show()
 
     # Get contours within cropped license plate
     char_list = find_contours(dimensions, img_binary_lp)
@@ -317,29 +297,53 @@ def predict_result(ch_contours):
         output.append(character)
         
     plate_number = ''.join(output)
+    # print(f'300 - {plate_number}')
     return plate_number
 
 ################################################################################
 
 if __name__ == '__main__':
 
+    models_file_path = './models/'
+    file_model = 'ua-license-plate-recognition-model-37x.h5'
+    file_cascad = 'haarcascade_russian_plate_number.xml'
+
+    full_path_models = os.path.join(models_file_path, file_model)  
+    full_path_cascad = os.path.join(models_file_path, file_cascad)
+
+    model = load_model(full_path_models)
+    # model = cv2.imread(full_path_models)
+    # cascade = cv2.imread(full_path_cascad)
+
+    img_file_path = './img/'
+    file_img = 'AM0074BB.png'
+    full_path_img = os.path.join(img_file_path, file_img)
+
+    original = cv2.imread(full_path_img)
+    if original is None:
+        print("Помилка завантаження зображення. Перевірте шлях до файлу.")
+        exit(1)
+
+
+    img = original.copy()
+
     # Getting plate prom the processed image
     output_img, plate = extract_plate(img)
 
     # display processed image with plate-rectangle
-    display(output_img, 'detected license plate in the input image')
+    # display(output_img, 'detected license plate in the input image')
 
     # display plate-image with plate-rectangle
-    display(plate, 'extracted license plate from the image')
+    # display(plate, 'extracted license plate from the image')
 
     # display segmented plate to contours
     chars = segment_to_contours(plate)
 
 
-    for i in range(len(chars)):
-        plt.subplot(1, 10, i+1)
-        plt.imshow(chars[i], cmap='gray')
-        plt.axis('off')
+    # for i in range(len(chars)):
+    #     plt.subplot(1, 10, i+1)
+    #     plt.imshow(chars[i], cmap='gray')
+    #     plt.axis('off')
 
 
     # perform model loading before prediction
@@ -355,18 +359,20 @@ if __name__ == '__main__':
     print(predicted_str)
 
     # Segmented characters and their predicted value.
-    plt.figure(figsize=(10,6))
-    for i,ch in enumerate(chars):
-        img = cv2.resize(ch, (28,28), interpolation=cv2.INTER_LINEAR_EXACT)
-        #cv2.imwrite(str(i)+'.bmp', img)
-        plt.subplot(3, 4, i+1)
-        plt.imshow(img, cmap='gray')
-        plt.title(f'predicted: {predict_result(chars)[i]}')
-        plt.axis('off')
-    plt.show()
+    # plt.figure(figsize=(10,6))
+    # for i,ch in enumerate(chars):
+    #     img = cv2.resize(ch, (28,28), interpolation=cv2.INTER_LINEAR_EXACT)
+    #     #cv2.imwrite(str(i)+'.bmp', img)
+    #     plt.subplot(3, 4, i+1)
+    #     plt.imshow(img, cmap='gray')
+    #     plt.title(f'predicted: {predict_result(chars)[i]}')
+    #     plt.axis('off')
+    # plt.show()
 
     ################################################################################
 
-    if len(predicted_str) > 4:
-        numbered_img, plate = extract_plate(original, predicted_str)
-        display(numbered_img, 'recognized license plate number')
+    # if len(predicted_str) > 4:
+    #     numbered_img, plate = extract_plate(original, predicted_str)
+    #     display(numbered_img, 'recognized license plate number')
+
+
