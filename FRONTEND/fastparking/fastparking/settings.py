@@ -59,7 +59,7 @@ INSTALLED_APPS = [
     "cars",
     "communications",
     "finance",
-    "photo",
+    "photos",
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
