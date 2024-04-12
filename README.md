@@ -15,7 +15,7 @@ Plate license recognition
 
 - merge to `dev` тільки через `pull-request` і запит користувачам на підтвердження, мінімум один має підтвердити, і тоді розблокується кнопка `Merge`, і можна об'єднати у `dev`.
 
-- Python >=3.11
+- Python >=3.10
 
 - poetry
 
@@ -29,6 +29,7 @@ Plate license recognition
     - BACKEND
     - FRONTEND
     - Database
+    - DS
 
 - Кожен підпроєкт - незалежний продукт, і відповідно має свій незалежний Docker. 
 
@@ -49,6 +50,8 @@ else:
 - FRONTEND має власне віртуальне оточення poetry.
 
 - BACKEND має власне віртуальне оточення poetry
+
+- DS - робочі файли для Data Science
 
 - Для роботи з FRONTEND:
     - переходимо у теку FRONTEND, активуємо віртуальне сердобине `poetry shell`
@@ -98,7 +101,9 @@ cd FRONTEND/fastparking
 python manage.py migrate
 ```
 
-`scripts\migrate_dev_app.cmd`
+#### Автоматичне створення супер адміністратора Django з оточення .env
+
+`scripts\create_django_auto_admin.cmd`
 
 #### Запуск всього проєкту з підпроєктами у докер
 
@@ -123,16 +128,18 @@ python manage.py migrate
 1. cd scripts
 1. docker_db.cmd - run DB local docker, skip if remote used postgres
 1. migrate_dev_app.cmd - migrate DB
-1. create_django_admin.cmd - create admin
+1. create_django_auto_admin.cmd - create admin aromatically from .env
 1. run_dev_app.cmd - run app
 1. open browser: http://127.0.0.1:8000
 
 
 ## SERVER SIDE DEPLOY - CI/CD
 ### CI перевірка коду 
-Перевірка коду проєкту на збирання проходить автоматично у кожному "GitHub Pull request" безпосередньо перед об'єднанням з гілкою `dev` функцію Action GitHub.
+Перевірка коду проєкту на збирання проходить автоматично у кожному "GitHub pull request" безпосередньо перед об'єднанням з гілкою `dev` функцію Action GitHub.
 
-Action GitHub використовує з налаштуванням файлу `.github\workflows\django.yml` де проходить перевірка на збирання середовища виконання у трьох версіях `python-version: ["3.10", "3.11", "3.12"]`. 
+Але без повірки міграції.
+
+Action GitHub використовує налаштуванням з файлу `.github\workflows\django.yml` де проходить перевірка на збирання середовища виконання для трьох версії python:  `python-version: ["3.10", "3.11", "3.12"]`. 
 
 Безпосереднє тестування проєкту Django автоматично виконується командую `python manage.py test`.
 
@@ -142,7 +149,7 @@ Action GitHub використовує з налаштуванням файлу 
 
 Локальний користувач для виконання задач без прав адміністратора.
 
-На сервері проект виконуються у декількох `docker` контейнерах, котрі об'єднані файлом налаштувань : `deploy\docker-compose-project.yml`.
+На сервері проект виконуються у декількох `docker` контейнерах, котрі об'єднані файлом налаштувань: `deploy\docker-compose-project.yml`.
 
 Для визначення події з необхідності виконати операцію повторного `deploy` - періодично виконується скрипт: `scripts\detect_changes_git.sh`. 
 
@@ -150,9 +157,9 @@ Action GitHub використовує з налаштуванням файлу 
 
 Якщо зміни виявленні то виконується скрипт - `scripts\re_deploy_docker.sh`.
 
-Для налаштувань під конкретні умови середовища виконання ми файл `detect_changes_git` копіюємо за межі теки проєкту.
+Для налаштувань під конкретні умови середовища виконання файл `detect_changes_git` копіюємо за межі теки проєкту.
 
- У нас це рівень вище `~/PlateN/`, та змінюємо локальний шлях до теки проєкту у змінній `SOURCE`.  
+У нас це рівень вище `~/PlateN/`, та змінюємо локальний шлях до теки проєкту у змінній `SOURCE`.  
 ```
 SOURCE=${HOME}/PlateN/PlateN
 ```
