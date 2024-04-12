@@ -42,7 +42,7 @@ if __name__ == "__main__":
         help="Limit Check period in seconds, default 300 sec",
     )
     parser.add_argument(
-        "-l",
+        "-n",
         "--news_period",
         type=int,
         default=60 * 15,
@@ -51,6 +51,9 @@ if __name__ == "__main__":
     parser.add_argument("-q", "--quite", action="store_true", help="Quite")
     args = parser.parse_args()
 
+    send_message_news(
+        "Hosting server just applied new changes of git branch at: <datetime>"
+    )
     if args.loop:
         loop_delay = args.delay
         time_now = time.time()
@@ -67,9 +70,6 @@ if __name__ == "__main__":
 
         times = {period_name: time_now for period_name in periods.keys()}
         print_log = not args.quite
-        send_message_news(
-            "Hosting server just applied new changes of git branch at: <datetime>"
-        )
         try:
             while True:
                 time_now = time.time()
