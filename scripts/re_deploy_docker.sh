@@ -1,6 +1,7 @@
-#!/bin/env bash
+#!/bin/sh
 
 ./docker_app_build.sh
 ./docker_app_stop.sh
+./docker_app.sh
 ./docker_app.sh
 
