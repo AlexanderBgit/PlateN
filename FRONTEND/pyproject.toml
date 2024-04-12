@@ -17,6 +17,10 @@ pillow = "^10.3.0"
 psycopg2-binary = "^2.9.9"
 tensorflow-io-gcs-filesystem = "0.31.0"
 tensorflow = "^2.16.1"
+opencv-python-headless = {version = "^4.9.0.80", platform = "linux"}
+opencv-python = {version = "^4.9.0.80", platform = "!linux"}
+matplotlib = "^3.8.4"
+scikit-learn = "^1.4.2"
 
 [build-system]
 requires = ["poetry-core"]
