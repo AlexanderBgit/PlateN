@@ -1,3 +1,3 @@
-#!/bin/env bash
+#!/bin/bash
 
 docker logs fastparking-code-1
