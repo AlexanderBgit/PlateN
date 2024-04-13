@@ -6,6 +6,6 @@ from . import views
 app_name = 'finance'
 
 urlpatterns = [
-    path('main/', views.main, name='main'),
+    path('', views.main, name='main'),
     # Інші URL-шляхи для вашого додатку "finance"
 ]

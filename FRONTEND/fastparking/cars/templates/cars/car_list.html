@@ -9,11 +9,27 @@
 </head>
 <body>
     <h1>List of Cars</h1>
+    
+    <!-- Форма фільтрації -->
+    <form method="GET" action="{% url 'car_list' %}">
+        <!-- Додайте поля фільтрації за вашими потребами -->
+        <label for="car_number">Car Number:</label>
+        <input type="text" name="car_number">
+        
+        <label for="blocked">Blocked:</label>
+        <select name="blocked">
+            <option value="True">Yes</option>
+            <option value="False">No</option>
+        </select>
+        
+        <button type="submit">Filter</button>
+    </form>
+
     <ul>
         {% for car in cars %}
-            <li>{{ car.car_number }}</li>
-            
-            <!-- Додайте інші поля, які ви хочете відобразити для кожного автомобіля -->
+            <li>{{ car.car_number }} - Photo: <img src="{{ car.photo_car.url }}" alt="Car photo">, Predict: {{ car.predict }}, Blocked: {{ car.blocked }}, Pay Pass: {{ car.pay_pass }}</li>
+        {% empty %}
+            <li>No cars found.</li>
         {% endfor %}
     </ul>
 </body>
