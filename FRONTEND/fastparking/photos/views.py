@@ -12,9 +12,12 @@ def upload_file(request):
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            handle_uploaded_file(request.FILES["file"])
-            upload_url = reverse("upload")
-            return HttpResponseRedirect(upload_url)
+            type_of_photo = request.POST.get("type")
+            # print(f"{request.POST=}")
+            # print(f"{request.FILES=}")
+            handle_uploaded_file(request.FILES.get("photo"), type_of_photo)
+            # upload_url = reverse("upload")
+            return HttpResponseRedirect("")
     else:
         form = UploadFileForm()
     return render(request, "photos/upload.html", {"form": form})
