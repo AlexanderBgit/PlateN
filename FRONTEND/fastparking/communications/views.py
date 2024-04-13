@@ -5,14 +5,17 @@ from .send_news import send_news_to_telegram
 
 
 def check_news():
-    send_news_to_telegram()
+    return send_news_to_telegram()
 
 
 def main(request):
     # ваш код для обробки запиту тут
-    check_news()
+    sent_messages = check_news()
     return render(
         request,
         "communications/main.html",
-        {"news_channel": settings.TELEGRAM_NEWS_NAME[1:]},
+        {
+            "news_channel": settings.TELEGRAM_NEWS_NAME[1:],
+            "sent_messages": sent_messages,
+        },
     )  # або інша логіка відповідно до вашого проекту

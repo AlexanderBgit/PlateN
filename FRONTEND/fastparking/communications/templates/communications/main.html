@@ -4,4 +4,7 @@
 <h1>Messages</h1>
 <p>Перевіряємо чи є актуальні новини, і форсуємо їх надіслання до каналу новин.</p>
 Наш канал новин: <a href="https://t.me/{{ news_channel }}">@{{ news_channel }}.</a>
+{% if sent_messages %}
+<p>Надіслано повідомлень: {{ sent_messages }}.</p>
+{% endif%}
 {% endblock content %}
