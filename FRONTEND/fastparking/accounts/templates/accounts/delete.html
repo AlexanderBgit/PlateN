@@ -1,0 +1,24 @@
+{% extends "parking/base.html" %}
+
+{% block content %}
+
+<h1>{{ title }}</h1>
+
+<p>Are you sure you want to delete the car:</p>
+
+<ul>
+  <li>Brand: {{ my_cars.brand }}</li>
+  <li>Type: {{ my_cars.car_type }}</li>
+  <li>Car number: {{ car_number.car_number }}</li>
+</ul>
+
+<form method="post" action="{% url 'accounts:delete' pk=my_cars.pk %}">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-danger">Yes, delete car</button>
+  <a href="{% url 'accounts:my_cars' %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock content %}
+
+
+

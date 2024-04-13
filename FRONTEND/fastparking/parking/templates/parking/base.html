@@ -38,6 +38,13 @@
         </a>
       </li>
       {% if user.is_authenticated %}
+
+      <li>
+        <a class="nav-link text-white" href="{% url 'accounts:profile' %}">
+          <i class="fa-solid fa-car"></i>
+          <span class="nav-item">Accounts</span>
+        </a>
+      </li>
       <li>
         <a class="nav-link text-white" href="/cars/">
           <i class="fa-solid fa-car"></i>
