@@ -13,9 +13,18 @@ def upload_file(request):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             type_of_photo = request.POST.get("type")
-            # print(f"{request.POST=}")
-            # print(f"{request.FILES=}")
-            handle_uploaded_file(request.FILES.get("photo"), type_of_photo)
+            file_in = request.FILES.get("photo")
+            if file_in:
+                img_predict = handle_uploaded_file(file_in.read(), type_of_photo)
+                info = img_predict.get("info")
+                predict = img_predict.get("predict")
+                # print(f"{info}")
+                if info:
+                    return render(
+                        request,
+                        "photos/upload.html",
+                        {"form": form, "info": info, "predict": predict},
+                    )
             # upload_url = reverse("upload")
             return HttpResponseRedirect("")
     else:

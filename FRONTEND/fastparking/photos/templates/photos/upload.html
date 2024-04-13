@@ -7,5 +7,12 @@
         {{ form.as_p }}
         <input type="submit" value="Submit">
     </form>
+{% if info %}
+   <h2>RESULT:</h2>
+    <p>info: {{ info }}</p>
+    <p>number: {{ predict.num_avto_str }}</p>
+    <p>accuracy: {{ predict.accuracy }}</p>
+    img: <img src="data:image/jpeg;base64,{{ predict.num_img }}">
+{% endif %}
 {% endblock content %}
 
