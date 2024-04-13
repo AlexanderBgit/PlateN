@@ -280,6 +280,25 @@ def get_num_avto(img_avto):
     }
 
 
+def get_num_auto_png(img) -> dict:
+    num_result = get_num_avto(img)
+    img = np.zeros(0)
+    try:
+        is_success, im_buf_arr = cv2.imencode(
+            ".png", num_result["num_img"], params=[cv2.IMWRITE_PNG_COMPRESSION, 5]
+        )
+    except Exception:
+        is_success = False
+
+    if is_success:
+        io_buf = io.BytesIO(im_buf_arr)
+        num_result["num_img"] = io_buf.getvalue()
+        im_buf_arr = np.zeros(0)
+    else:
+        num_result["num_img"] = None
+    return num_result
+
+
 ################################################################################
 
 if __name__ == "__main__":
@@ -297,24 +316,6 @@ if __name__ == "__main__":
         print("Помилка завантаження зображення. Перевірте шлях до файлу.")
         exit(1)
 
-    num_result = get_num_avto(original)
-    img = num_result["num_img"]
-    is_success, im_buf_arr = cv2.imencode(
-        ".png", img, params=[cv2.IMWRITE_PNG_COMPRESSION, 5]
-    )
-    # decode
-    # decode_img = cv2.imdecode(np.frombuffer(io_buf.getbuffer(), np.uint8), -1)
-    # byte_im = im_buf_arr.tobytes()
-
-    # or using BytesIO
-    io_buf = io.BytesIO(im_buf_arr)
-    byte_im = io_buf.getvalue()
-
-    # with open("aaa.png", "wb") as f:
-    #     f.write(byte_im)
-
-    print(is_success, img.shape, img.size)
-    print(byte_im)
-    print(len(byte_im))
-    num_result["num_img"] = byte_im
+    # num_result = get_num_avto(original)
+    num_result = get_num_auto_png(original)
     print(num_result)
