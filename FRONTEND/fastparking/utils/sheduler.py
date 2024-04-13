@@ -47,7 +47,7 @@ if __name__ == "__main__":
         "-n",
         "--news_period",
         type=int,
-        default=60 * 1,
+        default=60 * 15,
         help="Limit Check period in seconds, default 900 sec (15 mins)",
     )
     parser.add_argument("-q", "--quite", action="store_true", help="Quite")
