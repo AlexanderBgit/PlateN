@@ -53,10 +53,12 @@ if __name__ == "__main__":
     )
     parser.add_argument("-q", "--quite", action="store_true", help="Quite")
     args = parser.parse_args()
-
-    send_message_news(
-        "Hosting server just applied new changes of git branch at: <datetime>"
-    )
+    if __name__ == "__main__":
+        text = "Local developer run 'sheduler.py' at: <datetime>"
+    else:
+        text = "Hosting server just applied new changes of git branch at: <datetime>"
+    result = send_message_news(text)
+    # print(f"{result=}")
     if args.loop:
         loop_delay = args.delay
         time_now = time.time()
