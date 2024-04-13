@@ -1,7 +1,6 @@
 import time
 import argparse
 
-
 from telegram_api import crone_pool, send_message_news
 
 
@@ -48,7 +47,7 @@ if __name__ == "__main__":
         "-n",
         "--news_period",
         type=int,
-        default=60 * 15,
+        default=60 * 1,
         help="Limit Check period in seconds, default 900 sec (15 mins)",
     )
     parser.add_argument("-q", "--quite", action="store_true", help="Quite")
@@ -68,7 +67,7 @@ if __name__ == "__main__":
         actions = {
             "telegram_pool": handler_telegram_pool,
             "limit_check": handler_limit_check,
-            "news_check": handler_news_check,
+            "news_check": handler_news_check(),
         }
 
         times = {period_name: time_now for period_name in periods.keys()}
