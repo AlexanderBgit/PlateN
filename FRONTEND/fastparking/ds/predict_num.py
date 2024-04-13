@@ -284,11 +284,18 @@ if __name__ == "__main__":
         print("Помилка завантаження зображення. Перевірте шлях до файлу.")
         exit(1)
 
-    result = get_num_avto(original)
-    is_success, im_buf_arr = cv2.imencode(".png", result)
+    text, img = get_num_avto(original)
+    # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    is_success, im_buf_arr = cv2.imencode(
+        ".png", img, params=[cv2.IMWRITE_PNG_COMPRESSION, 5]
+    )
     byte_im = im_buf_arr.tobytes()
 
-    print(is_success)
-    print(byte_im)
+    # with open("aaa.png", "wb") as f:
+    #     f.write(byte_im)
 
+    print(is_success, img.shape, img.size)
+    print(byte_im)
+    print(len(byte_im))
+    result = (text, byte_im)
     print(f"ok - {result}")
