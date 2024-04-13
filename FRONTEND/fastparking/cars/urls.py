@@ -8,6 +8,6 @@ from .views import CarListView
 app_name = "cars"
 
 urlpatterns = [
-    path('cars/', CarListView.as_view(), name='car_list'),
+    path('', CarListView.as_view(), name='car_list'),
     # Додайте інші URL, якщо потрібно
 ]
