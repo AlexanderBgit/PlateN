@@ -242,6 +242,8 @@ def predict_result(ch_contours, model):
     for i, c in enumerate(characters):
         dic[i] = c
 
+    total_accuracy = 1
+
     output = []
     for i, ch in enumerate(ch_contours):
 
@@ -250,14 +252,24 @@ def predict_result(ch_contours, model):
         img = fix_dimension(img_)
         img = img.reshape(1, 28, 28, 3)  # preparing image for the model
 
-        y_ = np.argmax(model.predict(img, verbose=0), axis=-1)[
+        prediction = model.predict(img, verbose=0)
+
+       
+        y_ = np.argmax(prediction, axis=-1)[
             0
         ]  # predicting the class
-        character = dic[y_]
+
+        # print(y_, prediction.shape, prediction)
+        character = dic[y_]        
+        # accuracy = prediction[0][y_]
+        # print(f'{accuracy=}')
+        # total_accuracy *= accuracy
+        # print(f'{total_accuracy=}')
+
         output.append(character)
 
     plate_number = "".join(output)
-    return plate_number
+    return plate_number, total_accuracy
 
 
 def get_num_avto(img_avto):
@@ -266,10 +278,12 @@ def get_num_avto(img_avto):
 
     chars = segment_to_contours(num_img)
 
-    predicted_str = predict_result(chars, model)
+    predicted_str, total_accuracy = predict_result(chars, model)
     num_avto_str = str.replace(predicted_str, "#", "")
 
-    return num_avto_str, num_img
+    return {'num_avto_str': num_avto_str,
+            'accuracy': total_accuracy, 
+            'num_img': num_img}
 
 
 ################################################################################
@@ -291,4 +305,4 @@ if __name__ == "__main__":
         exit(1)
 
     result = get_num_avto(original)
-    print(f"ok - {result}")
+    print(result)
