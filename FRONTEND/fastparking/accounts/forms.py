@@ -25,30 +25,3 @@ class CarNumberForm(ModelForm):
         fields = ["car_number"]
         exclude = ["user", "photo_car", "predict", "blocked", "pay_pass"] 
 
-    
-        
-        
-
-        
-
-    # def save(self, commit=True):
-    #     my_cars_instance = super().save(commit=False)
-    #     car_number = self.cleaned_data.get('car_number')
-        
-    #     # Создание/обновление объекта Car
-    #     car_instance, created = Car.objects.get_or_create(car_number=car_number)
-        
-    #     # Сохранение MyCars
-    #     if commit:
-    #         my_cars_instance.save()
-        
-    #     # Присвоение объекта Car к объекту MyCars
-    #     my_cars_instance.car_number = car_instance
-        
-    #     # Сохранение MyCars вместе с привязанным объектом Car
-    #     if commit:
-    #         my_cars_instance.save()
-        
-        # return my_cars_instance
-    
-
