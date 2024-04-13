@@ -59,12 +59,8 @@ INSTALLED_APPS = [
     "cars",
     "communications",
     "finance",
-<<<<<<< HEAD
     "photos",
-=======
-    "photo",
     "accounts",
->>>>>>> 02c22ab73ddcbb7e1637ed0a00dae7d57a6b96ab
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
