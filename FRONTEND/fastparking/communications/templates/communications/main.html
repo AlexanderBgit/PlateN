@@ -1,14 +1,7 @@
 <!-- communications/templates/communications/main.html -->
 {% extends "parking/base.html" %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Page - Communications</title>
-</head>
-<body>
-    <h1>Main Page - Communications</h1>
-    <p>This is a placeholder for the main page of the communications app.</p>
-</body>
-</html>
+{% block content %}
+<h1>Messages</h1>
+<p>Перевіряємо чи є актуальні новини, і форсуємо їх надіслання до каналу новин.</p>
+Наш канал новин: <a href="https://t.me/{{ news_channel }}">@{{ news_channel }}.</a>
+{% endblock content %}
