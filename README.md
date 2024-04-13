@@ -15,7 +15,7 @@ Plate license recognition
 
 - merge to `dev` тільки через `pull-request` і запит користувачам на підтвердження, мінімум один має підтвердити, і тоді розблокується кнопка `Merge`, і можна об'єднати у `dev`.
 
-- Python >=3.10
+- Python >=3.10,<3.12
 
 - poetry
 
@@ -139,7 +139,7 @@ python manage.py migrate
 
 Але без повірки міграції.
 
-Action GitHub використовує налаштуванням з файлу `.github\workflows\django.yml` де проходить перевірка на збирання середовища виконання для трьох версії python:  `python-version: ["3.10", "3.11", "3.12"]`. 
+Action GitHub використовує налаштуванням з файлу `.github\workflows\django.yml` де проходить перевірка на збирання середовища виконання для трьох версії python:  `python-version: ["3.10", "3.11"]`. 
 
 Безпосереднє тестування проєкту Django автоматично виконується командую `python manage.py test`.
 
