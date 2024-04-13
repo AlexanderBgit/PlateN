@@ -10,7 +10,7 @@ from .models import Photo
 TYPES = {"0": "IN", "1": "OUT"}
 
 
-def save_prediction(predict: dict, type: str) -> None:
+def db_save_photo_information(predict: dict, type: str) -> int | None:
     num_auto = predict.get("num_avto_str")
     accuracy = predict.get("accuracy")
     num_img = predict.get("num_img")
@@ -21,6 +21,7 @@ def save_prediction(predict: dict, type: str) -> None:
         record.photo = num_img
         record.type = type
         record.save()
+        return record.id
 
 
 def save_image(f, type: str = "", filepath: Path | None = None):
@@ -40,8 +41,13 @@ def save_image(f, type: str = "", filepath: Path | None = None):
                 destination.write(chunk)
 
 
+def registration_car(utc_datetime, registration_data):
+    print(f"registration_car: {utc_datetime=}, {registration_data=}")
+
+
 def handle_uploaded_file(f, type: str | None) -> dict[str, dict]:
     if f and type:
+        utc_datetime = datetime.utcnow()
         info = f"File accepted, sizes: {len(f) // 1024} KB, {type=}"
         #  try to save
         # try:
@@ -52,7 +58,11 @@ def handle_uploaded_file(f, type: str | None) -> dict[str, dict]:
         # analyze and calculate prediction of image
         predict = get_num_auto_png_io(f.read())
         # store information to database
-        save_prediction(predict, type)
+        photo_id = db_save_photo_information(predict, type)
+        # registration
+        num_auto = predict.get("num_avto_str")
+        registration_data = {"photo_id": photo_id, "num_auto": num_auto, "type": type}
+        registration_car(utc_datetime, registration_data)
         # prepare for show on web page
         binary_image_data = predict.get("num_img")
         if binary_image_data:
