@@ -192,7 +192,7 @@ def find_contours(dimensions, img, debug=False):
 
 
 # Find characters in the resulting images
-def segment_to_contours(image, debug:bool = False):
+def segment_to_contours(image, debug: bool = False):
     new_height = 75  # set fixed height
     # print("original plate[w,h]:", image.shape[1], image.shape[0], "new_shape:333,", new_height)
 
@@ -309,6 +309,11 @@ def get_num_auto_png(img) -> dict:
         im_buf_arr = np.zeros(0)
     else:
         num_result["num_img"] = None
+
+    # tune output accuracy
+    if len(num_result["num_avto_str"]) < 6:
+        num_result["accuracy"] *= 0.3
+
     return num_result
 
 
