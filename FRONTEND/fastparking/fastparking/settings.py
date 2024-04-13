@@ -191,3 +191,14 @@ CACHES = {
 }
 
 # print(f"{CACHES=}")
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv("MAIL_SERVER")
+EMAIL_PORT = os.getenv("MAIL_PORT", 465)
+EMAIL_STARTTLS = False
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
+EMAIL_HOST_USER = os.getenv('MAIL_USERNAME')
+EMAIL_HOST_PASSWORD = os.getenv('MAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
