@@ -67,7 +67,7 @@ if __name__ == "__main__":
         actions = {
             "telegram_pool": handler_telegram_pool,
             "limit_check": handler_limit_check,
-            "news_check": handler_news_check(),
+            "news_check": handler_news_check,
         }
 
         times = {period_name: time_now for period_name in periods.keys()}
