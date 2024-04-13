@@ -15,7 +15,7 @@ def upload_file(request):
             type_of_photo = request.POST.get("type")
             file_in = request.FILES.get("photo")
             if file_in:
-                img_predict = handle_uploaded_file(file_in.read(), type_of_photo)
+                img_predict = handle_uploaded_file(file_in, type_of_photo)
                 info = img_predict.get("info")
                 predict = img_predict.get("predict")
                 # print(f"{info}")
