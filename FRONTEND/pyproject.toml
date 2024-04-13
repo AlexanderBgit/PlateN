@@ -18,12 +18,13 @@ psycopg2-binary = "^2.9.9"
 tensorflow-io-gcs-filesystem = "~0.31"
 tensorflow = "~2.15"
 opencv-python-headless = {version = "^4.9.0.80", platform = "linux"}
-opencv-python = {version = "^4.9.0.80", platform = "!linux"}
+opencv-python = {version = "^4.9.0.80", platform = "win32 || darwin"}
 matplotlib = "^3.8.4"
 scikit-learn = "^1.4.2"
 
 [tool.poetry.group.dev.dependencies]
 scikit-learn = "^1.4.2"
+# opencv-python = "^4.9.0.80"
 
 [build-system]
 requires = ["poetry-core"]

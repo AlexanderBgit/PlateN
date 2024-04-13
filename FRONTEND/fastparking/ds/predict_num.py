@@ -1,16 +1,15 @@
 import os
-
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-
+import io
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 
 # import tensorflow as tf
-from pathlib import Path
 
 
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 # from sklearn.metrics import f1_score
 # from keras import optimizers
 # from keras.models import Sequential
@@ -70,7 +69,6 @@ def extract_plate(img, plate_cascade, text=""):
     y_max = 0
 
     for x, y, w, h in plate_rect:
-
         # виконує пропорційне зміщення пікселів
         a, b = (int(0.1 * h), int(0.1 * w))
         aa, bb = (int(0.1 * h), int(0.1 * w))
@@ -107,7 +105,6 @@ def extract_plate(img, plate_cascade, text=""):
 
 # Відповідність контурів номерному або символьному шаблону
 def find_contours(dimensions, img):
-
     i_width_threshold = 6
 
     # Знайдіть всі контури на зображенні
@@ -196,7 +193,6 @@ def find_contours(dimensions, img):
 
 # Find characters in the resulting images
 def segment_to_contours(image):
-
     new_height = 75  # set fixed height
     # print("original plate[w,h]:", image.shape[1], image.shape[0], "new_shape:333,", new_height)
 
@@ -244,7 +240,6 @@ def predict_result(ch_contours, model):
 
     output = []
     for i, ch in enumerate(ch_contours):
-
         img_ = cv2.resize(ch, (28, 28))  # interpolation=cv2.INTER_LINEAR by default
 
         img = fix_dimension(img_)
@@ -275,7 +270,6 @@ def get_num_avto(img_avto):
 ################################################################################
 
 if __name__ == "__main__":
-
     img_path = (
         Path(__file__)
         .resolve()
@@ -291,4 +285,10 @@ if __name__ == "__main__":
         exit(1)
 
     result = get_num_avto(original)
+    is_success, im_buf_arr = cv2.imencode(".png", result)
+    byte_im = im_buf_arr.tobytes()
+
+    print(is_success)
+    print(byte_im)
+
     print(f"ok - {result}")
