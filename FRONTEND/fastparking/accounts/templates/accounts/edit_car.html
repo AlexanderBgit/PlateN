@@ -1,0 +1,37 @@
+{% extends "parking/base.html" %}
+
+{% block content %}
+
+<h1>{{ title }}</h1>
+
+<form method="post">
+  {% csrf_token %}
+
+  <div class="form-group">
+    <label for="id_brand">Brand:</label>
+    {{ my_cars_form.brand }}
+    {% for error in my_cars_form.brand.errors %}
+      <p style="color: red;">{{ error }}</p>
+    {% endfor %}
+  </div>
+
+  <div class="form-group">
+    <label for="id_car_type">Car type:</label>
+    {{ my_cars_form.car_type }}
+    {% for error in my_cars_form.car_type.errors %}
+      <p style="color: red;">{{ error }}</p>
+    {% endfor %}
+  </div>
+
+  <div class="form-group">
+    <label for="id_car_number">Car number:</label>
+    {{ car_number_form.car_number }}
+    {% for error in car_number_form.car_number.errors %}
+      <p style="color: red;">{{ error }}</p>
+    {% endfor %}
+  </div>
+
+  <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+{% endblock content %}

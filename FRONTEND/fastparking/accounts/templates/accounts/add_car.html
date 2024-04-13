@@ -1,0 +1,29 @@
+{% extends "parking/base.html" %}
+{% block content %}
+
+<form method="post" action="{% url 'accounts:add_car' %}"></form>
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <form action="{% url 'accounts:add_car' %}" method="post">
+        {% csrf_token %}
+        {{ my_cars_form.as_p }}
+        {{ car_number_form.as_p }}
+        <button type="submit" class="btn btn-primary">Add Car</button>
+    </form>
+</body>
+</html>
+<!-- <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ my_cars_form.as_p }}
+        <button type="submit">Add Car</button>
+    </form>
+</body>
+</html> -->
+
+{% endblock content %}

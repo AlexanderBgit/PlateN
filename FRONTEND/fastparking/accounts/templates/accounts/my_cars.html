@@ -1,0 +1,47 @@
+{% extends "parking/base.html" %}
+{% block content %}
+
+
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    {% if my_cars %}
+        <ul>
+            {% for car in my_cars %}
+            
+            
+            <li>Brand: {{ car.brand }}</li>
+            <li>Type: {{ car.car_type }}</li>
+            <li>Number: {{ car.car_number }}</li>
+            <a href="{% url 'accounts:edit_car' car.pk %}" class="btn btn-primary">Edit</a>
+            <a href="{% url 'accounts:delete' car.pk %}" class="btn btn-primary">Delete Car</a>
+
+           
+            
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No cars found.</p>
+    {% endif %}
+    
+    
+
+    <div class="card-body" style="display: inline-block">
+        
+        
+        <a href="{% url 'accounts:add_car' %}" class="btn btn-success">Add new Car</a>
+
+        
+
+        
+
+        
+
+    </div>
+</div>
+
+</body>
+</html>
+{% endblock content %}
+
