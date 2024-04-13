@@ -104,7 +104,7 @@ def extract_plate(img, plate_cascade, text=""):
 
 
 # Відповідність контурів номерному або символьному шаблону
-def find_contours(dimensions, img):
+def find_contours(dimensions, img, debug=False):
     i_width_threshold = 6
 
     # Знайдіть всі контури на зображенні
@@ -177,8 +177,8 @@ def find_contours(dimensions, img):
                 break
 
     # Return characters on ascending order with respect to the x-coordinate (most-left character first)
-
-    plt.show()
+    if debug:
+        plt.show()
     # arbitrary function that stores sorted list of character indeces
     indices = sorted(range(len(x_cntr_list)), key=lambda k: x_cntr_list[k])
     img_res_copy = []
@@ -192,7 +192,7 @@ def find_contours(dimensions, img):
 
 
 # Find characters in the resulting images
-def segment_to_contours(image):
+def segment_to_contours(image, debug:bool = False):
     new_height = 75  # set fixed height
     # print("original plate[w,h]:", image.shape[1], image.shape[0], "new_shape:333,", new_height)
 
@@ -215,9 +215,10 @@ def segment_to_contours(image):
 
     # Estimations of character contours sizes of cropped license plates
     dimensions = [LP_WIDTH / 24, LP_WIDTH / 8, LP_HEIGHT / 3, 2 * LP_HEIGHT / 3]
-    # plt.imshow(img_binary_lp, cmap='gray')
-    # plt.title("original plate contour (binary)")
-    # plt.show()
+    # if debug:
+    #     plt.imshow(img_binary_lp, cmap='gray')
+    #     plt.title("original plate contour (binary)")
+    #     plt.show()
 
     # Get contours within cropped license plate
     char_list = find_contours(dimensions, img_binary_lp)
@@ -278,6 +279,18 @@ def get_num_avto(img_avto):
         "accuracy": total_accuracy,
         "num_img": num_img,
     }
+
+
+def decode_io_file(f):
+    io_buf = io.BytesIO(f)
+    # io_buf.seek(0)
+    decode_img = cv2.imdecode(np.frombuffer(io_buf.getbuffer(), np.uint8), -1)
+    return decode_img
+
+
+def get_num_auto_png_io(f) -> dict:
+    img = decode_io_file(f)
+    return get_num_auto_png(img)
 
 
 def get_num_auto_png(img) -> dict:
