@@ -238,7 +238,7 @@ def predict_result(ch_contours, model):
     for i, c in enumerate(characters):
         dic[i] = c
 
-    total_accuracy = 1
+    total_accuracy = 1.0
 
     output = []
     for i, ch in enumerate(ch_contours):
@@ -298,11 +298,12 @@ if __name__ == "__main__":
         exit(1)
 
     num_result = get_num_avto(original)
-    # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = num_result["num_img"]
     is_success, im_buf_arr = cv2.imencode(
         ".png", img, params=[cv2.IMWRITE_PNG_COMPRESSION, 5]
     )
+    # decode
+    # decode_img = cv2.imdecode(np.frombuffer(io_buf.getbuffer(), np.uint8), -1)
     # byte_im = im_buf_arr.tobytes()
 
     # or using BytesIO
