@@ -1,16 +1,15 @@
 import os
-
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-
+import io
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 
 # import tensorflow as tf
-from pathlib import Path
 
 
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 # from sklearn.metrics import f1_score
 # from keras import optimizers
 # from keras.models import Sequential
@@ -70,7 +69,6 @@ def extract_plate(img, plate_cascade, text=""):
     y_max = 0
 
     for x, y, w, h in plate_rect:
-
         # виконує пропорційне зміщення пікселів
         a, b = (int(0.1 * h), int(0.1 * w))
         aa, bb = (int(0.1 * h), int(0.1 * w))
@@ -106,8 +104,7 @@ def extract_plate(img, plate_cascade, text=""):
 
 
 # Відповідність контурів номерному або символьному шаблону
-def find_contours(dimensions, img):
-
+def find_contours(dimensions, img, debug=False):
     i_width_threshold = 6
 
     # Знайдіть всі контури на зображенні
@@ -180,8 +177,8 @@ def find_contours(dimensions, img):
                 break
 
     # Return characters on ascending order with respect to the x-coordinate (most-left character first)
-
-    plt.show()
+    if debug:
+        plt.show()
     # arbitrary function that stores sorted list of character indeces
     indices = sorted(range(len(x_cntr_list)), key=lambda k: x_cntr_list[k])
     img_res_copy = []
@@ -195,8 +192,7 @@ def find_contours(dimensions, img):
 
 
 # Find characters in the resulting images
-def segment_to_contours(image):
-
+def segment_to_contours(image, debug: bool = False):
     new_height = 75  # set fixed height
     # print("original plate[w,h]:", image.shape[1], image.shape[0], "new_shape:333,", new_height)
 
@@ -219,9 +215,10 @@ def segment_to_contours(image):
 
     # Estimations of character contours sizes of cropped license plates
     dimensions = [LP_WIDTH / 24, LP_WIDTH / 8, LP_HEIGHT / 3, 2 * LP_HEIGHT / 3]
-    # plt.imshow(img_binary_lp, cmap='gray')
-    # plt.title("original plate contour (binary)")
-    # plt.show()
+    # if debug:
+    #     plt.imshow(img_binary_lp, cmap='gray')
+    #     plt.title("original plate contour (binary)")
+    #     plt.show()
 
     # Get contours within cropped license plate
     char_list = find_contours(dimensions, img_binary_lp)
@@ -242,11 +239,10 @@ def predict_result(ch_contours, model):
     for i, c in enumerate(characters):
         dic[i] = c
 
-    total_accuracy = 1
+    total_accuracy = 1.0
 
     output = []
     for i, ch in enumerate(ch_contours):
-
         img_ = cv2.resize(ch, (28, 28))  # interpolation=cv2.INTER_LINEAR by default
 
         img = fix_dimension(img_)
@@ -254,13 +250,10 @@ def predict_result(ch_contours, model):
 
         prediction = model.predict(img, verbose=0)
 
-       
-        y_ = np.argmax(prediction, axis=-1)[
-            0
-        ]  # predicting the class
+        y_ = np.argmax(prediction, axis=-1)[0]  # predicting the class
 
         # print(y_, prediction.shape, prediction)
-        character = dic[y_]        
+        character = dic[y_]
         # accuracy = prediction[0][y_]
         # print(f'{accuracy=}')
         # total_accuracy *= accuracy
@@ -281,15 +274,52 @@ def get_num_avto(img_avto):
     predicted_str, total_accuracy = predict_result(chars, model)
     num_avto_str = str.replace(predicted_str, "#", "")
 
-    return {'num_avto_str': num_avto_str,
-            'accuracy': total_accuracy, 
-            'num_img': num_img}
+    return {
+        "num_avto_str": num_avto_str,
+        "accuracy": total_accuracy,
+        "num_img": num_img,
+    }
+
+
+def decode_io_file(f):
+    io_buf = io.BytesIO(f)
+    # io_buf.seek(0)
+    decode_img = cv2.imdecode(np.frombuffer(io_buf.getbuffer(), np.uint8), -1)
+    return decode_img
+
+
+def get_num_auto_png_io(f) -> dict:
+    img = decode_io_file(f)
+    return get_num_auto_png(img)
+
+
+def get_num_auto_png(img) -> dict:
+    num_result = get_num_avto(img)
+    img = np.zeros(0)
+    try:
+        is_success, im_buf_arr = cv2.imencode(
+            ".png", num_result["num_img"], params=[cv2.IMWRITE_PNG_COMPRESSION, 5]
+        )
+    except Exception:
+        is_success = False
+
+    if is_success:
+        io_buf = io.BytesIO(im_buf_arr)
+        num_result["num_img"] = io_buf.getvalue()
+        im_buf_arr = np.zeros(0)
+    else:
+        num_result["num_img"] = None
+
+    # tune output accuracy
+    if len(num_result["num_avto_str"]) < 6:
+        num_result["accuracy"] *= 0.3
+
+    return num_result
 
 
 ################################################################################
 
 if __name__ == "__main__":
-
     img_path = (
         Path(__file__)
         .resolve()
@@ -304,5 +334,6 @@ if __name__ == "__main__":
         print("Помилка завантаження зображення. Перевірте шлях до файлу.")
         exit(1)
 
-    result = get_num_avto(original)
-    print(result)
+    # num_result = get_num_avto(original)
+    num_result = get_num_auto_png(original)
+    print(num_result)
