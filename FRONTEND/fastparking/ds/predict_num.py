@@ -289,7 +289,11 @@ if __name__ == "__main__":
     is_success, im_buf_arr = cv2.imencode(
         ".png", img, params=[cv2.IMWRITE_PNG_COMPRESSION, 5]
     )
-    byte_im = im_buf_arr.tobytes()
+    # byte_im = im_buf_arr.tobytes()
+
+    # or using BytesIO
+    io_buf = io.BytesIO(im_buf_arr)
+    byte_im = io_buf.getvalue()
 
     # with open("aaa.png", "wb") as f:
     #     f.write(byte_im)
