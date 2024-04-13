@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "parking",
-    "users",
+    "users.apps.UsersConfig",
     "cars",
     "communications",
     "finance",

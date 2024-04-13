@@ -1,17 +1,23 @@
+from django.urls import reverse
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
+from photos.models import Photo
 
-    
 class Car(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)  
-    photo_car = models.ImageField(upload_to='car_photos/', null=True, blank=True)
-    car_number = models.CharField(max_length=20)
-    predict = models.FloatField(null=True, blank=True)  # Ви можете коригувати тип поля відповідно до вашої системи розпізнавання
-    blocked = models.BooleanField(default=False)
-    pay_pass = models.BooleanField(default=False)
+    photo = models.ForeignKey(Photo, on_delete=models.SET_NULL, null=True)
+    car_number = models.CharField(max_length=16, null=True)
+    predict = models.FloatField(null=True)
 
-    # Додайте інші поля за необхідності, такі як кількість заїздів, кількість виїздів і т. д.
+    def save(self, *args, **kwargs):
+        if self.photo:
+            self.car_number = self.photo.recognized_car_number
+            self.predict = self.photo.accuracy
+        super().save(*args, **kwargs)
+
+
+   
 
     def __str__(self):
         return self.car_number
+def get_absolute_url(self):
+    return reverse("car_list", kwargs={"pk": self.pk})
