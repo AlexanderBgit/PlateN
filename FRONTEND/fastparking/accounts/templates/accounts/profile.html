@@ -1,15 +1,24 @@
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-</head>
-<body>
-    <h1>User Profile</h1>
-    <p>Username: {{ request.user.username }}</p>
-    <p>Email: {{ request.user.email }}</p>
-    <!-- Додайте інші дані профілю користувача, які вам потрібні -->
-</body>
-</html> {% endcomment %}
-{% extends "parking/base.html" %}
+<!-- profile.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Welcome to your profile</h1>
+
+    <!-- Display user's cars -->
+    <h2>Your Cars</h2>
+    <ul>
+        {% for car in user_cars %}
+            <li>{{ car.car_number }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Form to add a new car -->
+    <h2>Add a New Car</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Car</button>
+    </form>
+</div>
+{% endblock %}
