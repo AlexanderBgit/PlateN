@@ -12,13 +12,13 @@ def main(request):
     )
 
 from parking.models import Registration
-from .models import Sessions
+# from .models import Sessions
 
 def generate_report(request):
     user = request.user
     entry_datetime = request.GET.get('start_date')
     exit_datetime = request.GET.get('end_date')
-    entries = Sessions.objects.all()[:10]
+    # entries = Sessions.objects.all()[:10]
 
     parking_entries = Registration.objects.filter(user=user, 
                                                   entry_time__range=[entry_datetime, exit_datetime])
