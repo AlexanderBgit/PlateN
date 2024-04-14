@@ -103,7 +103,10 @@ def edit_car(request, pk):
     return render(request, "accounts/edit_car.html", context)
 
 
-
+class CarListView(ListView):
+    model = Car
+    template_name = 'car_list.html'  # Шаблон для відображення списку автомобілів
+    context_object_name = 'cars'  # Ім'я змінної в контексті шаблону
 
 
 
