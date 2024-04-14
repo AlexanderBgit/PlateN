@@ -29,6 +29,8 @@ if __name__ == "__main__":
         ("NF2656", "INF2656"),
         ("ZNF2656", "INF265"),
         ("ZNF2656", "NF265"),
+        ("ZNF2656", "ZNF2656"),
+        ("ZNF2656", "2656"),
     ]
 
     for string1, string2 in pairs:
