@@ -1,6 +1,7 @@
-
 from django.shortcuts import render, redirect
 from .forms import TariffForm
+
+
 
 def main(request):
     active_menu = "finance"
@@ -8,7 +9,6 @@ def main(request):
     return render(
         request, "finance/main.html", {"active_menu": active_menu}
     )  # або інша логіка відповідно до вашого проекту
-
 
 def add_tariff(request):
     if request.method == 'POST':
@@ -30,3 +30,4 @@ def create_tariff(request):
     else:
         form = TariffForm()
     return render(request, 'tariff.html', {'form': form})
+
