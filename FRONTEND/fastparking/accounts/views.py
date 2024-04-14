@@ -38,24 +38,22 @@ def add_car(request):
             car_number = car_number_form.cleaned_data.get('car_number')
             car_instance, created = Car.objects.get_or_create(car_number=car_number)
 
-            
             new_mycars = my_cars_form.save(commit=False)
             new_mycars.user = request.user
-            new_mycars.car_number = car_instance  
+            new_mycars.car_number = car_instance
             new_mycars.save()
-
-            
-            if hasattr(Car, 'user'):
-                car_instance.user = request.user
-                car_instance.save()
 
             return redirect(to="accounts:my_cars")
 
-    return render(request, 'accounts/add_car.html', {
-        "title": "Add new car",
-        "my_cars_form": my_cars_form,
-        "car_number_form": car_number_form,
-    })
+    return render(
+        request,
+        'accounts/add_car.html',
+        {
+            "title": "Add new car",
+            "my_cars_form": my_cars_form,
+            "car_number_form": car_number_form,
+        }
+    )
 
 
 
