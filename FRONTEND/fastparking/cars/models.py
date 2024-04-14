@@ -30,3 +30,6 @@ class Car(models.Model):
 
     def get_absolute_url(self):
         return reverse("car_list", kwargs={"pk": self.pk})
+
+class MyCars(models.Model):
+    pass
