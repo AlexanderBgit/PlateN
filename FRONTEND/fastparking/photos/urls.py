@@ -7,6 +7,7 @@ app_name = "photos"
 
 urlpatterns = [
     # path("", views.main, name="main"),
-    path("", views.upload_file, name="main"),
+    path("", views.main, name="index"),
+    path("main", views.main, name="main"),
     path("upload", views.upload_file, name="upload"),
 ]
