@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.utils.decorators import method_decorator
-from .forms import CarForm
+# from .forms import CarForm
+from .forms import CarForm, MyCarForm  # Оновлено імпорт
+
 
 # @method_decorator(login_required, name='dispatch')
 # class CabinetView(View):
