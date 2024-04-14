@@ -20,7 +20,6 @@ except ImportError:
 
 from communications.repository import (
     find_user_by_telegram_id,
-    find_user_by_telegram_nickname,
     save_user_telegram_id,
 )
 
@@ -444,7 +443,21 @@ def handler_start(user_id: str, username: str | None = None):
         # answer_to_user(user_id, "\n".join(print_text))
 
 
+def check_registered_user(user_id: str) -> bool:
+    result = False
+    if user_id:
+        result = bool(find_user_by_telegram_id(user_id))
+    if not result:
+        print_text = [
+            "Ви ще не зареєстровані у системі",
+            "Тому всі результати є демонстраційними.\n",
+        ]
+        answer_to_user(user_id, "\n".join(print_text))
+    return result
+
+
 def handler_begin(user_id: str, username: str | None = None):
+    check_registered_user(user_id)
     car_number = "AA0001BB"
     tariff_id = "1"
     parking_id = "L01-34"
@@ -456,6 +469,7 @@ def handler_begin(user_id: str, username: str | None = None):
 
 
 def handler_stop(user_id: str, username: str | None = None):
+    check_registered_user(user_id)
     print_text = [parse_text("Команду STOP прийнято: <datetime>")]
     payed_uniq_id = cache.get("payed_uniq_id")
     if not payed_uniq_id:
@@ -477,6 +491,7 @@ def handler_stop(user_id: str, username: str | None = None):
 
 
 def handler_pay(user_id: str, username: str | None = None):
+    check_registered_user(user_id)
     car_number = "AA0001BB"
     duration = 2
     tariff_id = "1"
@@ -503,6 +518,7 @@ def handler_help(user_id: str, username: str | None = None):
 
 
 def handler_cabinet(user_id: str, username: str | None = None):
+    check_registered_user(user_id)
     user_name = "Jon Travolta"
     cars_list = ["AA0001BB", "AA0002CC"]
     car_numbers = ", ".join(cars_list)
@@ -560,6 +576,7 @@ def check_payments():
     # print(qr_data)
     if qr_data:
         user_id = cache.get("user_id")
+        check_registered_user(user_id)
         cache.set("payment_id", None)
         cache.set("user_id", None)
 
