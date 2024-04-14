@@ -32,52 +32,52 @@
     <hr>
     <ul class="nav nav-pills flex-column">
       <li>
-        <a class="nav-link active" href="/">
+        <a class="nav-link {% if active_menu == 'home' %}active{% else %}text-white{% endif %}" href="/">
           <i class="fa-solid fa-home"></i>
           <span class="nav-item mx-auto">Home</span>
         </a>
       </li>
       {% if user.is_authenticated %}
       <li>
-        <a class="nav-link text-white" href="/cars/">
+        <a class="nav-link {% if active_menu == 'cars' %}active{% else %}text-white{% endif %}" href="/cars/">
           <i class="fa-solid fa-car"></i>
           <span class="nav-item">Cars</span>
         </a>
       </li>
       <li>
-        <a class="nav-link text-white" href="{% url 'finance:main' %}">
+        <a class="nav-link {% if active_menu == 'finance' %}active{% else %}text-white{% endif %}" href="{% url 'finance:main' %}">
           <i class="fa-solid fa-table-list"></i>
           <span class="nav-item">Finance</span>
         </a>
       </li>
       
       <li>
-        <a class="nav-link text-white" href="{% url 'communications:main' %}">
+        <a class="nav-link {% if active_menu == 'messages' %}active{% else %}text-white{% endif %}" href="{% url 'communications:main' %}">
           <i class="fa-solid fa-earth-americas"></i>
           <span class="nav-item">Messages</span>
         </a>
       </li>
       <li>
-        <a class="nav-link text-white" href="{% url 'photos:main' %}">
+        <a class="nav-link {% if active_menu == 'photos' %}active{% else %}text-white{% endif %}" href="{% url 'photos:main' %}">
           <i class="fa-solid fa-folders"></i>
           <span class="nav-item">Photos</span>
         </a>
       </li>
       <li>
-        <a class="nav-link text-white" href="{% url 'users:logout' %}">
+        <a class="nav-link {% if active_menu == 'logout' %}active{% else %}text-white{% endif %}" href="{% url 'users:logout' %}">
           <i class="fa-solid fa-sign-out"></i>
           <span class="nav-item">Logout</span>
         </a>
       </li>
       {% else %}
       <li>
-        <a class="nav-link text-white" href="{% url 'users:username' %}">
+        <a class="nav-link {% if active_menu == 'signin' %}active{% else %}text-white{% endif %}" href="{% url 'users:username' %}">
           <i class="fa-solid fa-user"></i>
           <span class="nav-item">SignIn</span>
         </a>
       </li>
       <li>
-        <a class="nav-link text-white" href="{% url 'users:register' %}">
+        <a class="nav-link {% if active_menu == 'signup' %}active{% else %}text-white{% endif %}" href="{% url 'users:register' %}">
           <i class="fa-solid fa-user-check"></i>
           <span class="nav-item">SignUp</span>
         </a>
