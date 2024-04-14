@@ -20,7 +20,7 @@ from .models import Car
 class MyCarForm(forms.ModelForm):  # додано другий такий самий клас
     class Meta:
         model = Car
-        fields = ['car_number', 'predict', 'blocked', 'pay_pass']  # Перерахуйте всі поля, які ви хочете відображати у формі
+        fields = ['car_number', 'predict', 'blocked', 'PayPass']  # Перерахуйте всі поля, які ви хочете відображати у формі
 
         widgets = {
             'car_number': forms.TextInput(attrs={'class': 'form-control'}),
