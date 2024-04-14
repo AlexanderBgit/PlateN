@@ -1,1 +1,1 @@
-python utils\sheduler.py --loop -q
+python utils\sheduler.py --loop -q --sent_hello

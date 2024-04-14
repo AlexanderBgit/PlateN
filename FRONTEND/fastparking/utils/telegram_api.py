@@ -13,7 +13,11 @@ import django
 from django.conf import settings
 from django.core.cache import cache
 
-from get_anekdot import get_random_block
+try:
+    from get_anekdot import get_random_block
+except ImportError:
+    from .get_anekdot import get_random_block
+
 
 # import settings from Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fastparking.settings")
@@ -555,7 +559,6 @@ def crone_pool():
         list_id = get_updated_id(updates)
         if list_id:
             save_latest_update_id(list_id[-1])
-            # save_unknown_users(updates)
             parse_commands(updates)
 
 
