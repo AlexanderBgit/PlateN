@@ -6,8 +6,8 @@ Plate license recognition
 ## env file
 На основі файлу `deploy/env-examples` створюємо власний  `deploy/.env` з власними змінними
 
-
-## LOCAL DEVELOPMENT
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>LOCAL DEVELOPMENT</h2></summary>
 
 - git проекту: https://github.com/AlexanderBgit/PlateN , default branch `dev`
 
@@ -64,7 +64,11 @@ else:
 - Якщо у VC Code створити Workspace, додати до нього підпроєкти як (File->Add folder to WorkSpace), то при запуску терміналу буде запити з якої теки ви це хочете зробити.
 
  - Для роботи з локальною базою даних використовуємо настуні кроки (Local Database postgres). Для роботи з віддаленою базою даних пропускаємо ці кроки.
-### Local Database postgres
+</details>
+
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Local Database postgres</h3></summary>
+
 #### run database postgres docker container
 
 `scripts/docker_db.cmd`
@@ -75,9 +79,10 @@ else:
 
 #### stop database postgres docker container
 `scripts\docker_db_stop.cmd`
+</details>
 
-
-### Запуск та обслуговування застосунку в докер
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Запуск та обслуговування застосунку в докер</h3></summary>
 
 #### run app locally
 Запускати з віртуального оточення poetry
@@ -116,9 +121,12 @@ python manage.py migrate
 
 ##### rebuild project (code) docker container
 `scripts\docker_app_build.cmd`
+</details>
 
 
-## Процедура підключення dev - Django з нуля:
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Процедура підключення dev - Django з нуля:</h2></summary>
+
 1. git checkout dev
 1. git pull
 1. cd FRONTEND
@@ -131,10 +139,16 @@ python manage.py migrate
 1. create_django_auto_admin.cmd - create admin aromatically from .env
 1. run_dev_app.cmd - run app
 1. open browser: http://127.0.0.1:8000
+</details>
+
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>SERVER SIDE DEPLOY - CI/CD</h2></summary>
 
 
-## SERVER SIDE DEPLOY - CI/CD
-### CI перевірка коду 
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>CI перевірка коду </h3></summary>
+
+
 Перевірка коду проєкту на збирання проходить автоматично у кожному "GitHub pull request" безпосередньо перед об'єднанням з гілкою `dev` функцію Action GitHub.
 
 Але без повірки міграції.
@@ -142,9 +156,11 @@ python manage.py migrate
 Action GitHub використовує налаштуванням з файлу `.github\workflows\django.yml` де проходить перевірка на збирання середовища виконання для трьох версії python:  `python-version: ["3.10", "3.11"]`. 
 
 Безпосереднє тестування проєкту Django автоматично виконується командую `python manage.py test`.
+</details>
 
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>CD </h3></summary>
 
-### CD
 Сервер: Linux (Debian).
 
 Локальний користувач для виконання задач без прав адміністратора.
@@ -171,5 +187,7 @@ SOURCE=${HOME}/PlateN/PlateN
 */15 * * * *  ~/PlateN/detect_changes_git.sh > /dev/null 2>&1
 ```
  Що дозволяє запускати скрипт `detect_changes_git.sh` кожні 15 хвилин.
+</details>
 
+</details>
 
