@@ -1,4 +1,5 @@
 from django.db import models
+from parking.models import Registration
 
 class Tariff(models.Model):
     description = models.CharField(max_length=255)
@@ -11,8 +12,8 @@ class Tariff(models.Model):
         return self.description
 
 class Payment(models.Model):
-    user_id = models.IntegerField(blank=True, null=True)  # ID користувача, який здійснив оплату (не обов'язкове)
-    registration_id = models.IntegerField()  # ID реєстрації, за яку здійснюється оплата
+    # user_id = models.IntegerField(blank=True, null=True)  # ID користувача, який здійснив оплату (не обов'язкове)
+    registration_id = models.ForeignKey(Registration, on_delete=models.SET_NULL, null=True, blank=True)  # ID реєстрації, за яку здійснюється оплата
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     datetime = models.DateTimeField()
 
