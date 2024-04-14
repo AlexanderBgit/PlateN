@@ -2,7 +2,17 @@
 {% extends "parking/base.html" %}
 {% block content %}
     <h2>
-        <a href="upload">Завантажити фото транспортного засобу</a>
+        <ul>
+            <li>
+                <a class="btn btn-primary" href="{% url 'photos:upload' %}">Upload photo of car</a>
+            </li>
+            <li>
+                <a class="btn btn-primary" href="{% url 'photos:upload' %}?type=0">Upload IN photo of car</a>
+            </li>
+            <li>
+                <a class="btn btn-primary" href="{% url 'photos:upload' %}?type=1">Upload OUT photo of car</a>
+            </li>
+        </ul>
     </h2>
 
 {% endblock content %}

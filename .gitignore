@@ -162,7 +162,4 @@ cython_debug/
 */.*
 */*.tmp
 Database/*
-
-
-
-
+/FRONTEND/git-version.txt
