@@ -3,6 +3,7 @@ import argparse
 
 
 from telegram_api import crone_pool, send_message_news
+from communications.send_news import send_news_to_telegram
 
 
 def handler_telegram_pool(print_log: bool = False):
@@ -19,6 +20,7 @@ def handler_limit_check(print_log: bool = False):
 def handler_news_check(print_log: bool = False):
     if print_log:
         print("- handler_news_check")
+    send_news_to_telegram()
     # send_message_news(
     #     "Simulation news sending, every 15 mins since start app: <datetime>"
     # )
@@ -51,13 +53,22 @@ if __name__ == "__main__":
         default=60 * 15,
         help="Limit Check period in seconds, default 900 sec (15 mins)",
     )
+    parser.add_argument(
+        "--sent_hello",
+        action="store_true",
+        help="hello message on boot",
+    )
     parser.add_argument("-q", "--quite", action="store_true", help="Quite")
     args = parser.parse_args()
-    if __name__ == "__main__":
-        text = "Local developer run 'sheduler.py' at: <datetime>"
-    else:
-        text = "Hosting server just applied new changes of git branch at: <datetime>"
-    result = send_message_news(text)
+
+    if args.sent_hello:
+        if __name__ == "__main__":
+            text = "Local developer run 'sheduler.py' at: <datetime>"
+        else:
+            text = (
+                "Hosting server just applied new changes of git branch at: <datetime>"
+            )
+        result = send_message_news(text)
     # print(f"{result=}")
     if args.loop:
         loop_delay = args.delay

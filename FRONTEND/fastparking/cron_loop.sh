@@ -1,6 +1,6 @@
 #!/bin/env sh
 
-python ./utils/sheduler.py --loop -q
+python ./utils/sheduler.py --loop -q --sent_hello
 
 # while true; do
 #   python ./utils/telegram_api.py
