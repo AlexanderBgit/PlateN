@@ -1,17 +1,26 @@
+from django.forms import ModelForm, CharField
 from django import forms
-from cars.models import Car 
+from .models import MyCars
+from cars.models import Car
 
-class CarForm(forms.ModelForm):
+
+class MyCarsForm(ModelForm):
+    brand = CharField(max_length=255, 
+        widget=forms.TextInput(attrs={'placeholder': 'Brand', "class": "form-control"}))
+    car_type = CharField(max_length=255, 
+        widget=forms.TextInput(attrs={'placeholder': 'Car type', "class": "form-control"}))
+    
+    class Meta:
+        model = MyCars
+        fields = ["brand", "car_type", "car_number"]
+        exclude = ["user", "car_number"] 
+
+
+class CarNumberForm(ModelForm):
+    car_number = CharField(max_length=255, 
+        widget=forms.TextInput(attrs={'placeholder': 'Car number', "class": "form-control"}))  
+    
     class Meta:
         model = Car
-        fields = ['photo_car', 'car_number', 'predict']
-        labels = {
-            'photo_car': 'Photo',
-            'car_number': 'Car Number',
-            'predict': 'Prediction',
-        }
-        widgets = {
-            'photo_car': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'car_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'predict': forms.NumberInput(attrs={'class': 'form-control'}),
-        }
+        fields = ["car_number"]
+        exclude = ["user", "photo_car", "predict", "blocked", "pay_pass"] 

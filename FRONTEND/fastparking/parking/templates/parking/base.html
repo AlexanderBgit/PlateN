@@ -38,7 +38,12 @@
         </a>
       </li>
       {% if user.is_authenticated %}
-      <li><a href="/accounts/cabinet/">Profile</a></li>
+      <li>
+        <a class="nav-link text-white" href="{% url 'accounts:profile' %}">
+          <i class="fa-solid fa-car"></i>
+          <span class="nav-item">Accounts</span>
+        </a>
+      </li>
       <li>
         <a class="nav-link {% if active_menu == 'cars' %}active{% else %}text-white{% endif %}" href="/cars/">
           <i class="fa-solid fa-car"></i>
