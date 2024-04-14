@@ -1,7 +1,7 @@
 # forms.py
 from django import forms
 from .models import Car
-from .forms import MyCarForm
+# from .forms import MyCarForm
 
 # class CarForm(forms.ModelForm):
 #     class Meta:
