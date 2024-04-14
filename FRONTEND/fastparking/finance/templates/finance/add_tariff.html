@@ -1,0 +1,10 @@
+<!-- У вашому файлі add_tariff.html -->
+{% extends "parking/base.html" %}
+{% block content %}
+    <h2>Add Tariff</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+{% endblock content %}

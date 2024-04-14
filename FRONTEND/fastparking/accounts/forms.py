@@ -24,4 +24,3 @@ class CarNumberForm(ModelForm):
         model = Car
         fields = ["car_number"]
         exclude = ["user", "photo_car", "predict", "blocked", "pay_pass"] 
-
