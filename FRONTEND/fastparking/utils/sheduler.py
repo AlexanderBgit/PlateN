@@ -5,6 +5,7 @@ import platform
 
 from telegram_api import crone_pool, send_message_news
 from communications.send_news import send_news_to_telegram
+from communications.notifications import send_limits
 
 
 def handler_telegram_pool(print_log: bool = False):
@@ -16,6 +17,7 @@ def handler_telegram_pool(print_log: bool = False):
 def handler_limit_check(print_log: bool = False):
     if print_log:
         print("- handler_limit_check")
+    send_limits()
 
 
 def handler_news_check(print_log: bool = False):
