@@ -1,6 +1,6 @@
 from django.db import models
-from users.models import CustomUser
 from cars.models import Car
+from users.models import CustomUser
 
 # Create your models here.
 
