@@ -33,7 +33,8 @@ def upload_file(request):
 
 
 def main(request):
+    active_menu = "photos"
     # ваш код для обробки запиту тут
     return render(
-        request, "photos/main.html"
+        request, "photos/main.html", {"active_menu": active_menu}
     )  # або інша логіка відповідно до вашого проекту
