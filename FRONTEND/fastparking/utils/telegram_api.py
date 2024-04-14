@@ -18,6 +18,12 @@ try:
 except ImportError:
     from .get_anekdot import get_random_block
 
+from communications.repository import (
+    find_user_by_telegram_id,
+    find_user_by_telegram_nickname,
+    save_user_telegram_id,
+)
+
 
 # import settings from Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fastparking.settings")
@@ -266,24 +272,46 @@ def save_users_id(users: set):
 def save_user_id(user_id: str, username: str) -> None:
     if username:
         username = f"@{username}"
+        result = save_user_telegram_id(username, user_id)
+        if result:
+            answer_to_user(
+                user_id, f"For {username=} saved in DB as ID: {user_id}, {result=}"
+            )
+        else:
+            answer_to_user(
+                user_id,
+                f"Ваше псевдо в телеграмі: '{username}' ще не зареєстровано у профілі користувача нашої парковки."
+                "\nЗареєструйтеся, і повторіть знову команду /start.",
+            )
         # print(f"saving user to DB: {user_id=} {username=}")
         # debug info
-        answer_to_user(user_id, f"For {username=} saving to DB their ID: {user_id=}")
 
 
 def save_user_phone_number(user_id: str, phone_number: str) -> None:
     if phone_number:
         phone_number = f"+{phone_number}"
+        result = save_user_telegram_id(phone_number, user_id)
         # print(f"save_user_phone_number to DB: {user_id}, {phone_number}")
         # debug info
-        answer_to_user(
-            user_id, f"For {phone_number=} saving to DB their ID: {user_id=}"
-        )
+        if result:
+            answer_to_user(
+                user_id, f"For {phone_number=} saved in DB as ID: {user_id}, {result=}"
+            )
+        else:
+            answer_to_user(
+                user_id,
+                f"Ваш номер телефону в телеграмі: '{phone_number}'ще не зареєстровано у профілі користувача нашої парковки."
+                "\nЗареєструйтеся, і повторіть знову команду /start.",
+            )
 
 
 def get_user_profile(user_id: str) -> dict | None:
-    # data = {"user_id": user_id, "username": "username"}
     data = None
+    username = find_user_by_telegram_id(user_id)
+    if username:
+        data = {"user_id": user_id, "username": username}
+
+    # data = {"user_id": user_id, "username": "username"}
     return data
 
 
