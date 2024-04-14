@@ -4,7 +4,7 @@
     <h1>List of Cars</h1>
     
     <!-- Форма фільтрації -->
-    <form method="GET" action="{% url 'car_list' %}">
+    <form method="GET" action="{% url 'cars:car_list' %}">
         <!-- Додайте поля фільтрації за вашими потребами -->
         <label for="car_number">Car Number:</label>
         <input type="text" name="car_number">
