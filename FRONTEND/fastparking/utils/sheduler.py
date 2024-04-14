@@ -1,9 +1,11 @@
 import time
 import argparse
+import platform
 
 
 from telegram_api import crone_pool, send_message_news
 from communications.send_news import send_news_to_telegram
+from communications.notifications import send_limits
 
 
 def handler_telegram_pool(print_log: bool = False):
@@ -15,6 +17,7 @@ def handler_telegram_pool(print_log: bool = False):
 def handler_limit_check(print_log: bool = False):
     if print_log:
         print("- handler_limit_check")
+    send_limits()
 
 
 def handler_news_check(print_log: bool = False):
@@ -60,9 +63,8 @@ if __name__ == "__main__":
     )
     parser.add_argument("-q", "--quite", action="store_true", help="Quite")
     args = parser.parse_args()
-
     if args.sent_hello:
-        if __name__ == "__main__":
+        if platform.system() != "Linux":
             text = "Local developer run 'sheduler.py' at: <datetime>"
         else:
             text = (
