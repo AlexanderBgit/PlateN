@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import TariffForm
-
+from .forms import TariffForm, PaymentsForm
 
 
 def main(request):
@@ -10,24 +9,46 @@ def main(request):
         request, "finance/main.html", {"active_menu": active_menu}
     )  # або інша логіка відповідно до вашого проекту
 
+
 def add_tariff(request):
-    if request.method == 'POST':
+    active_menu = "finance"
+    if request.method == "POST":
         form = TariffForm(request.POST)
         if form.is_valid():
             form.save()
             # Після успішного додавання тарифу можна перенаправити користувача на іншу сторінку
-            return redirect('finance:main')  # Замініть 'finance:main' на URL-адресу, куди потрібно перенаправити
+            return redirect(
+                "finance:main"
+            )  # Замініть 'finance:main' на URL-адресу, куди потрібно перенаправити
     else:
         form = TariffForm()
-    return render(request, 'finance/add_tariff.html', {'form': form})
+    return render(request, "finance/add_tariff.html", {"form": form})
+
 
 def create_tariff(request):
-    if request.method == 'POST':
+    active_menu = "finance"
+    if request.method == "POST":
         form = TariffForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('tariff_list')  # Перенаправлення на список тарифів після створення
+            return redirect(
+                "tariff_list"
+            )  # Перенаправлення на список тарифів після створення
     else:
         form = TariffForm()
-    return render(request, 'tariff.html', {'form': form})
+    return render(request, "tariff.html", {"form": form})
 
+
+def add_pay(request):
+    active_menu = "finance"
+    if request.method == "POST":
+        form = PaymentsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # Після успішного додавання тарифу можна перенаправити користувача на іншу сторінку
+            return redirect(
+                "finance:main"
+            )  # Замініть 'finance:main' на URL-адресу, куди потрібно перенаправити
+    else:
+        form = PaymentsForm()
+    return render(request, "finance/add_pay.html", {"form": form})
