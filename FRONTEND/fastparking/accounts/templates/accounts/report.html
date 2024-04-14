@@ -1,0 +1,37 @@
+{% extends "parking/base.html" %}
+{% block content %}
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    {% if entries %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Column 1</th>
+                    <th>Column 2</th>
+                    <th>Column 3</th>
+                    <!-- інші колонки за необхідністю -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.entry_time }}</td>
+                    <td>{{ entry.exit_time }}</td>
+                    <td>{{ entry.car_number }}</td>
+                    <!-- інші поля запису за необхідності -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No entries found.</p>
+    {% endif %}
+
+    <div class="card-body" style="display: inline-block">
+        <a href="{% url 'accounts:add_car' %}" class="btn btn-success">Report Car</a>
+    </div>
+</body>
+</html>
+{% endblock content %}
