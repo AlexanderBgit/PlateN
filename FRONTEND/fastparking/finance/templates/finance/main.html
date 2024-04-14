@@ -1,14 +1,16 @@
 <!-- finance/templates/finance/main.html -->
-{% extends "parking/base.html" %}
+
+<!-- У вашому файлі finance/main.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Page - Finance</title>
+    <!-- Мета теги, посилання на стилі, скрипти та інше -->
+    <title>Main Page</title>
 </head>
 <body>
-    <h1>Main Page - Finance</h1>
-    <p>This is a placeholder for the main page of the finance app.</p>
+    <h2>Main Page</h2>
+    <!-- Додайте посилання на сторінку додавання тарифу -->
+    <a href="{% url 'finance:add_tariff' %}">Add Tariff</a>
+    <!-- Інші елементи сторінки, такі як таблиці, графіки тощо -->
 </body>
 </html>
