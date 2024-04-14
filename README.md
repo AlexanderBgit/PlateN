@@ -64,7 +64,7 @@ else:
 - Якщо у VC Code створити Workspace, додати до нього підпроєкти як (File->Add folder to WorkSpace), то при запуску терміналу буде запити з якої теки ви це хочете зробити.
 
  - Для роботи з локальною базою даних використовуємо настуні кроки (Local Database postgres). Для роботи з віддаленою базою даних пропускаємо ці кроки.
-### Local Database postgres
+<details><summary>### Local Database postgres</summary>
 #### run database postgres docker container
 
 `scripts/docker_db.cmd`
@@ -72,7 +72,7 @@ else:
 Данні бази будуть створенні у теці `Database\postgres-data\`
 
 Тека додана у виключення git - не викладати у git, у кожного вона своя!
-
+</details>
 #### stop database postgres docker container
 `scripts\docker_db_stop.cmd`
 
