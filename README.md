@@ -7,7 +7,7 @@ Plate license recognition
 На основі файлу `deploy/env-examples` створюємо власний  `deploy/.env` з власними змінними
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;">▼</span><h2>LOCAL DEVELOPMENT</h2></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>LOCAL DEVELOPMENT</h2></summary>
 
 - git проекту: https://github.com/AlexanderBgit/PlateN , default branch `dev`
 
@@ -67,7 +67,7 @@ else:
 </details>
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;">▼</span><h3>Local Database postgres</h3></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Local Database postgres</h3></summary>
 
 #### run database postgres docker container
 
@@ -82,7 +82,7 @@ else:
 </details>
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;">▼</span><h3>Запуск та обслуговування застосунку в докер</h3></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Запуск та обслуговування застосунку в докер</h3></summary>
 
 #### run app locally
 Запускати з віртуального оточення poetry
@@ -125,7 +125,7 @@ python manage.py migrate
 
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;">▼</span><h2>Процедура підключення dev - Django з нуля:</h2></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Процедура підключення dev - Django з нуля:</h2></summary>
 
 1. git checkout dev
 1. git pull
@@ -142,11 +142,11 @@ python manage.py migrate
 </details>
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;">▼</span><h2>SERVER SIDE DEPLOY - CI/CD</h2></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>SERVER SIDE DEPLOY - CI/CD</h2></summary>
 
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;">▼</span><h3>CI перевірка коду </h3></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>CI перевірка коду </h3></summary>
 
 
 Перевірка коду проєкту на збирання проходить автоматично у кожному "GitHub pull request" безпосередньо перед об'єднанням з гілкою `dev` функцію Action GitHub.
@@ -159,7 +159,7 @@ Action GitHub використовує налаштуванням з файлу 
 </details>
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;">▼</span><h3>CD </h3></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>CD </h3></summary>
 
 Сервер: Linux (Debian).
 
