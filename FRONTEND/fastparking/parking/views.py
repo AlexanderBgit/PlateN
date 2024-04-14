@@ -16,12 +16,12 @@ from .models import Sessions
 
 def generate_report(request):
     user = request.user
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
+    entry_datetime = request.GET.get('start_date')
+    exit_datetime = request.GET.get('end_date')
     entries = Sessions.objects.all()[:10]
 
     parking_entries = Registration.objects.filter(user=user, 
-                                                  entry_time__range=[start_date, end_date])
+                                                  entry_time__range=[entry_datetime, exit_datetime])
 
-    return render(request, 'accounts/report.html', {'entries': entries, 'start_date': start_date, 'end_date': end_date})
+    return render(request, 'accounts/report.html', {'entries': entries, 'start_date': entry_datetime, 'end_date': exit_datetime})
 

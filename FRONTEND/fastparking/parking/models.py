@@ -1,7 +1,20 @@
-# Create your models here.
+from django.contrib.auth.models import User
 
 from django.db import models
-from django.contrib.auth.models import User
+from photos.models import Photo
+from django.db import models
+from photos.models import Photo
+from cars.models import Car
+
+
+class ParkingSpace(models.Model):
+    number = models.CharField(max_length=10, unique=True)
+    status = models.BooleanField(default=False)  # False - вільно, True - зайнято
+    registration_id = models.ForeignKey(Photo, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return self.number
+
 
 class Registration(models.Model):
     parking = models.ForeignKey(ParkingSpace, on_delete=models.CASCADE)
@@ -14,6 +27,5 @@ class Registration(models.Model):
     photo_out = models.ForeignKey(Photo, on_delete=models.SET_NULL, related_name='registration_photo_out', null=True, blank=True)
     car = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True, blank=True)
 
-
     def __str__(self):
-        return f"{self.car_number} - {self.entry_time} to {self.exit_time}"
+        return f"Registration ID: {self.id} - Parking ID: {self.parking_id} - Entry Time: {self.entry_datetime}"
