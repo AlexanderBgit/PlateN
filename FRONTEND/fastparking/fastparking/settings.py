@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "communications",
     "finance",
     "photos",
+    "accounts",
 ]
 
 AUTH_USER_MODEL = 'users.CustomUser'
