@@ -13,7 +13,11 @@ import django
 from django.conf import settings
 from django.core.cache import cache
 
-from get_anekdot import get_random_block
+try:
+    from get_anekdot import get_random_block
+except ImportError:
+    from .get_anekdot import get_random_block
+
 
 # import settings from Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fastparking.settings")
@@ -148,7 +152,8 @@ def send_message(text: str, chat_id: int | str, parse_mode: bool = False) -> Non
         }
     else:
         json = {"chat_id": chat_id, "text": text}
-    _ = requests.post(url, json=json, timeout=10)
+    response = requests.post(url, json=json, timeout=10)
+    return response.status_code == 200
     # print(_)
 
 
@@ -161,30 +166,34 @@ def send_button_message(text: str, chat_id: int | str, reply_markup: dict) -> No
         "reply_markup": reply_markup,
         "link_preview_options": {"is_disabled": True},
     }
-    _ = requests.post(url, json=json, timeout=10)
+    response = requests.post(url, json=json, timeout=10)
+    return response.status_code == 200
     # print(_)
 
 
-def send_message_user(text: str, n_name: str) -> None:
+def send_message_user(text: str, n_name: str) -> bool | None:
     updates = get_updates()
     if not updates:
         return
     chat_id = user_id_by_username(updates, n_name)
     if chat_id:
-        send_message(text=text, chat_id=chat_id)
+        return send_message(text=text, chat_id=chat_id)
 
 
-def send_message_news(text: str, chat_id: int | str = TELEGRAM_NEWS_NAME) -> None:
+def send_message_news(
+    text: str, chat_id: int | str = TELEGRAM_NEWS_NAME
+) -> bool | None:
     if chat_id:
         if text.find("<") != -1 and text.find(">") != -1:
             text = parse_text(text)
         # print(f"send_message_news: {chat_id=}, {text=}")
-        send_message(text=text, chat_id=chat_id)
+        return send_message(text=text, chat_id=chat_id)
 
 
-def answer_to_user(user_id: str | int, text: str, parse_mode: bool = False):
-    print(f"answer_to_user: {user_id=} {text=}")
-    send_message(text, user_id, parse_mode=parse_mode)
+def answer_to_user(user_id: str | int, text: str, parse_mode: bool = False, debug=True):
+    if debug:
+        print(f"answer_to_user: {user_id=} {text=}")
+    return send_message(text, user_id, parse_mode=parse_mode)
 
 
 def get_local_time_now() -> datetime:
@@ -346,7 +355,7 @@ def parse_commands(updates: list[dict]) -> None:
                     return
 
 
-def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
+def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> bool | None:
     img = qrcode.make(qr_data, border=2)
     mem_file = BytesIO()
     img.save(mem_file)
@@ -355,10 +364,11 @@ def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> None:
     data = {"chat_id": chat_id}
     url = f"{BASE_URL}/sendPhoto"
 
-    _ = requests.post(url, data=data, files={"photo": mem_file})
+    response = requests.post(url, data=data, files={"photo": mem_file})
+    return response.status_code == 200
 
 
-def handler_with_button(user_id: str, username: str | None = None):
+def handler_with_button(user_id: str, username: str | None = None) -> bool | None:
     print_text = [parse_text("TEST <datetime>")]
     reply_markup = {"inline_keyboard": []}
     inlineRow = [
@@ -367,7 +377,7 @@ def handler_with_button(user_id: str, username: str | None = None):
         {"text": "News", "url": "https://t.me/fastparking_news"},
     ]
     reply_markup["inline_keyboard"].append(inlineRow)
-    send_button_message("\n".join(print_text), user_id, reply_markup)
+    return send_button_message("\n".join(print_text), user_id, reply_markup)
 
 
 def handler_start(user_id: str, username: str | None = None):
@@ -549,7 +559,6 @@ def crone_pool():
         list_id = get_updated_id(updates)
         if list_id:
             save_latest_update_id(list_id[-1])
-            # save_unknown_users(updates)
             parse_commands(updates)
 
 
