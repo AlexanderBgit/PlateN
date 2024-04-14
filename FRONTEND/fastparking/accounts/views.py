@@ -11,15 +11,16 @@ from .forms import MyCarsForm, CarNumberForm
 def profile(request):
     return render(request, 'accounts/profile.html', {"title": "User profile"})
 
+
+
 @login_required
 def my_cars(request):
-    my_cars = MyCars.objects.filter(user=request.user)
-    my_cars_number = Car.objects.filter(user=request.user).values_list('car_number', flat=True)
-    return render(request, 'accounts/my_cars.html', 
-            {
-                "title": "My Cars",
-                "my_cars": my_cars,
-                "my_cars_number": my_cars_number
+    my_cars = MyCars.objects.filter(user=request.user) 
+    my_cars_number = my_cars.values_list('car_number', flat=True)
+    return render(request, 'accounts/my_cars.html', context={
+        "title": "My Cars",
+        "my_cars": my_cars,
+        "my_cars_number": my_cars_number
     })
 
 
@@ -60,6 +61,7 @@ def add_car(request):
 @login_required
 def delete(request, pk):
     my_cars = get_object_or_404(MyCars, pk=pk)
+    car_number = get_object_or_404(Car, pk=pk)
 
     if request.method == "POST":
         my_cars.delete()
@@ -68,6 +70,7 @@ def delete(request, pk):
     context = {
         "title": "Delete car",
         "my_cars": my_cars,
+        "car_number": car_number
     }
 
     return render(request, "accounts/delete.html", context)
@@ -86,7 +89,7 @@ def edit_car(request, pk):
             my_cars_form.save()
             car_number_form.save()
 
-            return redirect(to="accounts:my_cars", pk=pk)
+            return redirect(to="accounts:my_cars")
 
     else:
         my_cars_form = MyCarsForm(instance=my_cars)
