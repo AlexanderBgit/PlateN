@@ -21,37 +21,43 @@ class PaymentsForm(forms.ModelForm):
     registration_id = forms.ModelChoiceField(
         queryset=Registration.objects.all(),
         required=False,  # Set it to True if it's required
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+                "title": "Select the Registration number you want to pay from the list",
+            }
+        ),
         help_text="Select the Registration number you want to pay from the list",
     )
 
-    manual_registration_id = forms.CharField(
+    manual_registration_id = forms.DecimalField(
+        min_value=1,
+        max_digits=6,
+        max_value=10**6 - 1,
         required=False,
-        max_length=6,
-        widget=forms.TextInput(
-            attrs={"class": "form-control col-6", "placeholder": "XXXXXX"}  # ,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control col-8",
+                "placeholder": "XXXXXX",
+                "title": "Enter a valid registration ID with which you want to pay",
+            }  # ,
         ),
-        help_text="Enter a valid registration ID with which you want to pay",
+        # help_text="Enter a valid registration ID with which you want to pay",
     )
 
     amount = forms.DecimalField(
+        min_value=5,
         max_digits=10,
         decimal_places=2,
         widget=forms.NumberInput(
-            attrs={"class": "form-control col-6", "placeholder": "0.00"}
+            attrs={
+                "class": "form-control col-6",
+                "placeholder": "0.00",
+                "title": "Enter the amount you want to pay",
+            }
         ),
-        help_text="Enter the amount you want to pay",
+        # help_text="Enter the amount you want to pay",
     )
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     # Loop through all fields in the form
-    #     for field_name, field in self.fields.items():
-    #         # Check if the field is not 'registration_id' or 'amount'
-    #         print(field_name, field.widget)
-    #         if field_name not in ["registration_id", "amount"]:
-    #             # Apply the widget to the field
-    #             field.widget = forms.TextInput(attrs={"class": "form-control"})
 
     class Meta:
         model = Payment
