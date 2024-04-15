@@ -79,10 +79,8 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = "users.CustomUser"
-<<<<<<< HEAD
 PARKING_SPACES_COUNT = 100
-=======
->>>>>>> origin/dev
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
