@@ -22,18 +22,29 @@ def main(request):
         },
     )
 
+<<<<<<< HEAD
+=======
+from parking.models import Registration
+# from .models import Sessions
+
+>>>>>>> origin/dev
 def generate_report(request):
     user = request.user
     entry_datetime = request.GET.get('start_date')
     exit_datetime = request.GET.get('end_date')
     car = car
+<<<<<<< HEAD
     
+=======
+    # entries = Sessions.objects.all()[:10]
+>>>>>>> origin/dev
 
     parking_entries = Registration.objects.filter(user=user, 
                                                   entry_time__range=[entry_datetime, exit_datetime])
 
     return render(request, 'accounts/report.html', {'car': car, 'start_date': entry_datetime, 'end_date': exit_datetime})
 
+<<<<<<< HEAD
 def parking_plan_view(request):
     parking_spaces = ParkingSpace.objects.all()
 
@@ -92,3 +103,5 @@ def exit_registration(request, entry_id):
 def registration_table(request):
     registrations = EntryRegistration.objects.all()
     return render(request, 'registration_table.html', {'registrations': registrations})
+=======
+>>>>>>> origin/dev
