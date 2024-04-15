@@ -1,17 +1,10 @@
 <!-- parking/templates/car_list.html -->
 {% extends "parking/base.html" %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List of Cars</title>
-</head>
-<body>
+{% block content %}
     <h1>List of Cars</h1>
     
     <!-- Форма фільтрації -->
-    <form method="GET" action="{% url 'car_list' %}">
+    <form method="GET" action="{% url 'cars:car_list' %}">
         <!-- Додайте поля фільтрації за вашими потребами -->
         <label for="car_number">Car Number:</label>
         <input type="text" name="car_number">
@@ -32,5 +25,4 @@
             <li>No cars found.</li>
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock content %}
