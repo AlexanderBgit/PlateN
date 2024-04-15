@@ -4,13 +4,10 @@
     <h1>List of Cars</h1>
     
     <!-- Форма фільтрації -->
-<<<<<<< HEAD:FRONTEND/fastparking/cars/templates/cars/cars.html
-    <form method="GET" action="{% url 'cars' %}">
-    <!-- Додайте поля фільтрації за вашими потребами -->
-=======
+
     <form method="GET" action="{% url 'cars:car_list' %}">
         <!-- Додайте поля фільтрації за вашими потребами -->
->>>>>>> 3e302bb42f80857ce7753fe82eb88f153b7aaed0:FRONTEND/fastparking/cars/templates/cars/car_list.html
+
         <label for="car_number">Car Number:</label>
         <input type="text" name="car_number">
         
