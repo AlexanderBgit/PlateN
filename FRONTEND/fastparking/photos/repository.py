@@ -45,6 +45,15 @@ def registration_car(utc_datetime, registration_data):
     print(f"registration_car: {utc_datetime=}, {registration_data=}")
 
 
+def build_base64_image(binary_image_data):
+    return base64.b64encode(binary_image_data).decode("utf-8")
+
+
+def build_html_image(binary_image_data):
+    base64_image_data = build_base64_image(binary_image_data)
+    return f'<img src="data:image/jpeg;base64,{base64_image_data}">'
+
+
 def handle_uploaded_file(f, type: str | None) -> dict[str, dict]:
     if f and type:
         utc_datetime = datetime.utcnow()
