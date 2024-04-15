@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Table</title>
+</head>
+<body>
+    <h1>Registration Table</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Parking</th>
+                <th>Entry Time</th>
+                <th>Exit Time</th>
+                <th>Car Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registration in registrations %}
+            <tr>
+                <td>{{ registration.id }}</td>
+                <td>{{ registration.parking }}</td>
+                <td>{{ registration.entry_registration.entry_datetime }}</td>
+                <td>{{ registration.exit_datetime }}</td>
+                <td>{{ registration.car_number_out }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
