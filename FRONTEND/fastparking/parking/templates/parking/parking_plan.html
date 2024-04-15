@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>План парковки</title>
+    <style>
+        .parking-space {
+            width: 50px; /* Ширина парковочного місця */
+            height: 50px; /* Висота парковочного місця */
+            border: 1px solid #000; /* Рамка парковочного місця */
+            margin: 2px; /* Відступ між місцями */
+            display: inline-block; /* Показувати місця в одному рядку */
+        }
+        .free-space {
+            background-color: green; /* Колір для вільних місць */
+        }
+    </style>
+</head>
+<body>
+    {% for row in parking_rows %}
+        <div>
+            {% for space in row %}
+                <div class="parking-space free-space"></div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</body>
+</html>

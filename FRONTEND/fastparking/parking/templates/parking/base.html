@@ -44,6 +44,10 @@
           <span class="nav-item">Accounts</span>
         </a>
       </li>
+      <a class="nav-link {% if active_menu == 'parking:registration_list' %}active{% else %}text-white{% endif %}" href="{% url 'parking:registration_list' %}">
+        <i class="fa-solid fa-car"></i>
+        <span class="nav-item">Registration</span>
+      </a>
       <li>
         <a class="nav-link {% if active_menu == 'cars' %}active{% else %}text-white{% endif %}" href="/cars/">
             <i class="fa-solid fa-car"></i>
