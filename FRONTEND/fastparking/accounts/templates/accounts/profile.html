@@ -6,8 +6,21 @@
 <body>
     <h1>User Profile</h1>
     <p>Username: {{ request.user.username }}</p>
+    {% if request.user.first_name %}
+    <p>First name: {{ request.user.first_name }}</p>
+    {% endif %}
+    {% if request.user.last_name %}
+    <p>Last name: {{ request.user.last_name }}</p>
+    {% endif %}
     <p>Email: {{ request.user.email }}</p>
-    <!-- Додайте інші дані профілю користувача, які вам потрібні -->
+    {% if request.user.telegram_nickname  %}
+    <p>Telegram nickname: {{ request.user.telegram_nickname }}</p>
+    {% endif %}
+    {% if request.user.phone_number %}
+    <p>Phone number: {{ request.user.phone_number }}</p>
+
+    {% endif %}
+
 
     <a href="{% url 'accounts:my_cars' %}" class="btn btn-primary">My Cars</a>
 </body>
