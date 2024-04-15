@@ -1,18 +1,28 @@
-<!-- finance/templates/finance/main.html -->
 {% extends "parking/base.html" %}
 {% block content %}
-    <h2>
-        <ul>
-            <li>
-                <a class="btn btn-primary" href="{% url 'photos:upload' %}">Upload photo of car</a>
-            </li>
-            <li>
-                <a class="btn btn-primary" href="{% url 'photos:upload' %}?type=0">Upload IN photo of car</a>
-            </li>
-            <li>
-                <a class="btn btn-primary" href="{% url 'photos:upload' %}?type=1">Upload OUT photo of car</a>
-            </li>
-        </ul>
-    </h2>
-
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card bg-primary">
+                <div class="card-body">
+                    <a href="{% url 'photos:upload' %}" class="btn btn-primary btn-lg btn-block">Upload photo of car</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-primary">
+                <div class="card-body">
+                    <a href="{% url 'photos:upload' %}?type=0" class="btn btn-primary btn-lg btn-block">Upload IN photo of car</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-primary">
+                <div class="card-body">
+                    <a href="{% url 'photos:upload' %}?type=1" class="btn btn-primary btn-lg btn-block">Upload OUT photo of car</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
