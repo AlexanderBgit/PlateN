@@ -29,7 +29,7 @@ class Car(models.Model):
         return self.car_number
 
     def get_absolute_url(self):
-        return reverse("car_list", kwargs={"pk": self.pk})
+        return reverse("cars", kwargs={"pk": self.pk})
 
 class MyCars(models.Model):
     pass

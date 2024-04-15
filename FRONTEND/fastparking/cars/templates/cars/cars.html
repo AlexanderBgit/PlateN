@@ -1,11 +1,11 @@
-<!-- parking/templates/car_list.html -->
+<!-- parking/templates/cars.html -->
 {% extends "parking/base.html" %}
 {% block content %}
     <h1>List of Cars</h1>
     
     <!-- Форма фільтрації -->
-    <form method="GET" action="{% url 'car_list' %}">
-        <!-- Додайте поля фільтрації за вашими потребами -->
+    <form method="GET" action="{% url 'cars' %}">
+    <!-- Додайте поля фільтрації за вашими потребами -->
         <label for="car_number">Car Number:</label>
         <input type="text" name="car_number">
         

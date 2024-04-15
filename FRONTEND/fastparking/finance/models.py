@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from parking.models import Registration
 
 class Tariff(models.Model):
@@ -10,6 +11,8 @@ class Tariff(models.Model):
 
     def __str__(self):
         return self.description
+    def get_absolute_url(self):
+        return reverse('tariff-detail', kwargs={'pk': self.pk})
 
 class Payment(models.Model):
     # user_id = models.IntegerField(blank=True, null=True)  # ID користувача, який здійснив оплату (не обов'язкове)
@@ -20,3 +23,5 @@ class Payment(models.Model):
     def __str__(self):
         return f"Payment {self.id}"
 
+    def get_absolute_url(self):
+        return reverse('post', kwargs={'post_slug': self.id})
