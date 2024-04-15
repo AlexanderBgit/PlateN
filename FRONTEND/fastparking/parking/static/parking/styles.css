@@ -31,6 +31,14 @@ h1, .h1, h2, .h2, h3, .h3 {
     margin-right: 16px;
 }
 
+.sidebar .nav-pills li:hover {
+  background-color: #485070;
+}
+
+.sidebar ul li a:hover {
+  color: #ccc !important;
+}
+
 /* bootstrap */
 .bd-placeholder-img {
     font-size: 1.125rem;
