@@ -14,6 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 import tempfile
+import configparser
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +22,20 @@ env_file = BASE_DIR.parent.parent.joinpath("deploy").joinpath(".env")
 if env_file.exists():
     load_dotenv(env_file)
 
+git_version = ""
+GIT_VERSION_FILE = BASE_DIR.parent.joinpath("git-version.txt")
+if GIT_VERSION_FILE.exists():
+    git_version = GIT_VERSION_FILE.read_text().strip()
 
+proj_version = ""
+PYPROJECT_FILE = BASE_DIR.parent.joinpath("pyproject.toml")
+if PYPROJECT_FILE.exists():
+    config = configparser.ConfigParser()
+    config.read(PYPROJECT_FILE)
+    proj_version = config["tool.poetry"]["version"].strip('"')
+
+VERSION = f"{proj_version}-{git_version}"
+print(f"{VERSION=}")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -40,7 +54,9 @@ DEBUG = bool(os.environ.get("DJANGO_DEBUG", True))
 DJANGO_ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS")
 if DJANGO_ALLOWED_HOSTS:
     ALLOWED_HOSTS = DJANGO_ALLOWED_HOSTS.split(",")
-    CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in DJANGO_ALLOWED_HOSTS.split(",")]
+    CSRF_TRUSTED_ORIGINS = [
+        f"https://{host}" for host in DJANGO_ALLOWED_HOSTS.split(",")
+    ]
 else:
     ALLOWED_HOSTS = []
 
@@ -63,7 +79,7 @@ INSTALLED_APPS = [
     "accounts",
 ]
 
-AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = "users.CustomUser"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -192,14 +208,14 @@ CACHES = {
 }
 
 # print(f"{CACHES=}")
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("MAIL_SERVER")
 EMAIL_PORT = os.getenv("MAIL_PORT", 465)
 EMAIL_STARTTLS = False
 EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
-EMAIL_HOST_USER = os.getenv('MAIL_USERNAME')
-EMAIL_HOST_PASSWORD = os.getenv('MAIL_PASSWORD')
+EMAIL_HOST_USER = os.getenv("MAIL_USERNAME")
+EMAIL_HOST_PASSWORD = os.getenv("MAIL_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
