@@ -1,14 +1,6 @@
 <!-- photos/templates/upload.html -->
-{% extends "parking/base.html" %} {% block content %} {% if target_type %}
-<h1>Upload photo: {{ target_type.desc}}</h1>
-{% else %}
-<h1>Upload photo</h1>
-{% endif %}
-<form method="POST" action="" enctype="multipart/form-data">
-  {% csrf_token %} {{ form.as_p }}
-  <input class="btn btn-primary" type="submit" value="Submit" />
-</form>
-{% if info %}
+{% extends "parking/base.html" %}
+{% block content %} 
 <h2>RESULT:</h2>
 <p class="">info: {{ info }}</p>
 <p class="">number: {{ predict.num_avto_str }}</p>
