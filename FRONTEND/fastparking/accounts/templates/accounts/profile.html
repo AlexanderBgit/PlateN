@@ -1,31 +1,30 @@
 {% extends "parking/base.html" %}
 {% block content %}
 
-    <h1>User Profile</h1>
+    <h3>User Profile</h3>
 
     <div class="card mt-3">
         <div class="card-header"><strong>Details:</strong></div>
         <div class="card-body">
-          <h5 class="card-title mb-3 mt-3"><strong>Username:</strong> {{ request.user.username }}</h5>
-    
-          <p><strong>Username: </strong>{{ request.user.username }}</p>
+
+          <h6 class="card-title mb-3 mt-3"><strong>Username: </strong>{{ request.user.username }}</h6>
 
           {% if request.user.first_name %}
-          <p><strong>First name: </strong>{{ request.user.first_name }}</p>
+          <h6 class="card-title mb-3 mt-3"><strong>First name: </strong>{{ request.user.first_name }}</h6>
           {% endif %}
 
           {% if request.user.last_name %}
-          <p><strong>Last name: </strong>{{ request.user.last_name }}</p>
+          <h6 class="card-title mb-3 mt-3"><strong>Last name: </strong>{{ request.user.last_name }}</h6>
           {% endif %}
 
-          <p><strong>Email: </strong>{{ request.user.email }}</p>
+          <h6 class="card-title mb-3 mt-3"><strong>Email: </strong>{{ request.user.email }}</h6>
 
           {% if request.user.telegram_nickname  %}
-          <p><strong>Telegram nickname: </strong>{{ request.user.telegram_nickname }}</p>
+          <h6 class="card-title mb-3 mt-3"><strong>Telegram nickname: </strong>{{ request.user.telegram_nickname }}</h6>
           {% endif %}
 
           {% if request.user.phone_number %}
-          <p><strong>Phone number: </strong>{{ request.user.phone_number }}</p>
+          <h6 class="card-title mb-3 mt-3"><strong>Phone number: </strong>{{ request.user.phone_number }}</h6>
           {% endif %}
       
         </div>
