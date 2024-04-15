@@ -1,7 +1,8 @@
 from django import forms
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 from .models import Tariff, Payment, Registration
+from parking.repository import get_registration_instance
 
 
 class TariffForm(forms.ModelForm):
@@ -17,23 +18,46 @@ class TariffForm(forms.ModelForm):
 
 
 class PaymentsForm(forms.ModelForm):
-    manual_registration_id = forms.CharField(
-        required=False,
-        max_length=6,
-        widget=forms.TextInput(
-            attrs={"placeholder": "XXXXXX"}  # "class": "form-control",
+    registration_id = forms.ModelChoiceField(
+        queryset=Registration.objects.all(),
+        required=False,  # Set it to True if it's required
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+                "title": "Select the Registration number you want to pay from the list",
+            }
         ),
+        help_text="Select the Registration number you want to pay from the list",
     )
 
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     # Loop through all fields in the form
-    #     for field_name, field in self.fields.items():
-    #         # Check if the field is not 'registration_id' or 'amount'
-    #         print(field_name, field.widget)
-    #         if field_name not in ["registration_id", "amount"]:
-    #             # Apply the widget to the field
-    #             field.widget = forms.TextInput(attrs={"class": "form-control"})
+    manual_registration_id = forms.DecimalField(
+        min_value=1,
+        max_digits=6,
+        max_value=10**6 - 1,
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control col-8",
+                "placeholder": "XXXXXX",
+                "title": "Enter a valid registration ID with which you want to pay",
+            }  # ,
+        ),
+        # help_text="Enter a valid registration ID with which you want to pay",
+    )
+
+    amount = forms.DecimalField(
+        min_value=5,
+        max_digits=10,
+        decimal_places=2,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control col-6",
+                "placeholder": "0.00",
+                "title": "Enter the amount you want to pay",
+            }
+        ),
+        # help_text="Enter the amount you want to pay",
+    )
 
     class Meta:
         model = Payment
@@ -60,11 +84,11 @@ class PaymentsForm(forms.ModelForm):
 
         return cleaned_data
 
-    def get_registration_instance(self, id):
-        try:
-            return Registration.objects.get(pk=id)
-        except ObjectDoesNotExist:
-            return None
+    def clean_amount(self):
+        amount = self.cleaned_data.get("amount")
+        if amount is not None and amount <= 0:
+            raise ValidationError("Amount must be a positive value.")
+        return amount
 
     def clean_manual_registration_id(self):
         manual_registration_id = self.cleaned_data.get("manual_registration_id")
@@ -80,9 +104,7 @@ class PaymentsForm(forms.ModelForm):
 
         if manual_registration_id:
             # If manual_registration_id is provided, save it to the registration_id field
-            instance.registration_id = self.get_registration_instance(
-                manual_registration_id
-            )
+            instance.registration_id = get_registration_instance(manual_registration_id)
 
         if commit:
             instance.save()
