@@ -17,6 +17,11 @@ class RegisterForm(UserCreationForm):
     telegram_nickname = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
     telegram_id = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
     # cars = forms.ModelMultipleChoiceField(queryset=Car.objects.all(), required=False)
+    password1 = CharField(max_length=20, min_length=8, required=True,
+                          widget=PasswordInput(attrs={"class": "form-control"}))
+    password2 = CharField(max_length=20, min_length=8, required=True,
+                          widget=PasswordInput(attrs={"class": "form-control"}))
+
     class Meta:
         model = get_user_model()  # Змінено з User на CustomUser
         # fields = ("username", "first_name", "last_name", "email", "phone_number", "accept_oferta", "password1", "password2", "telegram_nickname")
