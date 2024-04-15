@@ -9,3 +9,4 @@ urlpatterns = [
     path('registration/', views.registration_list, name='registration_list'),
    
 ]
+
