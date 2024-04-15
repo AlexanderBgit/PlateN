@@ -1,47 +1,56 @@
 {% extends "parking/base.html" %}
 {% block content %}
 
+    <h2 style="padding-left: 1rem;">{{ title }}</h2>
 
-    <title>{{ title }}</title>
-</head>
-<body>
-    <h1>{{ title }}</h1>
     {% if my_cars %}
-        <ul>
-            {% for car in my_cars %}
-            
-            
-            <li>Brand: {{ car.brand }}</li>
-            <li>Type: {{ car.car_type }}</li>
-            <li>Number: {{ car.car_number }}</li>
-            <a href="{% url 'accounts:edit_car' car.pk %}" class="btn btn-primary">Edit</a>
-            <a href="{% url 'accounts:delete' car.pk %}" class="btn btn-primary">Delete Car</a>
 
-           
-            
-            {% endfor %}
-        </ul>
+    <div class="bd-example">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Brand</th>
+                <th scope="col">Type</th>
+                <th scope="col">Number</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delit</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for car in my_cars %}
+                    <tr>
+                        <th scope="row">{{ car.brand }}</th>
+                        <td>{{ car.car_type }}</td>
+                        <td>{{ car.car_number }}</td>
+
+                        <td>
+                            <h5><a class="badge rounded-pill text-bg-info" style="color: white !important;"
+                                href="{% url 'accounts:edit_car' car.pk %}">Edit</a>
+                            </h5>
+                        </td>
+                        <td>
+                            <h5><a class="badge rounded-pill text-bg-danger" style="color: white !important;"
+                                href="{% url 'accounts:delete' car.pk %}">Delete</a>
+                            </h5>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <br>
+
     {% else %}
         <p>No cars found.</p>
     {% endif %}
-    
-    
+
 
     <div class="card-body" style="display: inline-block">
-        
-        
+
         <a href="{% url 'accounts:add_car' %}" class="btn btn-success">Add new Car</a>
-
-        
-
-        
-
-        
 
     </div>
 </div>
 
-</body>
-</html>
 {% endblock content %}
 
