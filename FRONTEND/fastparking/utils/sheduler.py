@@ -1,9 +1,12 @@
 import time
 import argparse
+import platform
 
+from django.conf import settings
 
 from telegram_api import crone_pool, send_message_news
 from communications.send_news import send_news_to_telegram
+from communications.notifications import send_limits
 
 
 def handler_telegram_pool(print_log: bool = False):
@@ -15,6 +18,7 @@ def handler_telegram_pool(print_log: bool = False):
 def handler_limit_check(print_log: bool = False):
     if print_log:
         print("- handler_limit_check")
+    send_limits()
 
 
 def handler_news_check(print_log: bool = False):
@@ -60,14 +64,12 @@ if __name__ == "__main__":
     )
     parser.add_argument("-q", "--quite", action="store_true", help="Quite")
     args = parser.parse_args()
-
     if args.sent_hello:
-        if __name__ == "__main__":
-            text = "Local developer run 'sheduler.py' at: <datetime>"
+        version = settings.VERSION
+        if platform.system() != "Linux":
+            text = f"Local developer run 'sheduler.py' v.{version} at: <datetime>"
         else:
-            text = (
-                "Hosting server just applied new changes of git branch at: <datetime>"
-            )
+            text = f"Hosting server just applied new changes of git branch v.{version} at: <datetime>"
         result = send_message_news(text)
     # print(f"{result=}")
     if args.loop:

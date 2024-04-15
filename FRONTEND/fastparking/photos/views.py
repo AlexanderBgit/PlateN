@@ -5,10 +5,15 @@ from django.urls import reverse
 
 
 # Imaginary function to handle an uploaded file.
-from .repository import handle_uploaded_file
+from .repository import handle_uploaded_file, TYPES
 
 
 def upload_file(request):
+    target_type = None
+    if request.method == "GET":
+        tt = request.GET.get("type")
+        if tt:
+            target_type = {"type": tt, "desc": TYPES.get(tt)}
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -23,13 +28,23 @@ def upload_file(request):
                     return render(
                         request,
                         "photos/upload.html",
-                        {"form": form, "info": info, "predict": predict},
+                        {
+                            "form": form,
+                            "target_type": target_type,
+                            "info": info,
+                            "predict": predict,
+                        },
                     )
             # upload_url = reverse("upload")
             return HttpResponseRedirect("")
     else:
-        form = UploadFileForm()
-    return render(request, "photos/upload.html", {"form": form})
+        initial = None
+        if target_type:
+            initial = {"type": target_type.get("type")}
+        form = UploadFileForm(initial=initial)
+    return render(
+        request, "photos/upload.html", {"form": form, "target_type": target_type}
+    )
 
 
 def main(request):

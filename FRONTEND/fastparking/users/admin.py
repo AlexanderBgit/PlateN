@@ -4,9 +4,6 @@ from django.contrib import admin
 from .models import CustomUser
 class ModelAdmin(admin.ModelAdmin):
 
-    def has_module_permission(self, request):
-        return False
-
     exclude = ("user_permissions", "is_staff", "is_superuser")
 
     list_display = (
