@@ -1,9 +1,5 @@
-from django.utils import timezone
 from django.db import models
-from photos.models import Photo
-from django.db import models
-from cars.models import Car
-
+# from finance.models import Tariff
 
 class ParkingSpace(models.Model):
     number = models.CharField(max_length=10, unique=True)
@@ -12,50 +8,25 @@ class ParkingSpace(models.Model):
 
     def __str__(self):
         return self.number
-
-
-
 class Registration(models.Model):
-    parking = models.ForeignKey(ParkingSpace, on_delete=models.CASCADE)
+    parking_space = models.ForeignKey(ParkingSpace, on_delete=models.CASCADE)
+    car_number = models.CharField(max_length=16)
     entry_datetime = models.DateTimeField(auto_now_add=True)
-    car_number_in = models.CharField(max_length=16)
     exit_datetime = models.DateTimeField(null=True, blank=True)
     invoice = models.CharField(max_length=255, null=True, blank=True)
-    car_number_out = models.CharField(max_length=16, null=True, blank=True)
-    photo_in = models.ForeignKey(Photo, on_delete=models.SET_NULL, related_name='registration_photo_in', null=True, blank=True)
-    photo_out = models.ForeignKey(Photo, on_delete=models.SET_NULL, related_name='registration_photo_out', null=True, blank=True)
-    car = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True, blank=True)
-
-    @property
-    def duration(self):
-        if self.exit_datetime:
-            return self.exit_datetime - self.entry_datetime
-        else:
-            return timezone.now() - self.entry_datetime
+    payments = models.BooleanField(default=False)
+    tariff_id = models.IntegerField(null=True)  # Додамо поле для зберігання id тарифу
 
     def __str__(self):
-        return f"Registration ID: {self.id} - Parking ID: {self.parking_id} - Entry Time: {self.entry_datetime}"
+        return f"Registration: {self.car_number} - Parking Space: {self.parking_space.number}"
 
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Якщо це нова реєстрація
+            # Збережемо id тарифу для цієї реєстрації на момент заїзду
+            self.tariff_id = self.get_current_tariff_id()
+        super(Registration, self).save(*args, **kwargs)
 
-class EntryRegistration(models.Model):
-    parking = models.ForeignKey(ParkingSpace, on_delete=models.CASCADE)
-    entry_datetime = models.DateTimeField(auto_now_add=True)
-    car_number_in = models.CharField(max_length=16)
-
-class ExitRegistration(models.Model):
-    parking = models.ForeignKey(ParkingSpace, on_delete=models.CASCADE)
-    entry_registration = models.OneToOneField(EntryRegistration, on_delete=models.CASCADE)
-    exit_datetime = models.DateTimeField()
-    car_number_out = models.CharField(max_length=16)
-
-class CombinedRegistration(models.Model):
-    entry_registration = models.OneToOneField(EntryRegistration, on_delete=models.CASCADE)
-    exit_registration = models.OneToOneField(ExitRegistration, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"Combined Registration ID: {self.id}"
-
-    @classmethod
-    def create_combined_registration(cls, entry_registration, exit_registration):
-        combined_registration = cls.objects.create(entry_registration=entry_registration, exit_registration=exit_registration)
-        return combined_registration
+    def get_current_tariff_id(self):
+        # Отримаємо всі тарифи, які були активні на момент заїзду
+        tariff = Tariff.objects.filter(start_date__lte=self.entry_datetime, end_date__gte=self.entry_datetime).first()
+        return tariff.id if tariff else None

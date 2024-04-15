@@ -3,8 +3,7 @@ from .models import ParkingSpace
 from django.conf import settings
 from django.utils import timezone
 from .models import Registration
-from .models import ParkingSpace, EntryRegistration, ExitRegistration, CombinedRegistration
-
+from .models import ParkingSpace
 
 def main(request):
     total_parking_spaces = settings.PARKING_SPACES_COUNT
