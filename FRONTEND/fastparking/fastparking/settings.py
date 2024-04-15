@@ -35,7 +35,6 @@ if PYPROJECT_FILE.exists():
     proj_version = config["tool.poetry"]["version"].strip('"')
 
 VERSION = f"{proj_version}-{git_version}"
-print(f"{VERSION=}")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
