@@ -1,0 +1,16 @@
+<!-- У вашому файлі add_tariff.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Мета теги, посилання на стилі, скрипти та інше -->
+    <title>Add Tariff</title>
+</head>
+<body>
+    <h2>Add Tariff</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>

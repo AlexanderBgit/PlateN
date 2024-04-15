@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.forms import CharField, TextInput, EmailField, EmailInput, PasswordInput
 from django import forms
 from .models import CustomUser
+from cars.models import Car
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={"class": "form-control"}))
@@ -15,10 +16,11 @@ class RegisterForm(UserCreationForm):
     accept_oferta = forms.BooleanField(required=True)
     telegram_nickname = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
     telegram_id = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
+    # cars = forms.ModelMultipleChoiceField(queryset=Car.objects.all(), required=False)
     class Meta:
         model = get_user_model()  # Змінено з User на CustomUser
+        # fields = ("username", "first_name", "last_name", "email", "phone_number", "accept_oferta", "password1", "password2", "telegram_nickname")
         fields = ("username", "first_name", "last_name", "email", "phone_number", "accept_oferta", "password1", "password2", "telegram_nickname")
-
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -41,3 +43,10 @@ class LoginForm(AuthenticationForm):
     class Meta:
         model = get_user_model()
         fields = ("username", "password")
+
+
+
+class CarAddForm(forms.Form):
+    car_number = forms.CharField(label='Car Number', max_length=16)
+    brand = forms.CharField(label='Brand', max_length=100)
+    car_type = forms.CharField(label='Car Type', max_length=100)
