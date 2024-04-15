@@ -79,6 +79,8 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = "users.CustomUser"
+PARKING_SPACES_COUNT = 100
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
