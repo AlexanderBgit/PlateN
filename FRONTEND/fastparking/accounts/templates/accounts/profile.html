@@ -1,28 +1,38 @@
 {% extends "parking/base.html" %}
 {% block content %}
 
-    <title>User Profile</title>
-</head>
-<body>
     <h1>User Profile</h1>
-    <p>Username: {{ request.user.username }}</p>
-    {% if request.user.first_name %}
-    <p>First name: {{ request.user.first_name }}</p>
-    {% endif %}
-    {% if request.user.last_name %}
-    <p>Last name: {{ request.user.last_name }}</p>
-    {% endif %}
-    <p>Email: {{ request.user.email }}</p>
-    {% if request.user.telegram_nickname  %}
-    <p>Telegram nickname: {{ request.user.telegram_nickname }}</p>
-    {% endif %}
-    {% if request.user.phone_number %}
-    <p>Phone number: {{ request.user.phone_number }}</p>
 
-    {% endif %}
+    <div class="card mt-3">
+        <div class="card-header"><strong>Details:</strong></div>
+        <div class="card-body">
+          <h5 class="card-title mb-3 mt-3"><strong>Username:</strong> {{ request.user.username }}</h5>
+    
+          <p><strong>Username: </strong>{{ request.user.username }}</p>
 
+          {% if request.user.first_name %}
+          <p><strong>First name: </strong>{{ request.user.first_name }}</p>
+          {% endif %}
+
+          {% if request.user.last_name %}
+          <p><strong>Last name: </strong>{{ request.user.last_name }}</p>
+          {% endif %}
+
+          <p><strong>Email: </strong>{{ request.user.email }}</p>
+
+          {% if request.user.telegram_nickname  %}
+          <p><strong>Telegram nickname: </strong>{{ request.user.telegram_nickname }}</p>
+          {% endif %}
+
+          {% if request.user.phone_number %}
+          <p><strong>Phone number: </strong>{{ request.user.phone_number }}</p>
+          {% endif %}
+      
+        </div>
+    </div>
+    
+    <br>
 
     <a href="{% url 'accounts:my_cars' %}" class="btn btn-primary">My Cars</a>
-</body>
-</html> 
+
 {% endblock content %}

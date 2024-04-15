@@ -18,11 +18,38 @@
         <button type="submit">Filter</button>
     </form>
 
-    <ul>
-        {% for car in cars %}
-            <li>{{ car.car_number }} - Photo: <img src="{{ car.photo_car.url }}" alt="Car photo">, Predict: {{ car.predict }}, Blocked: {{ car.blocked }}, Pay Pass: {{ car.pay_pass }}</li>
-        {% empty %}
-            <li>No cars found.</li>
-        {% endfor %}
-    </ul>
+
+    {% if cars %}
+    <div class="bd-example">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Number</th>
+                <th scope="col">Photo</th>
+                <th scope="col">Predict</th>
+                <th scope="col">Blocked</th>
+                <th scope="col">Pay Pass</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for car in cars %}
+                    <tr>
+                        <th scope="row">{{ car.car_number }}</th>
+
+                        <td>
+                            <img src="{{ car.photo_car.url }}" alt="Car photo">
+                        </td>
+                        <td>{{ car.predict }}</td>
+                        <td>{{ car.blocked }}</td>
+                        <td>Pass:{{ car.pay_pass }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <li>No cars found.</li>
+    {% endif %}
+    <br>
+
 {% endblock content %}
