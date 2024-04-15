@@ -5,4 +5,5 @@ app_name = 'parking'
 
 urlpatterns = [
     path('', views.main, name='main'),
+    
 ]
