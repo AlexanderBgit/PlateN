@@ -6,6 +6,7 @@ cd "${script_dir}"
 if command -v dos2unix &> /dev/null; then
   echo "converting *.sh files from CRLF to LF"
   dos2unix *.sh &> /dev/null
+  dos2unix ../FRONTEND/*.sh &> /dev/null
 fi
 pushd "../deploy"
 # echo "STOPPING SEPARATED DEV DB CONTAINER"
