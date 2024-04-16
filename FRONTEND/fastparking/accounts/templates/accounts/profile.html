@@ -19,12 +19,12 @@
 
           <h6 class="card-title mb-3 mt-3"><strong>Email: </strong>{{ request.user.email }}</h6>
 
-          {% if request.user.telegram_nickname  %}
-          <h6 class="card-title mb-3 mt-3"><strong>Telegram nickname: </strong>{{ request.user.telegram_nickname }}</h6>
-          {% endif %}
-
           {% if request.user.phone_number %}
           <h6 class="card-title mb-3 mt-3"><strong>Phone number: </strong>{{ request.user.phone_number }}</h6>
+          {% endif %}
+
+          {% if request.user.telegram_nickname  %}
+          <h6 class="card-title mb-3 mt-3"><strong>Telegram nickname: </strong>{{ request.user.telegram_nickname }}</h6>
           {% endif %}
       
         </div>
