@@ -10,4 +10,6 @@ urlpatterns = [
     path('add-car/', views.add_car, name='add_car'),
     path('delete/<int:pk>', views.delete, name='delete'),
     path('edit-car/<int:pk>/', views.edit_car, name='edit_car'),
+    path('edit-profile/', views.edit_profile, name='edit_profile'),
+    path('password-change/', views.password_change, name='password_change'),
 ]

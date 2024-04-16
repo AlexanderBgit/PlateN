@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate
+from django.urls import reverse_lazy
 
 from .models import MyCars
 from cars.models import Car
-from .forms import MyCarsForm, CarNumberForm
+from .forms import MyCarsForm, CarNumberForm, EditForm, EditPassword
 
 
 
@@ -103,6 +105,33 @@ def edit_car(request, pk):
     }
 
     return render(request, "accounts/edit_car.html", context)
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        user_form = EditForm(request.POST, instance=request.user)  
+        if user_form.is_valid():
+            user_form.save()
+            return redirect(to='accounts:profile')  
+    else:
+        user_form = EditForm(instance=request.user)  
+
+    context = {'user_form': user_form}
+    return render(request, "accounts/edit_profile.html", context)
+
+@login_required
+def password_change(request):
+    if request.method == 'POST':
+        form = EditPassword(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect(to='accounts:profile')
+    else:
+        form = EditPassword(request.user)
+    context = {'form': form}
+    return render(request, 'accounts/password_change.html', context)
+
 
 
 
