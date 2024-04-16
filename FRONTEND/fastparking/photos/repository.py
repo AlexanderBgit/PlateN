@@ -1,4 +1,5 @@
 import base64
+import random
 from datetime import datetime
 from io import BytesIO
 from pathlib import Path
@@ -48,8 +49,12 @@ def save_image(
                 destination.write(chunk)
 
 
-def registration_car(utc_datetime, registration_data):
+def registration_car(utc_datetime, registration_data) -> dict:
     print(f"registration_car: {utc_datetime=}, {registration_data=}")
+    # DEMO MODE
+    if registration_data.get("type") == "0":
+        registration_data["registration_id"] = random.randint(1, 999999)
+    return registration_data
 
 
 def build_base64_image(binary_image_data):
@@ -131,7 +136,9 @@ def handle_uploaded_file(
         if registration_id:
             date_formated = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
             registration_id_formatted = f"{registration_id:06}"
+
             parking_place = registration_result.get("parking_place")
+
             reg_info = f"id:{registration_id},place:{parking_place},date:{int(utc_datetime.timestamp())}|"
             encoded_text = sign_text(reg_info)
             hash_code = encoded_text.split("|:")[-1]
