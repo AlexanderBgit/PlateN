@@ -5,7 +5,18 @@
 <h1>Upload photo</h1>
 {% endif %}
 <form method="POST" action="" enctype="multipart/form-data">
-  {% csrf_token %} {{ form.as_p }}
+  {% csrf_token %} 
+  {% if not target_type %}
+    <p>{{ form.type.label_tag }} {{ form.type }}</p>
+  {% else %}
+  <p class="d-none">{{ form.type.label_tag }} {{ form.type }}</p>
+  {% endif %}
+    <p>{{ form.photo.label_tag }} {{ form.photo }}</p>
+  {% if  target_type == 1 %}
+  <p>{{ form.registration_id.label_tag }} {{ form.registration_id }}</p>
+  <p>{{ form.manual_registration_id.label_tag }} {{ form.manual_registration_id }}</p>
+  {% endif %}
+  
   <input class="btn btn-primary" type="submit" value="Submit" />
 </form>
 {% if info %}

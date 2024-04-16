@@ -71,7 +71,7 @@ def build_qrcode(qr_data) -> str:
     )
     qr.add_data(qr_data)
     qr.make(fit=True)
-    img = qr.make_image(fill_color="brown", back_color="white")
+    img = qr.make_image(fill_color=(56, 64, 88), back_color="white")
 
     # img = qrcode.make(qr_data, border=2)
     mem_file = BytesIO()
