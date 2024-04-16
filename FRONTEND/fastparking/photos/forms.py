@@ -55,27 +55,27 @@ class UploadFileForm(forms.Form):
         # help_text="Enter a valid registration ID with which you want to pay",
     )
 
-    def clean(self):
-        cleaned_data = super().clean()
-        registration_id = cleaned_data.get("registration_id")
-        manual_registration_id = cleaned_data.get("manual_registration_id")
+    # def clean(self):
+    #     cleaned_data = super().clean()
+    #     registration_id = cleaned_data.get("registration_id")
+    #     manual_registration_id = cleaned_data.get("manual_registration_id")
 
-        if not registration_id and not manual_registration_id:
-            raise forms.ValidationError(
-                "Please select a registration ID from the list or enter it manually."
-            )
+    #     if not registration_id and not manual_registration_id:
+    #         raise forms.ValidationError(
+    #             "Please select a registration ID from the list or enter it manually."
+    #         )
 
-        if registration_id:
-            # If registration_id is selected from the list, set manual_registration_id to None
-            cleaned_data["manual_registration_id"] = None
-        elif not manual_registration_id:
-            # If manual_registration_id is not provided and registration_id is not selected from the list, raise validation error
-            raise forms.ValidationError(
-                "Please select a registration ID from the list or enter it manually."
-            )
-        else:
-            cleaned_data["registration_id"] = manual_registration_id
-        return cleaned_data
+    #     if registration_id:
+    #         # If registration_id is selected from the list, set manual_registration_id to None
+    #         cleaned_data["manual_registration_id"] = None
+    #     elif not manual_registration_id:
+    #         # If manual_registration_id is not provided and registration_id is not selected from the list, raise validation error
+    #         raise forms.ValidationError(
+    #             "Please select a registration ID from the list or enter it manually."
+    #         )
+    #     else:
+    #         cleaned_data["registration_id"] = manual_registration_id
+    #     return cleaned_data
 
     def clean_manual_registration_id(self):
         manual_registration_id = self.cleaned_data.get("manual_registration_id")

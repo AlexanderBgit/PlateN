@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 
-
 class Photo(models.Model):
     photo = models.BinaryField(null=True)
     timestamp = models.DateTimeField(auto_now=True)
