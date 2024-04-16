@@ -85,10 +85,10 @@ class UploadFileForm(forms.Form):
 
     def clean_manual_registration_id(self):
         manual_registration_id = self.cleaned_data.get("manual_registration_id")
-        # if manual_registration_id:
-        # Check if the manual_registration_id exists in the list of Registration.registration_id
-        # if not Registration.objects.filter(pk=manual_registration_id).exists():
-        #     raise forms.ValidationError("Entered registration ID does not exist.")
+        if manual_registration_id:
+            # Check if the manual_registration_id exists in the list of Registration.registration_id
+            if not Registration.objects.filter(pk=manual_registration_id).exists():
+                raise forms.ValidationError("Entered registration ID does not exist.")
         return manual_registration_id
 
         #     class Meta:

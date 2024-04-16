@@ -11,10 +11,17 @@ from ds.predict_num import get_num_auto_png_io
 
 from .models import Photo
 
+from parking.models import ParkingSpace, Registration
+from cars.models import Car
+from datetime import datetime
+
+# from .repository import sign_text, build_qrcode
+
+
 TYPES = {"0": "IN", "1": "OUT"}
 
 
-def db_save_photo_information(predict: dict, type: str) -> int | None:
+def db_save_photo_information(predict: dict, type: str) -> Photo | None:
     num_auto = predict.get("num_avto_str")
     accuracy = predict.get("accuracy")
     num_img = predict.get("num_img")
@@ -25,7 +32,7 @@ def db_save_photo_information(predict: dict, type: str) -> int | None:
         record.photo = num_img
         record.type = int(type)
         record.save()
-        return record.pk
+        return record
 
 
 def save_image(
@@ -119,6 +126,9 @@ def handle_uploaded_file(
         photo_id = db_save_photo_information(predict, type)
         # registration
         num_auto = predict.get("num_avto_str")
+        # uniform for manual enter registration_id
+        if registration_id and isinstance(registration_id, Registration):
+            registration_id = registration_id.pk
         registration_data = {
             "photo_id": photo_id,
             "num_auto": num_auto,
@@ -127,7 +137,15 @@ def handle_uploaded_file(
         }
         res = check_and_register_car(registration_data)
         print(res)
-        registration_result = register_parking_event(num_auto, type, photo_id)
+
+        # -------------------------------------------------------
+        registration_result = None
+        if num_auto and photo_id:
+            registration_result = register_parking_event(
+                utc_datetime, num_auto, type, photo_id, registration_id
+            )
+        # -------------------------------------------------------
+
         binary_image_data = predict.get("num_img")
         if binary_image_data:
             base64_image = build_base64_image(binary_image_data)
@@ -138,9 +156,7 @@ def handle_uploaded_file(
         if registration_id:
             date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
             registration_id_formatted = f"{registration_id:06}"
-
             parking_place = registration_result.get("parking_place")
-
             reg_info = f"id:{registration_id},place:{parking_place},date:{int(utc_datetime.timestamp())}|"
             encoded_text = sign_text(reg_info)
             hash_code = encoded_text.split("|:")[-1]
@@ -155,15 +171,10 @@ def handle_uploaded_file(
         return {"info": info, "predict": predict, "registration": registration}
 
 
-from parking.models import ParkingSpace, Registration
-from cars.models import Car
-from datetime import datetime
-from .repository import sign_text, build_qrcode
-
-
 def check_and_register_car(registration_data):
     num_auto = registration_data.get("num_auto")
     photo_id = registration_data.get("photo_id")
+    photo_id = photo_id.pk
 
     try:
         car = Car.objects.get(car_number=num_auto)
@@ -177,7 +188,7 @@ def check_and_register_car(registration_data):
         return {"success": True, "info": "Автомобіль не існує, створено новий запис"}
 
 
-def find_free_parking_space():
+def find_free_parking_space() -> ParkingSpace:
     try:
         # Шукаємо перше вільне місце на парковці
         parking_space = ParkingSpace.objects.filter(status=False).first()
@@ -193,16 +204,80 @@ def find_free_parking_space():
         return None
 
 
-def register_parking_event(num_auto, registration_type, photo_id):
+def parking_space_status_change(id: int, status: bool) -> ParkingSpace | None:
+    try:
+        parking_space = ParkingSpace.objects.get(pk=id)
+        parking_space.status = status
+        parking_space.save()
+        return parking_space
+    except ParkingSpace.DoesNotExist as e:
+        print(f"Error: {e}")
+
+
+def register_parking_event(
+    utc_datetime: datetime,
+    num_auto: str,
+    registration_type,
+    photo_id: Photo,
+    registration_id: int | str | None = None,
+) -> dict | None:
+    if registration_type == "0":
+        return register_parking_in_event(utc_datetime, num_auto, photo_id)
+    elif registration_type == "1":
+        return register_parking_out_event(
+            utc_datetime, num_auto, photo_id, registration_id
+        )
+
+
+def register_parking_in_event(
+    utc_datetime: datetime,
+    num_auto: str,
+    photo_id: Photo,
+) -> dict:
+    result = {"registration_id": None, "parking_space": None, "info": None}
     parking_space = find_free_parking_space()
     if parking_space:
         # Реєструємо нову подію на парковці
-        registration = Registration.objects.create(
-            car_number=num_auto,
-            registration_type=registration_type,
-            registration_photo_id=photo_id,
-            parking_space=parking_space,
-        )
-        return registration
-    else:
-        return None  # Не вдалося знайти вільне місце на парковці
+        try:
+            print(f"register_parking_in_event : {photo_id=}")
+            registration = Registration.objects.create(
+                entry_datetime=utc_datetime,
+                car_number_in=num_auto,
+                photo_in=photo_id,
+                parking=parking_space,
+            )
+            result = {
+                "registration_id": registration.pk,
+                "parking_place": parking_space.number,
+                "info": None,
+            }
+        except Exception as e:
+            print(f"Error: {e} , restore free place {parking_space}")
+            # restore free place
+            parking_space_status_change(parking_space.pk, False)
+    return result
+
+
+def register_parking_out_event(
+    utc_datetime: datetime,
+    num_auto: str,
+    photo_id: Photo,
+    registration_id: int | str | None = None,
+) -> dict | None:
+    result = {"registration_id": None, "parking_space": None, "info": None}
+    if registration_id:
+        registration_id = int(registration_id)
+        try:
+            registration = Registration.objects.get(pk=registration_id)
+            registration.exit_datetime = utc_datetime
+            registration.car_number_out = num_auto
+            registration.photo_out = photo_id
+            registration.save()
+            result = {
+                "registration_id": registration.pk,
+                "parking_place": registration.parking.number,
+                "info": None,
+            }
+        except Registration.DoesNotExist as e:
+            print(f"Error: {e}")
+    return result
