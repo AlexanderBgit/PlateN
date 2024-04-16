@@ -55,10 +55,6 @@ class UploadFileForm(forms.Form):
         # help_text="Enter a valid registration ID with which you want to pay",
     )
 
-
-class Meta:
-    fields = ["registration_id", "manual_registration_id"]
-
     def clean(self):
         cleaned_data = super().clean()
         registration_id = cleaned_data.get("registration_id")
@@ -77,6 +73,8 @@ class Meta:
             raise forms.ValidationError(
                 "Please select a registration ID from the list or enter it manually."
             )
+        else:
+            cleaned_data["registration_id"] = manual_registration_id
         return cleaned_data
 
     def clean_manual_registration_id(self):
@@ -86,3 +84,6 @@ class Meta:
             if not Registration.objects.filter(pk=manual_registration_id).exists():
                 raise forms.ValidationError("Entered registration ID does not exist.")
         return manual_registration_id
+
+        #     class Meta:
+        # fields = ["registration_id", "manual_registration_id"]

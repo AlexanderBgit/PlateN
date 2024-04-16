@@ -10,7 +10,9 @@
   <p>{{ form.photo.label_tag }} {{ form.photo }}</p>
   {% if target_type.desc == "OUT" %}
   <p>{{ form.registration_id.label_tag }} {{ form.registration_id }}</p>
+  <p class="text-warning">{{ form.registration_id.errors }}</p>
   <p>{{ form.manual_registration_id.label_tag }} {{ form.manual_registration_id }}</p>
+  <p class="text-warning">{{ form.manual_registration_id.errors }}</p>
   {% endif %}
 
   <input class="btn btn-primary" type="submit" value="Submit" />
