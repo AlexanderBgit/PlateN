@@ -126,6 +126,9 @@ def handle_uploaded_file(
         photo_id = db_save_photo_information(predict, type)
         # registration
         num_auto = predict.get("num_avto_str")
+        # uniform for manual enter registration_id
+        if registration_id and isinstance(registration_id, Registration):
+            registration_id = registration_id.pk
         registration_data = {
             "photo_id": photo_id,
             "num_auto": num_auto,
