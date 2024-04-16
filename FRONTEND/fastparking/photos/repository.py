@@ -173,6 +173,7 @@ def handle_uploaded_file(
 def check_and_register_car(registration_data):
     num_auto = registration_data.get("num_auto")
     photo_id = registration_data.get("photo_id")
+    photo_id = photo_id.pk
 
     try:
         car = Car.objects.get(car_number=num_auto)
