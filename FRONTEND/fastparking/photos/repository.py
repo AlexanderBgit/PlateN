@@ -11,6 +11,12 @@ from ds.predict_num import get_num_auto_png_io
 
 from .models import Photo
 
+from parking.models import ParkingSpace, Registration
+from cars.models import Car
+from datetime import datetime
+from .repository import sign_text, build_qrcode
+
+
 TYPES = {"0": "IN", "1": "OUT"}
 
 
@@ -127,13 +133,15 @@ def handle_uploaded_file(
         }
         res = check_and_register_car(registration_data)
         print(res)
-        registration_result = register_parking_event(num_auto, type, photo_id)
+        registration_result = register_parking_event(
+            num_auto, type, photo_id, registration_id
+        )
         binary_image_data = predict.get("num_img")
         if binary_image_data:
             base64_image = build_base64_image(binary_image_data)
             predict["num_img"] = base64_image
         if registration_result:
-            registration_id = registration_result.get("registration_id")
+            registration_id = registration_result.pk
         registration = None
         if registration_id:
             date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -155,12 +163,6 @@ def handle_uploaded_file(
         return {"info": info, "predict": predict, "registration": registration}
 
 
-from parking.models import ParkingSpace, Registration
-from cars.models import Car
-from datetime import datetime
-from .repository import sign_text, build_qrcode
-
-
 def check_and_register_car(registration_data):
     num_auto = registration_data.get("num_auto")
     photo_id = registration_data.get("photo_id")
@@ -177,7 +179,7 @@ def check_and_register_car(registration_data):
         return {"success": True, "info": "Автомобіль не існує, створено новий запис"}
 
 
-def find_free_parking_space():
+def find_free_parking_space() -> ParkingSpace:
     try:
         # Шукаємо перше вільне місце на парковці
         parking_space = ParkingSpace.objects.filter(status=False).first()
@@ -193,7 +195,21 @@ def find_free_parking_space():
         return None
 
 
-def register_parking_event(num_auto, registration_type, photo_id):
+def parking_space_status_change(id: int, status: bool) -> ParkingSpace | None:
+    try:
+        parking_space = ParkingSpace.objects.get(pk=id)
+        parking_space.status = status
+        parking_space.save()
+        return parking_space
+    except ParkingSpace.DoesNotExist as e:
+        print(f"Error: {e}")
+
+
+def register_parking_event(
+    num_auto, registration_type, photo_id, registration_id: int | str | None = None
+) -> Registration | None:
+    if registration_id:
+        registration_id = int(registration_id)
     parking_space = find_free_parking_space()
     if parking_space:
         # Реєструємо нову подію на парковці
