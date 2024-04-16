@@ -1,9 +1,5 @@
 from django.urls import reverse
-
 from django.conf import settings
-
-
-
 from django.db import models
 from photos.models import Photo
 
@@ -33,3 +29,4 @@ class Car(models.Model):
 
 class MyCars(models.Model):
     pass
+

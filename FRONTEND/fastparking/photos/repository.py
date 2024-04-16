@@ -13,7 +13,6 @@ from .models import Photo
 
 TYPES = {"0": "IN", "1": "OUT"}
 
-
 def db_save_photo_information(predict: dict, type: str) -> int | None:
     num_auto = predict.get("num_avto_str")
     accuracy = predict.get("accuracy")
@@ -100,7 +99,6 @@ def unsign_text(text):
         print("Tampering detected!")
         return None
 
-
 def handle_uploaded_file(
     f, type: str | None, filename: str | None = None, registration_id: str | None = None
 ) -> dict[str, dict]:
@@ -125,8 +123,9 @@ def handle_uploaded_file(
             "type": type,
             "registration_id": registration_id,
         }
-        registration_result = registration_car(utc_datetime, registration_data)
-        # prepare for show on web page
+        res = check_and_register_car(registration_data)
+        print(res)
+        registration_result = register_parking_event(num_auto, type, photo_id)
         binary_image_data = predict.get("num_img")
         if binary_image_data:
             base64_image = build_base64_image(binary_image_data)
@@ -137,7 +136,9 @@ def handle_uploaded_file(
         if registration_id:
             date_formated = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
             registration_id_formatted = f"{registration_id:06}"
-            parking_place = "L01-01"
+
+            parking_place = registration_result.get("parking_place")
+
             reg_info = f"id:{registration_id},place:{parking_place},date:{int(utc_datetime.timestamp())}|"
             encoded_text = sign_text(reg_info)
             hash_code = encoded_text.split("|:")[-1]
@@ -150,3 +151,51 @@ def handle_uploaded_file(
                 "hash": hash_code,
             }
         return {"info": info, "predict": predict, "registration": registration}
+
+from parking.models import ParkingSpace, Registration
+from cars.models import Car
+from datetime import datetime
+from .repository import sign_text, build_qrcode
+def check_and_register_car(registration_data):
+    num_auto = registration_data.get("num_auto")
+    photo_id = registration_data.get("photo_id")
+    
+    try:
+        car = Car.objects.get(car_number=num_auto)
+        if car.blocked:
+            return {"success": False, "info": "Автомобіль заблокований"}
+        else:
+            return {"success": True, "info": "Автомобіль існує і не заблокований"}
+    except Car.DoesNotExist:
+        # Створюємо новий запис в таблиці Car
+        car = Car.objects.create(car_number=num_auto, photo_car_id=photo_id)
+        return {"success": True, "info": "Автомобіль не існує, створено новий запис"}
+
+def find_free_parking_space():
+    try:
+        # Шукаємо перше вільне місце на парковці
+        parking_space = ParkingSpace.objects.filter(status=False).first()
+        if parking_space:
+            # Змінюємо статус місця на зайнято
+            parking_space.status = True
+            parking_space.save()
+            return parking_space
+        else:
+            return None  # Немає вільних місць на парковці
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+def register_parking_event(num_auto, registration_type, photo_id):
+    parking_space = find_free_parking_space()
+    if parking_space:
+        # Реєструємо нову подію на парковці
+        registration = Registration.objects.create(
+            car_number=num_auto,
+            registration_type=registration_type,
+            registration_photo_id=photo_id,
+            parking_space=parking_space
+        )
+        return registration
+    else:
+        return None  # Не вдалося знайти вільне місце на парковці
