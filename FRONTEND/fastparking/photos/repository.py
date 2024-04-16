@@ -23,7 +23,7 @@ def db_save_photo_information(predict: dict, type: str) -> int | None:
         record.recognized_car_number = num_auto
         record.accuracy = accuracy
         record.photo = num_img
-        record.type = type
+        record.type = int(type)
         record.save()
         return record.pk
 
