@@ -25,6 +25,8 @@ services:
     tty: true        # docker run -t
     ports:
       - "8000:8000"
+    volumes:
+      - ../Database/django_cache:/tmp/django_cache
     depends_on:
       pg:
         condition: service_healthy
