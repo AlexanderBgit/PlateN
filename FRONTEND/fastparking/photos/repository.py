@@ -148,14 +148,12 @@ def handle_uploaded_file(
             base64_image = build_base64_image(binary_image_data)
             predict["num_img"] = base64_image
         if registration_result:
-            registration_id = registration_result.pk
+            registration_id = registration_result.get("registration_id")
         registration = None
         if registration_id:
             date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
             registration_id_formatted = f"{registration_id:06}"
-
             parking_place = registration_result.get("parking_place")
-
             reg_info = f"id:{registration_id},place:{parking_place},date:{int(utc_datetime.timestamp())}|"
             encoded_text = sign_text(reg_info)
             hash_code = encoded_text.split("|:")[-1]
@@ -219,7 +217,7 @@ def register_parking_event(
     registration_type,
     photo_id: Photo,
     registration_id: int | str | None = None,
-) -> Registration | None:
+) -> dict | None:
     if registration_type == "0":
         return register_parking_in_event(utc_datetime, num_auto, photo_id)
     elif registration_type == "1":
@@ -232,24 +230,29 @@ def register_parking_in_event(
     utc_datetime: datetime,
     num_auto: str,
     photo_id: Photo,
-) -> Registration | None:
+) -> dict:
+    result = {"registration_id": None, "parking_space": None, "info": None}
     parking_space = find_free_parking_space()
     if parking_space:
         # Реєструємо нову подію на парковці
         try:
+            print(f"register_parking_in_event : {photo_id=}")
             registration = Registration.objects.create(
                 entry_datetime=utc_datetime,
                 car_number_in=num_auto,
-                registration_photo_id=photo_id,
+                photo_in=photo_id,
                 parking=parking_space,
             )
-            return registration
+            result = {
+                "registration_id": registration.pk,
+                "parking_place": parking_space.number,
+                "info": None,
+            }
         except Exception as e:
             print(f"Error: {e} , restore free place {parking_space}")
             # restore free place
             parking_space_status_change(parking_space.pk, False)
-    else:
-        return None  # Не вдалося знайти вільне місце на парковці
+    return result
 
 
 def register_parking_out_event(
@@ -257,7 +260,8 @@ def register_parking_out_event(
     num_auto: str,
     photo_id: Photo,
     registration_id: int | str | None = None,
-) -> Registration | None:
+) -> dict | None:
+    result = {"registration_id": None, "parking_space": None, "info": None}
     if registration_id:
         registration_id = int(registration_id)
         try:
@@ -266,6 +270,11 @@ def register_parking_out_event(
             registration.car_number_out = num_auto
             registration.photo_out = photo_id
             registration.save()
-            return registration
+            result = {
+                "registration_id": registration.pk,
+                "parking_place": registration.parking.number,
+                "info": None,
+            }
         except Registration.DoesNotExist as e:
             print(f"Error: {e}")
+    return result
