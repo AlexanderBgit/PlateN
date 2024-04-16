@@ -1,42 +1,42 @@
 <!-- У вашому файлі add_tariff.html -->
-{% extends "parking/base.html" %}
-{% block content %}
-    <div class="container" id="payment_result">
-        <h2>Payment Results</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Field Name</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for field, value in payment.items %}
-                    <tr>
-                        <td>{{ field }}:</td>
-                        <td>{{ value | safe }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+{% extends "parking/base.html" %} {% block content %}
+<div class="container" id="payment_result">
+  <h2>Payment Results</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Field Name</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for field, value in payment.items %}
+      <tr>
+        <td>{{ field }}:</td>
+        <td>{{ value | safe }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
-<p><a class="btn btn-primary" href="{% url 'finance:main' %}">MAIN</a>
-    <button onclick="printDiv('payment_result')" class="btn btn-primary">Print</button>
+<p>
+  <a class="btn btn-primary" href="{% url 'finance:main' %}">MAIN</a>
+  <button onclick="printDiv('payment_result')" class="btn btn-primary">Print</button>
 </p>
 
-    <script>
-        function printPage() {
-            window.print();  // Trigger print functionality
-        }
-        function printDiv(divName) {
-            var printContents = document.getElementById(divName).innerHTML;
-            var originalContents = document.body.innerHTML;
+<script>
+  function printPage() {
+    window.print(); // Trigger print functionality
+  }
+  function printDiv(divName) {
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
 
-            document.body.innerHTML = printContents;
-            window.print();
+    document.body.innerHTML = printContents;
+    window.print();
 
-            document.body.innerHTML = originalContents;
-        }
-    </script>
+    document.body.innerHTML = originalContents;
+  }
+</script>
 {% endblock content %}

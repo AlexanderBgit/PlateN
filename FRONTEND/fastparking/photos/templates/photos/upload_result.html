@@ -1,15 +1,84 @@
 <!-- photos/templates/upload.html -->
-{% extends "parking/base.html" %}
-{% block content %} 
-<h2>RESULT:</h2>
-<p class="">info: {{ info }}</p>
-<p class="">number: {{ predict.num_avto_str }}</p>
-<p class="">accuracy: {{ predict.accuracy }}</p>
-<img
-  src="data:image/jpeg;base64,{{ predict.num_img }}"
-  alt="recognized license plate number: {{ predict.num_avto_str }}"
-  title="recognized license plate number: {{ predict.num_avto_str }}"
-/>
-<p></p>
-<a href="{% url 'photos:main' %}" class="btn btn-primary">Back</a>
-{% endif %} {% endblock content %}
+{% extends "parking/base.html" %} {% block content %}
+<div class="container" id="photo_result">
+  <h2>RESULT:</h2>
+  <table class="table">
+    <tbody>
+      <tr>
+        <th>Info:</th>
+        <td>{{ info }}</td>
+      </tr>
+
+      <tr>
+        <th>Recognized number:</th>
+        <td>{{ predict.num_avto_str }}</td>
+      </tr>
+      <tr>
+        <th>Accuracy:</th>
+        <td>{{ predict.accuracy }}</td>
+      </tr>
+      <tr>
+        <th>Photo:</th>
+        <td>
+          <img
+            src="data:image/jpeg;base64,{{ predict.num_img }}"
+            alt="recognized license plate number: {{ predict.num_avto_str }}"
+            title="recognized license plate number: {{ predict.num_avto_str }}"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2"><h3>Registration Information:</h3></td>
+      </tr>
+      <tr>
+        <th>Registration ID:</th>
+        <td>{{ registration.id }}</td>
+      </tr>
+      <tr>
+        <th>Registration Date:</th>
+        <td>{{ registration.date }}</td>
+      </tr>
+      <tr>
+        <th>Parking place:</th>
+        <td>{{ registration.parking_place }}</td>
+      </tr>
+      <tr>
+        <th>QR Code:</th>
+        <td>
+          <img
+            src="data:image/jpeg;base64,{{ registration.qr_code }}"
+            alt="Registration ID: {{ registration.id }}"
+            title="Registration ID: {{ registration.id }}"
+          />
+        </td>
+      </tr>
+      <tr>
+        <th>Uniq code:</th>
+        <td>{{ registration.hash }}</td>
+      </tr>
+      <tr></tr>
+    </tbody>
+  </table>
+  <p></p>
+</div>
+<div class="container">
+  <p>
+    <a href="{% url 'photos:main' %}" class="btn btn-primary">Back</a>
+    <button onclick="printDiv('photo_result')" class="btn btn-primary">Print</button>
+  </p>
+</div>
+<script>
+  function printPage() {
+    window.print(); // Trigger print functionality
+  }
+  function printDiv(divName) {
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    window.print();
+
+    document.body.innerHTML = originalContents;
+  }
+</script>
+{% endblock content %}
