@@ -40,10 +40,14 @@
       {% if user.is_authenticated %}
       <li>
         <a class="nav-link {% if active_menu == 'accounts' %}active{% else %}text-white{% endif %}" href="{% url 'accounts:profile' %}">
-          <i class="fa-solid fa-car"></i>
-          <span class="nav-item">Accounts</span>
+          <i class="fa-solid fa-user"></i>
+          <span class="nav-item">Profile</span>
         </a>
       </li>
+      <a class="nav-link {% if active_menu == 'parking:registration_list' %}active{% else %}text-white{% endif %}" href="{% url 'parking:registration_list' %}">
+        <i class="fa-solid fa-car"></i>
+        <span class="nav-item">Registration</span>
+      </a>
       <li>
         <a class="nav-link {% if active_menu == 'cars' %}active{% else %}text-white{% endif %}" href="/cars/">
             <i class="fa-solid fa-car"></i>
@@ -107,8 +111,6 @@
   <div class="container-fluid">
     {% block content %}
     {% endblock %}
-    <div class="flex-wrap">
-    </div>
   </div>
 
 </main>

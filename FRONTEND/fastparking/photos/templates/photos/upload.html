@@ -1,22 +1,22 @@
 <!-- photos/templates/upload.html -->
-{% extends "parking/base.html" %}
-{% block content %}
-{% if target_type %}
-    <h1>Upload photo: {{ target_type.desc}}</h1>
+{% extends "parking/base.html" %} {% block content %} {% if target_type %}
+<h1>Upload photo: {{ target_type.desc}}</h1>
 {% else %}
-    <h1>Upload photo</h1>
+<h1>Upload photo</h1>
 {% endif %}
-    <form method="POST" action="" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input class="btn btn-primary" type="submit" value="Submit">
-    </form>
-{% if info %}
-   <h2>RESULT:</h2>
-    <p>info: {{ info }}</p>
-    <p>number: {{ predict.num_avto_str }}</p>
-    <p>accuracy: {{ predict.accuracy }}</p>
-    <img src="data:image/jpeg;base64,{{ predict.num_img }}">
-{% endif %}
-{% endblock content %}
+<form method="POST" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+  <p {% if target_type %} class="d-none" {% endif %}>{{ form.type.label_tag }} {{ form.type }}</p>
+  <p>{{ form.photo.label_tag }} {{ form.photo }}</p>
+  {% if target_type.desc == "OUT" %}
+  <p>{{ form.registration_id.label_tag }} {{ form.registration_id }}</p>
+  <p class="text-warning">{{ form.registration_id.errors }}</p>
+  <p>{{ form.manual_registration_id.label_tag }} {{ form.manual_registration_id }}</p>
+  <p class="text-warning">{{ form.manual_registration_id.errors }}</p>
+  {% endif %}
 
+  <input class="btn btn-primary" type="submit" value="Submit" />
+</form>
+<p></p>
+<a href="{% url 'photos:main' %}" class="btn btn-primary">Back</a>
+{% endblock content %}

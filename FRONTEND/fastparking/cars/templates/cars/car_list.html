@@ -1,28 +1,67 @@
 <!-- parking/templates/car_list.html -->
 {% extends "parking/base.html" %}
 {% block content %}
-    <h1>List of Cars</h1>
+    <h3 class="mb-3 mt-3">List of Cars</h3>
     
     <!-- Форма фільтрації -->
     <form method="GET" action="{% url 'cars:car_list' %}">
         <!-- Додайте поля фільтрації за вашими потребами -->
-        <label for="car_number">Car Number:</label>
-        <input type="text" name="car_number">
+
+        <div class="card col-md-5">
+
+            <div class="body mt-3">
+                <div class="input-group mb-2">
+                    <label class="input-group-text" for="car_number">Car Number:</label>
+                    <input type="text" class="form-control" name="car_number" style="width: 300px;">
+                </div>
+            
+                <div class="input-group mb-2">
+                    <label class="input-group-text" for="blocked">Blocked:</label>
+                    <select class="form-select" name="blocked">
+                        <option value="True">Yes</option>
+                        <option value="False">No</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary mb-3" type="submit" style="width:100%">Filter</button>
+            </div>
+        </div>
+
         
-        <label for="blocked">Blocked:</label>
-        <select name="blocked">
-            <option value="True">Yes</option>
-            <option value="False">No</option>
-        </select>
-        
-        <button type="submit">Filter</button>
+
     </form>
 
-    <ul>
-        {% for car in cars %}
-            <li>{{ car.car_number }} - Photo: <img src="{{ car.photo_car.url }}" alt="Car photo">, Predict: {{ car.predict }}, Blocked: {{ car.blocked }}, Pay Pass: {{ car.pay_pass }}</li>
-        {% empty %}
-            <li>No cars found.</li>
-        {% endfor %}
-    </ul>
+
+    {% if cars %}
+    <div class="bd-example">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Number</th>
+                <th scope="col">Photo</th>
+                <th scope="col">Predict</th>
+                <th scope="col">Blocked</th>
+                <th scope="col">Pay Pass</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for car in cars %}
+                    <tr>
+                        <th scope="row">{{ car.car_number }}</th>
+
+                        <td>
+                            <img src="{{ car.photo_car.url }}" alt="Car photo">
+                        </td>
+                        <td>{{ car.predict }}</td>
+                        <td>{{ car.blocked }}</td>
+                        <td>Pass:{{ car.pay_pass }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <li>No cars found.</li>
+    {% endif %}
+    <br>
+
 {% endblock content %}
