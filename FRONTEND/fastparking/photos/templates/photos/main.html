@@ -1,28 +1,43 @@
-{% extends "parking/base.html" %}
-{% block content %}
+{% extends "parking/base.html" %} {% block content %} {% load static %}
 <div class="container">
-    <div class="row">
-        <div class="col-md-4">
+  <div class="row">
+    <!-- <div class="col-md-4">
             <div class="card bg-primary">
                 <div class="card-body">
                     <a href="{% url 'photos:upload' %}" class="btn btn-primary btn-lg btn-block">Upload photo of car</a>
                 </div>
             </div>
+        </div> -->
+    <div class="col-md-4">
+      <div class="card bg-primary">
+        <div class="card-body mx-auto text-center">
+          <a href="{% url 'photos:upload' %}?type=0" class="btn btn-primary btn-lg btn-block">
+            <img
+              width="270"
+              height="270"
+              src="{% static 'photos/button_in_01_270x270.gif' %}"
+              title="Upload IN photo of car"
+              alt="Upload IN photo of car"
+          /></a>
+          <p>Upload IN photo of car</p>
         </div>
-        <div class="col-md-4">
-            <div class="card bg-primary">
-                <div class="card-body">
-                    <a href="{% url 'photos:upload' %}?type=0" class="btn btn-primary btn-lg btn-block">Upload IN photo of car</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card bg-primary">
-                <div class="card-body">
-                    <a href="{% url 'photos:upload' %}?type=1" class="btn btn-primary btn-lg btn-block">Upload OUT photo of car</a>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+    <div class="col-md-4">
+      <div class="card bg-success">
+        <div class="card-body mx-auto text-center">
+          <a href="{% url 'photos:upload' %}?type=1" class="btn btn-sucess btn-lg btn-block"
+            ><img
+              width="270"
+              height="270"
+              src="{% static 'photos/button_out_01_270x270.gif' %}"
+              title="Upload OUT photo of car"
+              alt="Upload OUT photo of car"
+          /></a>
+          <p>Upload OUT photo of car</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock content %}

@@ -5,30 +5,16 @@
 <h1>Upload photo</h1>
 {% endif %}
 <form method="POST" action="" enctype="multipart/form-data">
-  {% csrf_token %} 
-  {% if not target_type %}
-    <p>{{ form.type.label_tag }} {{ form.type }}</p>
-  {% else %}
-  <p class="d-none">{{ form.type.label_tag }} {{ form.type }}</p>
-  {% endif %}
-    <p>{{ form.photo.label_tag }} {{ form.photo }}</p>
-  {% if  target_type == 1 %}
+  {% csrf_token %}
+  <p {% if target_type %} class="d-none" {% endif %}>{{ form.type.label_tag }} {{ form.type }}</p>
+  <p>{{ form.photo.label_tag }} {{ form.photo }}</p>
+  {% if target_type.desc == "OUT" %}
   <p>{{ form.registration_id.label_tag }} {{ form.registration_id }}</p>
   <p>{{ form.manual_registration_id.label_tag }} {{ form.manual_registration_id }}</p>
   {% endif %}
-  
+
   <input class="btn btn-primary" type="submit" value="Submit" />
 </form>
-{% if info %}
-<h2>RESULT:</h2>
-<p class="">info: {{ info }}</p>
-<p class="">number: {{ predict.num_avto_str }}</p>
-<p class="">accuracy: {{ predict.accuracy }}</p>
-<img
-  src="data:image/jpeg;base64,{{ predict.num_img }}"
-  alt="recognized license plate number: {{ predict.num_avto_str }}"
-  title="recognized license plate number: {{ predict.num_avto_str }}"
-/>
 <p></p>
 <a href="{% url 'photos:main' %}" class="btn btn-primary">Back</a>
-{% endif %} {% endblock content %}
+{% endblock content %}
