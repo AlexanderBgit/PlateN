@@ -18,19 +18,19 @@ def upload_file(request):
         if tt:
             target_type = {"type": tt, "desc": TYPES.get(tt)}
     if request.method == "POST":
-        tt = request.POST.get("type")
+        tt = request.POST.get("t_photo")
         if tt:
             target_type = {"type": tt, "desc": TYPES.get(tt)}
-        print(f"{request.POST=}")
+        # print(f"{request.POST=}")
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             uploaded_file = request.FILES.get("photo")
             if uploaded_file:
                 filename = uploaded_file.name
-            type_of_photo = request.POST.get("type")
+            type_of_photo = form.cleaned_data.get("t_photo")
             file_in = request.FILES.get("photo")
             if file_in:
-                registration_id = request.POST.get("registration_id")
+                registration_id = form.cleaned_data.get("registration_id")
                 img_predict = handle_uploaded_file(
                     file_in, type_of_photo, filename, registration_id
                 )
@@ -53,7 +53,7 @@ def upload_file(request):
     else:
         initial = None
         if target_type:
-            initial = {"type": target_type.get("type")}
+            initial = {"t_photo": target_type.get("type")}
         form = UploadFileForm(initial=initial)
     context = {"active_menu": active_menu, "form": form, "target_type": target_type}
     return render(request, "photos/upload.html", context)
