@@ -43,7 +43,6 @@ class EditForm(UserChangeForm):
     last_name = CharField(max_length=150, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
     email = forms.EmailField(max_length=150, required=True, widget=forms.EmailInput(attrs={"class": "form-control"}))
     phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
-    accept_oferta = forms.BooleanField(required=True)
     telegram_nickname = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
     
     class Meta:
@@ -56,7 +55,7 @@ class EditForm(UserChangeForm):
             'phone_number',
             'telegram_nickname',             
         )
-        exclude = ["telegram_id", "password1", "password2"] 
+        exclude = ["accept_oferta", "telegram_id", "password1", "password2"] 
 
 class EditPassword(PasswordChangeForm):
     
@@ -69,6 +68,7 @@ class EditPassword(PasswordChangeForm):
             'last_name',
             'email', 
             'phone_number',
+            "accept_oferta",
             'telegram_nickname', 
             ] 
 
