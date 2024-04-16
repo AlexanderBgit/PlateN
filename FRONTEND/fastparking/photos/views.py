@@ -2,14 +2,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import UploadFileForm
 from django.urls import resolve, reverse
-from datetime import datetime
-# Imaginary function to handle an uploaded file.
-from .repository import handle_uploaded_file, TYPES, check_and_register_car, registration_car
-from .repository import check_and_register_car, registration_car
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from .forms import UploadFileForm
-from django.urls import resolve, reverse
 
 
 # Imaginary function to handle an uploaded file.
