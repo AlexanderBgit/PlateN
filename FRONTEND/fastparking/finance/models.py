@@ -1,6 +1,9 @@
+from datetime import datetime
 from django.db import models
 from django.urls import reverse
 from parking.models import Registration
+
+end_date_default = "2999-01-01 00:00:00"
 
 
 class Tariff(models.Model):
@@ -8,7 +11,9 @@ class Tariff(models.Model):
     price_per_hour = models.DecimalField(max_digits=10, decimal_places=2)
     price_per_day = models.DecimalField(max_digits=10, decimal_places=2)
     start_date = models.DateTimeField()
-    end_date = models.DateTimeField(default="2999-01-01 00:00:00")
+    end_date = models.DateTimeField(
+        default=datetime.strptime(end_date_default, "%Y-%m-%d %H:%M:%S")
+    )
 
     def __str__(self):
         return self.description
