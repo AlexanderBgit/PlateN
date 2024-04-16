@@ -4,6 +4,10 @@ body {
     font-family: 'DM Sans';
 }
 
+body ul {
+    list-style: none
+}
+
 /* quotes */
 h1, .h1, h2, .h2, h3, .h3 {
     margin-top: 20px;
@@ -126,4 +130,33 @@ h1, .h1, h2, .h2, h3, .h3 {
     padding-bottom: 0.8em;
     padding-left: 1.2em;
     padding-right: 1.2em;
+}
+
+footer {
+    background-color: #000;
+    color: #fff;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+}
+
+footer a.link-light:hover {
+    color: #4285F4;
+    text-decoration: none;
+}
+
+footer .icon {
+    margin-right: 5px;
+    width: 20px;
+    height: 20px;
 }

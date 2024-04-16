@@ -9,11 +9,13 @@
           integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 
     <link href='https://fonts.googleapis.com/css?family=DM Sans' rel='stylesheet'>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
     
     {% load static %}
     <link rel="stylesheet" href="{% static 'parking/styles.css' %}">
     <link rel="stylesheet" href="{% static 'parking/docs.css' %}">
-    <link rel="stylesheet" href="{% static 'parking/css/all.min.css' %}">    
+    <link rel="stylesheet" href="{% static 'parking/css/all.min.css' %}">
+    <link rel="icon" href="{% static 'parking/favicon.png' %}">
 
     <title>{{title}}</title>
 </head>
@@ -114,6 +116,25 @@
   </div>
 
 </main>
+
+<footer class="footer mt-auto py-3 bg-dark">
+    <div class="container">
+        <span class="text-light">Developed by the NeuronCurveBobr team. &copy; 2024. All rights reserved.</span>
+        <span class="text-light">Contact us:
+            <a href="mailto:info@neuroncurvebobr.com" target="_blank" class="link-light">
+                <i class="fa-solid fa-envelopes-bulk"></i>
+                info@neuroncurvebobr.com
+            </a>
+        </span>
+        <span class="text-light">Follow us:
+            <a href="https://t.me/fastparking_bobr_bot" target="_blank" class="link-light">
+                <i class="fa-brands fa-telegram"></i>
+                Telegram bot
+            </a>
+        </span>
+    </div>
+</footer>
+
 <script>
   // Отримуємо посилання на поля форми
   var phoneNumberInput = document.getElementById("id_phone_number");
