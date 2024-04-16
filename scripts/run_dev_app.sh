@@ -8,6 +8,8 @@ if command -v dos2unix &> /dev/null; then
   dos2unix *.sh &> /dev/null
 fi
 
+./migrate_dev_app.sh
+
 # simulate poetry shell
 pushd "../FRONTEND"
 git rev-parse --short HEAD > git-version.txt
