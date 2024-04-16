@@ -1,123 +1,153 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
 
-    <link href='https://fonts.googleapis.com/css?family=DM Sans' rel='stylesheet'>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-    
+    <link href="https://fonts.googleapis.com/css?family=DM Sans" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" />
+
     {% load static %}
-    <link rel="stylesheet" href="{% static 'parking/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'parking/docs.css' %}">
-    <link rel="stylesheet" href="{% static 'parking/css/all.min.css' %}">
-    <link rel="icon" href="{% static 'parking/favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'parking/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'parking/docs.css' %}" />
+    <link rel="stylesheet" href="{% static 'parking/css/all.min.css' %}" />
+    <link rel="icon" href="{% static 'parking/favicon.png' %}" />
 
     <title>{{title}}</title>
-</head>
-<body>
+  </head>
+  <body>
+    <main class="d-flex flex-nowrap">
+      <h1 class="visually-hidden">Sidebars examples</h1>
 
-<main class="d-flex flex-nowrap">
-  <h1 class="visually-hidden">Sidebars examples</h1>
+      <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-bg-custom" style="width: 320px">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+          <svg class="bi pe-none me-2" width="10" height="32"><use xlink:href="#bootstrap" /></svg>
 
-  <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-bg-custom" style="width: 320px;">
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-      <svg class="bi pe-none me-2" width="10" height="32"><use xlink:href="#bootstrap"/></svg>
-
-      <img src="{% static 'parking/logo-main2.svg' %}" width="60" height="60" >
-      <span class="ms-1 fs-4">NeuronCurveBobr</span>
-    </a>
-    <hr>
-    <ul class="nav nav-pills flex-column">
-      <li>
-        <a class="nav-link {% if active_menu == 'home' %}active{% else %}text-white{% endif %}" href="/">
-          <i class="fa-solid fa-home"></i>
-          <span class="nav-item mx-auto">Home</span>
+          <img src="{% static 'parking/logo-main2.svg' %}" width="60" height="60" />
+          <span class="ms-1 fs-4">NeuronCurveBobr</span>
         </a>
-      </li>
-      {% if user.is_authenticated %}
-      <li>
-        <a class="nav-link {% if active_menu == 'accounts' %}active{% else %}text-white{% endif %}" href="{% url 'accounts:profile' %}">
-          <i class="fa-solid fa-user"></i>
-          <span class="nav-item">Profile</span>
-        </a>
-      </li>
-      <a class="nav-link {% if active_menu == 'parking:registration_list' %}active{% else %}text-white{% endif %}" href="{% url 'parking:registration_list' %}">
-        <i class="fa-solid fa-car"></i>
-        <span class="nav-item">Registration</span>
-      </a>
-      <li>
-        <a class="nav-link {% if active_menu == 'cars' %}active{% else %}text-white{% endif %}" href="/cars/">
+        <hr />
+        <ul class="nav nav-pills flex-column">
+          <li>
+            <a class="nav-link {% if active_menu == 'home' %}active{% else %}text-white{% endif %}" href="/">
+              <i class="fa-solid fa-home"></i>
+              <span class="nav-item mx-auto">Home</span>
+            </a>
+          </li>
+          {% if user.is_authenticated %}
+          <li>
+            <a
+              class="nav-link {% if active_menu == 'accounts' %}active{% else %}text-white{% endif %}"
+              href="{% url 'accounts:profile' %}"
+            >
+              <i class="fa-solid fa-user"></i>
+              <span class="nav-item">Profile</span>
+            </a>
+          </li>
+          <a
+            class="nav-link {% if active_menu == 'parking:registration_list' %}active{% else %}text-white{% endif %}"
+            href="{% url 'parking:registration_list' %}"
+          >
             <i class="fa-solid fa-car"></i>
-            <span class="nav-item">Cars</span>
-        </a>
-    </li>
-      <li>
-        <a class="nav-link {% if active_menu == 'finance' %}active{% else %}text-white{% endif %}" href="{% url 'finance:main' %}">
-          <i class="fa-solid fa-table-list"></i>
-          <span class="nav-item">Finance</span>
-        </a>
-      </li>
-      
-      <li>
-        <a class="nav-link {% if active_menu == 'messages' %}active{% else %}text-white{% endif %}" href="{% url 'communications:main' %}">
-          <i class="fa-solid fa-earth-americas"></i>
-          <span class="nav-item">Messages</span>
-        </a>
-      </li>
-      <li>
-        <a class="nav-link {% if active_menu == 'photos' %}active{% else %}text-white{% endif %}" href="{% url 'photos:main' %}">
-          <i class="fa-solid fa-folders"></i>
-          <span class="nav-item">Photos</span>
-        </a>
-      </li>
-      <li>
-        <a class="nav-link {% if active_menu == 'logout' %}active{% else %}text-white{% endif %}" href="{% url 'users:logout' %}">
-          <i class="fa-solid fa-sign-out"></i>
-          <span class="nav-item">Logout</span>
-        </a>
-      </li>
-      {% else %}
-      <li>
-        <a class="nav-link {% if active_menu == 'signin' %}active{% else %}text-white{% endif %}" href="{% url 'users:username' %}">
-          <i class="fa-solid fa-user"></i>
-          <span class="nav-item">SignIn</span>
-        </a>
-      </li>
-      <li>
-        <a class="nav-link {% if active_menu == 'signup' %}active{% else %}text-white{% endif %}" href="{% url 'users:register' %}">
-          <i class="fa-solid fa-user-check"></i>
-          <span class="nav-item">SignUp</span>
-        </a>
-      </li>
-      {% endif %}
-    </ul>
-    <hr>
-    <div class="dropdown">
-      <a href="#" class="d-flex align-items-center text-white text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="{% static 'parking/mdo.png' %}" alt="" width="32" height="32" class="rounded-circle me-2">
-        {% if user.is_authenticated %}
-        <strong>{{user.username}}</strong><span style="color: #00d000"> &#9679;</span>
-     {% else %}
-        <strong>Username </strong>
-     {% endif %}
-      </a>
-    </div>
-  </div>
-  <div class="b-example-divider b-example-vr"></div>
+            <span class="nav-item">Registration</span>
+          </a>
+          <li>
+            <a class="nav-link {% if active_menu == 'cars' %}active{% else %}text-white{% endif %}" href="/cars/">
+              <i class="fa-solid fa-car"></i>
+              <span class="nav-item">Cars</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="nav-link {% if active_menu == 'finance' %}active{% else %}text-white{% endif %}"
+              href="{% url 'finance:main' %}"
+            >
+              <i class="fa-solid fa-table-list"></i>
+              <span class="nav-item">Finance</span>
+            </a>
+          </li>
 
-  <div class="container-fluid">
-    {% block content %}
-    {% endblock %}
-  </div>
+          <li>
+            <a
+              class="nav-link {% if active_menu == 'messages' %}active{% else %}text-white{% endif %}"
+              href="{% url 'communications:main' %}"
+            >
+              <i class="fa-solid fa-earth-americas"></i>
+              <span class="nav-item">Messages</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="nav-link {% if active_menu == 'photos' %}active{% else %}text-white{% endif %}"
+              href="{% url 'photos:main' %}"
+            >
+              <i class="fa-solid fa-folders"></i>
+              <span class="nav-item">Photos</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="nav-link {% if active_menu == 'logout' %}active{% else %}text-white{% endif %}"
+              href="{% url 'users:logout' %}"
+            >
+              <i class="fa-solid fa-sign-out"></i>
+              <span class="nav-item">Logout</span>
+            </a>
+          </li>
+          {% else %}
+          <li>
+            <a
+              class="nav-link {% if active_menu == 'signin' %}active{% else %}text-white{% endif %}"
+              href="{% url 'users:username' %}"
+            >
+              <i class="fa-solid fa-user"></i>
+              <span class="nav-item">SignIn</span>
+            </a>
+          </li>
+          <li>
+            <a
+              class="nav-link {% if active_menu == 'signup' %}active{% else %}text-white{% endif %}"
+              href="{% url 'users:register' %}"
+            >
+              <i class="fa-solid fa-user-check"></i>
+              <span class="nav-item">SignUp</span>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+        <hr />
+        <div class="dropdown">
+          <a
+            href="#"
+            class="d-flex align-items-center text-white text-decoration-none"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <img src="{% static 'parking/mdo.png' %}" alt="" width="32" height="32" class="rounded-circle me-2" />
+            {% if user.is_authenticated %}
+            <strong>{{user.username}}</strong><span style="color: #00d000"> &#9679;</span>
+            {% else %}
+            <strong>Username </strong>
+            {% endif %}
+          </a>
+        </div>
+      </div>
+      <div class="b-example-divider b-example-vr"></div>
 
-</main>
+      <div class="container-fluid">{% block content %} {% endblock %}</div>
+    </main>
 
-<footer class="footer mt-auto py-3 bg-dark">
+    <!-- <footer class="footer mt-auto py-3 bg-dark">
     <div class="container">
         <span class="text-light">Developed by the NeuronCurveBobr team. &copy; 2024. All rights reserved.</span>
         <span class="text-light">Contact us:
@@ -133,24 +163,24 @@
             </a>
         </span>
     </div>
-</footer>
+</footer> -->
 
-<script>
-  // Отримуємо посилання на поля форми
-  var phoneNumberInput = document.getElementById("id_phone_number");
-  var telegramNicknameInput = document.getElementById("id_telegram_nickname");
+    <script>
+      // Отримуємо посилання на поля форми
+      var phoneNumberInput = document.getElementById("id_phone_number");
+      var telegramNicknameInput = document.getElementById("id_telegram_nickname");
 
-  // Додаємо обробник події для поля "Phone Number"
-  phoneNumberInput.addEventListener("blur", function() {
-      // Отримуємо номер телефону, введений користувачем
-      var phoneNumber = phoneNumberInput.value;
+      // Додаємо обробник події для поля "Phone Number"
+      phoneNumberInput.addEventListener("blur", function () {
+        // Отримуємо номер телефону, введений користувачем
+        var phoneNumber = phoneNumberInput.value;
 
-      // Тут можна реалізувати логіку для отримання телеграм нікнейму на основі номера телефону
-      // Наприклад, якщо користувач згодом підтвердить доступ до свого аккаунту Telegram, ви можете отримати його нікнейм.
+        // Тут можна реалізувати логіку для отримання телеграм нікнейму на основі номера телефону
+        // Наприклад, якщо користувач згодом підтвердить доступ до свого аккаунту Telegram, ви можете отримати його нікнейм.
 
-      // Поки що ми просто присвоюємо значення поля "Telegram nickname" номеру телефону
-      telegramNicknameInput.value = phoneNumber;
-  });
-</script>
-</body>
+        // Поки що ми просто присвоюємо значення поля "Telegram nickname" номеру телефону
+        telegramNicknameInput.value = phoneNumber;
+      });
+    </script>
+  </body>
 </html>
