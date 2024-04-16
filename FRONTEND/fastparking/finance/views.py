@@ -10,7 +10,7 @@ def main(request):
     active_menu = resolved_view.app_name
     # ваш код для обробки запиту тут
     return render(
-        request, "finance/main.html", {"active_menu": active_menu}
+        request, "finance/main.html", {"active_menu": active_menu, "title": "Finance"}
     )  # або інша логіка відповідно до вашого проекту
 
 
@@ -27,7 +27,11 @@ def add_tariff(request):
             )  # Замініть 'finance:main' на URL-адресу, куди потрібно перенаправити
     else:
         form = TariffForm()
-    context = {"active_menu": active_menu, "form": form}
+    context = {
+        "active_menu": active_menu,
+        "form": form,
+        "title": "Finance | Tariff",
+    }
     return render(request, "finance/add_tariff.html", context)
 
 
@@ -43,7 +47,7 @@ def create_tariff(request):
             )  # Перенаправлення на список тарифів після створення
     else:
         form = TariffForm()
-    context = {"active_menu": active_menu, "form": form}
+    context = {"active_menu": active_menu, "form": form, "title": "Finance | Tariff"}
     return render(request, "tariff.html", context)
 
 
@@ -77,12 +81,20 @@ def add_pay(request):
                 "Invoice": invoice_formatted,
                 "Amount": amount_formatted,
             }
-            context = {"active_menu": active_menu, "payment": payment}
+            context = {
+                "active_menu": active_menu,
+                "payment": payment,
+                "title": "Finance | Payments",
+            }
             return render(request, "finance/payed.html", context)
             # return redirect(
             #     "finance:main"
             # )  # Замініть 'finance:main' на URL-адресу, куди потрібно перенаправити
     else:
         form = PaymentsForm()
-    context = {"active_menu": active_menu, "form": form}
+    context = {
+        "active_menu": active_menu,
+        "form": form,
+        "title": "Finance | Payments",
+    }
     return render(request, "finance/add_pay.html", context)
