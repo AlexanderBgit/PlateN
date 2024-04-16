@@ -7,8 +7,10 @@ pwd
 echo RUN MIGRATION
 python manage.py migrate
 export PYTHONPATH=${PYTHONPATH}:./:./fastparking:/app/fastparking:/app
-echo CREATE_SPUREUSER
+echo CREATE SPUREUSER
 python ./admin/create_admin_user.py
+echo CREATE PARKING PLACE
+python ./parking/create_parking.py
 echo RUN BACKGROUND SHEDULER
 ./cron_loop.sh &
 echo RUN FRONTEND - DJANGO
