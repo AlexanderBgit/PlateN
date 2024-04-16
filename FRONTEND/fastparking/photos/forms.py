@@ -10,7 +10,7 @@ TOTAL_DIGITS_ID = 6
 
 class UploadFileForm(forms.Form):
     choices = TYPES.items()  # [(k, v) for k, v in TYPES.items()]
-    type = forms.ChoiceField(
+    t_photo = forms.ChoiceField(
         choices=choices,
         widget=forms.Select(
             attrs={
@@ -57,6 +57,12 @@ class UploadFileForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+        t_photo = cleaned_data.get("t_photo")
+        if t_photo == "0":
+            cleaned_data["registration_id"] = None
+            cleaned_data["manual_registration_id"] = None
+            return cleaned_data
+
         registration_id = cleaned_data.get("registration_id")
         manual_registration_id = cleaned_data.get("manual_registration_id")
 
@@ -79,10 +85,10 @@ class UploadFileForm(forms.Form):
 
     def clean_manual_registration_id(self):
         manual_registration_id = self.cleaned_data.get("manual_registration_id")
-        if manual_registration_id:
-            # Check if the manual_registration_id exists in the list of Registration.registration_id
-            if not Registration.objects.filter(pk=manual_registration_id).exists():
-                raise forms.ValidationError("Entered registration ID does not exist.")
+        # if manual_registration_id:
+        # Check if the manual_registration_id exists in the list of Registration.registration_id
+        # if not Registration.objects.filter(pk=manual_registration_id).exists():
+        #     raise forms.ValidationError("Entered registration ID does not exist.")
         return manual_registration_id
 
         #     class Meta:
