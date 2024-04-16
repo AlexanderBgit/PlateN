@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate
-from django.urls import reverse_lazy
+from django.contrib.auth import login
+from django.urls import resolve
 
 from .models import MyCars
 from cars.models import Car
@@ -11,15 +11,20 @@ from .forms import MyCarsForm, CarNumberForm, EditForm, EditPassword
 
 @login_required
 def profile(request):
-    return render(request, 'accounts/profile.html', {"title": "User profile"})
+    resolved_view = resolve(request.path)
+    active_menu = resolved_view.app_name
+    return render(request, 'accounts/profile.html', {"active_menu": active_menu, "title": "User profile"})
 
 
 
 @login_required
 def my_cars(request):
+    resolved_view = resolve(request.path)
+    active_menu = resolved_view.app_name
     my_cars = MyCars.objects.filter(user=request.user) 
     my_cars_number = my_cars.values_list('car_number', flat=True)
     return render(request, 'accounts/my_cars.html', context={
+        "active_menu": active_menu,
         "title": "My Cars",
         "my_cars": my_cars,
         "my_cars_number": my_cars_number
@@ -30,6 +35,8 @@ def my_cars(request):
 
 @login_required
 def add_car(request):
+    resolved_view = resolve(request.path)
+    active_menu = resolved_view.app_name
     my_cars_form = MyCarsForm()
     car_number_form = CarNumberForm()
 
@@ -52,6 +59,7 @@ def add_car(request):
         request,
         'accounts/add_car.html',
         {
+            "active_menu": active_menu,
             "title": "Add new car",
             "my_cars_form": my_cars_form,
             "car_number_form": car_number_form,
@@ -62,6 +70,8 @@ def add_car(request):
 
 @login_required
 def delete(request, pk):
+    resolved_view = resolve(request.path)
+    active_menu = resolved_view.app_name
     my_cars = get_object_or_404(MyCars, pk=pk)
     car_number = get_object_or_404(Car, pk=pk)
 
@@ -70,6 +80,7 @@ def delete(request, pk):
         return redirect(to="accounts:my_cars")
 
     context = {
+        "active_menu": active_menu,
         "title": "Delete car",
         "my_cars": my_cars,
         "car_number": car_number
@@ -81,6 +92,8 @@ def delete(request, pk):
 
 @login_required
 def edit_car(request, pk):
+    resolved_view = resolve(request.path)
+    active_menu = resolved_view.app_name
     my_cars = get_object_or_404(MyCars, pk=pk)
 
     if request.method == "POST":
@@ -98,6 +111,7 @@ def edit_car(request, pk):
         car_number_form = CarNumberForm(instance=my_cars.car_number)
 
     context = {
+        "active_menu": active_menu,
         "title": "Editing car",
         "my_cars": my_cars,
         "my_cars_form": my_cars_form,
@@ -108,6 +122,8 @@ def edit_car(request, pk):
 
 @login_required
 def edit_profile(request):
+    resolved_view = resolve(request.path)
+    active_menu = resolved_view.app_name
     if request.method == 'POST':
         user_form = EditForm(request.POST, instance=request.user)  
         if user_form.is_valid():
@@ -116,11 +132,13 @@ def edit_profile(request):
     else:
         user_form = EditForm(instance=request.user)  
 
-    context = {'user_form': user_form}
+    context = {"active_menu": active_menu,'user_form': user_form}
     return render(request, "accounts/edit_profile.html", context)
 
 @login_required
 def password_change(request):
+    resolved_view = resolve(request.path)
+    active_menu = resolved_view.app_name
     if request.method == 'POST':
         form = EditPassword(request.user, request.POST)
         if form.is_valid():
@@ -129,7 +147,7 @@ def password_change(request):
             return redirect(to='accounts:profile')
     else:
         form = EditPassword(request.user)
-    context = {'form': form}
+    context = {"active_menu": active_menu,'form': form}
     return render(request, 'accounts/password_change.html', context)
 
 
