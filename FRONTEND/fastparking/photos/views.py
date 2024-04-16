@@ -39,7 +39,7 @@ def upload_file(request):
                 registration = img_predict.get("registration")
                 context = {
                     "active_menu": active_menu,
-                    # "form": form,
+                    "title": f"Photos | { target_type.get('desc') }",
                     "target_type": target_type,
                     "info": info,
                     "predict": predict,
@@ -55,13 +55,19 @@ def upload_file(request):
         if target_type:
             initial = {"t_photo": target_type.get("type")}
         form = UploadFileForm(initial=initial)
-    context = {"active_menu": active_menu, "form": form, "target_type": target_type}
+    context = {
+        "active_menu": active_menu,
+        "title": f"Photos | {target_type.get('desc')}",
+        "form": form,
+        "target_type": target_type,
+    }
     return render(request, "photos/upload.html", context)
 
 
 def main(request):
-    active_menu = "photos"
+    resolved_view = resolve(request.path)
+    active_menu = resolved_view.app_name
     # ваш код для обробки запиту тут
     return render(
-        request, "photos/main.html", {"active_menu": active_menu}
+        request, "photos/main.html", {"active_menu": active_menu, "title": "Photos"}
     )  # або інша логіка відповідно до вашого проекту
