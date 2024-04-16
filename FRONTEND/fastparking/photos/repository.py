@@ -13,6 +13,7 @@ from .models import Photo
 
 TYPES = {"0": "IN", "1": "OUT"}
 
+
 def db_save_photo_information(predict: dict, type: str) -> int | None:
     num_auto = predict.get("num_avto_str")
     accuracy = predict.get("accuracy")
@@ -99,6 +100,7 @@ def unsign_text(text):
         print("Tampering detected!")
         return None
 
+
 def handle_uploaded_file(
     f, type: str | None, filename: str | None = None, registration_id: str | None = None
 ) -> dict[str, dict]:
@@ -134,7 +136,7 @@ def handle_uploaded_file(
             registration_id = registration_result.get("registration_id")
         registration = None
         if registration_id:
-            date_formated = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
+            date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
             registration_id_formatted = f"{registration_id:06}"
 
             parking_place = registration_result.get("parking_place")
@@ -147,19 +149,22 @@ def handle_uploaded_file(
                 "id": registration_id_formatted,
                 "parking_place": parking_place,
                 "qr_code": qrcode_img,
-                "date": date_formated,
+                "date": date_formatted,
                 "hash": hash_code,
             }
         return {"info": info, "predict": predict, "registration": registration}
+
 
 from parking.models import ParkingSpace, Registration
 from cars.models import Car
 from datetime import datetime
 from .repository import sign_text, build_qrcode
+
+
 def check_and_register_car(registration_data):
     num_auto = registration_data.get("num_auto")
     photo_id = registration_data.get("photo_id")
-    
+
     try:
         car = Car.objects.get(car_number=num_auto)
         if car.blocked:
@@ -170,6 +175,7 @@ def check_and_register_car(registration_data):
         # Створюємо новий запис в таблиці Car
         car = Car.objects.create(car_number=num_auto, photo_car_id=photo_id)
         return {"success": True, "info": "Автомобіль не існує, створено новий запис"}
+
 
 def find_free_parking_space():
     try:
@@ -186,6 +192,7 @@ def find_free_parking_space():
         print(f"Error: {e}")
         return None
 
+
 def register_parking_event(num_auto, registration_type, photo_id):
     parking_space = find_free_parking_space()
     if parking_space:
@@ -194,7 +201,7 @@ def register_parking_event(num_auto, registration_type, photo_id):
             car_number=num_auto,
             registration_type=registration_type,
             registration_photo_id=photo_id,
-            parking_space=parking_space
+            parking_space=parking_space,
         )
         return registration
     else:
