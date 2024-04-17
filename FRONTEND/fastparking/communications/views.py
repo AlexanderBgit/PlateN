@@ -21,6 +21,7 @@ def main(request):
         {
             "active_menu": active_menu,
             "news_channel": settings.TELEGRAM_NEWS_NAME[1:],
+            "t_bot": settings.TELEGRAM_BOT_NAME,
             "sent_messages": sent_messages,
             "title": "Messages",
         },

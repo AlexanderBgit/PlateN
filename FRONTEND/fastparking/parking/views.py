@@ -140,3 +140,13 @@ def registration_table(request):
         "registrations": registrations,
     }
     return render(request, "registration_table.html", content)
+
+def registration_csv(request):
+    active_menu = "registration"
+    registrations = Registration.objects.all()
+    content = {
+        "title": "Registration table",
+        "active_menu": active_menu,
+        "registrations": registrations,
+    }
+    return render(request, "registration_table.html", content)
