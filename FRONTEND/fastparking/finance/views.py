@@ -1,5 +1,7 @@
 from django.urls import resolve
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from photos.repository import build_html_image
 from .forms import TariffForm, PaymentsForm
@@ -8,12 +10,15 @@ from .forms import TariffForm, PaymentsForm
 def main(request):
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name
-    # ваш код для обробки запиту тут
-    return render(
-        request, "finance/main.html", {"active_menu": active_menu, "title": "Finance"}
-    )  # або інша логіка відповідно до вашого проекту
+    user: User = request.user
+    is_admin = False
+    if user:
+        is_admin = user.is_superuser
+    context = {"active_menu": active_menu, "title": "Finance", "is_admin": is_admin}
+    return render(request, "finance/main.html", context)
 
 
+@login_required
 def add_tariff(request):
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name
@@ -35,6 +40,7 @@ def add_tariff(request):
     return render(request, "finance/add_tariff.html", context)
 
 
+@login_required
 def create_tariff(request):
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name
