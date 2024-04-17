@@ -14,6 +14,9 @@ def main(request):
     parking_spaces = ParkingSpace.objects.all()
     total_parking_spaces = parking_spaces.count()
     free_parking_spaces = parking_spaces.filter(status=False).count()
+    parking_progress = int(
+        (total_parking_spaces - free_parking_spaces) / total_parking_spaces * 100
+    )
     active_menu = "home"
     version = settings.VERSION
     return render(
@@ -24,6 +27,7 @@ def main(request):
             "active_menu": active_menu,
             "total_parking_spaces": total_parking_spaces,
             "free_parking_spaces": free_parking_spaces,
+            "parking_progress": parking_progress,
             "version": version,
         },
     )
@@ -58,8 +62,9 @@ def parking_plan_view(request):
     active_menu = "home"
     # parking_spaces = ParkingSpace.objects.all()
     parking_spaces = ParkingSpace.objects.all().order_by("number")
-
     parking_spaces_count = parking_spaces.filter(status=False).count()
+    total_spaces = parking_spaces.count()
+    parking_progress = int((total_spaces - parking_spaces_count) / total_spaces * 100)
 
     # Розбиття місць на рядки
     # row_length = 10  # Довжина рядка (кількість місць у рядку)
@@ -72,6 +77,7 @@ def parking_plan_view(request):
         "active_menu": active_menu,
         "parking_spaces": parking_spaces,
         "parking_spaces_count": parking_spaces_count,
+        "parking_progress": parking_progress,
     }
     return render(request, "parking/parking_plan.html", content)
 
