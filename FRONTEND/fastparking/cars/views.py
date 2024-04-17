@@ -2,7 +2,9 @@ from cars.models import Car
 
 # from .forms import MyCarForm, CarNumberForm
 from django.views.generic import ListView
-
+from django.shortcuts import render
+from django.shortcuts import redirect
+from django.urls import reverse
 
 
 class CarListView(ListView):
@@ -19,3 +21,23 @@ class CarListView(ListView):
         context["active_menu"] = "cars"
 
         return context
+
+    def get_queryset(self):
+        return (
+            Car.objects.all()
+        )  # Return your queryset dynamically based on your requirements
+
+    def post(self, request, *args, **kwargs):
+        cars_id = request.POST.getlist("cars")
+        blocked_id = request.POST.getlist("blocked")
+        pay_pass_id = request.POST.getlist("pay_pass")
+        for id in cars_id:
+            blocked = id in blocked_id
+            pay_pass = id in pay_pass_id
+            # print(id, blocked, pay_pass)
+            try:
+                Car.objects.filter(pk=id).update(blocked=blocked, PayPass=pay_pass)
+            except Car.DoesNotExist:
+                ...
+
+        return redirect(reverse("cars:car_list"))

@@ -1,9 +1,10 @@
 <!-- parking/templates/car_list.html -->
-{% extends "parking/base.html" %} {% block content %}
+{% extends "parking/base.html" %} {% block content %} {% load static %}
 <h3 class="mb-3 mt-3">List of Cars</h3>
 
 <!-- Форма фільтрації -->
 <form method="GET" action="{% url 'cars:car_list' %}">
+  {% csrf_token %}
   <!-- Додайте поля фільтрації за вашими потребами -->
 
   <div class="card col-md-5">
@@ -27,30 +28,55 @@
 
 {% if cars %}
 <div class="bd-example">
-  <table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th scope="col">Number</th>
-        <!-- <th scope="col">Photo</th>
+  <form method="post" action="{% url 'cars:car_list' %}">
+    {% csrf_token %}
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Number</th>
+          <!-- <th scope="col">Photo</th>
         <th scope="col">Predict</th> -->
-        <th scope="col" class="text-center">Blocked</th>
-        <th scope="col" class="text-center">Pay Pass</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for car in cars %}
-      <tr>
-        <th scope="row">{{ car.car_number }}</th>
-        <!-- <td>
-                            <img src="{{ car.photo_car.url }}" alt="Car photo">
-                        </td> -->
-        <!-- <td>{{ car.predict }}</td> -->
-        <td class="text-center">{% if car.blocked %} Blocked {%else%} - {%endif%}</td>
-        <td class="text-center">{% if car.pay_pass %} Pass {%else%} - {%endif%}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+          <th scope="col" class="text-center">Blocked</th>
+          <th scope="col" class="text-center">Pay Pass</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for car in cars %}
+        <input type="hidden" name="cars" value="{{car.pk}}" />
+        <tr>
+          <th scope="row">{{ car.car_number }}</th>
+          <!-- <td>
+              <img src="{{ car.photo_car.url }}" alt="Car photo">
+        </td> -->
+          <!-- <td>{{ car.predict }}</td> -->
+          <td class="text-center">
+            <input
+              type="checkbox"
+              data-id="{{ car.pk }}"
+              name="blocked"
+              value="{{ car.pk }}"
+              {% if car.blocked %}
+              checked
+              {% endif %}
+            />
+          </td>
+          <td class="text-center">
+            <input
+              type="checkbox"
+              data-id="{{ car.pk }}"
+              name="pay_pass"
+              value="{{ car.pk }}"
+              {% if car.pay_pass %}
+              checked
+              {% endif %}
+            />
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <button class="btn btn-primary mb-3" type="submit">Save</button>
+  </form>
 </div>
 {% else %}
 <li>No cars found.</li>
