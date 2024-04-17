@@ -1,11 +1,13 @@
 {% extends "parking/base.html" %} {% block content %} {% load static %}
 <h2>Plan of parking</h2>
-<h3>Total places: {{ parking_spaces.count }}. Free places: {{parking_spaces_count}}</h3>
+<h3>
+Total number of parking spaces: {{ parking_spaces.count }}, including free spaces: {{parking_spaces_count}}
+</h3>
 <div class="container-fluid">
-  <div class="row pt-4 mt-3 border rounded">
+  <div class="row pt-4 mt-3 border rounded bg-light">
     {% for entry in parking_spaces %}
-    <div class="col-xl-1 mb-5">
-      <div class="card" style="width: 42px; height: 42px">
+    <div class="col-xl-1 mb-3">
+      <div class="card" style="width:100%; max-width: 70px;">
         <img
           class="card-img-top"
           width="100%"

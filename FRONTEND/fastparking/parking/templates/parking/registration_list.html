@@ -13,8 +13,10 @@
           <th scope="col">Entry Datetime</th>
           <th scope="col">Tariff</th>
           <th scope="col">Exit Datetime</th>
+          <th scope="col">Invoice</th>
           <th scope="col">Car Number In</th>
           <th scope="col">Car Number Out</th>
+          <th scope="col">Paid</th>
         </tr>
       </thead>
       <tbody>
@@ -25,8 +27,12 @@
           <td>{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
           <td>{{ registration.tariff_in }}</td>  <!-- Виведення інформації про тариф -->
           <td>{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
+          <td>{{ registration.invoice }}</td>
           <td>{{ registration.car_number_in }}</td>
           <td>{{ registration.car_number_out }}</td>
+          <td>{% if registration.exit_datetime %}
+            <img src="/static/admin/img/icon-yes.svg" alt="Yes">
+            {%else%} <img src="/static/admin/img/icon-no.svg" alt="No">{%endif%}</td>
         </tr>
         {% endfor %}
       </tbody>

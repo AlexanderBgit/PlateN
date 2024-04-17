@@ -126,7 +126,7 @@ def handle_uploaded_file(
         photo_id = db_save_photo_information(predict, type)
         # registration
         num_auto = predict.get("num_avto_str")
-        
+
         # uniform for manual enter registration_id
         if registration_id and isinstance(registration_id, Registration):
             registration_id = registration_id.pk
@@ -246,7 +246,6 @@ def register_parking_event(
     registration_type,
     photo_id: Photo,
     registration_id: int | str | None = None,
-    
 ) -> dict | None:
     if registration_type == "0":
         return register_parking_in_event(utc_datetime, num_auto, photo_id)
@@ -262,12 +261,13 @@ def register_parking_in_event(
     photo_id: Photo,
 ) -> dict:
     result = {"registration_id": None, "parking_space": None, "info": None}
+
     parking_space = find_free_parking_space(num_auto)
-    
+
     if parking_space:
         # Реєструємо нову подію на парковці
         try:
-            tariff_in=get_price_per_hour(utc_datetime)
+            tariff_in = get_price_per_hour(utc_datetime)
             print(f"register_parking_in_event : {photo_id=}")
             registration = Registration.objects.create(
                 entry_datetime=utc_datetime,
@@ -305,6 +305,8 @@ def register_parking_out_event(
             registration.car_number_out = num_auto
             registration.photo_out = photo_id
             registration.save()
+            # Free parking space
+            parking_space_status_change(registration.parking.pk, False)
             result = {
                 "registration_id": registration.pk,
                 "parking_place": registration.parking.number,
@@ -316,6 +318,7 @@ def register_parking_out_event(
         result["info"] = "registration_id not found"
     return result
 
+
 def get_price_per_hour(entry_time):
     """
     Returns the price per hour from the Tariff object applicable at the given time.
@@ -323,13 +326,16 @@ def get_price_per_hour(entry_time):
     applicable_tariffs = Tariff.objects.filter(
         start_date__lte=entry_time,
         end_date__gte=entry_time,
-    ).order_by('-start_date')  # Get the latest applicable tariff
+    ).order_by(
+        "-start_date"
+    )  # Get the latest applicable tariff
 
     if applicable_tariffs.exists():
         applicable_tariff = applicable_tariffs.first()
         return applicable_tariff.price_per_hour
     else:
         return None
+
 
 # def get_applicable_tariff(entry_time):
 #     """
@@ -338,7 +344,7 @@ def get_price_per_hour(entry_time):
 #     applicable_tariffs = Tariff.objects.filter(
 #         start_date__lte=entry_time,
 #         end_date__gte=entry_time,
-#         description__icontains='hourly'  
+#         description__icontains='hourly'
 #     ).order_by('-start_date')  # Get the latest applicable tariff
 
 #     if applicable_tariffs.exists():

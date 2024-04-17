@@ -10,8 +10,8 @@ def main(request):
     parking_spaces = ParkingSpace.objects.all()
     total_parking_spaces = parking_spaces.count()
     free_parking_spaces = parking_spaces.filter(status=False).count()
-
     active_menu = "home"
+    version = settings.VERSION
     return render(
         request,
         "parking/index.html",
@@ -20,6 +20,7 @@ def main(request):
             "active_menu": active_menu,
             "total_parking_spaces": total_parking_spaces,
             "free_parking_spaces": free_parking_spaces,
+            "version": version,
         },
     )
 
@@ -52,7 +53,7 @@ def generate_report(request):
 def parking_plan_view(request):
     active_menu = "home"
     # parking_spaces = ParkingSpace.objects.all()
-    parking_spaces = ParkingSpace.objects.all().order_by('number')
+    parking_spaces = ParkingSpace.objects.all().order_by("number")
 
     parking_spaces_count = parking_spaces.filter(status=False).count()
 
