@@ -51,7 +51,9 @@ def generate_report(request):
 
 def parking_plan_view(request):
     active_menu = "home"
-    parking_spaces = ParkingSpace.objects.all()
+    # parking_spaces = ParkingSpace.objects.all()
+    parking_spaces = ParkingSpace.objects.all().order_by('number')
+
     parking_spaces_count = parking_spaces.filter(status=False).count()
 
     # Розбиття місць на рядки
