@@ -1,4 +1,7 @@
-{% extends "parking/base.html" %} {% block content %} {% load static %}
+{% extends "parking/base.html" %} 
+{% block content %} 
+{% load static %}
+
 <h1>Registration List</h1>
 <div class="container-fluid">
   <div class="bd-example">
@@ -8,6 +11,7 @@
           <th scope="col">ID</th>
           <th scope="col">Parking Space</th>
           <th scope="col">Entry Datetime</th>
+          <th scope="col">Tariff</th>
           <th scope="col">Exit Datetime</th>
           <th scope="col">Car Number In</th>
           <th scope="col">Car Number Out</th>
@@ -18,8 +22,9 @@
         <tr scope="row">
           <td>{{ registration.id }}</td>
           <td>{{ registration.parking }}</td>
-          <td>{{ registration.entry_datetime|date:'Y-m-d H:i e' }}</td>
-          <td>{{ registration.exit_datetime|date:'Y-m-d H:i e' }}</td>
+          <td>{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
+          <td>{{ registration.tariff_in }}</td>  <!-- Виведення інформації про тариф -->
+          <td>{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
           <td>{{ registration.car_number_in }}</td>
           <td>{{ registration.car_number_out }}</td>
         </tr>
@@ -28,4 +33,5 @@
     </table>
   </div>
 </div>
+
 {% endblock %}

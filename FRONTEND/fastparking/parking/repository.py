@@ -1,10 +1,9 @@
 # from .models import Registration
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
-
+from cars.models import Car
 from .services import compare_plates
 from .models import Registration
-
 
 def get_registration_instance(id: int) -> Registration | None:
     try:
@@ -33,7 +32,7 @@ def find_registered_plate(num_auto: str, max_results: int = 1000) -> int | None:
             return reg.id
 
 
-from .models import Car, Registration
+
 
 def check_and_register_car(num_auto):
     # Тут буде ваша логіка для перевірки та реєстрації автомобіля
@@ -89,3 +88,5 @@ def process_car_registration(data):
             print("Реєстрація автомобіля успішна!")
         else:
             print("Автомобіль заблокований або не може бути зареєстрований.")
+
+

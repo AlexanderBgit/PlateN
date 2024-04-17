@@ -1,9 +1,9 @@
 # from .models import Registration
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
-from .models import Tariff
-from .services import compare_plates
-from .models import Registration
+from finance.models import Payment
+from parking.services import compare_plates
+from parking.models import Registration
 
 
 def get_registration_instance(id: int) -> Registration | None:
@@ -31,7 +31,7 @@ def find_registered_plate(num_auto: str, max_results: int = 1000) -> int | None:
         result, sim = compare_plates(num_auto, reg_num_auto)
         if result:
             return reg.id
-from .models import Payment
+
 # from parking.repository import get_registration_instance
 
 def save_payment(registration_id: int, amount: float) -> Payment:
