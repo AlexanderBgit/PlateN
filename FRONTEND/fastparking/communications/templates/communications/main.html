@@ -1,8 +1,21 @@
 <!-- communications/templates/communications/main.html -->
-{% extends "parking/base.html" %} {% block content %}
-<h1>Messages</h1>
-<p>We check for relevant news and speed it up to send it to the news channel.</p>
-Our news channel: <a href="https://t.me/{{ news_channel }}">@{{ news_channel }}.</a>
-{% if sent_messages %}
-<p>Messages sent: {{ sent_messages }}.</p>
-{% endif%} {% endblock content %}
+{% extends "parking/base.html" %} {% block content %} {% load static %}
+<div class="container-fluid">
+  <h2>Messages</h2>
+
+  <p>We check for relevant news and speed it up to send it to the news channel.</p>
+  <table class="table">
+    <tr>
+      <th class="text-center">Our news channel: <a href="https://t.me/{{ news_channel }}">@{{ news_channel }}.</a></td>
+      <th class="text-center">Our Telegram bot: <a href="https://t.me/{{ t_bot }}">@{{ t_bot }}.</a></td>
+    </tr>
+    <tr>
+      <td class="text-center"><img class="mt-2" src="{% static 'parking/qr_t_news.png' %}" width="80%" /></td>
+      <td class="text-center"><img src="{% static 'parking/qr_t_bot.png' %}" width="80%" /></td>
+    </tr>
+  </table>
+
+  {% if sent_messages %}
+  <p>Messages sent: {{ sent_messages }}.</p>
+  {% endif%} {% endblock content %}
+</div>
