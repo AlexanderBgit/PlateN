@@ -49,7 +49,7 @@ class EditForm(UserChangeForm):
     phone_number = forms.CharField(max_length=20, required=False, 
             widget=forms.TextInput(attrs={'placeholder': '+380XXXXXXXXX', "class": "form-control"}))
     telegram_nickname = forms.CharField(max_length=20, required=False, 
-            widget=forms.TextInput(attrs={'placeholder': '@Nickname', "class": "form-control"}))
+            widget=forms.TextInput(attrs={'placeholder': '@Nickname | +380XXXXXXXXX', "class": "form-control"}))
     
     class Meta:
         model = User 
