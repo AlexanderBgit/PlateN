@@ -7,9 +7,9 @@ from .models import ParkingSpace
 
 
 def main(request):
-    total_parking_spaces = settings.PARKING_SPACES_COUNT
-    occupied_parking_spaces = ParkingSpace.objects.filter(status=True).count()
-    free_parking_spaces = total_parking_spaces - occupied_parking_spaces
+    parking_spaces = ParkingSpace.objects.all()
+    total_parking_spaces = parking_spaces.count()
+    free_parking_spaces = parking_spaces.filter(status=False).count()
 
     active_menu = "home"
     return render(
