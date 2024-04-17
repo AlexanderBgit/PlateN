@@ -14,7 +14,7 @@ class RegisterForm(UserCreationForm):
     email = forms.EmailField(max_length=150, required=True, widget=forms.EmailInput(attrs={"class": "form-control"}))
     phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'placeholder': '+380XXXXXXXXX',"class": "form-control"}))
     accept_oferta = forms.BooleanField(required=True)
-    telegram_nickname = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'placeholder': '@Nickname',"class": "form-control"}))
+    telegram_nickname = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'placeholder': '@Nickname | +380XXXXXXXXX',"class": "form-control"}))
     telegram_id = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
     # cars = forms.ModelMultipleChoiceField(queryset=Car.objects.all(), required=False)
     password1 = CharField(max_length=20, min_length=8, required=True,
