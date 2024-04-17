@@ -125,19 +125,28 @@ def edit_car(request, pk):
 
     return render(request, "accounts/edit_car.html", context)
 
+
+
 @login_required
 def edit_profile(request):
-    resolved_view = resolve(request.path)
-    active_menu = resolved_view.app_name
-    if request.method == 'POST':
-        user_form = EditForm(request.POST, instance=request.user)  
-        if user_form.is_valid():
-            user_form.save()
-            return redirect(to='accounts:profile')  
-    else:
-        user_form = EditForm(instance=request.user)  
+    active_menu = resolve(request.path).app_name
 
-    context = {"active_menu": active_menu,'user_form': user_form}
+    if request.method == 'POST':
+        user_form = EditForm(request.POST, instance=request.user)
+        if user_form.is_valid():
+            new_data = user_form.save(commit=False)
+            fields_to_check = ['first_name','last_name','phone_number', 'telegram_nickname']
+            for field in fields_to_check:
+                if getattr(new_data, field) == '':
+                    old_data = getattr(request.user, field)
+                    if old_data:
+                        old_data.delete()
+            new_data.save()  
+            return redirect('accounts:profile')
+    else:
+        user_form = EditForm(instance=request.user)
+
+    context = {"active_menu": active_menu, 'user_form': user_form}
     return render(request, "accounts/edit_profile.html", context)
 
 @login_required
