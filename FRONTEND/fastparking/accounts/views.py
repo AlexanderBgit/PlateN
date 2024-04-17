@@ -104,7 +104,10 @@ def edit_car(request, pk):
 
         if my_cars_form.is_valid() and car_number_form.is_valid():
             my_cars_form.save()
-            car_number_form.save()
+            car_number_instance = car_number_form.save(commit=False)
+            car_number_instance.car_number = car_number_instance.car_number.upper()  # Переводимо в верхній регістр
+            car_number_instance.save()
+            # car_number_form.save()
 
             return redirect(to="accounts:my_cars")
 
