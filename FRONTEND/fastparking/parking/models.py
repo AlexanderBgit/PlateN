@@ -6,9 +6,8 @@ from photos.models import Photo
 class ParkingSpace(models.Model):
     number = models.CharField(max_length=10, unique=True)
     status = models.BooleanField(default=False)  # False - вільно, True - зайнято
-    registration_id = models.ForeignKey(
-        Photo, on_delete=models.SET_NULL, null=True, blank=True
-    )
+    car_num = models.CharField(max_length=16, default='')
+
 
     def __str__(self):
         return self.number
