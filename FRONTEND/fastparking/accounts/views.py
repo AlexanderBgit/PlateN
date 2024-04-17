@@ -46,6 +46,8 @@ def add_car(request):
 
         if my_cars_form.is_valid() and car_number_form.is_valid():
             car_number = car_number_form.cleaned_data.get('car_number')
+            if car_number:
+                car_number = car_number.strip().upper()
             car_instance, created = Car.objects.get_or_create(car_number=car_number)
 
             new_mycars = my_cars_form.save(commit=False)
