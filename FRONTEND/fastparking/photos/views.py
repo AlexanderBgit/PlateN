@@ -8,6 +8,7 @@ from django.urls import resolve, reverse
 from .repository import handle_uploaded_file, TYPES
 
 
+
 def upload_file(request):
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name

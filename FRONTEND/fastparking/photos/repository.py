@@ -194,21 +194,41 @@ def check_and_register_car(registration_data):
         }
 
 
-def find_free_parking_space() -> ParkingSpace:
+# def find_free_parking_space(num_auto) -> ParkingSpace:
+#     try:
+#         car_auto=num_auto
+#         # Шукаємо перше вільне місце на парковці
+#         parking_space = ParkingSpace.objects.filter(status=False).first()
+#         if parking_space:
+            
+#             # Змінюємо статус місця на зайнято
+#             parking_space.status = True
+#             parking_space.save()
+#             return parking_space
+#         else:
+#             return None  # Немає вільних місць на парковці
+#     except Exception as e:
+#         print(f"Error: {e}")
+#         return None
+
+def find_free_parking_space(num_auto=None) -> ParkingSpace:
     try:
         # Шукаємо перше вільне місце на парковці
         parking_space = ParkingSpace.objects.filter(status=False).first()
         if parking_space:
             # Змінюємо статус місця на зайнято
             parking_space.status = True
+            # Передаємо номер автомобіля, якщо він переданий
+            if num_auto:
+                parking_space.car_num = num_auto
             parking_space.save()
             return parking_space
         else:
-            return None  # Немає вільних місць на парковці
+            # Якщо не знайдено вільного місця, повертаємо None
+            return None
     except Exception as e:
         print(f"Error: {e}")
         return None
-
 
 def parking_space_status_change(id: int, status: bool) -> ParkingSpace | None:
     try:
@@ -242,7 +262,7 @@ def register_parking_in_event(
     photo_id: Photo,
 ) -> dict:
     result = {"registration_id": None, "parking_space": None, "info": None}
-    parking_space = find_free_parking_space()
+    parking_space = find_free_parking_space(num_auto)
     
     if parking_space:
         # Реєструємо нову подію на парковці
