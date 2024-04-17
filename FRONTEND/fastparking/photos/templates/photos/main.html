@@ -12,9 +12,7 @@
       <div class="card bg-primary">
         <div class="card-body mx-auto text-center">
           <a href="{% url 'photos:upload' %}?type=0" class="btn btn-primary btn-lg btn-block">
-            <img
-              width="270"
-              height="270"
+            <img style="width: 100%; max-width: 270px;"
               src="{% static 'photos/button_in_01_270x270.gif' %}"
               title="Upload IN photo of car"
               alt="Upload IN photo of car"
@@ -27,9 +25,7 @@
       <div class="card bg-success">
         <div class="card-body mx-auto text-center">
           <a href="{% url 'photos:upload' %}?type=1" class="btn btn-secondary btn-lg btn-block"
-            ><img
-              width="270"
-              height="270"
+            ><img style="width: 100%; max-width: 270px;"
               src="{% static 'photos/button_out_01_270x270.gif' %}"
               title="Upload OUT photo of car"
               alt="Upload OUT photo of car"
