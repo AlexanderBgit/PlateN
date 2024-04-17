@@ -11,9 +11,9 @@ User = get_user_model()
 
 
 class MyCarsForm(ModelForm):
-    brand = CharField(max_length=255, 
+    brand = CharField(max_length=255, required=False,
         widget=forms.TextInput(attrs={'placeholder': 'Brand', "class": "form-control"}))
-    car_type = CharField(max_length=255, 
+    car_type = CharField(max_length=255, required=False,
         widget=forms.TextInput(attrs={'placeholder': 'Car type', "class": "form-control"}))
     
     class Meta:
@@ -38,12 +38,18 @@ class EditForm(UserChangeForm):
         self.fields.pop('password', None)
 
 
-    username = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={"class": "form-control"}))
-    first_name = CharField(max_length=150, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
-    last_name = CharField(max_length=150, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
-    email = forms.EmailField(max_length=150, required=True, widget=forms.EmailInput(attrs={"class": "form-control"}))
-    phone_number = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
-    telegram_nickname = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
+    username = forms.CharField(max_length=100, required=True, 
+            widget=forms.TextInput(attrs={"class": "form-control"}))
+    first_name = CharField(max_length=150, required=False, 
+            widget=forms.TextInput(attrs={"class": "form-control"}))
+    last_name = CharField(max_length=150, required=False, 
+            widget=forms.TextInput(attrs={"class": "form-control"}))
+    email = forms.EmailField(max_length=150, required=True, 
+            widget=forms.EmailInput(attrs={"class": "form-control"}))
+    phone_number = forms.CharField(max_length=20, required=False, 
+            widget=forms.TextInput(attrs={'placeholder': '+380XXXXXXXXX', "class": "form-control"}))
+    telegram_nickname = forms.CharField(max_length=20, required=False, 
+            widget=forms.TextInput(attrs={'placeholder': '@Nickname', "class": "form-control"}))
     
     class Meta:
         model = User 
