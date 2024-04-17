@@ -1,6 +1,4 @@
-{% extends "parking/base.html" %} 
-{% block content %} 
-{% load static %}
+{% extends "parking/base.html" %} {% block content %} {% load static %}
 
 <h1>Registration List</h1>
 <div class="container-fluid">
@@ -25,14 +23,17 @@
           <td>{{ registration.id }}</td>
           <td>{{ registration.parking }}</td>
           <td>{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
-          <td>{{ registration.tariff_in }}</td>  <!-- Виведення інформації про тариф -->
+          <td>{{ registration.tariff_in }}</td>
           <td>{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
           <td>{{ registration.invoice }}</td>
           <td>{{ registration.car_number_in }}</td>
           <td>{{ registration.car_number_out }}</td>
-          <td>{% if registration.exit_datetime %}
-            <img src="/static/admin/img/icon-yes.svg" alt="Yes">
-            {%else%} <img src="/static/admin/img/icon-no.svg" alt="No">{%endif%}</td>
+          <td>
+            {% if registration.exit_datetime %}
+            <img src="{% static 'parking/icon-yes.svg' %}" alt="Yes" />
+            {%else%}<img src="{% static 'parking/icon-no.svg' %}" alt="No" />
+            {%endif%}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
