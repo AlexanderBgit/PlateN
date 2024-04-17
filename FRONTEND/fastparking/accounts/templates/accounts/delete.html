@@ -6,10 +6,10 @@
 
 <p>Are you sure you want to delete the car:</p>
 
-<ul>
-  <li>Brand: {{ my_cars.brand }}</li>
-  <li>Type: {{ my_cars.car_type }}</li>
-  <li>Car number: {{ car_number.car_number }}</li>
+<ul class="list-group mb-4">
+  <li class="list-group-item">Brand: {{ my_cars.brand }}</li>
+  <li class="list-group-item">Type: {{ my_cars.car_type }}</li>
+  <li class="list-group-item">Car number: {{ car_number.car_number }}</li>
 </ul>
 
 <form method="post" action="{% url 'accounts:delete' pk=my_cars.pk %}">
