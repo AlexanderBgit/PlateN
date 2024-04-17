@@ -72,57 +72,68 @@ def parking_plan_view(request):
 def registration_list(request):
     active_menu = "registration"
     registrations = Registration.objects.all()
-    return render(
-        request, "parking/registration_list.html", {"registrations": registrations}
-    )
+    content = {
+        "title": "Registration list",
+        "active_menu": active_menu,
+        "registrations": registrations,
+    }
+    return render(request, "parking/registration_list.html", content)
 
 
-def entry_registration(request):
-    if request.method == "POST":
-        # Отримання даних з форми
-        parking_id = request.POST.get("parking_id")
-        car_number_in = request.POST.get("car_number_in")
+# def entry_registration(request):
+#     active_menu = "registration"
+#     if request.method == "POST":
+#         # Отримання даних з форми
+#         parking_id = request.POST.get("parking_id")
+#         car_number_in = request.POST.get("car_number_in")
 
-        # Створення реєстрації заїзду
-        parking = ParkingSpace.objects.get(id=parking_id)
-        entry_registration = EntryRegistration.objects.create(
-            parking=parking, car_number_in=car_number_in
-        )
+#         # Створення реєстрації заїзду
+#         parking = ParkingSpace.objects.get(id=parking_id)
+#         entry_registration = Registration.objects.create(
+#             parking=parking, car_number_in=car_number_in
+#         )
 
-        # Перенаправлення на сторінку з реєстрацією виїзду
-        return redirect("exit_registration", entry_id=entry_registration.id)
+#         # Перенаправлення на сторінку з реєстрацією виїзду
+#         return redirect("exit_registration", entry_id=entry_registration.id)
 
-    return render(request, "entry_registration_form.html")
+#     return render(request, "entry_registration_form.html")
 
 
-def exit_registration(request, entry_id):
-    if request.method == "POST":
-        # Отримання даних з форми
-        exit_datetime = timezone.now()
-        car_number_out = request.POST.get("car_number_out")
+# def exit_registration(request, entry_id):
+#     active_menu = "registration"
+#     if request.method == "POST":
+#         # Отримання даних з форми
+#         exit_datetime = timezone.now()
+#         car_number_out = request.POST.get("car_number_out")
 
-        # Отримання реєстрації заїзду
-        entry_registration = EntryRegistration.objects.get(id=entry_id)
+#         # Отримання реєстрації заїзду
+#         entry_registration = Registration.objects.get(id=entry_id)
 
-        # Створення реєстрації виїзду
-        exit_registration = ExitRegistration.objects.create(
-            parking=entry_registration.parking,
-            entry_registration=entry_registration,
-            exit_datetime=exit_datetime,
-            car_number_out=car_number_out,
-        )
+#         # Створення реєстрації виїзду
+#         exit_registration = Registration.objects.create(
+#             parking=entry_registration.parking,
+#             entry_registration=entry_registration,
+#             exit_datetime=exit_datetime,
+#             car_number_out=car_number_out,
+#         )
 
-        # Створення об'єднаної реєстрації
-        combined_registration = CombinedRegistration.create_combined_registration(
-            entry_registration, exit_registration
-        )
+#         # Створення об'єднаної реєстрації
+#         combined_registration = Registration.create_combined_registration(
+#             entry_registration, exit_registration
+#         )
 
-        # Перенаправлення на іншу сторінку
-        return redirect("some_other_view")
+#         # Перенаправлення на іншу сторінку
+#         return redirect("some_other_view")
 
-    return render(request, "exit_registration_form.html")
+#     return render(request, "exit_registration_form.html")
 
 
 def registration_table(request):
-    registrations = EntryRegistration.objects.all()
-    return render(request, "registration_table.html", {"registrations": registrations})
+    active_menu = "registration"
+    registrations = Registration.objects.all()
+    content = {
+        "title": "Registration table",
+        "active_menu": active_menu,
+        "registrations": registrations,
+    }
+    return render(request, "registration_table.html", content)

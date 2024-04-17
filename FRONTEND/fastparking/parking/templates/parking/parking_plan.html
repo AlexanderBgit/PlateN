@@ -1,19 +1,6 @@
 {% extends "parking/base.html" %} {% block content %} {% load static %}
-<style>
-  .parking-space {
-    width: 50px; /* Ширина парковочного місця */
-    height: 50px; /* Висота парковочного місця */
-    border: 1px solid #000; /* Рамка парковочного місця */
-    margin: 2px; /* Відступ між місцями */
-    display: inline-block; /* Показувати місця в одному рядку */
-  }
-  .free-space {
-    background-color: green; /* Колір для вільних місць */
-  }
-</style>
 <h2>Plan of parking</h2>
 <h3>Total places: {{ parking_spaces.count }}. Free places: {{parking_spaces_count}}</h3>
-
 <div class="container-fluid">
   <div class="row row-cols-1 row-cols-md-6 g-2">
     {% for entry in parking_spaces %}
