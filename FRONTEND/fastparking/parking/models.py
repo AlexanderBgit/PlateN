@@ -3,20 +3,23 @@ from cars.models import Car
 from photos.models import Photo
 from django.utils import timezone
 
+
 class ParkingSpace(models.Model):
     number = models.CharField(max_length=10, unique=True)
     status = models.BooleanField(default=False)  # False - вільно, True - зайнято
-    car_num = models.CharField(max_length=16, default='')
-
+    car_num = models.CharField(max_length=16, default="")
 
     def __str__(self):
         return self.number
+
 
 class Registration(models.Model):
     parking = models.ForeignKey(ParkingSpace, on_delete=models.CASCADE)
     entry_datetime = models.DateTimeField(auto_now_add=True)
     car_number_in = models.CharField(max_length=16)
-    tariff_in = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Змінено поле на DecimalField
+    tariff_in = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True
+    )  # Змінено поле на DecimalField
     exit_datetime = models.DateTimeField(null=True, blank=True)
     invoice = models.CharField(max_length=255, null=True, blank=True)
     car_number_out = models.CharField(max_length=16, null=True, blank=True)
@@ -35,8 +38,11 @@ class Registration(models.Model):
         blank=True,
     )
     car = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True, blank=True)
+
     def calculate_parking_fee(self):
-        print("Calculating parking fee...")
+        print(
+            f"Calculating parking fee... tariff: {self.tariff_in}",
+        )
         current_time = timezone.now()  # отримуємо поточний час
         if self.entry_datetime:
             duration = current_time - self.entry_datetime
@@ -46,8 +52,7 @@ class Registration(models.Model):
                 parking_fee = round(hours * price_per_hour, 2)
                 return parking_fee
         return "Calc..."
-   
-    
+
     def __str__(self):
         if self.invoice:
             invoice_predict = self.invoice
@@ -55,4 +60,4 @@ class Registration(models.Model):
             invoice_predict = self.calculate_parking_fee()
             # invoice_predict = finance_repo.calculate_current_invoice(self.id)
         e_date = self.entry_datetime.strftime("%Y-%m-%d %H:%M")
-        return f"Registration ID: {self.id:06} - Cur Number: {self.car_number_in} - Parking Number: {self.parking.number} - Entry: {e_date} - Invoice*: {invoice_predict}"
+        return f"Registration ID: {self.pk:06} - Cur Number: {self.car_number_in} - Parking Number: {self.parking.number} - Entry: {e_date} - Invoice*: {invoice_predict}"
