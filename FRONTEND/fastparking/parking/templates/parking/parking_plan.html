@@ -2,10 +2,10 @@
 <h2>Plan of parking</h2>
 <h3>Total places: {{ parking_spaces.count }}. Free places: {{parking_spaces_count}}</h3>
 <div class="container-fluid">
-  <div class="row row-cols-1 row-cols-md-6 g-2">
+  <div class="row pt-4 mt-3 border rounded">
     {% for entry in parking_spaces %}
-    <div class="col">
-      <div class="card" style="max-width: 140px; width: 100%">
+    <div class="col-xl-1 mb-5">
+      <div class="card" style="width: 42px; height: 42px">
         <img
           class="card-img-top"
           width="100%"
