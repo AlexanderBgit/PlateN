@@ -1,8 +1,12 @@
+import csv
+
 from django.shortcuts import render, redirect
-from .models import ParkingSpace
+from django.http import HttpResponse
 from django.conf import settings
 from django.utils import timezone
+
 from .models import Registration
+from .models import ParkingSpace
 from .models import ParkingSpace
 
 
@@ -141,12 +145,46 @@ def registration_table(request):
     }
     return render(request, "registration_table.html", content)
 
-def registration_csv(request):
-    active_menu = "registration"
+
+def download_csv(request):
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="registrations.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(
+        [
+            "ID",
+            "Parking Space",
+            "Entry Datetime",
+            "Exit Datetime",
+            "Tariff",
+            "invoice",
+            "Car Number In",
+            "Car Number Out",
+        ]
+    )
+
     registrations = Registration.objects.all()
-    content = {
-        "title": "Registration table",
-        "active_menu": active_menu,
-        "registrations": registrations,
-    }
-    return render(request, "registration_table.html", content)
+    iso_str = "%Y-%m-%dT%H:%M:%S"
+    for registration in registrations:
+        entry_datetime = None
+        if registration.entry_datetime:
+            entry_datetime = registration.entry_datetime.strftime(iso_str)
+        exit_datetime = None
+        if registration.exit_datetime:
+            exit_datetime = registration.exit_datetime.strftime(iso_str)
+        writer.writerow(
+            [
+                registration.pk,
+                registration.parking,
+                entry_datetime,
+                exit_datetime,
+                registration.tariff_in,
+                registration.invoice,
+                registration.car_number_in,
+                registration.car_number_out,
+            ]
+        )
+
+    return response
