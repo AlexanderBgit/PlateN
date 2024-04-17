@@ -17,7 +17,7 @@ except ImportError:
 if __name__ == "__main__":
     PARKING_SPACES_COUNT = settings.PARKING_SPACES_COUNT
     total = 0
-    for i in range(PARKING_SPACES_COUNT):
+    for i in range(1, PARKING_SPACES_COUNT + 1):
         number = f"P-{i:03}"
         try:
             parking = ParkingSpace(number=number)
