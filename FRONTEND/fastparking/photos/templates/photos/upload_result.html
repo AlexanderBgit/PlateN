@@ -27,6 +27,7 @@
           />
         </td>
       </tr>
+      {% if registration.id %}
       <tr>
         <td colspan="2"><h3>Registration Information:</h3></td>
       </tr>
@@ -59,8 +60,16 @@
       <tr></tr>
     </tbody>
   </table>
-  <p></p>
 </div>
+{% else %}
+
+<div class="d-inline p-2 bg-primary text-white">Registration denied</div>
+<div class="d-inline p-2 bg-dark text-white">{{ info }}</div>
+
+{% endif %}
+
+<p></p>
+
 <div class="container">
   <p>
     <a href="{% url 'photos:main' %}" class="btn btn-primary">Back</a>

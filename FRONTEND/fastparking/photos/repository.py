@@ -110,7 +110,7 @@ def unsign_text(text):
 
 def handle_uploaded_file(
     f, type: str | None, filename: str | None = None, registration_id: str | None = None
-) -> dict[str, dict]:
+) -> dict:
     if f and type:
         utc_datetime = datetime.utcnow()
         info = f"File accepted, sizes: {len(f) // 1024} KB, {TYPES.get(type)}, {filename=}."
@@ -135,8 +135,8 @@ def handle_uploaded_file(
             "type": type,
             "registration_id": registration_id,
         }
-        res = check_and_register_car(registration_data)
-        print(res)
+        register_car_result = check_and_register_car(registration_data)
+        print(register_car_result)
 
         # -------------------------------------------------------
         registration_result = None
@@ -152,6 +152,8 @@ def handle_uploaded_file(
             predict["num_img"] = base64_image
         if registration_result:
             registration_id = registration_result.get("registration_id")
+            info = f"Car: {register_car_result.get('info')}, Register: {registration_result.get('info')}"
+
         registration = None
         if registration_id:
             date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -179,13 +181,16 @@ def check_and_register_car(registration_data):
     try:
         car = Car.objects.get(car_number=num_auto)
         if car.blocked:
-            return {"success": False, "info": "Автомобіль заблокований"}
+            return {"success": False, "info": "The car is blocked"}
         else:
-            return {"success": True, "info": "Автомобіль існує і не заблокований"}
+            return {"success": True, "info": "The car exists and is not blocked"}
     except Car.DoesNotExist:
         # Створюємо новий запис в таблиці Car
         car = Car.objects.create(car_number=num_auto, photo_car_id=photo_id)
-        return {"success": True, "info": "Автомобіль не існує, створено новий запис"}
+        return {
+            "success": True,
+            "info": "The car does not exist, a new record has been created",
+        }
 
 
 def find_free_parking_space() -> ParkingSpace:
@@ -249,12 +254,14 @@ def register_parking_in_event(
             result = {
                 "registration_id": registration.pk,
                 "parking_place": parking_space.number,
-                "info": None,
+                "info": "Success",
             }
         except Exception as e:
             print(f"Error: {e} , restore free place {parking_space}")
             # restore free place
             parking_space_status_change(parking_space.pk, False)
+    else:
+        result["info"] = "No free space"
     return result
 
 
@@ -276,8 +283,10 @@ def register_parking_out_event(
             result = {
                 "registration_id": registration.pk,
                 "parking_place": registration.parking.number,
-                "info": None,
+                "info": "Success",
             }
         except Registration.DoesNotExist as e:
             print(f"Error: {e}")
+    else:
+        result["info"] = "registration_id not found"
     return result
