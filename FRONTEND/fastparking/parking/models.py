@@ -1,7 +1,7 @@
 from django.db import models
 from cars.models import Car
 from photos.models import Photo
-
+from django.utils import timezone
 
 class ParkingSpace(models.Model):
     number = models.CharField(max_length=10, unique=True)
@@ -35,14 +35,24 @@ class Registration(models.Model):
         blank=True,
     )
     car = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True, blank=True)
+    def calculate_parking_fee(self):
+        print("Calculating parking fee...")
+        current_time = timezone.now()  # отримуємо поточний час
+        if self.entry_datetime:
+            duration = current_time - self.entry_datetime
+            hours = duration.total_seconds() / 3600  # переводимо час в години
+            if self.tariff_in:
+                price_per_hour = float(self.tariff_in)  # Зміна типу на float
+                parking_fee = round(hours * price_per_hour, 2)
+                return parking_fee
+        return "Calc..."
+   
     
     def __str__(self):
         if self.invoice:
             invoice_predict = self.invoice
         else:
-            invoice_predict = "Calc..."  # calculate_current_invoice(self.id)
+            invoice_predict = self.calculate_parking_fee()
             # invoice_predict = finance_repo.calculate_current_invoice(self.id)
         e_date = self.entry_datetime.strftime("%Y-%m-%d %H:%M")
-        return f"Registration ID: {self.id:06} - Parking Number: {self.parking.number} - Entry: {e_date} - Invoice*: {invoice_predict}"
-    
-    
+        return f"Registration ID: {self.id:06} - Cur Number: {self.car_number_in} - Parking Number: {self.parking.number} - Entry: {e_date} - Invoice*: {invoice_predict}"
