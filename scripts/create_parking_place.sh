@@ -8,14 +8,11 @@ if command -v dos2unix &> /dev/null; then
   dos2unix *.sh &> /dev/null
 fi
 
-./migrate_dev_app.sh
-
 # simulate poetry shell
 pushd "../FRONTEND"
-git rev-parse --short HEAD > git-version.txt
 pyact=$(poetry env info -p)
 source ${pyact}/bin/activate
 popd
 pushd "../FRONTEND/fastparking"
-python manage.py runserver 0.0.0.0:8000
+python ./parking/create_parking.py
 popd

@@ -1,35 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Combined Registration List</title>
-</head>
-<body>
-    <h1>Combined Registration List</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Registration ID</th>
-                <th>Parking Space</th>
-                <th>Entry Datetime</th>
-                <th>Exit Datetime</th>
-                <th>Car Number In</th>
-                <th>Car Number Out</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for combined_registration in combined_registrations %}
-                <tr>
-                    <td>{{ combined_registration.id }}</td>
-                    <td>{{ combined_registration.entry_registration.parking }}</td>
-                    <td>{{ combined_registration.entry_registration.entry_datetime }}</td>
-                    <td>{{ combined_registration.exit_registration.exit_datetime }}</td>
-                    <td>{{ combined_registration.entry_registration.car_number_in }}</td>
-                    <td>{{ combined_registration.exit_registration.car_number_out }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
+{% extends "parking/base.html" %} {% block content %} {% load static %}
+<h1>Registration List</h1>
+<div class="container-fluid">
+  <div class="bd-example">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Parking Space</th>
+          <th scope="col">Entry Datetime</th>
+          <th scope="col">Exit Datetime</th>
+          <th scope="col">Car Number In</th>
+          <th scope="col">Car Number Out</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for registration in registrations %}
+        <tr scope="row">
+          <td>{{ registration.id }}</td>
+          <td>{{ registration.parking }}</td>
+          <td>{{ registration.entry_datetime|date:'Y-m-d H:i e' }}</td>
+          <td>{{ registration.exit_datetime|date:'Y-m-d H:i e' }}</td>
+          <td>{{ registration.car_number_in }}</td>
+          <td>{{ registration.car_number_out }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}

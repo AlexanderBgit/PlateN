@@ -1,6 +1,10 @@
 @echo off
 echo "runed poetry shell?"
 
+echo "runing migration"
+
+call migrate_dev_app.cmd
+
 PUSHD "..\FRONTEND\fastparking"
 poetry env info -p
 echo "\Scripts\activate"

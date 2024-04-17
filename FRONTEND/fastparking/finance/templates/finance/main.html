@@ -1,12 +1,14 @@
 <!-- finance/templates/finance/main.html -->
 
 {% extends "parking/base.html" %} {% block content %}
-<h2>Main Page</h2>
+<h2>Finance</h2>
 <!-- Додайте посилання на сторінку додавання тарифу -->
-<ul>
-  <li><a class="btn btn-primary" href="{% url 'finance:add_tariff' %}">Add Tariff</a></li>
-  <li><a class="btn btn-primary" href="{% url 'finance:add_pay' %}">Payments</a></li>
-</ul>
+<div class="container">
+  <ul class="list-group">
+    <li class="list-group-item"><a class="btn btn-primary" href="{% url 'finance:add_tariff' %}">Add Tariff</a></li>
+    <li class="list-group-item"><a class="btn btn-primary" href="{% url 'finance:add_pay' %}">Payments</a></li>
+  </ul>
+</div>
 
 <!-- Інші елементи сторінки, такі як таблиці, графіки тощо -->
 {% endblock content %}

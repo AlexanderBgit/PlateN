@@ -1,29 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>План парковки</title>
-    <style>
-        .parking-space {
-            width: 50px; /* Ширина парковочного місця */
-            height: 50px; /* Висота парковочного місця */
-            border: 1px solid #000; /* Рамка парковочного місця */
-            margin: 2px; /* Відступ між місцями */
-            display: inline-block; /* Показувати місця в одному рядку */
-        }
-        .free-space {
-            background-color: green; /* Колір для вільних місць */
-        }
-    </style>
-</head>
-<body>
-    {% for row in parking_rows %}
-        <div>
-            {% for space in row %}
-                <div class="parking-space free-space"></div>
-            {% endfor %}
-        </div>
+{% extends "parking/base.html" %} {% block content %} {% load static %}
+<h2>Plan of parking</h2>
+<h3>Total places: {{ parking_spaces.count }}. Free places: {{parking_spaces_count}}</h3>
+<div class="container-fluid">
+  <div class="row row-cols-1 row-cols-md-6 g-2">
+    {% for entry in parking_spaces %}
+    <div class="col">
+      <div class="card" style="max-width: 140px; width: 100%">
+        <img
+          class="card-img-top"
+          width="100%"
+          alt="{{entry.number}}"
+          title="{{entry.number}}"
+          src="{% if entry.status %}{% static 'parking/car-02.png' %}{% else %}{% static 'parking/car-01.png' %}{%endif%}"
+        />
+        <div class="text-center"><p class="card-title">{{entry.number}}</p></div>
+      </div>
+    </div>
     {% endfor %}
-</body>
-</html>
+  </div>
+</div>
+
+{% endblock %}
