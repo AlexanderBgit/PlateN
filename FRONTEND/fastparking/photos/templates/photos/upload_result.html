@@ -65,6 +65,12 @@
           />
         </td>
       </tr>
+      {% if registration.compare_plates %}
+      <tr {% if not registration.compare_plates.0 %}class="text-danger" {% endif %}>
+        <th>Compare plates IN/OUT:</th>
+        <td>{{ registration.compare_plates }}</td>
+      </tr>
+      {% endif %}
       <tr>
         <th>Uniq code:</th>
         <td>{{ registration.hash }}</td>
