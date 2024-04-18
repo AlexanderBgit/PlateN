@@ -60,4 +60,4 @@ class Registration(models.Model):
             invoice_predict = self.calculate_parking_fee()
             # invoice_predict = finance_repo.calculate_current_invoice(self.id)
         e_date = self.entry_datetime.strftime("%Y-%m-%d %H:%M")
-        return f"Registration ID: {self.pk:06} - Cur Number: {self.car_number_in} - Parking Number: {self.parking.number} - Entry: {e_date} - Invoice*: {invoice_predict}"
+        return f"Registration ID: {self.pk:06} - Car Number: {self.car_number_in} - Parking Number: {self.parking.number} - Entry: {e_date} - Invoice*: {invoice_predict}"
