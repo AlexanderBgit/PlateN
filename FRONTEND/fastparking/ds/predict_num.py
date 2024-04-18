@@ -269,7 +269,7 @@ def get_num_avto(img_avto):
     img = img_avto.copy()
     output_img, num_img = extract_plate(img, plate_cascade)
 
-    if num_img:
+    if num_img is not None:
         chars = segment_to_contours(num_img)
 
         predicted_str, total_accuracy = predict_result(chars, model)
@@ -299,7 +299,7 @@ def get_num_auto_png_io(f) -> dict:
 def get_num_auto_png(img) -> dict:
     num_result = get_num_avto(img)
     img = num_result.get("num_img", None)
-    is_success = img != None
+    is_success = img is not None
     
     if is_success:
         try:
