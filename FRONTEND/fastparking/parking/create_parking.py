@@ -35,11 +35,6 @@ def create_parking():
 
 def create_tariffs():
     total = 0
-    start_date_naive = datetime.strptime("2000-01-01 00:00:00Z", "%Y-%m-%d %H:%M:%SZ")
-    start_date_aware = start_date_naive.replace(tzinfo=pytz.utc)
-    end_date_naive = datetime.strptime("2999-01-01 00:00:00Z", "%Y-%m-%d %H:%M:%SZ")
-    end_date_aware = end_date_naive.replace(tzinfo=pytz.utc)
-
     tariffs = [
         {
             "description": "Basic-1",
