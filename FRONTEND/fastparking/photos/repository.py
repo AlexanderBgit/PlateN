@@ -6,6 +6,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core import signing
 import qrcode
+import pytz
 
 from ds.predict_num import get_num_auto_png_io
 
@@ -137,7 +138,7 @@ def handle_uploaded_file(
             "registration_id": registration_id,
         }
         register_car_result = check_and_register_car(registration_data)
-        print(register_car_result)
+        # print(register_car_result)
         info = register_car_result.get("info")
 
         registration_result = None
@@ -164,6 +165,7 @@ def handle_uploaded_file(
                 date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
                 registration_id_formatted = f"{registration_id:06}"
                 parking_place = registration_result.get("parking_place")
+                tariff_in = registration_result.get("tariff_in")
                 reg_info = f"id:{registration_id},place:{parking_place},date:{int(utc_datetime.timestamp())}|"
                 encoded_text = sign_text(reg_info)
                 hash_code = encoded_text.split("|:")[-1]
@@ -171,6 +173,7 @@ def handle_uploaded_file(
                 registration = {
                     "id": registration_id_formatted,
                     "parking_place": parking_place,
+                    "tariff_in": tariff_in,
                     "qr_code": qrcode_img,
                     "date": date_formatted,
                     "hash": hash_code,
@@ -216,7 +219,7 @@ def check_and_register_car(registration_data):
 #         return None
 
 
-def find_free_parking_space(num_auto=None) -> ParkingSpace:
+def find_free_parking_space(num_auto=None) -> ParkingSpace | None:
     try:
         # Шукаємо перше вільне місце на парковці
         parking_space = ParkingSpace.objects.filter(status=False).first()
@@ -274,7 +277,7 @@ def register_parking_in_event(
         # Реєструємо нову подію на парковці
         try:
             tariff_in = get_price_per_hour(utc_datetime)
-            print(f"register_parking_in_event : {photo_id=}")
+            # print(f"register_parking_in_event : {photo_id=}")
             registration = Registration.objects.create(
                 entry_datetime=utc_datetime,
                 car_number_in=num_auto,
@@ -285,6 +288,7 @@ def register_parking_in_event(
             result = {
                 "registration_id": registration.pk,
                 "parking_place": parking_space.number,
+                "tariff_in": tariff_in,
                 "info": "Success",
             }
         except Exception as e:
@@ -316,6 +320,7 @@ def register_parking_out_event(
             result = {
                 "registration_id": registration.pk,
                 "parking_place": registration.parking.number,
+                "tariff_in": registration.tariff_in,
                 "info": "Success",
             }
         except Registration.DoesNotExist as e:
@@ -325,20 +330,20 @@ def register_parking_out_event(
     return result
 
 
-def get_price_per_hour(entry_time):
+def get_price_per_hour(entry_time) -> float | None:
     """
     Returns the price per hour from the Tariff object applicable at the given time.
     """
     applicable_tariffs = Tariff.objects.filter(
-        start_date__lte=entry_time,
-        end_date__gte=entry_time,
+        start_date__lte=entry_time.replace(tzinfo=pytz.utc),
+        end_date__gte=entry_time.replace(tzinfo=pytz.utc),
     ).order_by(
         "-start_date"
     )  # Get the latest applicable tariff
 
     if applicable_tariffs.exists():
         applicable_tariff = applicable_tariffs.first()
-        return applicable_tariff.price_per_hour
+        return float(applicable_tariff.price_per_hour)
     else:
         return None
 
