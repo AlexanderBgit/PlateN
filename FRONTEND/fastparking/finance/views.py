@@ -1,9 +1,14 @@
+from datetime import datetime
+import pytz
 from django.urls import resolve
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
-from photos.repository import build_html_image
+from photos.repository import (
+    build_html_image,
+    calculate_invoice,
+)
 from .forms import TariffForm, PaymentsForm
 
 
@@ -71,17 +76,27 @@ def add_pay(request):
         if form.is_valid():
             instance = form.save()
             currency = "UAH"
+            exit_datetime = datetime.utcnow().replace(tzinfo=pytz.utc)
+            invoice_calculated = calculate_invoice(
+                instance.registration_id.entry_datetime,
+                exit_datetime,
+                instance.registration_id.tariff_in,
+            )
             amount_formatted = f"{instance.amount:.2f} {currency}"
             date_formated = instance.datetime.strftime("%Y-%m-%d %H:%M:%S")
             payment_id_formatted = f"{instance.id:06}"
             registration_id_formatted = f"{instance.registration_id.id:06}"
             parking_place = instance.registration_id.parking.number
             car_number_in = instance.registration_id.car_number_in
-            if instance.registration_id.invoice:
-                invoice = float(instance.registration_id.invoice)
-                invoice_formatted = f"{invoice:.2f} {currency}"
+            if invoice_calculated:
+                invoice_formatted = f"{invoice_calculated:.2f} {currency}"
             else:
                 invoice_formatted = "--"
+            # if instance.registration_id.invoice:
+            #     invoice = float(instance.registration_id.invoice)
+            #     invoice_formatted = f"{invoice:.2f} {currency}"
+            # else:
+            #     invoice_formatted = "--"
             photo_in = build_html_image(instance.registration_id.photo_in.photo)
             payment = {
                 "Payment ID": payment_id_formatted,

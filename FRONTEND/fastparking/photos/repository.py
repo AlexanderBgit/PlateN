@@ -387,6 +387,7 @@ def calculate_invoice_for_reg_id(
     registration_id: int, update_record: bool = False
 ) -> float | None:
     result = None
+
     try:
         registration = Registration.objects.get(pk=registration_id)
         tariff_in = registration.tariff_in
@@ -403,7 +404,7 @@ def calculate_invoice_for_reg_id(
 
     except Registration.DoesNotExist as e:
         print(f"Error: {e}")
-
+    print("calculate_invoice_for_reg_id", registration_id, result)
     return result
 
 
