@@ -138,39 +138,43 @@ def handle_uploaded_file(
         }
         register_car_result = check_and_register_car(registration_data)
         print(register_car_result)
+        info = register_car_result.get("info")
 
-        # -------------------------------------------------------
         registration_result = None
-        if num_auto and photo_id:
-            registration_result = register_parking_event(
-                utc_datetime, num_auto, type, photo_id, registration_id
-            )
-        # -------------------------------------------------------
+        registration = None
 
         binary_image_data = predict.get("num_img")
         if binary_image_data:
             base64_image = build_base64_image(binary_image_data)
             predict["num_img"] = base64_image
-        if registration_result:
-            registration_id = registration_result.get("registration_id")
-            info = f"Car: {register_car_result.get('info')}, Register: {registration_result.get('info')}"
 
-        registration = None
-        if registration_id:
-            date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
-            registration_id_formatted = f"{registration_id:06}"
-            parking_place = registration_result.get("parking_place")
-            reg_info = f"id:{registration_id},place:{parking_place},date:{int(utc_datetime.timestamp())}|"
-            encoded_text = sign_text(reg_info)
-            hash_code = encoded_text.split("|:")[-1]
-            qrcode_img = build_qrcode(encoded_text)
-            registration = {
-                "id": registration_id_formatted,
-                "parking_place": parking_place,
-                "qr_code": qrcode_img,
-                "date": date_formatted,
-                "hash": hash_code,
-            }
+        if register_car_result.get("success"):
+            # -------------------------------------------------------
+            if num_auto and photo_id:
+                registration_result = register_parking_event(
+                    utc_datetime, num_auto, type, photo_id, registration_id
+                )
+            # -------------------------------------------------------
+            if registration_result:
+
+                registration_id = registration_result.get("registration_id")
+                info = f"Car: {register_car_result.get('info')}, Register: {registration_result.get('info')}"
+
+            if registration_id:
+                date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
+                registration_id_formatted = f"{registration_id:06}"
+                parking_place = registration_result.get("parking_place")
+                reg_info = f"id:{registration_id},place:{parking_place},date:{int(utc_datetime.timestamp())}|"
+                encoded_text = sign_text(reg_info)
+                hash_code = encoded_text.split("|:")[-1]
+                qrcode_img = build_qrcode(encoded_text)
+                registration = {
+                    "id": registration_id_formatted,
+                    "parking_place": parking_place,
+                    "qr_code": qrcode_img,
+                    "date": date_formatted,
+                    "hash": hash_code,
+                }
         return {"info": info, "predict": predict, "registration": registration}
 
 
@@ -200,7 +204,7 @@ def check_and_register_car(registration_data):
 #         # Шукаємо перше вільне місце на парковці
 #         parking_space = ParkingSpace.objects.filter(status=False).first()
 #         if parking_space:
-            
+
 #             # Змінюємо статус місця на зайнято
 #             parking_space.status = True
 #             parking_space.save()
@@ -210,6 +214,7 @@ def check_and_register_car(registration_data):
 #     except Exception as e:
 #         print(f"Error: {e}")
 #         return None
+
 
 def find_free_parking_space(num_auto=None) -> ParkingSpace:
     try:
@@ -229,6 +234,7 @@ def find_free_parking_space(num_auto=None) -> ParkingSpace:
     except Exception as e:
         print(f"Error: {e}")
         return None
+
 
 def parking_space_status_change(id: int, status: bool) -> ParkingSpace | None:
     try:
