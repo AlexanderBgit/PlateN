@@ -395,7 +395,7 @@ def calculate_invoice_for_reg_id(registration_id: int) -> float | None:
                 exit_datetime=registration.exit_datetime,
                 tariff_in=tariff_in,
             )
-    except ParkingSpace.DoesNotExist as e:
+    except Registration.DoesNotExist as e:
         print(f"Error: {e}")
 
     return result
