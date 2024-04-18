@@ -49,6 +49,19 @@ def upload_file(request):
                 # print(f"{info}")
                 if info:
                     return render(request, "photos/upload_result.html", context)
+                else:
+                    context = {
+                        "active_menu": active_menu,
+                        "title": "",
+                        "target_type": {"type":0},
+                        "info": "Not recognized",
+                        "predict": {
+                            "num_avto_str": "Number not recognized",
+                            "accuracy": "0"
+                            },
+                        "registration": "NOT registered",
+                    }
+                    return render(request, "photos/upload_result.html", context)
             # upload_url = reverse("upload")
             return HttpResponseRedirect("")
     else:

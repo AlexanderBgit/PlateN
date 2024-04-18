@@ -91,8 +91,8 @@
               class="nav-link {% if active_menu == 'photos' %}active{% else %}text-white{% endif %}"
               href="{% url 'photos:main' %}"
             >
-              <i class="fa-solid fa-folders"></i>
-              <span class="nav-item">Photos</span>
+              <i class="fa-solid fa-camera"></i>
+              <span class="nav-item">Car Recognition</span>
             </a>
           </li>
           <li>
@@ -142,9 +142,12 @@
           </a>
         </div>
       </div>
-      <div class="b-example-divider b-example-vr"></div>
+      <div class="b-example-divider b-example-vr">
+      </div>
 
-      <div class="container-fluid">{% block content %} {% endblock %}</div>
+      <div class="container-fluid">
+        {% block content %} {% endblock %}
+      </div>
     </main>
 
     <!-- <footer class="footer mt-auto py-3 bg-dark">
