@@ -114,6 +114,8 @@ def handle_uploaded_file(
 ) -> dict:
     if f and type:
         utc_datetime = datetime.utcnow()
+        utc_datetime = utc_datetime.replace(tzinfo=pytz.utc)
+
         info = f"File accepted, sizes: {len(f) // 1024} KB, {TYPES.get(type)}, {filename=}."
         #  try to save
         # try:
@@ -168,7 +170,11 @@ def handle_uploaded_file(
                 registration_id_formatted = f"{registration_id:06}"
                 parking_place = registration_result.get("parking_place")
                 tariff_in = registration_result.get("tariff_in")
-                reg_info = f"id:{registration_id},place:{parking_place},date:{int(utc_datetime.timestamp())}|"
+                invoice = registration_result.get("invoice")
+                invoice_str = ""
+                if invoice:
+                    invoice_str = f"invoice: {invoice},"
+                reg_info = f"id:{registration_id},place:{parking_place},{invoice_str}date:{int(utc_datetime.timestamp())}|"
                 encoded_text = sign_text(reg_info)
                 hash_code = encoded_text.split("|:")[-1]
                 qrcode_img = build_qrcode(encoded_text)
@@ -176,6 +182,7 @@ def handle_uploaded_file(
                     "id": registration_id_formatted,
                     "parking_place": parking_place,
                     "tariff_in": tariff_in,
+                    "invoice": invoice,
                     "qr_code": qrcode_img,
                     "date": date_formatted,
                     "hash": hash_code,
@@ -313,6 +320,12 @@ def register_parking_out_event(
         registration_id = int(registration_id)
         try:
             registration = Registration.objects.get(pk=registration_id)
+            invoice = calculate_invoice(
+                registration.entry_datetime, utc_datetime, registration.tariff_in
+            )
+            if invoice:
+                registration.invoice = str(invoice)
+
             registration.exit_datetime = utc_datetime
             registration.car_number_out = num_auto
             registration.photo_out = photo_id
@@ -323,6 +336,7 @@ def register_parking_out_event(
                 "registration_id": registration.pk,
                 "parking_place": registration.parking.number,
                 "tariff_in": registration.tariff_in,
+                "invoice": invoice,
                 "info": "Success",
             }
         except Registration.DoesNotExist as e:
@@ -348,6 +362,45 @@ def get_price_per_hour(entry_time) -> float | None:
         return float(applicable_tariff.price_per_hour)
     else:
         return None
+
+
+def calculate_invoice(
+    entry_datetime: datetime | None,
+    exit_datetime: datetime | None,
+    tariff_in,
+) -> float:
+    parking_fee = 0.0
+    if (
+        entry_datetime is not None
+        and exit_datetime is not None
+        and tariff_in is not None
+    ):
+        duration = exit_datetime.replace(tzinfo=pytz.utc) - entry_datetime.replace(
+            tzinfo=pytz.utc
+        )
+        hours = duration.total_seconds() / 3600  # переводимо час в години
+        if tariff_in:
+            price_per_hour = float(tariff_in)  # Зміна типу на float
+            parking_fee = round(hours * price_per_hour, 2)
+    return parking_fee
+
+
+def calculate_invoice_for_reg_id(registration_id: int) -> float | None:
+    result = None
+    try:
+        registration = Registration.objects.get(pk=registration_id)
+        tariff_in = registration.tariff_in
+        if tariff_in:
+            tariff_in = float(registration.tariff_in)
+            result = calculate_invoice(
+                entry_datetime=registration.entry_datetime,
+                exit_datetime=registration.exit_datetime,
+                tariff_in=tariff_in,
+            )
+    except Registration.DoesNotExist as e:
+        print(f"Error: {e}")
+
+    return result
 
 
 # def get_applicable_tariff(entry_time):

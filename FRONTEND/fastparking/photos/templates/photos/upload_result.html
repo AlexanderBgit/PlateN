@@ -49,6 +49,12 @@
         <th>Tariff:</th>
         <td>{{ registration.tariff_in }}</td>
       </tr>
+      {% if registration.invoice %}
+      <tr>
+        <th>Invoice:</th>
+        <td>{{ registration.invoice }}</td>
+      </tr>
+      {% endif %}
       <tr>
         <th>QR Code:</th>
         <td>
