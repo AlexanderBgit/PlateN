@@ -169,8 +169,10 @@ def registration_table(request):
     return render(request, "registration_table.html", content)
 
 
+@login_required
 def download_csv(request):
-
+    if not is_admin(request):
+        return redirect("parking:main")
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="registrations.csv"'
 
