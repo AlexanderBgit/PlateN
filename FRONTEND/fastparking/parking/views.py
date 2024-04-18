@@ -14,12 +14,10 @@ def main(request):
     parking_spaces = ParkingSpace.objects.all()
     total_parking_spaces = parking_spaces.count()
     free_parking_spaces = parking_spaces.filter(status=False).count()
-    try:
-        parking_progress = int(
-            (total_parking_spaces - free_parking_spaces) / total_parking_spaces * 100
-        )
-    except ZeroDivisionError:
-        parking_progress = 0
+    parking_progress = 0
+    if total_parking_spaces > 0:
+        parking_progress = int((total_parking_spaces - free_parking_spaces) / total_parking_spaces * 100)
+
     active_menu = "home"
     version = settings.VERSION
     return render(
@@ -67,12 +65,10 @@ def parking_plan_view(request):
     parking_spaces = ParkingSpace.objects.all().order_by("number")
     parking_spaces_count = parking_spaces.filter(status=False).count()
     total_spaces = parking_spaces.count()
-    try:
-        parking_progress = int(
-            (total_spaces - parking_spaces_count) / total_spaces * 100
-        )
-    except ZeroDivisionError:
-        parking_progress = 0
+    parking_progress = 0
+    if total_spaces > 0:
+        parking_progress = int((total_spaces - parking_spaces_count) / total_spaces * 100)
+
 
     # Розбиття місць на рядки
     # row_length = 10  # Довжина рядка (кількість місць у рядку)
