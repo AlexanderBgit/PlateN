@@ -26,7 +26,7 @@ def db_save_photo_information(predict: dict, type: str) -> Photo | None:
     num_auto = predict.get("num_avto_str")
     accuracy = predict.get("accuracy")
     num_img = predict.get("num_img")
-    if num_auto:
+    if num_auto and num_img:
         record = Photo()
         record.recognized_car_number = num_auto
         record.accuracy = accuracy
@@ -123,6 +123,8 @@ def handle_uploaded_file(
 
         # analyze and calculate prediction of image
         predict = get_num_auto_png_io(f.read())
+        if not predict["num_img"]: return {}
+
         # store information to database
         photo_id = db_save_photo_information(predict, type)
         # registration

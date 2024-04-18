@@ -269,16 +269,19 @@ def get_num_avto(img_avto):
     img = img_avto.copy()
     output_img, num_img = extract_plate(img, plate_cascade)
 
-    chars = segment_to_contours(num_img)
+    if num_img is not None:
+        chars = segment_to_contours(num_img)
 
-    predicted_str, total_accuracy = predict_result(chars, model)
-    num_avto_str = str.replace(predicted_str, "#", "")
+        predicted_str, total_accuracy = predict_result(chars, model)
+        num_avto_str = str.replace(predicted_str, "#", "")
 
-    return {
-        "num_avto_str": num_avto_str,
-        "accuracy": total_accuracy,
-        "num_img": num_img,
-    }
+        return {
+            "num_avto_str": num_avto_str,
+            "accuracy": total_accuracy,
+            "num_img": num_img,
+        }
+    else:
+        return {}     
 
 
 def decode_io_file(f):
@@ -295,24 +298,30 @@ def get_num_auto_png_io(f) -> dict:
 
 def get_num_auto_png(img) -> dict:
     num_result = get_num_avto(img)
-    img = np.zeros(0)
-    try:
-        is_success, im_buf_arr = cv2.imencode(
-            ".png", num_result["num_img"], params=[cv2.IMWRITE_PNG_COMPRESSION, 5]
-        )
-    except Exception:
-        is_success = False
+    img = num_result.get("num_img", None)
+    is_success = img is not None
+    
+    if is_success:
+        try:
+            is_success, im_buf_arr = cv2.imencode(
+                ".png", img, params=[cv2.IMWRITE_PNG_COMPRESSION, 5]
+            )
+        except Exception:
+            is_success = False
 
     if is_success:
         io_buf = io.BytesIO(im_buf_arr)
         num_result["num_img"] = io_buf.getvalue()
         im_buf_arr = np.zeros(0)
+
+        # tune output accuracy
+        if len(num_result["num_avto_str"]) < 6:
+            num_result["accuracy"] *= 0.3
+
     else:
         num_result["num_img"] = None
+        print("num_result[num_img] = None")
 
-    # tune output accuracy
-    if len(num_result["num_avto_str"]) < 6:
-        num_result["accuracy"] *= 0.3
 
     return num_result
 

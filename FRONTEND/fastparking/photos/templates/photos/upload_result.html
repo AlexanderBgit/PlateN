@@ -18,6 +18,7 @@
         <td>{{ predict.accuracy }}</td>
       </tr>
       <tr>
+        {% if predict.num_img %}
         <th>Photo:</th>
         <td>
           <img
@@ -26,6 +27,7 @@
             title="recognized license plate number: {{ predict.num_avto_str }}"
           />
         </td>
+        {% endif %}
       </tr>
       {% if registration.id %}
       <tr>
