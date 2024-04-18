@@ -5,6 +5,7 @@ from cars.models import Car
 from .services import compare_plates
 from .models import Registration
 
+
 def get_registration_instance(id: int) -> Registration | None:
     try:
         return Registration.objects.get(pk=id)
@@ -18,7 +19,7 @@ def find_registered_plate(num_auto: str, max_results: int = 1000) -> int | None:
             car_number_out__isnull=True, car_number_in__contains=num_auto
         )
         if reg:
-            return reg.id
+            return reg.pk
     except Registration.DoesNotExist:
         return None
 
@@ -29,9 +30,7 @@ def find_registered_plate(num_auto: str, max_results: int = 1000) -> int | None:
         reg_num_auto = reg.car_number_in
         result, sim = compare_plates(num_auto, reg_num_auto)
         if result:
-            return reg.id
-
-
+            return reg.pk
 
 
 def check_and_register_car(num_auto):
@@ -44,6 +43,7 @@ def check_and_register_car(num_auto):
         return True
     else:
         return False
+
 
 def check_car_existence_and_block_status(num_auto):
     # Тут ви перевіряєте чи існує автомобіль та чи він не заблокований
@@ -58,16 +58,19 @@ def check_car_existence_and_block_status(num_auto):
     # Якщо автомобіль не існує або заблокований, повертаємо False
     return False
 
+
 def register_car(num_auto):
     # Тут буде ваш код для реєстрації автомобіля
     # Наприклад:
     Registration.objects.create(car_number=num_auto)
 
-def process_car_registration(data):
+
+def process_car_registration(data: dict) -> bool:
+    success = False
     num_auto = data.get("num_auto")
     type = data.get("type")
     utc_datetime = data.get("utc_datetime")
-    
+
     # Перевірка і реєстрація автомобіля
     if num_auto:
         success = check_and_register_car(num_auto)
@@ -75,18 +78,4 @@ def process_car_registration(data):
             print("Реєстрація автомобіля успішна!")
         else:
             print("Автомобіль заблокований або не може бути зареєстрований.")
-
-def process_car_registration(data):
-    num_auto = data.get("num_auto")
-    type = data.get("type")
-    utc_datetime = data.get("utc_datetime")
-    
-    # Перевірка і реєстрація автомобіля
-    if num_auto:
-        success = check_and_register_car(num_auto)
-        if success:
-            print("Реєстрація автомобіля успішна!")
-        else:
-            print("Автомобіль заблокований або не може бути зареєстрований.")
-
-
+    return success
