@@ -9,6 +9,7 @@ import qrcode
 import pytz
 
 from ds.predict_num import get_num_auto_png_io
+from parking.services import compare_plates
 
 from .models import Photo
 from finance.models import Tariff
@@ -169,6 +170,7 @@ def handle_uploaded_file(
                 parking_place = registration_result.get("parking_place")
                 tariff_in = registration_result.get("tariff_in")
                 invoice = registration_result.get("invoice")
+                compare_plates_result = registration_result.get("compare_plates")
                 invoice_str = ""
                 if invoice:
                     invoice_str = f"invoice: {invoice},"
@@ -181,6 +183,7 @@ def handle_uploaded_file(
                     "parking_place": parking_place,
                     "tariff_in": tariff_in,
                     "invoice": invoice,
+                    "compare_plates": compare_plates_result,
                     "qr_code": qrcode_img,
                     "date": date_formatted,
                     "hash": hash_code,
@@ -328,6 +331,9 @@ def register_parking_out_event(
             registration.car_number_out = num_auto
             registration.photo_out = photo_id
             registration.save()
+            compare_plates_result = compare_plates(
+                registration.car_number_in, registration.car_number_out
+            )
             # Free parking space
             parking_space_status_change(registration.parking.pk, False)
             result = {
@@ -335,6 +341,7 @@ def register_parking_out_event(
                 "parking_place": registration.parking.number,
                 "tariff_in": registration.tariff_in,
                 "invoice": invoice,
+                "compare_plates": compare_plates_result,
                 "info": "Success",
             }
         except Registration.DoesNotExist as e:
