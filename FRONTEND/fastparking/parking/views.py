@@ -4,6 +4,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from .models import Registration
 from .models import ParkingSpace
@@ -16,7 +18,9 @@ def main(request):
     free_parking_spaces = parking_spaces.filter(status=False).count()
     parking_progress = 0
     if total_parking_spaces > 0:
-        parking_progress = int((total_parking_spaces - free_parking_spaces) / total_parking_spaces * 100)
+        parking_progress = int(
+            (total_parking_spaces - free_parking_spaces) / total_parking_spaces * 100
+        )
 
     active_menu = "home"
     version = settings.VERSION
@@ -67,8 +71,9 @@ def parking_plan_view(request):
     total_spaces = parking_spaces.count()
     parking_progress = 0
     if total_spaces > 0:
-        parking_progress = int((total_spaces - parking_spaces_count) / total_spaces * 100)
-
+        parking_progress = int(
+            (total_spaces - parking_spaces_count) / total_spaces * 100
+        )
 
     # Розбиття місць на рядки
     # row_length = 10  # Довжина рядка (кількість місць у рядку)
@@ -86,7 +91,15 @@ def parking_plan_view(request):
     return render(request, "parking/parking_plan.html", content)
 
 
+def is_admin(request):
+    user: User = request.user
+    return user.is_superuser
+
+
+@login_required
 def registration_list(request):
+    if not is_admin(request):
+        return redirect("parking:main")
     active_menu = "registration"
     registrations = Registration.objects.all()
     content = {
