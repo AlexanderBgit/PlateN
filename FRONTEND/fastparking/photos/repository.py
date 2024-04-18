@@ -385,8 +385,11 @@ def calculate_invoice(
     return parking_fee
 
 
-def calculate_invoice_for_reg_id(registration_id: int) -> float | None:
+def calculate_invoice_for_reg_id(
+    registration_id: int, update_record: bool = False
+) -> float | None:
     result = None
+
     try:
         registration = Registration.objects.get(pk=registration_id)
         tariff_in = registration.tariff_in
@@ -397,9 +400,13 @@ def calculate_invoice_for_reg_id(registration_id: int) -> float | None:
                 exit_datetime=registration.exit_datetime,
                 tariff_in=tariff_in,
             )
+            if update_record and result:
+                registration.invoice = str(result)
+                registration.save()
+
     except Registration.DoesNotExist as e:
         print(f"Error: {e}")
-
+    print("calculate_invoice_for_reg_id", registration_id, result)
     return result
 
 
