@@ -5,7 +5,7 @@
 <!-- Додайте посилання на сторінку додавання тарифу -->
 <div class="container">
   <ul class="list-group">
-    {% if is_admin %}
+    {% if user.is_superuser %}
     <li class="list-group-item"><a class="btn btn-primary" href="{% url 'finance:add_tariff' %}">Add Tariff</a></li>
     <li class="list-group-item">
       <a class="btn btn-primary" target="_blank" href="/admin/finance/tariff/">Edit Tariff</a>
