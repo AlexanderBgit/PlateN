@@ -1,0 +1,51 @@
+{% extends "parking/base.html" %} {% block content %} {% load static %}
+
+<h1>Registration List</h1>
+<div class="container-fluid">
+  <div class="bd-example">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Parking Space</th>
+          <th scope="col">Entry Datetime</th>
+          <th scope="col">Tariff</th>
+          <th scope="col">Exit Datetime</th>
+          <th scope="col">Invoice</th>
+          <th scope="col">Car Number In</th>
+          <th scope="col">Car Number Out</th>
+          <th scope="col">Paid</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for registration in registrations %}
+        <tr scope="row">
+          <td>{{ registration.id }}</td>
+          <td>{{ registration.parking }}</td>
+          <td>{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
+          <td>{{ registration.tariff_in }}</td>
+          <td>{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
+          <td>{{ registration.invoice }}</td>
+          <td>{{ registration.car_number_in }}</td>
+          <td>{{ registration.car_number_out }}</td>
+          <td>
+            {% if registration.exit_datetime %}
+            <img src="{% static 'parking/icon-yes.svg' %}" alt="Yes" />
+            {%else%}<img src="{% static 'parking/icon-no.svg' %}" alt="No" />
+            {%endif%}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="container">
+  <ul class="list-group">
+    <li class="list-group-item">
+      <a class="btn btn-primary" target="_blank" href="{% url 'parking:download_csv' %}">Export to CSV</a>
+    </li>
+  </ul>
+</div>
+
+{% endblock %}

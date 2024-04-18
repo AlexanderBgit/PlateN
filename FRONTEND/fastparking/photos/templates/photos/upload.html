@@ -1,0 +1,35 @@
+<!-- photos/templates/upload.html -->
+{% extends "parking/base.html" %} {% block content %} {% if target_type %}
+<h1>Upload photo: {{ target_type.desc}}</h1>
+{% else %}
+<h1>Upload photo</h1>
+{% endif %}
+<form method="POST" action="" enctype="multipart/form-data">
+{% csrf_token %}
+{% if form.errors %}
+    <ul class="text-danger">
+        {% for field_name, error_list in form.errors.items %}
+            {% for error in error_list %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+{% endif %}
+    <p {% if target_type %} class="d-none" {% endif %}>{{ form.type.label_tag }} {{ form.t_photo }}</p>
+    <p>{{ form.photo.label_tag }} {{ form.photo }}</p>
+  {% if target_type.desc == "OUT" %}
+    <p>{{ form.registration_id.label_tag }} {{ form.registration_id }}</p>
+    {% if  form.registration_id.errors %}
+      <p class="text-danger">{{ form.registration_id.errors }}</p>
+    {% endif %}
+    <p>{{ form.manual_registration_id.label_tag }} {{ form.manual_registration_id }}</p>
+    {% if  form.manual_registration_id.errors %}
+      <p class="text-danger">{{ form.manual_registration_id.errors }}</p>
+    {% endif %}
+  {% endif %}
+
+  <input class="btn btn-primary" type="submit" value="Submit" />
+</form>
+<p></p>
+<a href="{% url 'photos:main' %}" class="btn btn-primary">Back</a>
+{% endblock content %}
