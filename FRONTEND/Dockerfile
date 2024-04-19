@@ -10,6 +10,9 @@ ENV APP_HOME /app
 # Встановимо робочу директорію всередині контейнера
 WORKDIR $APP_HOME
 
+COPY ${APP_BASE}requirements.txt requirements.txt
+RUN pip install -r requirements.txt 
+
 # Скопіюємо інші файли в робочу директорію контейнера
 COPY $APP_BASE  ./
 # COPY .env .env
@@ -21,12 +24,12 @@ COPY $APP_BASE  ./
 #COPY docs/ docs/
 #COPY main.py main.py
 
-COPY ${APP_BASE}requirements.txt requirements.txt
+# COPY ${APP_BASE}requirements.txt requirements.txt
 
 # Встановимо залежності всередині контейнера
 # RUN pip install -r requirements.txt 
 # RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
-RUN pip install -r requirements.txt 
+# RUN pip install -r requirements.txt 
 
 CMD bash ./run.sh 
 
