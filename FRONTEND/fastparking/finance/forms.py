@@ -19,7 +19,8 @@ class TariffForm(forms.ModelForm):
 
 class PaymentsForm(forms.ModelForm):
     registration_id = forms.ModelChoiceField(
-        queryset=Registration.objects.all(),
+        # queryset=Registration.objects.filter(invoice__isnull=True).exclude(payment__isnull=False),
+        queryset=Registration.objects.filter(invoice__isnull=True),
         required=False,  # Set it to True if it's required
         widget=forms.Select(
             attrs={

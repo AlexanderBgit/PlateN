@@ -29,7 +29,10 @@ class UploadFileForm(forms.Form):
     )
 
     registration_id = forms.ModelChoiceField(
-        queryset=Registration.objects.all(),
+        # queryset=Registration.objects.all(),
+        queryset=Registration.objects.filter(invoice__isnull=True).exclude(
+            payment__isnull=True
+        ),
         required=False,  # Set it to True if it's required
         widget=forms.Select(
             attrs={
@@ -87,7 +90,14 @@ class UploadFileForm(forms.Form):
         manual_registration_id = self.cleaned_data.get("manual_registration_id")
         if manual_registration_id:
             # Check if the manual_registration_id exists in the list of Registration.registration_id
-            if not Registration.objects.filter(pk=manual_registration_id).exists():
+            # if not Registration.objects.filter(pk=manual_registration_id).exists():
+            if (
+                not Registration.objects.filter(
+                    pk=manual_registration_id, invoice__isnull=True
+                )
+                .exclude(payment__isnull=True)
+                .exists()
+            ):
                 raise forms.ValidationError("Entered registration ID does not exist.")
         return manual_registration_id
 
