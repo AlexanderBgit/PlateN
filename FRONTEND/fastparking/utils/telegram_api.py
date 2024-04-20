@@ -40,6 +40,8 @@ COMMANDS = {}
 
 
 def get_updates(offset: str = "") -> list[dict] | None:
+    if not TOKEN:
+        return None
     url_getUpdates = f"{BASE_URL}/getUpdates?offset={offset}"
     response = requests.get(url_getUpdates)
     data = response.json()
@@ -51,11 +53,13 @@ def get_updates(offset: str = "") -> list[dict] | None:
             ]
         return results
     else:
-        print("Error:", data.get("description"))
+        print("Telegram_bot get_updates. Error:", data.get("description"))
         return None
 
 
 def user_id_by_username(updates: list[dict], username: str):
+    if not TOKEN:
+        return None
     for update in updates:
         message = update.get("message")
         if (
@@ -67,6 +71,8 @@ def user_id_by_username(updates: list[dict], username: str):
 
 
 def get_all_users(updates: list[dict]) -> set[tuple]:
+    if not TOKEN:
+        return None
     users = set()
     for update in updates:
         message = update.get("message")
@@ -77,6 +83,8 @@ def get_all_users(updates: list[dict]) -> set[tuple]:
 
 
 def find_phone_user(updates: list[dict], phone: str) -> tuple[str, str] | None:
+    if not TOKEN:
+        return None
     for update in updates:
         message = update.get("message")
         if message and message.get("from") and message["from"].get("id"):
@@ -90,6 +98,8 @@ def find_phone_user(updates: list[dict], phone: str) -> tuple[str, str] | None:
 
 
 def find_phones_users(updates: list[dict], phones: list[str]) -> set[tuple[str, str]]:
+    if not TOKEN:
+        return None
     users = set()
     for update in updates:
         message = update.get("message")
@@ -106,6 +116,8 @@ def find_phones_users(updates: list[dict], phones: list[str]) -> set[tuple[str, 
 
 
 def find_usernames(updates: list[dict], usernames: list[str]) -> set[tuple[str, str]]:
+    if not TOKEN:
+        return None
     users = set()
     for update in updates:
         message = update.get("message")
@@ -124,6 +136,8 @@ def find_usernames(updates: list[dict], usernames: list[str]) -> set[tuple[str, 
 def find_unknown_contacts(
     updates: list[dict], usernames: list[str], phones: list[str]
 ) -> set[tuple[str, str]]:
+    if not TOKEN:
+        return None
     users = set()
     for update in updates:
         message = update.get("message")
@@ -146,7 +160,11 @@ def find_unknown_contacts(
     return users
 
 
-def send_message(text: str, chat_id: int | str, parse_mode: bool = False) -> None:
+def send_message(
+    text: str, chat_id: int | str, parse_mode: bool = False
+) -> bool | None:
+    if not TOKEN:
+        return None
     url = f"{BASE_URL}/sendMessage"
     if parse_mode:
         json = {
@@ -162,7 +180,11 @@ def send_message(text: str, chat_id: int | str, parse_mode: bool = False) -> Non
     # print(_)
 
 
-def send_button_message(text: str, chat_id: int | str, reply_markup: dict) -> None:
+def send_button_message(
+    text: str, chat_id: int | str, reply_markup: dict
+) -> bool | None:
+    if not TOKEN:
+        return None
     url = f"{BASE_URL}/sendMessage"
     json = {
         "chat_id": chat_id,
@@ -177,6 +199,8 @@ def send_button_message(text: str, chat_id: int | str, reply_markup: dict) -> No
 
 
 def send_message_user(text: str, n_name: str) -> bool | None:
+    if not TOKEN:
+        return None
     updates = get_updates()
     if not updates:
         return
@@ -188,6 +212,8 @@ def send_message_user(text: str, n_name: str) -> bool | None:
 def send_message_news(
     text: str, chat_id: int | str = TELEGRAM_NEWS_NAME
 ) -> bool | None:
+    if not TOKEN:
+        return None
     if chat_id:
         if text.find("<") != -1 and text.find(">") != -1:
             text = parse_text(text)
@@ -195,7 +221,11 @@ def send_message_news(
         return send_message(text=text, chat_id=chat_id)
 
 
-def answer_to_user(user_id: str | int, text: str, parse_mode: bool = False, debug=True):
+def answer_to_user(
+    user_id: str | int, text: str, parse_mode: bool = False, debug=True
+) -> bool | None:
+    if not TOKEN:
+            return None
     if debug:
         print(f"answer_to_user: {user_id=} {text=}")
     return send_message(text, user_id, parse_mode=parse_mode)
@@ -224,6 +254,8 @@ def parse_text(text: str, username: str | None = None) -> str:
 
 
 def send_message_to_all_users(text: str) -> None:
+    if not TOKEN:
+        return None
     updates = get_updates()
     if not updates:
         return
@@ -315,7 +347,7 @@ def get_user_profile(user_id: str) -> dict | None:
 
 
 def get_unknown_usernames() -> list[str]:
-    unknown_usernames = ["@LeX4Xai"]
+    unknown_usernames = ["@Unknow"]
     return unknown_usernames
 
 
@@ -396,6 +428,8 @@ def send_qrcode(chat_id: int | str, qr_data: str = "FastParking") -> bool | None
 
 
 def handler_with_button(user_id: str, username: str | None = None) -> bool | None:
+    if not TOKEN:
+        return None
     print_text = [parse_text("TEST <datetime>")]
     reply_markup = {"inline_keyboard": []}
     inlineRow = [
@@ -408,6 +442,8 @@ def handler_with_button(user_id: str, username: str | None = None) -> bool | Non
 
 
 def handler_start(user_id: str, username: str | None = None):
+    if not TOKEN:
+        return None
     print_text = [parse_text("Welcome to FastParking system: <datetime>")]
     user_profile = get_user_profile(user_id)
     if user_profile:
@@ -594,7 +630,9 @@ def check_payments():
         cache.set("payed_uniq_id", uniq_id, timeout=None)
 
 
-def crone_pool():
+def crone_pool() -> None:
+    if not TOKEN:
+        return None
     check_payments()
     # get latest updates
     last_update_id = get_last_update_id()

@@ -1,7 +1,7 @@
 import csv
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
@@ -10,6 +10,12 @@ from django.contrib.auth.models import User
 from .models import Registration
 from .models import ParkingSpace
 from .models import ParkingSpace
+
+
+def health_check(request):
+    # Add logic to check the health of the application
+    health_status = {"status": "ok"}
+    return JsonResponse(health_status)
 
 
 def main(request):

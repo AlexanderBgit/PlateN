@@ -27,6 +27,12 @@ services:
       - "8000:8000"
     volumes:
       - ../Database/django_cache:/tmp/django_cache
+      # Health check command
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8000/health/ || exit 1"]
+      interval: 60s
+      timeout: 5s
+      retries: 5
     depends_on:
       pg:
         condition: service_healthy
