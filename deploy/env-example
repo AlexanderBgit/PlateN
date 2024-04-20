@@ -14,6 +14,7 @@ MAIL_FROM_NAME="Education GoIT. Fast Parking proj"
 
 DJANGO_SECRET_KEY="some_secret_key_for_production_k$adsk;lhPUO*R*P"
 DJANGO_DEBUG=0
+DJANGO_DEBUG_SQL=0
 DJANGO_ALLOWED_HOSTS=""
 
 APP_PORT=8000

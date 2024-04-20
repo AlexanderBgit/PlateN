@@ -49,6 +49,7 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 DEBUG = bool(os.environ.get("DJANGO_DEBUG", True))
+DEBUG_SQL = bool(os.environ.get("DJANGO_DEBUG_SQL", False))
 
 DJANGO_ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS")
 if DJANGO_ALLOWED_HOSTS:
@@ -220,3 +221,27 @@ EMAIL_USE_TLS = False
 EMAIL_HOST_USER = os.getenv("MAIL_USERNAME")
 EMAIL_HOST_PASSWORD = os.getenv("MAIL_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# SQL LOG
+if DEBUG and DEBUG_SQL:
+    LOGGING = {
+        "version": 1,
+        "filters": {
+            "require_debug_true": {
+                "()": "django.utils.log.RequireDebugTrue",
+            }
+        },
+        "handlers": {
+            "console": {
+                "level": "DEBUG",
+                "class": "logging.StreamHandler",
+                "filters": ["require_debug_true"],
+            }
+        },
+        "loggers": {
+            "django.db.backends": {
+                "level": "DEBUG",
+                "handlers": ["console"],
+            }
+        },
+    }
