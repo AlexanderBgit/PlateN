@@ -22,7 +22,7 @@
           class="card-img-top"
           width="100%"
           alt="{{entry.number}}"
-          title="{{entry.number}} - {{entry.car_num}}"
+          title="{{entry.number}}{% if entry.car_num %} - {{entry.car_num}}{% endif %}"
           src="{% if entry.status %}{% static 'parking/car-02.png' %}{% else %}{% static 'parking/car-01.png' %}{%endif%}"
         />
         <div class="text-center"><p class="card-title">{{entry.number}}</p></div>

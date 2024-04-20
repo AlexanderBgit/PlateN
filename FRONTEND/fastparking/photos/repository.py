@@ -126,7 +126,6 @@ def handle_uploaded_file(
 
         # analyze and calculate prediction of image
         predict = get_num_auto_png_io(f.read())
-        if not predict["num_img"]: return {}
 
         # store information to database
         photo_id = db_save_photo_information(predict, type)
@@ -142,9 +141,13 @@ def handle_uploaded_file(
             "type": type,
             "registration_id": registration_id,
         }
-        register_car_result = check_and_register_car(registration_data)
-        # print(register_car_result)
-        info = register_car_result.get("info")
+        register_car_result = {}
+        if photo_id and num_auto:
+            register_car_result = check_and_register_car(registration_data)
+            # print(register_car_result)
+            info = register_car_result.get("info")
+        else:
+            info = "No license plate information found"
 
         registration_result = None
         registration = None
@@ -196,23 +199,23 @@ def handle_uploaded_file(
 def check_and_register_car(registration_data):
     num_auto = registration_data.get("num_auto")
     photo_id = registration_data.get("photo_id")
-    if photo_id:
-        photo_id = photo_id.pk
+    if not photo_id or not num_auto:
+        return {"success": False, "info": "No license plate information found"}
+    photo_id = photo_id.pk
+    try:
+        car = Car.objects.get(car_number=num_auto)
+        if car.blocked:
+            return {"success": False, "info": "The car is blocked"}
+        else:
+            return {"success": True, "info": "The car exists and is not blocked"}
+    except Car.DoesNotExist:
+        # Створюємо новий запис в таблиці Car
+        car = Car.objects.create(car_number=num_auto, photo_car_id=photo_id)
+        return {
+            "success": True,
+            "info": "The car does not exist, a new record has been created",
+        }
 
-        try:
-            car = Car.objects.get(car_number=num_auto)
-            if car.blocked:
-                return {"success": False, "info": "The car is blocked"}
-            else:
-                return {"success": True, "info": "The car exists and is not blocked"}
-        except Car.DoesNotExist:
-            # Створюємо новий запис в таблиці Car
-            car = Car.objects.create(car_number=num_auto, photo_car_id=photo_id)
-            return {
-                "success": True,
-                "info": "The car does not exist, a new record has been created",
-            }
-    return {"success": False, "info": "The num not recognition"}
 
 # def find_free_parking_space(num_auto) -> ParkingSpace:
 #     try:
@@ -256,6 +259,8 @@ def parking_space_status_change(id: int, status: bool) -> ParkingSpace | None:
     try:
         parking_space = ParkingSpace.objects.get(pk=id)
         parking_space.status = status
+        if not status:
+            parking_space.car_num = ""
         parking_space.save()
         return parking_space
     except ParkingSpace.DoesNotExist as e:

@@ -8,7 +8,7 @@
         <th>Info:</th>
         <td>{{ info }}</td>
       </tr>
-
+      {% if redict.num_avto_str %}
       <tr>
         <th>Recognized number:</th>
         <td>{{ predict.num_avto_str }}</td>
@@ -17,6 +17,7 @@
         <th>Accuracy:</th>
         <td>{{ predict.accuracy }}</td>
       </tr>
+      {% endif %}
       <tr>
         {% if predict.num_img %}
         <th>Photo:</th>

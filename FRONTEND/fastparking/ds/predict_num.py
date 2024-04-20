@@ -315,11 +315,14 @@ def get_num_auto_png(img) -> dict:
         im_buf_arr = np.zeros(0)
 
         # tune output accuracy
-        if len(num_result["num_avto_str"]) < 6:
+        if not num_result["num_avto_str"]:
+            num_result["accuracy"] = 0
+        elif len(num_result["num_avto_str"]) < 6:
             num_result["accuracy"] *= 0.3
 
     else:
         num_result["num_img"] = None
+        num_result["accuracy"] = 0
         print("num_result[num_img] = None")
 
 
