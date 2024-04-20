@@ -11,5 +11,6 @@ urlpatterns = [
     # path('tariff/', create_tariff, name='create_tariff'),
     path("add_tariff/", views.add_tariff, name="add_tariff"),
     path("add_pay/", views.add_pay, name="add_pay"),
-    # Інші URL-шляхи для вашого додатку "finance"
+    path("payments/", views.payments_list, name="payments_list"),
+    path("download_csv/", views.download_csv, name="download_csv"),
 ]
