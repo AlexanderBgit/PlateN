@@ -259,6 +259,8 @@ def parking_space_status_change(id: int, status: bool) -> ParkingSpace | None:
     try:
         parking_space = ParkingSpace.objects.get(pk=id)
         parking_space.status = status
+        if not status:
+            parking_space.car_num = ""
         parking_space.save()
         return parking_space
     except ParkingSpace.DoesNotExist as e:
