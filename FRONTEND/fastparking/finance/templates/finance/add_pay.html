@@ -1,6 +1,6 @@
 <!-- У вашому файлі add_tariff.html -->
 {% extends "parking/base.html" %} {% block content %}
-<h2>Payments</h2>
+<h2>Pay the invoice</h2>
 <div class="container">
   <form method="post">
     {% csrf_token %} {{ form.as_p }}
