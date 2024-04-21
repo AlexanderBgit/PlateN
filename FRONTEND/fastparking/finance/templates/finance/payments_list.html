@@ -11,6 +11,8 @@
           <th scope="col">Registration</th>
           <th scope="col">Car number in</th>
           <th scope="col">Amount</th>
+          <th scope="col" title="Dynamic calculation">Invoice*</th>
+          <th scope="col" title="Moved out">Left</th>
         </tr>
       </thead>
       <tbody>
@@ -20,7 +22,14 @@
           <td>{{ payment.datetime|date:'Y-m-d H:i' }}</td>
           <td>{{ payment.registration_id.pk|stringformat:"06d" }}</td>
           <td>{{ payment.registration_id.car_number_in }}</td>
-          <td>{{ payment.amount }} UAH</td>
+          <td>{{ payment.amount }} {{ currency }}</td>
+          <td>{{ payment.registration_id.calculate_parking_fee }} {{ currency }}</td>
+          <td>
+            {% if payment.registration_id.exit_datetime %}
+            <img src="{% static 'parking/icon-yes.svg' %}" alt="Yes" />
+            {%else%}<img src="{% static 'parking/icon-no.svg' %}" alt="No" />
+            {%endif%}
+          </td>
           <td></td>
         </tr>
         {% endfor %}

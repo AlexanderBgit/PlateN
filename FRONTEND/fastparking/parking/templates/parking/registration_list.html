@@ -15,17 +15,18 @@
           <th scope="col">Car Number In</th>
           <th scope="col">Car Number Out</th>
           <th scope="col">Paid</th>
+          <th scope="col" tile="Compare plate OUT with IN">Compare</th>
         </tr>
       </thead>
       <tbody>
         {% for registration in registrations %}
         <tr scope="row">
-          <td>{{ registration.id }}</td>
+          <td>{{ registration.id|stringformat:"06d" }}</td>
           <td>{{ registration.parking }}</td>
           <td>{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
           <td>{{ registration.tariff_in }}</td>
           <td>{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
-          <td>{{ registration.invoice }}</td>
+          <td title="Calc: {{ registration.calculate_parking_fee }}">{{ registration.invoice}}</td>
           <td>{{ registration.car_number_in }}</td>
           <td>{{ registration.car_number_out }}</td>
           <td>
@@ -33,6 +34,20 @@
             <img src="{% static 'parking/icon-yes.svg' %}" alt="Yes" />
             {%else%}<img src="{% static 'parking/icon-no.svg' %}" alt="No" />
             {%endif%}
+          </td>
+          <td>
+            {% if registration.compare_in_out.1 > 0 %} {% if registration.compare_in_out.0 %}
+            <img
+              src="{% static 'parking/icon-yes.svg' %}"
+              alt="Positive"
+              title="Positive - {{ registration.compare_in_out.1 }}"
+            />
+            {%else%}<img
+              src="{% static 'parking/icon-no.svg' %}"
+              alt="Negative"
+              title="Negative - {{ registration.compare_in_out.1 }}"
+            />
+            {%endif%} {%else%} - {%endif%}
           </td>
         </tr>
         {% endfor %}

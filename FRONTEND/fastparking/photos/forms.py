@@ -1,11 +1,13 @@
 from django import forms
+from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 from parking.models import Registration
 from .repository import TYPES
 
-TOTAL_DIGITS_ID = 6
+TOTAL_DIGITS_ID = settings.TOTAL_DIGITS_ID[0]
 
 
 class UploadFileForm(forms.Form):
@@ -30,9 +32,13 @@ class UploadFileForm(forms.Form):
 
     registration_id = forms.ModelChoiceField(
         # queryset=Registration.objects.all(),
-        queryset=Registration.objects.filter(invoice__isnull=True).exclude(
-            payment__isnull=True
-        ),
+        # queryset=Registration.objects.filter(invoice__isnull=True).exclude(
+        #     payment__isnull=True
+        # ),
+        # queryset=Registration.objects.filter(
+        #     Q(payment__isnull=False) | Q(calculate_parking_fee=0, payment__isnull=True)
+        # ),
+        queryset=Registration.objects.none(),
         required=False,  # Set it to True if it's required
         widget=forms.Select(
             attrs={
@@ -57,6 +63,44 @@ class UploadFileForm(forms.Form):
         ),
         # help_text="Enter a valid registration ID with which you want to pay",
     )
+
+    def __init__(self, *args, **kwargs):
+        super(UploadFileForm, self).__init__(*args, **kwargs)
+        self.fields["registration_id"].queryset = self.get_registration_queryset()
+
+    def get_registration_queryset(self):
+        # Filter registrations where invoice is null and payment is not null
+        # queryset = Registration.objects.filter(
+        #     invoice__isnull=True, payment__isnull=False
+        # )
+
+        # Retrieve all registrations where invoice is null
+        queryset_inv = Registration.objects.filter(invoice__isnull=True)
+
+        # Filter registrations where invoice is null and payment is not null
+        queryset_pks = queryset_inv.filter(payment__isnull=False).values_list(
+            "pk", flat=True
+        )
+
+        # Filter registrations where calculate_parking_fee method returns 0
+        filtered_queryset_pks = [
+            registration.pk
+            for registration in queryset_inv
+            if registration.calculate_parking_fee() == 0
+        ]
+
+        # # Combine the two sets of registrations
+        # for registration in queryset:
+        #     if registration not in filtered_queryset:
+        #         filtered_queryset.append(registration)
+
+        # Combine the two sets of registrations
+        united_queryset_pks = set(queryset_pks) | (set(filtered_queryset_pks))
+        # print(f"{united_queryset_pks=}")
+        # Convert the list to a queryset
+        return Registration.objects.filter(
+            pk__in=[reg_pk for reg_pk in united_queryset_pks]
+        ).order_by("entry_datetime")
 
     def clean(self):
         cleaned_data = super().clean()

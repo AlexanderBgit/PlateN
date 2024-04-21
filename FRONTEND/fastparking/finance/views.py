@@ -1,5 +1,6 @@
 import csv
 from datetime import datetime
+from django.conf import settings
 from django.http import HttpResponse
 import pytz
 from django.urls import resolve
@@ -15,7 +16,7 @@ from photos.repository import (
 )
 from .forms import TariffForm, PaymentsForm
 
-PAGE_ITEMS = 5
+PAGE_ITEMS = settings.PAGE_ITEMS
 
 
 def is_admin(request):
@@ -133,14 +134,25 @@ def add_pay(request):
     return render(request, "finance/add_pay.html", context)
 
 
+def validate_int(value: str | int | None) -> int | None:
+    if value is not None:
+        try:
+            value = int(value)
+        except (TypeError, ValueError):
+            value = 1
+        if value < 1:
+            value = 1
+    return value
+
+
 @login_required
 def payments_list(request):
     if not is_admin(request):
         return redirect("parking:main")
     active_menu = "payment"
-    page_number = request.GET.get("page")  # Access page number from URL parameter
+    page_number = validate_int(request.GET.get("page"))
     payments = Payment.objects.all().order_by("-datetime")
-    paginator = Paginator(payments, PAGE_ITEMS)  # 10 items per page
+    paginator = Paginator(payments, PAGE_ITEMS)
     if page_number:
         page_obj = paginator.get_page(page_number)
     else:
@@ -151,6 +163,7 @@ def payments_list(request):
         "active_menu": active_menu,
         "paginator": paginator,
         "page_obj": page_obj,
+        "currency": settings.PAYMENT_CURRENCY[1],
     }
     return render(request, "finance/payments_list.html", content)
 
