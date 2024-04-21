@@ -1,0 +1,40 @@
+{% extends "parking/base.html" %} {% block content %} {% load static %}
+
+<h1>Payments List</h1>
+<div class="container-fluid">
+  <div class="bd-example">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Datetime</th>
+          <th scope="col">Registration</th>
+          <th scope="col">Car number in</th>
+          <th scope="col">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for payment in payments %}
+        <tr scope="row">
+          <td>{{ payment.id }}</td>
+          <td>{{ payment.datetime|date:'Y-m-d H:i' }}</td>
+          <td>{{ payment.registration_id.pk|stringformat:"06d" }}</td>
+          <td>{{ payment.registration_id.car_number_in }}</td>
+          <td>{{ payment.amount }} UAH</td>
+          <td></td>
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="container">
+  <ul class="list-group">
+    <li class="list-group-item">
+      <a class="btn btn-primary" target="_blank" href="{% url 'finance:download_csv' %}">Export to CSV</a>
+    </li>
+  </ul>
+</div>
+
+{% endblock %}
