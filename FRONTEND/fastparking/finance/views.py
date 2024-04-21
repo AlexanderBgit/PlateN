@@ -1,5 +1,6 @@
 import csv
 from datetime import datetime
+from django.conf import settings
 from django.http import HttpResponse
 import pytz
 from django.urls import resolve
@@ -15,7 +16,7 @@ from photos.repository import (
 )
 from .forms import TariffForm, PaymentsForm
 
-PAGE_ITEMS = 10
+PAGE_ITEMS = settings.PAGE_ITEMS
 
 
 def is_admin(request):
@@ -162,6 +163,7 @@ def payments_list(request):
         "active_menu": active_menu,
         "paginator": paginator,
         "page_obj": page_obj,
+        "currency": settings.PAYMENT_CURRENCY[1],
     }
     return render(request, "finance/payments_list.html", content)
 

@@ -423,17 +423,36 @@ def calculate_invoice_for_reg_id(
     return result
 
 
-# def get_applicable_tariff(entry_time):
-#     """
-#     Returns the Tariff object applicable at the given time.
-#     """
-#     applicable_tariffs = Tariff.objects.filter(
-#         start_date__lte=entry_time,
-#         end_date__gte=entry_time,
-#         description__icontains='hourly'
-#     ).order_by('-start_date')  # Get the latest applicable tariff
+def get_registration_allowed_for_out():
+        # Filter registrations where invoice is null and payment is not null
+        # queryset = Registration.objects.filter(
+        #     invoice__isnull=True, payment__isnull=False
+        # )
 
-#     if applicable_tariffs.exists():
-#         return applicable_tariffs.first()
-#     else:
-#         return None
+        # Retrieve all registrations where invoice is null
+        queryset_inv = Registration.objects.filter(invoice__isnull=True)
+
+        # Filter registrations where invoice is null and payment is not null
+        queryset_pks = queryset_inv.filter(payment__isnull=False).values_list(
+            "pk", flat=True
+        )
+
+        # Filter registrations where calculate_parking_fee method returns 0
+        filtered_queryset_pks = [
+            registration.pk
+            for registration in queryset_inv
+            if registration.calculate_parking_fee() == 0
+        ]
+
+        # # Combine the two sets of registrations
+        # for registration in queryset:
+        #     if registration not in filtered_queryset:
+        #         filtered_queryset.append(registration)
+
+        # Combine the two sets of registrations
+        united_queryset_pks = set(queryset_pks) | (set(filtered_queryset_pks))
+        print(f"{united_queryset_pks=}")
+        # Convert the list to a queryset
+        return Registration.objects.filter(
+            pk__in=[reg_pk for reg_pk in united_queryset_pks]
+        ).order_by("entry_datetime")
