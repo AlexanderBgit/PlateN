@@ -340,9 +340,10 @@ def register_parking_out_event(
             registration.car_number_out = num_auto
             registration.photo_out = photo_id
             registration.save()
-            compare_plates_result = compare_plates(
-                registration.car_number_in, registration.car_number_out
-            )
+            # compare_plates_result = compare_plates(
+            #     registration.car_number_in, registration.car_number_out
+            # )
+            compare_plates_result = registration.compare_in_out()
             # Free parking space
             parking_space_status_change(registration.parking.pk, False)
             result = {
