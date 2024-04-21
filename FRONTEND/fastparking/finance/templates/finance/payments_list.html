@@ -14,7 +14,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for payment in payments %}
+        {% for payment in page_obj.object_list %}
         <tr scope="row">
           <td>{{ payment.id }}</td>
           <td>{{ payment.datetime|date:'Y-m-d H:i' }}</td>
@@ -23,16 +23,29 @@
           <td>{{ payment.amount }} UAH</td>
           <td></td>
         </tr>
-
         {% endfor %}
       </tbody>
     </table>
+  </div>
+  <div class="container text-center">
+    {% if page_obj.has_previous %}
+    <a class="btn btn-sm btn-outline-primary me-2 d-disabled" href="?page={{ page_obj.previous_page_number }}">Prev</a>
+    {% endif %} {% for p in paginator.page_range %} {% if p == payment.number %}
+    <span class="current">{{ p }}</span>
+    {% else %}
+    <a href="?page={{ p }}">{{ p }}</a>
+    {% endif %} {% endfor %} {% if page_obj.has_next %}
+    <a class="btn btn-sm btn-outline-primary ms-2" href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
   </div>
 </div>
 <div class="container">
   <ul class="list-group">
     <li class="list-group-item">
       <a class="btn btn-primary" target="_blank" href="{% url 'finance:download_csv' %}">Export to CSV</a>
+    </li>
+    <li class="list-group-item">
+      <a class="btn btn-primary" target="_blank" href="{% url 'finance:main' %}">Back</a>
     </li>
   </ul>
 </div>

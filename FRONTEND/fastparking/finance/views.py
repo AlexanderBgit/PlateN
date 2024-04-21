@@ -6,6 +6,7 @@ from django.urls import resolve
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 
 from .models import Payment
 from photos.repository import (
@@ -13,6 +14,8 @@ from photos.repository import (
     calculate_invoice,
 )
 from .forms import TariffForm, PaymentsForm
+
+PAGE_ITEMS = 5
 
 
 def is_admin(request):
@@ -81,30 +84,30 @@ def add_pay(request):
             currency = "UAH"
             exit_datetime = datetime.utcnow().replace(tzinfo=pytz.utc)
             invoice_calculated = calculate_invoice(
-                instance.payment_id.entry_datetime,
+                instance.registration_id.entry_datetime,
                 exit_datetime,
-                instance.payment_id.tariff_in,
+                instance.registration_id.tariff_in,
             )
             amount_formatted = f"{instance.amount:.2f} {currency}"
-            date_formatted = instance.datetime.strftime("%Y-%m-%d %H:%M:%S")
+            date_formated = instance.datetime.strftime("%Y-%m-%d %H:%M:%S")
             payment_id_formatted = f"{instance.id:06}"
-            payment_id_formatted = f"{instance.payment_id.id:06}"
-            parking_place = instance.payment_id.parking.number
-            car_number_in = instance.payment_id.car_number_in
+            registration_id_formatted = f"{instance.registration_id.id:06}"
+            parking_place = instance.registration_id.parking.number
+            car_number_in = instance.registration_id.car_number_in
             if invoice_calculated:
                 invoice_formatted = f"{invoice_calculated:.2f} {currency}"
             else:
                 invoice_formatted = "--"
-            # if instance.payment_id.invoice:
-            #     invoice = float(instance.payment_id.invoice)
+            # if instance.registration_id.invoice:
+            #     invoice = float(instance.registration_id.invoice)
             #     invoice_formatted = f"{invoice:.2f} {currency}"
             # else:
             #     invoice_formatted = "--"
-            photo_in = build_html_image(instance.payment_id.photo_in.photo)
+            photo_in = build_html_image(instance.registration_id.photo_in.photo)
             payment = {
                 "Payment ID": payment_id_formatted,
-                "Date": date_formatted,
-                "payment ID": payment_id_formatted,
+                "Date": date_formated,
+                "Registration ID": registration_id_formatted,
                 "Parking place": parking_place,
                 "Car number": car_number_in,
                 "Photo": photo_in,
@@ -114,7 +117,7 @@ def add_pay(request):
             context = {
                 "active_menu": active_menu,
                 "payment": payment,
-                "title": "Finance | Payments",
+                "title": "Finance | Pay the invoice",
             }
             return render(request, "finance/payed.html", context)
             # return redirect(
@@ -125,7 +128,7 @@ def add_pay(request):
     context = {
         "active_menu": active_menu,
         "form": form,
-        "title": "Finance | Payments",
+        "title": "Finance | Pay the invoice",
     }
     return render(request, "finance/add_pay.html", context)
 
@@ -135,11 +138,19 @@ def payments_list(request):
     if not is_admin(request):
         return redirect("parking:main")
     active_menu = "payment"
-    payments = Payment.objects.all()
+    page_number = request.GET.get("page")  # Access page number from URL parameter
+    payments = Payment.objects.all().order_by("-datetime")
+    paginator = Paginator(payments, PAGE_ITEMS)  # 10 items per page
+    if page_number:
+        page_obj = paginator.get_page(page_number)
+    else:
+        page_obj = paginator.page(1)  # Get the first page by default
+
     content = {
         "title": "payment list",
         "active_menu": active_menu,
-        "payments": payments,
+        "paginator": paginator,
+        "page_obj": page_obj,
     }
     return render(request, "finance/payments_list.html", content)
 
@@ -162,7 +173,7 @@ def download_csv(request):
         ]
     )
 
-    payments = Payment.objects.all()
+    payments = Payment.objects.all().order_by("-datetime")
     iso_str = "%Y-%m-%dT%H:%M:%S"
     for payment in payments:
         formatted_datetime = None
