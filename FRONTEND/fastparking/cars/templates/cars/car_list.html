@@ -6,24 +6,30 @@
 <form method="GET" action="{% url 'cars:car_list' %}">
   <!-- {% csrf_token %} -->
   <!-- Додайте поля фільтрації за вашими потребами -->
-
-  <div class="card col-md-5">
-    <div class="body mt-3">
-      <div class="input-group mb-2">
-        <label class="input-group-text" for="car_number">Car Number:</label>
-        <input type="text" class="form-control" name="car_number" style="width: 300px" />
-      </div>
-
-      <div class="input-group mb-2">
-        <label class="input-group-text" for="blocked">Blocked:</label>
-        <select class="form-select" name="blocked">
-          <option value="True">Yes</option>
-          <option value="False">No</option>
-        </select>
-      </div>
-      <button class="btn btn-primary mb-3" type="submit" style="width: 100%">Filter</button>
+  <div class="container">  
+    <div class="row">  
+        <div class="col">  
+          <div class="input-group mb-2">
+            <label class="input-group-text" for="car_number">Car Number:</label>
+            <input type="text" class="form-control" name="car_number" style="width: 300px" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="input-group mb-2">
+            <label class="input-group-text" for="blocked">Blocked:</label>
+            <select class="form-select" name="blocked">
+              <option value="True">Yes</option>
+              <option value="False">No</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-1">  
+          <button class="btn btn-primary mb-3" type="submit" style="width: 100%">Filter</button>
+        </div>
     </div>
   </div>
+
+
 </form>
 
 {% if cars %}
