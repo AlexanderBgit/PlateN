@@ -3,6 +3,8 @@ from cars.models import Car
 from photos.models import Photo
 from django.utils import timezone
 
+from .services import compare_plates
+
 
 class ParkingSpace(models.Model):
     number = models.CharField(max_length=10, unique=True)
@@ -78,6 +80,10 @@ class Registration(models.Model):
                 # print(hours, self.round_to_int(hours), parking_fee, self.round_to_int(1.01),self.round_to_int(0.9))
                 return parking_fee
         return "Calc..."
+
+    def compare_in_out(self):
+        return compare_plates(self.car_number_in, self.car_number_out)
+
 
     def __str__(self):
         if self.invoice:

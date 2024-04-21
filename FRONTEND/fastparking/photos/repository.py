@@ -329,9 +329,10 @@ def register_parking_out_event(
         registration_id = int(registration_id)
         try:
             registration = Registration.objects.get(pk=registration_id)
-            invoice = calculate_invoice(
-                registration.entry_datetime, utc_datetime, registration.tariff_in
-            )
+            invoice = registration.calculate_parking_fee()
+            # invoice = calculate_invoice(
+            #     registration.entry_datetime, utc_datetime, registration.tariff_in
+            # )
             if invoice:
                 registration.invoice = str(invoice)
 
@@ -376,7 +377,7 @@ def get_price_per_hour(entry_time) -> float | None:
     else:
         return None
 
-
+# NO USED, USED - Registration.calculate_parking_fee()
 def calculate_invoice(
     entry_datetime: datetime | None,
     exit_datetime: datetime | None,

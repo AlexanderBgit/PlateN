@@ -15,7 +15,11 @@ def levenshtein_distance(str1: str, str2: str):
     return dp[len(str2)][n_m - 1]
 
 
-def compare_plates(num1: str, num2: str, threshold: int = 0.7):
+def compare_plates(
+    num1: str, num2: str | None, threshold: float = 0.7
+) -> tuple[bool, float]:
+    if num2 is None:
+        return (False, -1)
     similarity = 1 - (levenshtein_distance(num1, num2) / max(len(num1), len(num2)))
     result_trust = similarity >= threshold
     if not result_trust:
