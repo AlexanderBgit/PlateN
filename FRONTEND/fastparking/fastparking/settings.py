@@ -48,8 +48,8 @@ SECRET_KEY = os.environ.get(
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = bool(os.environ.get("DJANGO_DEBUG", True))
-DEBUG_SQL = bool(os.environ.get("DJANGO_DEBUG_SQL", False))
+DEBUG = bool(int(os.environ.get("DJANGO_DEBUG", 0)))
+DEBUG_SQL = bool(int(os.environ.get("DJANGO_DEBUG_SQL", 0)))
 
 DJANGO_ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS")
 if DJANGO_ALLOWED_HOSTS:
@@ -223,7 +223,8 @@ EMAIL_HOST_PASSWORD = os.getenv("MAIL_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # SQL LOG
-if DEBUG and DEBUG_SQL:
+print(f"{DEBUG_SQL=}")
+if DEBUG_SQL:
     LOGGING = {
         "version": 1,
         "filters": {
