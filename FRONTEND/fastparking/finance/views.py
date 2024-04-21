@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.http import HttpResponse
 import pytz
@@ -151,7 +151,12 @@ def payments_list(request):
         return redirect("parking:main")
     active_menu = "payment"
     page_number = validate_int(request.GET.get("page"))
+    days = validate_int(request.GET.get("days", 30))
     payments = Payment.objects.all().order_by("-datetime")
+    if days:
+        days_delta = datetime.now() - timedelta(days=float(days))
+        print(days_delta, days)
+        payments = payments.filter(datetime__gte=days_delta)
     paginator = Paginator(payments, PAGE_ITEMS)
     if page_number:
         page_obj = paginator.get_page(page_number)
