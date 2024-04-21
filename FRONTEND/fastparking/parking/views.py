@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime, timedelta
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
@@ -124,17 +125,25 @@ def registration_list(request):
         "-exit_datetime",
         "-entry_datetime",
     )
+    days = validate_int(request.GET.get("days", 30))
+    if days:
+        days_delta = timezone.now() - timedelta(days=float(days))
+        registrations = registrations.filter(entry_datetime__gte=days_delta)
     paginator = Paginator(registrations, settings.PAGE_ITEMS)
     if page_number:
         page_obj = paginator.get_page(page_number)
     else:
         page_obj = paginator.page(1)  # Get the first page by default
+
+    filter_params = {"days": days}
+
     content = {
         "title": "Registration list",
         "active_menu": active_menu,
         "paginator": paginator,
         "page_obj": page_obj,
         "currency": settings.PAYMENT_CURRENCY[1],
+        "filter_params": filter_params,
     }
     return render(request, "parking/registration_list.html", content)
 

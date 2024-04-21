@@ -1,6 +1,6 @@
 {% extends "parking/base.html" %} {% block content %} {% load static %}
 
-<h1>Registration List</h1>
+<h2>Registration List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}</h2>
 <div class="container-fluid">
   <div class="bd-example">
     <table class="table table-striped table-hover">
@@ -36,22 +36,18 @@
             {%endif%}
           </td>
           <td>
-            {% if registration.compare_in_out.1 > 0 %} 
-              {% if registration.compare_in_out.0 %}
-              <img
-                src="{% static 'parking/icon-yes.svg' %}"
-                alt="Positive"
-                title="Positive - {{ registration.compare_in_out.1 }}"
-              />
-              {%else%}<img
-                src="{% static 'parking/icon-no.svg' %}"
-                alt="Negative"
-                title="Negative - {{ registration.compare_in_out.1 }}"
-              />
-              {%endif%} 
-            {%else%} 
-            - 
-            {%endif%}
+            {% if registration.compare_in_out.1 > 0 %} {% if registration.compare_in_out.0 %}
+            <img
+              src="{% static 'parking/icon-yes.svg' %}"
+              alt="Positive"
+              title="Positive - {{ registration.compare_in_out.1 }}"
+            />
+            {%else%}<img
+              src="{% static 'parking/icon-no.svg' %}"
+              alt="Negative"
+              title="Negative - {{ registration.compare_in_out.1 }}"
+            />
+            {%endif%} {%else%} - {%endif%}
           </td>
         </tr>
         {% endfor %}

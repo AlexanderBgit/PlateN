@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.utils import timezone
 
 from .models import Payment
 from photos.repository import (
@@ -154,8 +155,7 @@ def payments_list(request):
     days = validate_int(request.GET.get("days", 30))
     payments = Payment.objects.all().order_by("-datetime")
     if days:
-        days_delta = datetime.now() - timedelta(days=float(days))
-        print(days_delta, days)
+        days_delta = timezone.now() - timedelta(days=float(days))
         payments = payments.filter(datetime__gte=days_delta)
     paginator = Paginator(payments, PAGE_ITEMS)
     if page_number:
@@ -163,12 +163,15 @@ def payments_list(request):
     else:
         page_obj = paginator.page(1)  # Get the first page by default
 
+    filter_params = {"days": days}
+
     content = {
         "title": "payment list",
         "active_menu": active_menu,
         "paginator": paginator,
         "page_obj": page_obj,
         "currency": settings.PAYMENT_CURRENCY[1],
+        "filter_params": filter_params,
     }
     return render(request, "finance/payments_list.html", content)
 
