@@ -11,7 +11,7 @@
           <th scope="col">Registration</th>
           <th scope="col">Car number in</th>
           <th scope="col">Amount</th>
-          <th scope="col" title="Dynamic calculation">Invoice*</th>
+          <th scope="col" title="Dynamic calculation for a car that hasn't left yet">Invoice*</th>
           <th scope="col" title="Moved out">Left</th>
         </tr>
       </thead>
@@ -37,29 +37,28 @@
     </table>
   </div>
 </div>
+<nav>
+  <div class="d-flex justify-content-center">
+    <span class="text-center" style="width: 80px">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-primary" role="button">Prev</a>
+      {% endif %}
+    </span>
 
-<div class="d-flex justify-content-center">
-  <span class="text-center" style="width: 80px">
-    {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-primary" role="button">Prev</a>
-    {% endif %}
-  </span>
-
-  <ul class="pagination pagination-sm">
-    {% for p in paginator.page_range %}
-    <li class="page-item{% if p == page_obj.number %} active{% endif %}">
-      <a href="?page={{ p }}" class="page-link">{{ p }}</a>
-    </li>
-    {% endfor %}
-  </ul>
-
-  <span class="text-center" style="width: 80px">
-    {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-outline-primary" role="button">Next</a>
-    {% endif %}
-  </span>
-</div>
-
+    <ul class="pagination pagination-sm">
+      {% for p in paginator.page_range %}
+      <li class="page-item{% if p == page_obj.number %} active{% endif %}">
+        <a href="?page={{ p }}" class="page-link">{{ p }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+    <span class="text-center" style="width: 80px">
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-outline-primary" role="button">Next</a>
+      {% endif %}
+    </span>
+  </div>
+</nav>
 <div class="container">
   <ul class="list-group">
     <li class="list-group-item">

@@ -135,11 +135,16 @@ class UploadFileForm(forms.Form):
         if manual_registration_id:
             # Check if the manual_registration_id exists in the list of Registration.registration_id
             # if not Registration.objects.filter(pk=manual_registration_id).exists():
+            # if (
+            #     not Registration.objects.filter(
+            #         pk=manual_registration_id, invoice__isnull=True
+            #     )
+            #     .exclude(payment__isnull=True)
+            #     .exists()
+            # ):
             if (
-                not Registration.objects.filter(
-                    pk=manual_registration_id, invoice__isnull=True
-                )
-                .exclude(payment__isnull=True)
+                not self.get_registration_queryset()
+                .filter(pk=manual_registration_id)
                 .exists()
             ):
                 raise forms.ValidationError("Entered registration ID does not exist.")
