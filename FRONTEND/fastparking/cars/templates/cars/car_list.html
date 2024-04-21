@@ -18,8 +18,9 @@
           <div class="input-group mb-2">
             <label class="input-group-text" for="blocked">Blocked:</label>
             <select class="form-select" name="blocked">
-              <option value="True">Yes</option>
-              <option value="False">No</option>
+              <option value="" {% if request.GET.blocked == "" %}selected{% endif %}>Any</option>
+              <option value="True" {% if request.GET.blocked == "True" %}selected{% endif %}>Yes</option>
+              <option value="False" {% if request.GET.blocked == "False" %}selected{% endif %}>No</option>
             </select>
           </div>
         </div>

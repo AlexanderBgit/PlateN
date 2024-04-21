@@ -28,7 +28,7 @@ class CarListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         page_number = self.validate_int(self.request.GET.get("page"))
-        queryset = context['object_list']
+        queryset = context["object_list"]
         paginator = Paginator(queryset, self.page_items)
         if page_number:
             page_obj = paginator.get_page(page_number)
@@ -46,9 +46,19 @@ class CarListView(ListView):
         return context
 
     def get_queryset(self):
-        return Car.objects.all().order_by(
-            "car_number",
-        )  # Return your queryset dynamically based on your requirements
+        queryset = Car.objects.all().order_by("car_number")
+        car_number = self.request.GET.get("car_number")
+        blocked = self.request.GET.get("blocked")
+
+        if car_number:
+            car_number = car_number.strip().upper()
+            car_number = "".join(char for char in car_number if char.isalnum())
+            queryset = queryset.filter(car_number=car_number)
+        if blocked:  # Handle potential absence of 'blocked' parameter
+            blocked = blocked.strip().lower() == "true"
+            queryset = queryset.filter(blocked=blocked)
+
+        return queryset
 
     def post(self, request, *args, **kwargs):
         cars_id = request.POST.getlist("cars")
