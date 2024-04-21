@@ -60,12 +60,12 @@
   </div>
 </nav>
 <div class="container">
-  <ul class="list-group">
+  <ul class="list-group list-group-horizontal">
     <li class="list-group-item">
       <a class="btn btn-primary" target="_blank" href="{% url 'finance:download_csv' %}">Export to CSV</a>
     </li>
     <li class="list-group-item">
-      <a class="btn btn-primary" target="_blank" href="{% url 'finance:main' %}">Back</a>
+      <a class="btn btn-primary" href="{% url 'finance:main' %}">Back</a>
     </li>
   </ul>
 </div>
