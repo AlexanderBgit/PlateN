@@ -39,17 +39,41 @@ class Registration(models.Model):
     )
     car = models.ForeignKey(Car, on_delete=models.SET_NULL, null=True, blank=True)
 
+    def round_to_int(self, number):
+        """Rounds a number to the nearest integer, using ceiling for positive values
+        and floor for negative values.
+
+        Args:
+            number: The number to round.
+
+        Returns:
+            The rounded integer.
+        """
+        return int(round(number + (0.5 if number > 0 else -0.5)))
+
+        # # Test cases
+        # rounded_1 = round_to_int(1.01)
+        # rounded_2 = round_to_int(0.9)
+
+        # print(rounded_1)  # Output: 2
+        # print(rounded_2)  # Output: 1
+
     def calculate_parking_fee(self):
-        print(
-            f"Calculating parking fee... tariff: {self.tariff_in}",
-        )
+        # print(
+        #     f"Calculating parking fee... tariff: {self.tariff_in}",
+        # )
         current_time = timezone.now()  # отримуємо поточний час
+        if self.exit_datetime:
+            current_time = self.exit_datetime
         if self.entry_datetime:
             duration = current_time - self.entry_datetime
             hours = duration.total_seconds() / 3600  # переводимо час в години
+            if hours < 0.25:
+                hours = 0  # Free first 15 mins
             if self.tariff_in:
                 price_per_hour = float(self.tariff_in)  # Зміна типу на float
-                parking_fee = round(hours * price_per_hour, 2)
+                parking_fee = round(price_per_hour * self.round_to_int(hours), 2)
+                # print(hours, self.round_to_int(hours), parking_fee, self.round_to_int(1.01),self.round_to_int(0.9))
                 return parking_fee
         return "Calc..."
 
