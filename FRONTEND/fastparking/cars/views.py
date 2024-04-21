@@ -53,7 +53,7 @@ class CarListView(ListView):
         if car_number:
             car_number = car_number.strip().upper()
             car_number = "".join(char for char in car_number if char.isalnum())
-            queryset = queryset.filter(car_number=car_number)
+            queryset = queryset.filter(car_number__icontains=car_number)
         if blocked:  # Handle potential absence of 'blocked' parameter
             blocked = blocked.strip().lower() == "true"
             queryset = queryset.filter(blocked=blocked)
