@@ -327,8 +327,8 @@ SOURCE=${HOME}/PlateN/PlateN
 ## Склад команди розробників
 1. [Team Lead](https://github.com/artem-dorofeev) @artem-dorofeev
 1. [Scrum Master](https://github.com/RostislavB74) @RostislavB74
-1. [Django expert](https://github.com/lumi-ua) @lumi-ua
-(https://github.com/diixo) @diixo
+1. [Django expert](https://github.com/lumi-ua) @lumi-ua and
+[@diixo](https://github.com/diixo) @diixo
 1. [Full stack devops](https://github.com/lexxai) @lexxai 
 2. [Art director](https://github.com/plaha303) @plaha303 
 3. [Tester](https://github.com/AlexanderBgit) @AlexanderBgit 
