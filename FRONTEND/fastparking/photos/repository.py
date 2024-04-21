@@ -333,7 +333,7 @@ def register_parking_out_event(
             # invoice = calculate_invoice(
             #     registration.entry_datetime, utc_datetime, registration.tariff_in
             # )
-            if invoice:
+            if invoice is not None:
                 registration.invoice = str(invoice)
 
             registration.exit_datetime = utc_datetime
@@ -376,6 +376,7 @@ def get_price_per_hour(entry_time) -> float | None:
         return float(applicable_tariff.price_per_hour)
     else:
         return None
+
 
 # NO USED, USED - Registration.calculate_parking_fee()
 def calculate_invoice(
@@ -425,35 +426,35 @@ def calculate_invoice_for_reg_id(
 
 
 def get_registration_allowed_for_out():
-        # Filter registrations where invoice is null and payment is not null
-        # queryset = Registration.objects.filter(
-        #     invoice__isnull=True, payment__isnull=False
-        # )
+    # Filter registrations where invoice is null and payment is not null
+    # queryset = Registration.objects.filter(
+    #     invoice__isnull=True, payment__isnull=False
+    # )
 
-        # Retrieve all registrations where invoice is null
-        queryset_inv = Registration.objects.filter(invoice__isnull=True)
+    # Retrieve all registrations where invoice is null
+    queryset_inv = Registration.objects.filter(invoice__isnull=True)
 
-        # Filter registrations where invoice is null and payment is not null
-        queryset_pks = queryset_inv.filter(payment__isnull=False).values_list(
-            "pk", flat=True
-        )
+    # Filter registrations where invoice is null and payment is not null
+    queryset_pks = queryset_inv.filter(payment__isnull=False).values_list(
+        "pk", flat=True
+    )
 
-        # Filter registrations where calculate_parking_fee method returns 0
-        filtered_queryset_pks = [
-            registration.pk
-            for registration in queryset_inv
-            if registration.calculate_parking_fee() == 0
-        ]
+    # Filter registrations where calculate_parking_fee method returns 0
+    filtered_queryset_pks = [
+        registration.pk
+        for registration in queryset_inv
+        if registration.calculate_parking_fee() == 0
+    ]
 
-        # # Combine the two sets of registrations
-        # for registration in queryset:
-        #     if registration not in filtered_queryset:
-        #         filtered_queryset.append(registration)
+    # # Combine the two sets of registrations
+    # for registration in queryset:
+    #     if registration not in filtered_queryset:
+    #         filtered_queryset.append(registration)
 
-        # Combine the two sets of registrations
-        united_queryset_pks = set(queryset_pks) | (set(filtered_queryset_pks))
-        print(f"{united_queryset_pks=}")
-        # Convert the list to a queryset
-        return Registration.objects.filter(
-            pk__in=[reg_pk for reg_pk in united_queryset_pks]
-        ).order_by("entry_datetime")
+    # Combine the two sets of registrations
+    united_queryset_pks = set(queryset_pks) | (set(filtered_queryset_pks))
+    print(f"{united_queryset_pks=}")
+    # Convert the list to a queryset
+    return Registration.objects.filter(
+        pk__in=[reg_pk for reg_pk in united_queryset_pks]
+    ).order_by("entry_datetime")
