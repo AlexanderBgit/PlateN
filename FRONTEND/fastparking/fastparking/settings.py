@@ -223,7 +223,6 @@ EMAIL_HOST_PASSWORD = os.getenv("MAIL_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # SQL LOG
-print(f"{DEBUG_SQL=}")
 if DEBUG_SQL:
     LOGGING = {
         "version": 1,
