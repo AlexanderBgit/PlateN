@@ -37,8 +37,16 @@
           </td>
           <td>
             {% if registration.compare_in_out.1 > 0 %} {% if registration.compare_in_out.0 %}
-            <img src="{% static 'parking/icon-yes.svg' %}" alt="Yes" />
-            {%else%}<img src="{% static 'parking/icon-no.svg' %}" alt="No" />
+            <img
+              src="{% static 'parking/icon-yes.svg' %}"
+              alt="Positive"
+              title="Positive - {{ registration.compare_in_out.1 }}"
+            />
+            {%else%}<img
+              src="{% static 'parking/icon-no.svg' %}"
+              alt="Negative"
+              title="Negative - {{ registration.compare_in_out.1 }}"
+            />
             {%endif%} {%else%} - {%endif%}
           </td>
         </tr>

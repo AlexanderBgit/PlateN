@@ -60,7 +60,7 @@ class Registration(models.Model):
         # print(rounded_1)  # Output: 2
         # print(rounded_2)  # Output: 1
 
-    def calculate_parking_fee(self):
+    def calculate_parking_fee(self) -> float | None:
         # print(
         #     f"Calculating parking fee... tariff: {self.tariff_in}",
         # )
@@ -79,11 +79,10 @@ class Registration(models.Model):
                 parking_fee = round(price_per_hour * hours, 2)
                 # print(hours, self.round_to_int(hours), parking_fee, self.round_to_int(1.01),self.round_to_int(0.9))
                 return parking_fee
-        return "Calc..."
+        return None
 
     def compare_in_out(self):
         return compare_plates(self.car_number_in, self.car_number_out)
-
 
     def __str__(self):
         if self.invoice:
