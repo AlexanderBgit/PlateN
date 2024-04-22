@@ -156,7 +156,6 @@ def payments_list(request):
     payments = Payment.objects.all().order_by("-datetime")
     if days:
         days_delta = timezone.now() - timedelta(days=float(days))
-        print(f"{days_delta=}")
         payments = payments.filter(datetime__gte=days_delta)
 
     paginator = Paginator(payments, PAGE_ITEMS)
