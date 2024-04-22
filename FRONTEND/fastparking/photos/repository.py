@@ -9,6 +9,7 @@ import qrcode
 import pytz
 
 from ds.predict_num import get_num_auto_png_io
+from finance.repository import calculate_total_payments
 from parking.services import compare_plates
 
 from .models import Photo
@@ -113,6 +114,30 @@ def unsign_text(text):
 def handle_uploaded_file(
     f, type: str | None, filename: str | None = None, registration_id: str | None = None
 ) -> dict:
+    """
+    RETURNED STRUCTURE of handle_uploaded_file:
+    img_predict: {"info": info, "predict": predict, "registration": registration}
+
+    info = str
+
+    predict = {
+    "num_avto_str": num_avto_str,
+    "accuracy": total_accuracy,
+    num_img": num_img,
+    }
+
+    registration = {
+        "id": registration_id_formatted,
+        "parking_place": parking_place,
+        "tariff_in": tariff_in,
+        "invoice": invoice,
+        "compare_plates": compare_plates_result,
+        "qr_code": qrcode_img,
+        "date": date_formatted,
+        "hash": hash_code,
+        "total_paid": total_paid
+    }
+    """
     if f and type:
         utc_datetime = datetime.utcnow()
         utc_datetime = utc_datetime.replace(tzinfo=pytz.utc)
@@ -177,12 +202,13 @@ def handle_uploaded_file(
                 invoice = registration_result.get("invoice")
                 compare_plates_result = registration_result.get("compare_plates")
                 invoice_str = ""
-                if invoice:
+                if invoice is not None:
                     invoice_str = f"invoice: {invoice},"
                 reg_info = f"id:{registration_id},place:{parking_place},{invoice_str}date:{int(utc_datetime.timestamp())}|"
                 encoded_text = sign_text(reg_info)
                 hash_code = encoded_text.split("|:")[-1]
                 qrcode_img = build_qrcode(encoded_text)
+                total_paid = calculate_total_payments(int(registration_id))
                 registration = {
                     "id": registration_id_formatted,
                     "parking_place": parking_place,
@@ -192,6 +218,7 @@ def handle_uploaded_file(
                     "qr_code": qrcode_img,
                     "date": date_formatted,
                     "hash": hash_code,
+                    "total_paid": total_paid
                 }
         return {"info": info, "predict": predict, "registration": registration}
 

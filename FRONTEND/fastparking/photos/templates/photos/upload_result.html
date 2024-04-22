@@ -50,10 +50,15 @@
         <th>Tariff:</th>
         <td>{{ registration.tariff_in }}</td>
       </tr>
-      {% if registration.invoice %}
+      {% if registration.invoice is not None %}
       <tr>
         <th>Invoice:</th>
-        <td>{{ registration.invoice }}</td>
+        <td>{{ registration.invoice }} {{currency}}</td>
+      </tr>
+      {% endif %} {% if registration.total_paid %}
+      <tr>
+        <th>Total Payed:</th>
+        <td>{{ registration.total_paid }} {{currency}}</td>
       </tr>
       {% endif %}
       <tr>

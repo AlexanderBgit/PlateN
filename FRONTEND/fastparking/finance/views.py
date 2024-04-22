@@ -1,5 +1,6 @@
 import csv
 from datetime import datetime, timedelta
+from decimal import Decimal
 from django.conf import settings
 from django.http import HttpResponse
 import pytz
@@ -15,6 +16,7 @@ from photos.repository import (
     build_html_image,
     calculate_invoice,
 )
+from .repository import calculate_total_payments
 from .forms import TariffForm, PaymentsForm
 
 PAGE_ITEMS = settings.PAGE_ITEMS
@@ -83,15 +85,16 @@ def add_pay(request):
         form = PaymentsForm(request.POST)
         if form.is_valid():
             instance = form.save()
-            currency = "UAH"
-            exit_datetime = datetime.utcnow().replace(tzinfo=pytz.utc)
-            invoice_calculated = calculate_invoice(
-                instance.registration_id.entry_datetime,
-                exit_datetime,
-                instance.registration_id.tariff_in,
-            )
+            currency = settings.PAYMENT_CURRENCY[0]
+            exit_datetime = timezone.now()
+            # invoice_calculated = calculate_invoice(
+            #     instance.registration_id.entry_datetime,
+            #     exit_datetime,
+            #     instance.registration_id.tariff_in,
+            # )
+            invoice_calculated = instance.registration_id.calculate_parking_fee()
             amount_formatted = f"{instance.amount:.2f} {currency}"
-            date_formated = instance.datetime.strftime("%Y-%m-%d %H:%M:%S")
+            date_formatted = instance.datetime.strftime("%Y-%m-%d %H:%M:%S")
             payment_id_formatted = f"{instance.id:06}"
             registration_id_formatted = f"{instance.registration_id.id:06}"
             parking_place = instance.registration_id.parking.number
@@ -100,6 +103,24 @@ def add_pay(request):
                 invoice_formatted = f"{invoice_calculated:.2f} {currency}"
             else:
                 invoice_formatted = "--"
+
+            underpayment_formatted = None
+            total_payed_formatted = None
+            if invoice_calculated and instance.amount and instance.registration_id.id:
+                # total_payed = calculate_total_payments(instance.registration_id.id)
+                total_payed = instance.registration_id.calculate_total_payed()
+                underpayment = (
+                    Decimal(invoice_calculated) - total_payed 
+                )
+                if total_payed > Decimal("0") and total_payed != instance.amount:
+                    total_payed_formatted = f"{total_payed:.2f} {currency}"
+
+                # print(
+                #     f"{invoice_calculated=}, {underpayment=}, {total_payed=} {instance.amount=}"
+                # )
+                if underpayment > Decimal("0"):
+                    underpayment_formatted = f"{underpayment:.2f} {currency}"
+
             # if instance.registration_id.invoice:
             #     invoice = float(instance.registration_id.invoice)
             #     invoice_formatted = f"{invoice:.2f} {currency}"
@@ -108,13 +129,15 @@ def add_pay(request):
             photo_in = build_html_image(instance.registration_id.photo_in.photo)
             payment = {
                 "Payment ID": payment_id_formatted,
-                "Date": date_formated,
+                "Date": date_formatted,
                 "Registration ID": registration_id_formatted,
                 "Parking place": parking_place,
                 "Car number": car_number_in,
                 "Photo": photo_in,
                 "Invoice": invoice_formatted,
-                "Amount": amount_formatted,
+                "Paid now": amount_formatted,
+                "Total paid": total_payed_formatted,
+                "Underpayment": underpayment_formatted,
             }
             context = {
                 "active_menu": active_menu,

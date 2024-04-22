@@ -11,16 +11,21 @@
         </tr>
       </thead>
       <tbody>
-        {% for field, value in payment.items %}
+        {% for field, value in payment.items %} {% if value %}
         <tr>
           <td>{{ field }}:</td>
           <td>{{ value | safe }}</td>
         </tr>
-        {% endfor %}
+        {% endif %} {% endfor %}
       </tbody>
     </table>
   </div>
-
+  {% if payment.Underpayment %}
+  <div class="alert alert-info" role="alert">
+    You have an underpayment for the parking service, please add the remaining {{payment.Underpayment}} for the service
+    provided to you.
+  </div>
+  {% endif %}
   <p>
     <a class="btn btn-primary" href="{% url 'finance:main' %}">MAIN</a>
     <button onclick="printDiv('payment_result')" class="btn btn-primary">Print</button>
