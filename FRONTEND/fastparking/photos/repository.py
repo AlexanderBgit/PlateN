@@ -122,7 +122,11 @@ def check_and_register_car(registration_data) -> dict:
     num_auto = registration_data.get("num_auto")
     photo_id = registration_data.get("photo_id")
     if not photo_id or not num_auto:
-        return {"success": False, "info": "No license plate information found", "car": None}
+        return {
+            "success": False,
+            "info": "No license plate information found",
+            "car": None,
+        }
     photo_id = photo_id.pk
     try:
         car = Car.objects.get(car_number=num_auto)
@@ -218,8 +222,9 @@ def handle_uploaded_file(
         if register_car_result.get("success"):
             # -------------------------------------------------------
             if num_auto and photo_id:
+                car = register_car_result.get("car")
                 registration_result = register_parking_event(
-                    utc_datetime, num_auto, type, photo_id, registration_id
+                    utc_datetime, num_auto, type, photo_id, registration_id, car
                 )
             # -------------------------------------------------------
             if registration_result:
@@ -312,9 +317,10 @@ def register_parking_event(
     registration_type,
     photo_id: Photo,
     registration_id: int | str | None = None,
+    car: Car | None = None,
 ) -> dict | None:
     if registration_type == "0":
-        return register_parking_in_event(utc_datetime, num_auto, photo_id)
+        return register_parking_in_event(utc_datetime, num_auto, photo_id, car)
     elif registration_type == "1":
         return register_parking_out_event(
             utc_datetime, num_auto, photo_id, registration_id
@@ -322,9 +328,7 @@ def register_parking_event(
 
 
 def register_parking_in_event(
-    utc_datetime: datetime,
-    num_auto: str,
-    photo_id: Photo,
+    utc_datetime: datetime, num_auto: str, photo_id: Photo, car: Car | None = None
 ) -> dict:
     result = {"registration_id": None, "parking_space": None, "info": None}
 
@@ -341,6 +345,7 @@ def register_parking_in_event(
                 photo_in=photo_id,
                 parking=parking_space,
                 tariff_in=tariff_in,
+                car=car,
             )
             result = {
                 "registration_id": registration.pk,

@@ -64,6 +64,11 @@ class Registration(models.Model):
         # print(rounded_1)  # Output: 2
         # print(rounded_2)  # Output: 1
 
+    def is_pay_pass(self) -> bool | None:
+        car = self.car
+        if car:
+            return car.PayPass
+
     def calculate_parking_fee(self) -> float | None:
         # print(
         #     f"Calculating parking fee... tariff: {self.tariff_in}",
@@ -78,6 +83,8 @@ class Registration(models.Model):
                 hours = 0  # Free first 15 mins
             else:
                 hours = self.round_to_int__(hours)
+            if self.is_pay_pass():
+                hours = 0  # Free for pay pass
             if self.tariff_in:
                 price_per_hour = float(self.tariff_in)  # Зміна типу на float
                 parking_fee = round(price_per_hour * hours, 2)
