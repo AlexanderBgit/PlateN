@@ -3,7 +3,7 @@
 <h2>Registration List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}</h2>
 <div class="container-fluid">
   <div class="bd-example">
-    <table class="table table-striped table-hover">
+    <table class="table  table-striped table-hover">
       <thead>
         <tr>
           <th scope="col">ID</th>
@@ -11,7 +11,7 @@
           <th scope="col">Entry Datetime</th>
           <th scope="col">Tariff</th>
           <th scope="col">Exit Datetime</th>
-          <th scope="col" title="Invoice">Invc</th>
+          <th scope="col" title="Invoice">Invoice</th>
           <th scope="col" title="Car Number In">Car NO IN</th>
           <th scope="col" title="Car Number Out">Car NO OUT</th>
           <th scope="col" title="Paid">P</th>
@@ -21,7 +21,7 @@
       <tbody>
         {% for registration in page_obj %}
         <tr scope="row">
-          <td>{{ registration.id|stringformat:"06d" }}</td>
+          <td class="font-monospace">{{ registration.id|stringformat:"06d" }}</td>
           <td>{{ registration.parking }}</td>
           <td>{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
           <td>{{ registration.tariff_in }}</td>

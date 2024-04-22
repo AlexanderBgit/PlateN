@@ -7,8 +7,8 @@
       <thead>
         <tr>
           <th scope="col">ID</th>
-          <th scope="col">Datetime</th>
           <th scope="col">Registration</th>
+          <th scope="col">Datetime</th>
           <th scope="col">Car number in</th>
           <th scope="col">Amount</th>
           <th scope="col" title="Dynamic calculation for a car that hasn't left yet">Invoice*</th>
@@ -19,8 +19,8 @@
         {% for payment in page_obj.object_list %}
         <tr scope="row">
           <td>{{ payment.id }}</td>
+          <td class="font-monospace">{{ payment.registration_id.pk|stringformat:"06d" }}</td>
           <td>{{ payment.datetime|date:'Y-m-d H:i' }}</td>
-          <td>{{ payment.registration_id.pk|stringformat:"06d" }}</td>
           <td>{{ payment.registration_id.car_number_in }}</td>
           <td>{{ payment.amount }} {{ currency }}</td>
           <td>{{ payment.registration_id.calculate_parking_fee }} {{ currency }}</td>
