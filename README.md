@@ -8,7 +8,7 @@
 # PlateN
 
 
-<details>
+<details open>
   <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Fast Parking <br> 
   application plate license recognition</h2></summary>
 
@@ -20,7 +20,7 @@ Home
 
 Plan of parking
 <div align="left" width="948" height="474">
-  <img src="/img/Parking Plan_short.png">
+  <img src="/readme/Parking Plan_short.png">
 </div>
 
 
@@ -36,19 +36,19 @@ Car recognition result
 Car recognition In
 
 <div align="left" width="948" height="474">
-  <img src="/img/Photos IN.png">
+  <img src="/readme/Photos IN.png">
 </div>
 
 Car recognition Out
 
 <div align="left" width="948" height="474">
-  <img src="/img/Photos OUT.png">
+  <img src="/readme/Photos OUT.png">
 </div>
 
 Cars
 
 <div align="left" width="948" height="474">
-  <img src="/img/Cars.png">
+  <img src="/readme/Cars.png">
 </div>
 </details>
 
@@ -59,19 +59,19 @@ Cars
 Profile
 
 <div align="left" width="948" height="474">
-  <img src="/img/User profile.png">
+  <img src="/readme/User profile.png">
 </div>
 
 Registration
 
 <div align="left" width="948" height="474">
-  <img src="/img/Register new user.png">
+  <img src="/readme/Register new user.png">
 </div>
 
 SignIn
 
 <div align="left" width="948" height="474">
-  <img src="/img/https __edu202415.aacom.net.png">
+  <img src="/readme/https __edu202415.aacom.net.png">
 </div>
 </details>
 
@@ -82,23 +82,23 @@ SignIn
 Finance
 
 <div align="left" width="948" height="474">
-  <img src="/img/Finance2.png">
+  <img src="/readme/Finance2.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/img/Finance_Pay_result.png">
+  <img src="/readme/Finance_Pay_result.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/img/Finance Pay the invoice.png">
+  <img src="/readme/Finance Pay the invoice.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/img/Finance Pay the invoice2.png">
+  <img src="/readme/Finance Pay the invoice2.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/img/payment list.png">
+  <img src="/readme/payment list.png">
 </div>
 
 </details>
@@ -109,20 +109,20 @@ Finance
 Messages
 
 <div align="left" width="948" height="474">
-  <img src="/img/Messages_adm.png">
+  <img src="/readme/Messages_adm.png">
 </div>
 
 Telegram
 <div align="left" width="948" height="474">
-  <img src="/img/Telegram_bot.png">
+  <img src="/readme/Telegram_bot.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/img/Telegram_news.png">
+  <img src="/readme/Telegram_news.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/img/Telegram_chat.png">
+  <img src="/readme/Telegram_chat.png">
 </div>
 </details>
 
@@ -327,8 +327,8 @@ SOURCE=${HOME}/PlateN/PlateN
 ## Склад команди розробників
 1. [Team Lead](https://github.com/artem-dorofeev) @artem-dorofeev
 1. [Scrum Master](https://github.com/RostislavB74) @RostislavB74
-1. [Django expert](https://github.com/lumi-ua) @lumi-ua
-(https://github.com/diixo) @diixo
+1. Django expert [@lumi-ua](https://github.com/lumi-ua) and 
+[@diixo](https://github.com/diixo) 
 1. [Full stack devops](https://github.com/lexxai) @lexxai 
 2. [Art director](https://github.com/plaha303) @plaha303 
 3. [Tester](https://github.com/AlexanderBgit) @AlexanderBgit 
