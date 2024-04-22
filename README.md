@@ -1,17 +1,136 @@
+![Python 3.11](https://img.shields.io/badge/python-3.11-blueviolet)
+![GitHub Pull Requests](https://img.shields.io/github/issues-pr/AlexanderBgit/PlateN?color=blueviolet)
+![Forks](https://img.shields.io/github/forks/AlexanderBgit/PlateN?style=social)
+![Latest Release](https://img.shields.io/github/v/release/AlexanderBgit/PlateN?include_prereleases&label=latest%20release)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/AlexanderBgit/PlateN?label=Version%20for%20development)
+
+
 # PlateN
-Plate license recognition
+
+
+<details open>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Fast Parking <br> 
+  application plate license recognition</h2></summary>
+
+Home
 
 <div align="left" width="948" height="474">
   <img src="/readme/img-1.png">
 </div>
 
+Plan of parking
 <div align="left" width="948" height="474">
-  <img src="/readme/img-2.png">
+  <img src="/readme/Parking Plan_short.png">
 </div>
+
+
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Check-in and Check-out by cars </h3></summary>
+
+Car recognition result
 
 <div align="left" width="948" height="474">
   <img src="/readme/img-3.png">
 </div>
+
+Car recognition In
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Photos IN.png">
+</div>
+
+Car recognition Out
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Photos OUT.png">
+</div>
+
+Cars
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Cars.png">
+</div>
+</details>
+
+
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>User account </h3></summary>
+
+Profile
+
+<div align="left" width="948" height="474">
+  <img src="/readme/User profile.png">
+</div>
+
+Registration
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Register new user.png">
+</div>
+
+SignIn
+
+<div align="left" width="948" height="474">
+  <img src="/readme/https __edu202415.aacom.net.png">
+</div>
+</details>
+
+
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Payments </h3></summary>
+
+Finance
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Finance2.png">
+</div>
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Finance_Pay_result.png">
+</div>
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Finance Pay the invoice.png">
+</div>
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Finance Pay the invoice2.png">
+</div>
+
+<div align="left" width="948" height="474">
+  <img src="/readme/payment list.png">
+</div>
+
+</details>
+
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Manage notifications </h3></summary>
+
+Messages
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Messages_adm.png">
+</div>
+
+Telegram
+<div align="left" width="948" height="474">
+  <img src="/readme/Telegram_bot.png">
+</div>
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Telegram_news.png">
+</div>
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Telegram_chat.png">
+</div>
+</details>
+
+
+## Презентація
+Youtube: https://www.youtube.com/watch?v=iH9t5hpYwqI
+
+</details>
 
 # Development environment
 
@@ -203,3 +322,13 @@ SOURCE=${HOME}/PlateN/PlateN
 
 </details>
 
+# Виконання
+
+## Склад команди розробників
+1. [Team Lead](https://github.com/artem-dorofeev) @artem-dorofeev
+1. [Scrum Master](https://github.com/RostislavB74) @RostislavB74
+1. Django expert [@lumi-ua](https://github.com/lumi-ua) and 
+[@diixo](https://github.com/diixo) 
+1. [Full stack devops](https://github.com/lexxai) @lexxai 
+2. [Art director](https://github.com/plaha303) @plaha303 
+3. [Tester](https://github.com/AlexanderBgit) @AlexanderBgit 
