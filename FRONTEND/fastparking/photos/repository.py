@@ -60,12 +60,12 @@ def save_image(
                 destination.write(chunk)
 
 
-def registration_car(utc_datetime, registration_data) -> dict:
-    print(f"registration_car: {utc_datetime=}, {registration_data=}")
-    # DEMO MODE
-    if registration_data.get("type") == "0":
-        registration_data["registration_id"] = random.randint(1, 999999)
-    return registration_data
+# def registration_car(utc_datetime, registration_data) -> dict:
+#     print(f"registration_car: {utc_datetime=}, {registration_data=}")
+#     # DEMO MODE
+#     if registration_data.get("type") == "0":
+#         registration_data["registration_id"] = random.randint(1, 999999)
+#     return registration_data
 
 
 def build_base64_image(binary_image_data):
@@ -111,9 +111,42 @@ def unsign_text(text):
         return None
 
 
+def check_and_register_car(registration_data) -> dict:
+    """
+    return {
+        "success": True,
+        "info": "The car does not exist, a new record has been created",
+        "car": car,
+    }
+    """
+    num_auto = registration_data.get("num_auto")
+    photo_id = registration_data.get("photo_id")
+    if not photo_id or not num_auto:
+        return {"success": False, "info": "No license plate information found", "car": None}
+    photo_id = photo_id.pk
+    try:
+        car = Car.objects.get(car_number=num_auto)
+        if car.blocked:
+            return {"success": False, "info": "The car is blocked", "car": None}
+        else:
+            return {
+                "success": True,
+                "info": "The car exists and is not blocked",
+                "car": None,
+            }
+    except Car.DoesNotExist:
+        # Створюємо новий запис в таблиці Car
+        car = Car.objects.create(car_number=num_auto, photo_car_id=photo_id)
+        return {
+            "success": True,
+            "info": "The car does not exist, a new record has been created",
+            "car": car,
+        }
+
+
 def handle_uploaded_file(
     f, type: str | None, filename: str | None = None, registration_id: str | None = None
-) -> dict:
+) -> dict | None:
     """
     RETURNED STRUCTURE of handle_uploaded_file:
     img_predict: {"info": info, "predict": predict, "registration": registration}
@@ -221,27 +254,6 @@ def handle_uploaded_file(
                     "total_paid": total_paid,
                 }
         return {"info": info, "predict": predict, "registration": registration}
-
-
-def check_and_register_car(registration_data):
-    num_auto = registration_data.get("num_auto")
-    photo_id = registration_data.get("photo_id")
-    if not photo_id or not num_auto:
-        return {"success": False, "info": "No license plate information found"}
-    photo_id = photo_id.pk
-    try:
-        car = Car.objects.get(car_number=num_auto)
-        if car.blocked:
-            return {"success": False, "info": "The car is blocked"}
-        else:
-            return {"success": True, "info": "The car exists and is not blocked"}
-    except Car.DoesNotExist:
-        # Створюємо новий запис в таблиці Car
-        car = Car.objects.create(car_number=num_auto, photo_car_id=photo_id)
-        return {
-            "success": True,
-            "info": "The car does not exist, a new record has been created",
-        }
 
 
 # def find_free_parking_space(num_auto) -> ParkingSpace:
