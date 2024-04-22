@@ -218,7 +218,7 @@ def handle_uploaded_file(
                     "qr_code": qrcode_img,
                     "date": date_formatted,
                     "hash": hash_code,
-                    "total_paid": total_paid
+                    "total_paid": total_paid,
                 }
         return {"info": info, "predict": predict, "registration": registration}
 
@@ -361,7 +361,7 @@ def register_parking_out_event(
             #     registration.entry_datetime, utc_datetime, registration.tariff_in
             # )
             if invoice is not None:
-                registration.invoice = str(invoice)
+                registration.invoice = "{:.2f}".format(float(invoice))
 
             registration.exit_datetime = utc_datetime
             registration.car_number_out = num_auto
