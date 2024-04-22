@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.http import HttpResponse
 import pytz
@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.utils import timezone
 
 from .models import Payment
 from photos.repository import (
@@ -151,12 +152,19 @@ def payments_list(request):
         return redirect("parking:main")
     active_menu = "payment"
     page_number = validate_int(request.GET.get("page"))
+    days = validate_int(request.GET.get("days", 30))
     payments = Payment.objects.all().order_by("-datetime")
+    if days:
+        days_delta = timezone.now() - timedelta(days=float(days))
+        payments = payments.filter(datetime__gte=days_delta)
+
     paginator = Paginator(payments, PAGE_ITEMS)
     if page_number:
         page_obj = paginator.get_page(page_number)
     else:
         page_obj = paginator.page(1)  # Get the first page by default
+
+    filter_params = {"days": days}
 
     content = {
         "title": "payment list",
@@ -164,6 +172,7 @@ def payments_list(request):
         "paginator": paginator,
         "page_obj": page_obj,
         "currency": settings.PAYMENT_CURRENCY[1],
+        "filter_params": filter_params,
     }
     return render(request, "finance/payments_list.html", content)
 

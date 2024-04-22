@@ -22,8 +22,8 @@ def compare_plates(
         return (False, -1)
     similarity = 1 - (levenshtein_distance(num1, num2) / max(len(num1), len(num2)))
     result_trust = similarity >= threshold
-    if not result_trust:
-        print("Low lever of similarity")
+    # if not result_trust:
+    #     print("Low lever of similarity")
     return result_trust, similarity
 
 
