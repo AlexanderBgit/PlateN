@@ -12,6 +12,7 @@
           <th scope="col">Tariff</th>
           <th scope="col">Exit Datetime</th>
           <th scope="col" title="Invoice">Invoice</th>
+          <th scope="col" title="Total paid">Paid</th>
           <th scope="col" title="Car Number In">Car NO IN</th>
           <th scope="col" title="Car Number Out">Car NO OUT</th>
           <th scope="col" title="Paid">P</th>
@@ -26,11 +27,9 @@
           <td>{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
           <td>{{ registration.tariff_in }}</td>
           <td>{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
-          <td title="Calc: {{ registration.calculate_parking_fee }}">
-            {{ registration.invoice }}
-              {% if registration.total_amount %} / 
-                  {{ registration.total_amount }}
-              {% endif %}
+          <td title="Calc: {{ registration.calculate_parking_fee }}">{{ registration.invoice}}</td>
+          <td title="Total paid for this registration">
+            {% if registration.total_amount %}{{ registration.total_amount }}{% endif %}
           </td>
           <td>{{ registration.car_number_in }}</td>
           <td>{{ registration.car_number_out }}</td>
