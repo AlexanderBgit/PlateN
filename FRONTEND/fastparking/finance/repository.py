@@ -1,4 +1,6 @@
+from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Sum
 
 from .models import Payment, Tariff
 
@@ -11,6 +13,16 @@ def get_tariff_instance(id: int) -> Tariff | None:
         return Tariff.objects.get(pk=id)
     except ObjectDoesNotExist:
         return None
+
+
+def calculate_total_payments(registration_id: int) -> Decimal:
+    total_amount = Payment.objects.filter(registration_id=registration_id).aggregate(
+        Sum("amount")
+    )["amount__sum"]
+    # Handle potential absence of payments
+    if total_amount is None:
+        total_amount = Decimal("0.0")
+    return total_amount
 
 
 def calculate_current_invoice(registration_id: int) -> str:
@@ -26,5 +38,4 @@ def calculate_current_invoice(registration_id: int) -> str:
     return str(result)
 
 
-def save_payment(registration_id: str, amount: str):
-    ...
+def save_payment(registration_id: str, amount: str): ...
