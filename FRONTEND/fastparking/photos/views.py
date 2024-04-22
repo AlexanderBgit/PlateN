@@ -2,10 +2,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import UploadFileForm
 from django.urls import resolve, reverse
+from django.conf import settings
 
 
 # Imaginary function to handle an uploaded file.
 from .repository import handle_uploaded_file, TYPES
+from finance.repository import calculate_total_payments
 
 
 def upload_file(request):
@@ -24,6 +26,7 @@ def upload_file(request):
         # print(f"{request.POST=}")
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
+            currency = settings.PAYMENT_CURRENCY[0]
             uploaded_file = request.FILES.get("photo")
             if uploaded_file:
                 filename = uploaded_file.name
@@ -44,6 +47,7 @@ def upload_file(request):
                     "info": info,
                     "predict": predict,
                     "registration": registration,
+                    "currency": currency,
                 }
                 # print(f"{info}")
                 if info:
@@ -52,12 +56,12 @@ def upload_file(request):
                     context = {
                         "active_menu": active_menu,
                         "title": "",
-                        "target_type": {"type":0},
+                        "target_type": {"type": 0},
                         "info": "Not recognized",
                         "predict": {
                             "num_avto_str": "Number not recognized",
-                            "accuracy": "0"
-                            },
+                            "accuracy": "0",
+                        },
                         "registration": "NOT registered",
                     }
                     return render(request, "photos/upload_result.html", context)
