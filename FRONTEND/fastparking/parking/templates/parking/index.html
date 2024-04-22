@@ -1,13 +1,11 @@
 {% extends "parking/base.html" %} {% block content %}
 
-<div class="px-4 my-5 text-center" style="padding-top: 0; margin-top: 0">
-  <h1 class="display-5 fw-bold" style="font-size: 36px; margin-top: -20px">Fast Parking</h1>
-  <h3 class="display-5 fw-bold" style="font-size: 26px; margin-top: 10px">Швидка паркова</h3>
+<div class="px-1 my-2 text-center">
+  <h3 class="display-6 fw-bold">Fast Parking - Швидка паркова</h3>
   <div class="col-lg-6 mx-auto">
-    <p class="lead" style="font-size: 16px">A new generation of parking</p>
-    <div class="mt-3 mb-3 pt-3 pb-3" style="border: 1px solid #ccc; border-radius: 5px">
-      <div>Total parking spaces: {{ total_parking_spaces }} | Free spaces: {{ free_parking_spaces }}</div>
-      <div class="progress">
+    <div class="mt-2 mb-2 pt-2 pb-2" style="border: 1px solid #ccc; border-radius: 5px">
+      <div class="mb-2">Total parking spaces: {{ total_parking_spaces }} | Free spaces: {{ free_parking_spaces }}</div>
+      <div class="progress ms-2 me-2">
         <div
           class="progress-bar"
           role="progressbar"
@@ -19,10 +17,11 @@
           Filled: {{ parking_progress }}%
         </div>
       </div>
-      <a href="{% url 'parking:parking_plan' %}" class="btn btn-primary mt-3"> Переглянути план парковки</a>
+      <a href="{% url 'parking:parking_plan' %}" class="btn btn-primary mt-3">View the parking plan</a>
     </div>
   </div>
-  <img class="d-block mx-auto mb-4" style="border-radius: 0.5rem" src="static/parking/cont1.jpg" alt="" width="100%" />
+  <img class="d-block mx-auto mb-4 mt-3" style="border-radius: 0.5rem" src="static/parking/cont1.jpg" alt="" width="100%" />
+  <p class="lead" style="font-size: 16px">A new generation of parking</p>
   <p class="small"><em>{% if version %}Version: {{ version }}{% endif %}</em></p>
 </div>
 

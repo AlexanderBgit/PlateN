@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime, timedelta
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
@@ -6,6 +7,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 
 from .models import Registration
 from .models import ParkingSpace
@@ -102,18 +104,46 @@ def is_admin(request):
     return user.is_superuser
 
 
+def validate_int(value: str | int | None) -> int | None:
+    if value is not None:
+        try:
+            value = int(value)
+        except (TypeError, ValueError):
+            value = 1
+        if value < 1:
+            value = 1
+    return value
+
+
 @login_required
 def registration_list(request):
     if not is_admin(request):
         return redirect("parking:main")
     active_menu = "registration"
+    page_number = validate_int(request.GET.get("page"))
     registrations = Registration.objects.all().order_by(
-        "-entry_datetime", "exit_datetime"
+        "-exit_datetime",
+        "-entry_datetime",
     )
+    days = validate_int(request.GET.get("days", 30))
+    if days:
+        days_delta = timezone.now() - timedelta(days=float(days))
+        registrations = registrations.filter(entry_datetime__gte=days_delta)
+    paginator = Paginator(registrations, settings.PAGE_ITEMS)
+    if page_number:
+        page_obj = paginator.get_page(page_number)
+    else:
+        page_obj = paginator.page(1)  # Get the first page by default
+
+    filter_params = {"days": days}
+
     content = {
         "title": "Registration list",
         "active_menu": active_menu,
-        "registrations": registrations,
+        "paginator": paginator,
+        "page_obj": page_obj,
+        "currency": settings.PAYMENT_CURRENCY[1],
+        "filter_params": filter_params,
     }
     return render(request, "parking/registration_list.html", content)
 

@@ -68,7 +68,7 @@ class UploadFileForm(forms.Form):
         super(UploadFileForm, self).__init__(*args, **kwargs)
         self.fields["registration_id"].queryset = self.get_registration_queryset()
 
-    def get_registration_queryset(self):
+    def get_registration_pks_for_out(self):
         # Filter registrations where invoice is null and payment is not null
         # queryset = Registration.objects.filter(
         #     invoice__isnull=True, payment__isnull=False
@@ -98,6 +98,10 @@ class UploadFileForm(forms.Form):
         united_queryset_pks = set(queryset_pks) | (set(filtered_queryset_pks))
         # print(f"{united_queryset_pks=}")
         # Convert the list to a queryset
+        return united_queryset_pks
+
+    def get_registration_queryset(self):
+        united_queryset_pks = self.get_registration_pks_for_out()
         return Registration.objects.filter(
             pk__in=[reg_pk for reg_pk in united_queryset_pks]
         ).order_by("entry_datetime")
@@ -135,13 +139,14 @@ class UploadFileForm(forms.Form):
         if manual_registration_id:
             # Check if the manual_registration_id exists in the list of Registration.registration_id
             # if not Registration.objects.filter(pk=manual_registration_id).exists():
-            if (
-                not Registration.objects.filter(
-                    pk=manual_registration_id, invoice__isnull=True
-                )
-                .exclude(payment__isnull=True)
-                .exists()
-            ):
+            # if (
+            #     not Registration.objects.filter(
+            #         pk=manual_registration_id, invoice__isnull=True
+            #     )
+            #     .exclude(payment__isnull=True)
+            #     .exists()
+            # ):
+            if manual_registration_id not in self.get_registration_pks_for_out():
                 raise forms.ValidationError("Entered registration ID does not exist.")
         return manual_registration_id
 
