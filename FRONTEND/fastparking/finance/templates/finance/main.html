@@ -15,8 +15,10 @@
     </li>
   </ul>
   {% endif %}
-  <img class="p-3" src="{% static 'finance/payment-icon.png' %}" width="20%" />
-  <ul class="list-group">
+  <div class="container">
+    <img class="p-3" src="{% static 'finance/bobr_pay.png' %}" style="max-height: 50vh;"/>
+  </div>
+  <ul class="list-group list-group-horizontal">
     <li class="list-group-item"><a class="btn btn-primary" href="{% url 'finance:add_pay' %}">Pay the invoice</a></li>
     <li class="list-group-item">
       <a class="btn btn-primary" href="{% url 'parking:main' %}">Back</a>
