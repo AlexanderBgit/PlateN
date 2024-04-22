@@ -110,7 +110,7 @@ def add_pay(request):
                 # total_payed = calculate_total_payments(instance.registration_id.id)
                 total_payed = instance.registration_id.calculate_total_payed()
                 underpayment = (
-                    Decimal(invoice_calculated) - total_payed - instance.amount
+                    Decimal(invoice_calculated) - total_payed 
                 )
                 if total_payed > Decimal("0") and total_payed != instance.amount:
                     total_payed_formatted = f"{total_payed:.2f} {currency}"
@@ -135,8 +135,8 @@ def add_pay(request):
                 "Car number": car_number_in,
                 "Photo": photo_in,
                 "Invoice": invoice_formatted,
-                "Amount": amount_formatted,
-                "Paid in advance": total_payed_formatted,
+                "Paid now": amount_formatted,
+                "Total paid": total_payed_formatted,
                 "Underpayment": underpayment_formatted,
             }
             context = {
