@@ -3,7 +3,7 @@
 <h2>Registration List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}</h2>
 <div class="container-fluid">
   <div class="bd-example">
-    <table class="table  table-striped table-hover">
+    <table class="table table-striped table-hover">
       <thead>
         <tr>
           <th scope="col">ID</th>
@@ -26,7 +26,12 @@
           <td>{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
           <td>{{ registration.tariff_in }}</td>
           <td>{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
-          <td title="Calc: {{ registration.calculate_parking_fee }}">{{ registration.invoice}}</td>
+          <td title="Calc: {{ registration.calculate_parking_fee }}">
+            {{ registration.invoice }}
+              {% if registration.total_amount %} / 
+                  {{ registration.total_amount }}
+              {% endif %}
+          </td>
           <td>{{ registration.car_number_in }}</td>
           <td>{{ registration.car_number_out }}</td>
           <td>
@@ -60,7 +65,12 @@
   <div class="d-flex justify-content-center">
     <span class="text-center" style="width: 80px">
       {% if page_obj.has_previous %}
-      <a href="?page={{ page_obj.previous_page_number }}&days={{ filter_params.days }}" class="btn btn-sm btn-outline-primary" role="button">Prev</a>
+      <a
+        href="?page={{ page_obj.previous_page_number }}&days={{ filter_params.days }}"
+        class="btn btn-sm btn-outline-primary"
+        role="button"
+        >Prev</a
+      >
       {% endif %}
     </span>
 
@@ -74,7 +84,12 @@
 
     <span class="text-center" style="width: 80px">
       {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}&days={{ filter_params.days }}" class="btn btn-sm btn-outline-primary" role="button">Next</a>
+      <a
+        href="?page={{ page_obj.next_page_number }}&days={{ filter_params.days }}"
+        class="btn btn-sm btn-outline-primary"
+        role="button"
+        >Next</a
+      >
       {% endif %}
     </span>
   </div>
@@ -93,7 +108,8 @@
         <input type="hidden" name="page" value="{{ request.GET.page }}" />
         <div class="input-group mb-2">
           <label class="input-group-text" for="days">Days:</label>
-          <div class="col-3"> <!-- Apply col-2 class here -->
+          <div class="col-3">
+            <!-- Apply col-2 class here -->
             <input
               type="number"
               class="form-control"
@@ -102,7 +118,8 @@
               value="{% if filter_params.days %}{{ filter_params.days }}{% endif %}"
             />
           </div>
-          <div class="col"> <!-- Adjust the width of the button -->
+          <div class="col">
+            <!-- Adjust the width of the button -->
             <button type="submit" class="btn btn-primary">Filter</button>
           </div>
         </div>

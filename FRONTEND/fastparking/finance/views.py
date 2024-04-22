@@ -85,7 +85,7 @@ def add_pay(request):
         form = PaymentsForm(request.POST)
         if form.is_valid():
             instance = form.save()
-            currency = "UAH"
+            currency = settings.PAYMENT_CURRENCY[0]
             exit_datetime = timezone.now()
             # invoice_calculated = calculate_invoice(
             #     instance.registration_id.entry_datetime,
@@ -107,7 +107,8 @@ def add_pay(request):
             underpayment_formatted = None
             total_payed_formatted = None
             if invoice_calculated and instance.amount and instance.registration_id.id:
-                total_payed = calculate_total_payments(instance.registration_id.id)
+                # total_payed = calculate_total_payments(instance.registration_id.id)
+                total_payed = instance.registration_id.calculate_total_payed()
                 underpayment = (
                     Decimal(invoice_calculated) - total_payed - instance.amount
                 )
@@ -135,7 +136,7 @@ def add_pay(request):
                 "Photo": photo_in,
                 "Invoice": invoice_formatted,
                 "Amount": amount_formatted,
-                "Total": total_payed_formatted,
+                "Paid in advance": total_payed_formatted,
                 "Underpayment": underpayment_formatted,
             }
             context = {

@@ -8,9 +8,9 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.db.models import Sum
 
 from .models import Registration
-from .models import ParkingSpace
 from .models import ParkingSpace
 
 
@@ -129,6 +129,9 @@ def registration_list(request):
     if days:
         days_delta = timezone.now() - timedelta(days=float(days))
         registrations = registrations.filter(entry_datetime__gte=days_delta)
+        for registration in registrations:
+            total_amount = registration.payment_set.aggregate(total=Sum('amount'))
+            registration.total_amount = total_amount['total'] or 0 
     paginator = Paginator(registrations, settings.PAGE_ITEMS)
     if page_number:
         page_obj = paginator.get_page(page_number)
