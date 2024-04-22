@@ -131,12 +131,15 @@ def check_and_register_car(registration_data) -> dict:
     try:
         car = Car.objects.get(car_number=num_auto)
         if car.blocked:
-            return {"success": False, "info": "The car is blocked", "car": None}
+            return {"success": False, "info": "The car is blocked", "car": car}
         else:
+            pay_pass_text = ""
+            if car.PayPass:
+                pay_pass_text = f", PayPass: {car.PayPass}"
             return {
                 "success": True,
-                "info": "The car exists and is not blocked",
-                "car": None,
+                "info": f"The car exists and is not blocked{pay_pass_text}",
+                "car": car,
             }
     except Car.DoesNotExist:
         # Створюємо новий запис в таблиці Car
