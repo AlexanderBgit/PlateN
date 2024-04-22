@@ -88,6 +88,26 @@
     <li class="list-group-item">
       <a class="btn btn-primary" href="{% url 'parking:main' %}">Back</a>
     </li>
+    <li class="list-group-item">
+      <form method="GET" action="">
+        <input type="hidden" name="page" value="{{ request.GET.page }}" />
+        <div class="input-group mb-2">
+          <label class="input-group-text" for="days">Days:</label>
+          <div class="col-3"> <!-- Apply col-2 class here -->
+            <input
+              type="number"
+              class="form-control"
+              name="days"
+              id="days"
+              value="{% if filter_params.days %}{{ filter_params.days }}{% endif %}"
+            />
+          </div>
+          <div class="col"> <!-- Adjust the width of the button -->
+            <button type="submit" class="btn btn-primary">Filter</button>
+          </div>
+        </div>
+      </form>
+    </li>
   </ul>
 </div>
 
