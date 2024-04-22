@@ -80,16 +80,6 @@
               <span class="nav-item">Finance</span>
             </a>
           </li>
-
-          <li>
-            <a
-              class="nav-link {% if active_menu == 'messages' %}active{% else %}text-white{% endif %}"
-              href="{% url 'communications:main' %}"
-            >
-              <i class="fa-solid fa-earth-americas"></i>
-              <span class="nav-item">Messages</span>
-            </a>
-          </li>
           <li>
             <a
               class="nav-link {% if active_menu == 'photos' %}active{% else %}text-white{% endif %}"
@@ -100,6 +90,16 @@
             </a>
           </li>
           <li>
+          <li>
+            <a
+              class="nav-link {% if active_menu == 'messages' %}active{% else %}text-white{% endif %}"
+              href="{% url 'communications:main' %}"
+            >
+              <i class="fa-solid fa-earth-americas"></i>
+              <span class="nav-item">Messages</span>
+            </a>
+          </li>
+
             <a
               class="nav-link {% if active_menu == 'logout' %}active{% else %}text-white{% endif %}"
               href="{% url 'users:logout' %}"
