@@ -5,12 +5,26 @@
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/AlexanderBgit/PlateN?label=Version%20for%20development)
 
 
-# PlateN
+# Fast Parking
+"Fast Parking" це веб-застосунок, який автоматично може визначати номери автомобільних знаків на зображеннях, відстежити тривалість паркування для кожного унікального транспортного засобу та розраховувати накопичені паркувальні витрати.
 
+### Функції застосунку:
+
+- Управління обліковими записами користувачів;
+- Приймання зображень від користувача. Детекція номерного знаку. Виявлення та виділення області з номерним знаком; 
+- Розпізнавання символів для ідентифікації тексту номерного знаку;
+- Перевірка номера авто у базі зареєстрованих транспортних засобів;
+- Запис часу в'їзду/виїзду кожного разу, коли визначається номерний знак. Відстеження тривалості паркування;
+- Розрахунок загальної тривалості паркування;
+- Зберігання даних про тривалість паркування в базі даних;
+- Розрахунок вартості паркування. Керування тарифами. Чек за QR-кодом;
+- Генерація звітів про розрахунки, які можна експортувати у форматі CSV;
+- Real Time сповіщення для подій в'їзду/виїзду у Telegram;
+- Візуалізація про кількість вільних та зайнятих паркомісць.
 
 <details open>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Fast Parking <br> 
-  application plate license recognition</h2></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>
+  License plate recognition application (screenshots)</h2></summary>
 
 Home
 
@@ -325,10 +339,10 @@ SOURCE=${HOME}/PlateN/PlateN
 # Виконання
 
 ## Склад команди розробників
-1. [Team Lead](https://github.com/artem-dorofeev) @artem-dorofeev
-1. [Scrum Master](https://github.com/RostislavB74) @RostislavB74
+1. Team Lead [@artem-dorofeev](https://github.com/artem-dorofeev) 
+1. Scrum Master [@RostislavB74](https://github.com/RostislavB74) 
 1. Django expert [@lumi-ua](https://github.com/lumi-ua) and 
 [@diixo](https://github.com/diixo) 
-1. [Full stack devops](https://github.com/lexxai) @lexxai 
-2. [Art director](https://github.com/plaha303) @plaha303 
-3. [Tester](https://github.com/AlexanderBgit) @AlexanderBgit 
+1. Full stack devops [@lexxai](https://github.com/lexxai) 
+2. Art director [@plaha303](https://github.com/plaha303) 
+3. Tester [@AlexanderBgit](https://github.com/AlexanderBgit) 
