@@ -40,7 +40,8 @@
             {%endif%}
           </td>
           <td>
-            {% if registration.compare_in_out.1 > 0 %} {% if registration.compare_in_out.0 %}
+            {% if registration.compare_in_out.1 >= 0 %} 
+            {% if registration.compare_in_out.0 %}
             <img
               src="{% static 'parking/icon-yes.svg' %}"
               alt="Positive"
