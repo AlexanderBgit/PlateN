@@ -1,9 +1,11 @@
+from decimal import Decimal
 from django.db import models
-from cars.models import Car
-from photos.models import Photo
 from django.utils import timezone
 
+
 from .services import compare_plates
+from photos.models import Photo
+from cars.models import Car
 
 
 class ParkingSpace(models.Model):
