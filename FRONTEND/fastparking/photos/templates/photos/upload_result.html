@@ -8,7 +8,7 @@
         <th>Info:</th>
         <td>{{ info }}</td>
       </tr>
-      {% if redict.num_avto_str %}
+      {% if predict.num_avto_str %}
       <tr>
         <th>Recognized number:</th>
         <td>{{ predict.num_avto_str }}</td>
@@ -43,6 +43,11 @@
         <td>{{ registration.date }}</td>
       </tr>
       <tr>
+        <th>Parking place:</th>
+        <td>{{ registration.parking_place }}</td>
+      </tr>
+      <tr>      
+        <tr>
         <th>Parking place:</th>
         <td>{{ registration.parking_place }}</td>
       </tr>
