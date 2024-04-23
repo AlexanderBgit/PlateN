@@ -124,6 +124,8 @@ class Registration(models.Model):
             if isinstance(duration, timezone.timedelta):
                 hours = duration.total_seconds() / 3600  # in hours
                 return hours
+        else:
+            return self.get_current_duration()
 
     def compare_in_out(self):
         return compare_plates(self.car_number_in, self.car_number_out)

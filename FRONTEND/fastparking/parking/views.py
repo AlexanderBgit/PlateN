@@ -135,7 +135,10 @@ def registration_list(request):
         registrations = registrations.filter(entry_datetime__gte=days_delta)
         for registration in registrations:
             total_amount = registration.calculate_total_payed()
+            duration = registration.get_duration()
+            duration_formatted = f"{duration:.2f}h"
             registration.total_amount = total_amount
+            registration.duration = duration_formatted
     paginator = Paginator(registrations, settings.PAGE_ITEMS)
     if page_number:
         page_obj = paginator.get_page(page_number)
