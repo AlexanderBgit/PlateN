@@ -74,11 +74,26 @@ class Registration(models.Model):
         # print(
         #     f"Calculating parking fee... tariff: {self.tariff_in}",
         # )
-        current_time = timezone.now()  # отримуємо поточний час
-        last_payment = self.get_last_payment()
-        print(f"{last_payment=}")
+        # PayPass - free all time
+        if self.is_pay_pass():
+            return 0.0  # Free for pay pass
+
+        current_time = timezone.now()
+
         if self.exit_datetime:
+            # Fix time for exit cars
             current_time = self.exit_datetime
+        else:
+            # Froze TIME during 15 min after last pay.
+            time_delta = timezone.timedelta(minutes=15)
+            last_payment = self.get_last_payment()
+            # Calculate the threshold time (15 minutes ago)
+            acceptable_time = current_time - time_delta
+            if last_payment and last_payment > acceptable_time:
+                current_time = last_payment
+            print(f"{last_payment=}, {current_time=}")
+
+        # calculate duration
         if self.entry_datetime:
             duration = current_time - self.entry_datetime
             hours = duration.total_seconds() / 3600  # переводимо час в години
@@ -88,9 +103,6 @@ class Registration(models.Model):
                 hours = 0  # Free first 15 mins
             else:
                 hours = self.round_to_int__(hours)
-            # PayPass - free all time
-            if self.is_pay_pass():
-                hours = 0  # Free for pay pass
 
             if self.tariff_in:
                 price_per_hour = float(self.tariff_in)  # Зміна типу на float
@@ -98,6 +110,20 @@ class Registration(models.Model):
                 # print(hours, self.round_to_int(hours), parking_fee, self.round_to_int(1.01),self.round_to_int(0.9))
                 return parking_fee
         return None
+
+    def get_current_duration(self) -> float | None:
+        current_time = timezone.now()
+        if self.entry_datetime:
+            duration = current_time - self.entry_datetime
+            hours = duration.total_seconds() / 3600  # in hours
+            return hours
+
+    def get_duration(self) -> float | None:
+        if self.entry_datetime and self.exit_datetime:
+            duration = self.exit_datetime - self.entry_datetime
+            if isinstance(duration, timezone.timedelta):
+                hours = duration.total_seconds() / 3600  # in hours
+                return hours
 
     def compare_in_out(self):
         return compare_plates(self.car_number_in, self.car_number_out)
