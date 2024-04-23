@@ -41,20 +41,21 @@ def main(request):
 def add_tariff(request):
     if not is_admin(request):
         return redirect("finance:main")
-    
+
     # Знайти останній тариф
     last_tariff = Tariff.objects.last()
-    
+
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name
     if request.method == "POST":
         form = TariffForm(request.POST)
         if form.is_valid():
             new_tariff = form.save(commit=False)
-            
             # Змінити кінець попереднього тарифу
             if last_tariff:
-                last_tariff.end_date = new_tariff.start_date - timezone.timedelta(seconds=1)
+                last_tariff.end_date = new_tariff.start_date - timezone.timedelta(
+                    seconds=1
+                )
                 last_tariff.save()
 
             # Додати новий тариф
@@ -145,9 +146,7 @@ def add_pay(request):
             if invoice_calculated and instance.amount and instance.registration_id.id:
                 # total_payed = calculate_total_payments(instance.registration_id.id)
                 total_payed = instance.registration_id.calculate_total_payed()
-                underpayment = (
-                    Decimal(invoice_calculated) - total_payed 
-                )
+                underpayment = Decimal(invoice_calculated) - total_payed
                 if total_payed > Decimal("0") and total_payed != instance.amount:
                     total_payed_formatted = f"{total_payed:.2f} {currency}"
 
