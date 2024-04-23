@@ -38,19 +38,16 @@ def main(request):
     currency = settings.PAYMENT_CURRENCY[0]
     if current_tariff:
         current_tariff_formatted = f"{current_tariff:.2f} {currency} per hour"
-    return render(
-        request,
-        "parking/index.html",
-        {
-            "title": "Fast Parking",
-            "active_menu": active_menu,
-            "total_parking_spaces": total_parking_spaces,
-            "free_parking_spaces": free_parking_spaces,
-            "parking_progress": parking_progress,
-            "version": version,
-            "current_tariff": current_tariff_formatted,
-        },
-    )
+    context = {
+        "title": "Fast Parking",
+        "active_menu": active_menu,
+        "total_parking_spaces": total_parking_spaces,
+        "free_parking_spaces": free_parking_spaces,
+        "parking_progress": parking_progress,
+        "version": version,
+        "current_tariff": current_tariff_formatted,
+    }
+    return render(request, "parking/index.html", context=context)
 
 
 def generate_report(request):

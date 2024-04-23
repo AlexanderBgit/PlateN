@@ -15,6 +15,21 @@ class TariffForm(forms.ModelForm):
             "start_date",
             "end_date",
         ]
+        widgets = {
+            "description": forms.TextInput(attrs={"class": "form-control"}),
+            "price_per_hour": forms.NumberInput(
+                attrs={"class": "form-control", "min": 0}
+            ),
+            "price_per_day": forms.NumberInput(
+                attrs={"class": "form-control", "min": 0}
+            ),
+            "start_date": forms.DateTimeInput(
+                attrs={"type": "datetime-local", "class": "form-control"}
+            ),
+            "end_date": forms.DateTimeInput(
+                attrs={"type": "datetime-local", "class": "form-control"}
+            ),
+        }
 
 
 class PaymentsForm(forms.ModelForm):
