@@ -4,10 +4,12 @@
   <h2>RESULT:</h2>
   <table class="table">
     <tbody>
+      {% if registration.id %}
       <tr>
         <th>Info:</th>
         <td>{{ info }}</td>
       </tr>
+      {% endif %}
       {% if predict.num_avto_str %}
       <tr>
         <th>Recognized number:</th>
@@ -60,7 +62,8 @@
         <th>Invoice:</th>
         <td>{{ registration.invoice }} {{currency}}</td>
       </tr>
-      {% endif %} {% if registration.total_paid %}
+      {% endif %}
+      {% if registration.total_paid %}
       <tr>
         <th>Total Payed:</th>
         <td>{{ registration.total_paid }} {{currency}}</td>
@@ -86,15 +89,14 @@
         <th>Uniq code:</th>
         <td>{{ registration.hash }}</td>
       </tr>
-      <tr></tr>
+     {% endif %}
     </tbody>
   </table>
 </div>
-{% else %}
 
-<div class="d-inline p-2 bg-primary text-white">Registration denied</div>
-<div class="d-inline p-2 bg-dark text-white">{{ info }}</div>
-
+{% if not registration.id %}
+<div class="p-2 bg-danger text-white">Registration denied</div>
+<div class="alert alert-info">{{ info }}</div>
 {% endif %}
 
 <p></p>

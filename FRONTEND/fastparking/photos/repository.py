@@ -231,7 +231,6 @@ def handle_uploaded_file(
                 )
             # -------------------------------------------------------
             if registration_result:
-
                 registration_id = registration_result.get("registration_id")
                 info = f"Car: {register_car_result.get('info')}, Register: {registration_result.get('info')}"
 
@@ -376,12 +375,28 @@ def register_parking_out_event(
         registration_id = int(registration_id)
         try:
             registration = Registration.objects.get(pk=registration_id)
-            invoice = registration.calculate_parking_fee()
+            calc_invoice = registration.calculate_parking_fee()
+            total_payed = registration.calculate_total_payed()
+            if calc_invoice is None:
+                result[
+                    "info"
+                ] = f"Failed. Missing finance information for id: {registration_id:06}."
+                return result
+            if total_payed is None:
+                total_payed = 0.0
+            if total_payed < calc_invoice:
+                currency = settings.PAYMENT_CURRENCY[0]
+                result["info"] = (
+                    f"Failed. Total paid: {total_payed} {currency} for what is less than the invoice "
+                    f"of {calc_invoice:.2f} {currency}. Please pay the rest."
+                )
+                return result
+
             # invoice = calculate_invoice(
             #     registration.entry_datetime, utc_datetime, registration.tariff_in
             # )
-            if invoice is not None:
-                registration.invoice = "{:.2f}".format(float(invoice))
+            if calc_invoice is not None:
+                registration.invoice = "{:.2f}".format(float(calc_invoice))
 
             registration.exit_datetime = utc_datetime
             registration.car_number_out = num_auto
@@ -397,7 +412,7 @@ def register_parking_out_event(
                 "registration_id": registration.pk,
                 "parking_place": registration.parking.number,
                 "tariff_in": registration.tariff_in,
-                "invoice": invoice,
+                "invoice": calc_invoice,
                 "compare_plates": compare_plates_result,
                 "info": "Success",
             }
