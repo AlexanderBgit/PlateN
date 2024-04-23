@@ -12,6 +12,7 @@ from django.db.models import Sum
 
 from .models import Registration
 from .models import ParkingSpace
+from photos.repository import get_price_per_hour
 
 
 def health_check(request):
@@ -32,18 +33,21 @@ def main(request):
 
     active_menu = "home"
     version = settings.VERSION
-    return render(
-        request,
-        "parking/index.html",
-        {
-            "title": "Fast Parking",
-            "active_menu": active_menu,
-            "total_parking_spaces": total_parking_spaces,
-            "free_parking_spaces": free_parking_spaces,
-            "parking_progress": parking_progress,
-            "version": version,
-        },
-    )
+    current_tariff = get_price_per_hour(timezone.now())
+    current_tariff_formatted = "--"
+    currency = settings.PAYMENT_CURRENCY[0]
+    if current_tariff:
+        current_tariff_formatted = f"{current_tariff:.2f} {currency} per hour"
+    context = {
+        "title": "Fast Parking",
+        "active_menu": active_menu,
+        "total_parking_spaces": total_parking_spaces,
+        "free_parking_spaces": free_parking_spaces,
+        "parking_progress": parking_progress,
+        "version": version,
+        "current_tariff": current_tariff_formatted,
+    }
+    return render(request, "parking/index.html", context=context)
 
 
 def generate_report(request):

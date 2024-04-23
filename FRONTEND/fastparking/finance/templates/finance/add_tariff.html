@@ -2,9 +2,12 @@
 {% extends "parking/base.html" %} {% block content %}
 <h2>Add Tariff</h2>
 <div class="container">
+  <div class="col-md-6">
   <form method="post">
     {% csrf_token %} {{ form.as_p }}
+    <p class="alert alert-info">The end date of the previous tariff will be automatically changed to the start date of this tariff.</p>
     <button class="btn btn-primary" type="submit">Save</button>
   </form>
+  </div>
 </div>
 {% endblock content %}

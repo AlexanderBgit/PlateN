@@ -21,14 +21,16 @@ except ImportError as err:
 def create_parking():
     PARKING_SPACES_COUNT = settings.PARKING_SPACES_COUNT
     total = 0
-    for i in range(1, PARKING_SPACES_COUNT + 1):
-        number = f"P-{i:03}"
-        try:
-            parking = ParkingSpace(number=number)
-            parking.save()
-            total += 1
-        except Exception as err:
-            ...
+    is_empty = not ParkingSpace.objects.exists()
+    if is_empty:
+        for i in range(1, PARKING_SPACES_COUNT + 1):
+            number = f"P-{i:03}"
+            try:
+                parking = ParkingSpace(number=number)
+                parking.save()
+                total += 1
+            except Exception as err:
+                ...
             # print(err)
     print(f"Created parking place {total}/{PARKING_SPACES_COUNT}")
 
@@ -44,7 +46,7 @@ def create_tariffs():
                 "2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S"
             ).replace(tzinfo=pytz.utc),
             "end_date": datetime.strptime(
-                "2020-01-01 00:00:00", "%Y-%m-%d %H:%M:%S"
+                "2019-12-31 23:59:59", "%Y-%m-%d %H:%M:%S"
             ).replace(tzinfo=pytz.utc),
         },
         {
@@ -55,18 +57,20 @@ def create_tariffs():
                 "2020-01-01 00:00:00", "%Y-%m-%d %H:%M:%S"
             ).replace(tzinfo=pytz.utc),
             "end_date": datetime.strptime(
-                "2999-01-01 00:00:00", "%Y-%m-%d %H:%M:%S"
+                "2999-12-31 23:59:59", "%Y-%m-%d %H:%M:%S"
             ).replace(tzinfo=pytz.utc),
         },
     ]
-    for tariff in tariffs:
-        try:
-            _, created = Tariff.objects.get_or_create(**tariff)
-            if created:
-                total += 1
-        except Exception as err:
-            ...
-            # print(err)
+    is_empty = not Tariff.objects.exists()
+    if is_empty:
+        for tariff in tariffs:
+            try:
+                _, created = Tariff.objects.get_or_create(**tariff)
+                if created:
+                    total += 1
+            except Exception as err:
+                ...
+                # print(err)
     print(f"Created tariffs {total}/{len(tariffs)}")
 
 
