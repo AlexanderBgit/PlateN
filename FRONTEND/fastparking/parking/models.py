@@ -91,7 +91,7 @@ class Registration(models.Model):
             acceptable_time = current_time - time_delta
             if last_payment and last_payment > acceptable_time:
                 current_time = last_payment
-            print(f"{last_payment=}, {current_time=}")
+            # print(f"{last_payment=}, {current_time=}")
 
         # calculate duration
         if self.entry_datetime:

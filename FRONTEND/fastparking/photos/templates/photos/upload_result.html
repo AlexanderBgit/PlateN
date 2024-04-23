@@ -44,10 +44,6 @@
         <th>Registration Date:</th>
         <td>{{ registration.date }}</td>
       </tr>
-      <tr>
-        <th>Parking place:</th>
-        <td>{{ registration.parking_place }}</td>
-      </tr>
       <tr>      
         <tr>
         <th>Parking place:</th>
@@ -67,6 +63,12 @@
       <tr>
         <th>Total Payed:</th>
         <td>{{ registration.total_paid }} {{currency}}</td>
+      </tr>
+      {% endif %}
+      {% if registration.duration %}
+      <tr>
+        <th>Duration:</th>
+        <td>{{ registration.duration }}</td>
       </tr>
       {% endif %}
       <tr>

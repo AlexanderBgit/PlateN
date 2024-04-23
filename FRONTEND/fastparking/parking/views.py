@@ -13,6 +13,7 @@ from django.db.models import Sum
 from .models import Registration
 from .models import ParkingSpace
 from photos.repository import get_price_per_hour
+from .services import format_hours
 
 
 def health_check(request):
@@ -137,8 +138,10 @@ def registration_list(request):
             total_amount = registration.calculate_total_payed()
             duration = registration.get_duration()
             duration_formatted = f"{duration:.2f}h"
+            duration_datetime = format_hours(duration)
             registration.total_amount = total_amount
             registration.duration = duration_formatted
+            registration.duration_datatime = duration_datetime
     paginator = Paginator(registrations, settings.PAGE_ITEMS)
     if page_number:
         page_obj = paginator.get_page(page_number)

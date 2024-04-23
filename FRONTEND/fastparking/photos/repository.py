@@ -10,7 +10,7 @@ import pytz
 
 from ds.predict_num import get_num_auto_png_io
 from finance.repository import calculate_total_payments
-from parking.services import compare_plates
+from parking.services import compare_plates, format_hours
 
 from .models import Photo
 from finance.models import Tariff
@@ -176,6 +176,7 @@ def handle_uploaded_file(
         "date": date_formatted,
         "hash": hash_code,
         "total_paid": total_paid
+        "duration": duration
     }
     """
     if f and type:
@@ -235,15 +236,17 @@ def handle_uploaded_file(
                 info = f"Car: {register_car_result.get('info')}, Register: {registration_result.get('info')}"
 
             if registration_id:
-                date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
+                date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
                 registration_id_formatted = f"{registration_id:06}"
                 parking_place = registration_result.get("parking_place")
                 tariff_in = registration_result.get("tariff_in")
                 invoice = registration_result.get("invoice")
                 compare_plates_result = registration_result.get("compare_plates")
-                invoice_str = ""
-                if invoice is not None:
-                    invoice_str = f"invoice: {invoice},"
+                duration = registration_result.get("duration")
+                duration_formatted = (
+                    f"{duration:.2f}h = {format_hours(duration)}" if duration else None
+                )
+                invoice_str = f"invoice: {invoice}," if invoice is not None else ""
                 reg_info = f"id:{registration_id},place:{parking_place},{invoice_str}date:{int(utc_datetime.timestamp())}|"
                 encoded_text = sign_text(reg_info)
                 hash_code = encoded_text.split("|:")[-1]
@@ -259,6 +262,7 @@ def handle_uploaded_file(
                     "date": date_formatted,
                     "hash": hash_code,
                     "total_paid": total_paid,
+                    "duration": duration_formatted,
                 }
         return {"info": info, "predict": predict, "registration": registration}
 
@@ -377,6 +381,7 @@ def register_parking_out_event(
             registration = Registration.objects.get(pk=registration_id)
             calc_invoice = registration.calculate_parking_fee()
             total_payed = registration.calculate_total_payed()
+            duration = registration.get_duration()
             if calc_invoice is None:
                 result[
                     "info"
@@ -414,6 +419,7 @@ def register_parking_out_event(
                 "tariff_in": registration.tariff_in,
                 "invoice": calc_invoice,
                 "compare_plates": compare_plates_result,
+                "duration": duration,
                 "info": "Success",
             }
         except Registration.DoesNotExist as e:

@@ -1,3 +1,6 @@
+from django.utils import timezone
+
+
 def levenshtein_distance(str1: str, str2: str):
     n_m = len(str1) + 1
     dp = [[0 for _ in range(n_m)] for _ in range(len(str2) + 1)]
@@ -40,3 +43,23 @@ if __name__ == "__main__":
     for string1, string2 in pairs:
         result, sim = compare_plates(string1, string2)
         print(f"Similarity between '{string1}' and '{string2}': {sim:.2f}", result)
+
+
+def format_hours(hours: float) -> str:
+    duration_seconds = hours * 3600
+    duration = timezone.timedelta(seconds=duration_seconds)
+
+    # Extract days, hours, and minutes
+    days = duration.days
+    hours, remainder = divmod(duration.seconds, 3600)
+    minutes, _ = divmod(remainder, 60)
+    data_join = []
+    if days:
+        data_join.append(f"{days} day(s)")
+    if hours:
+        data_join.append(f"{hours} hour(s)")
+    if minutes:
+        data_join.append(f"{minutes} minute(s)")
+
+    # Construct the formatted string
+    return " ".join(data_join)
