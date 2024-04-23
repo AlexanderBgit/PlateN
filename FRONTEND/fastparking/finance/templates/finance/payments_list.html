@@ -1,8 +1,7 @@
 {% extends "parking/base.html" %} {% block content %} {% load static %}
 
 <h2>Payments List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}</h2>
-<div class="container-fluid">
-  <div class="table-responsive bd-example">
+  <div class="container-fluid table-responsive bd-example">
     <table class="table table-striped table-hover text-nowrap">
       <thead class="">
         <tr>
@@ -36,7 +35,6 @@
       </tbody>
     </table>
   </div>
-</div>
 <nav>
   <div class="d-flex justify-content-center">
     <span class="text-center" style="width: 80px">
