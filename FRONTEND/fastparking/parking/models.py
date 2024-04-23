@@ -79,12 +79,16 @@ class Registration(models.Model):
         if self.entry_datetime:
             duration = current_time - self.entry_datetime
             hours = duration.total_seconds() / 3600  # переводимо час в години
+            
+            #  Free first 15 mins
             if hours < 0.25:
                 hours = 0  # Free first 15 mins
             else:
                 hours = self.round_to_int__(hours)
+            # PayPass - free all time 
             if self.is_pay_pass():
                 hours = 0  # Free for pay pass
+
             if self.tariff_in:
                 price_per_hour = float(self.tariff_in)  # Зміна типу на float
                 parking_fee = round(price_per_hour * hours, 2)
