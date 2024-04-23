@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 from django.db import models
 from django.utils import timezone
@@ -74,18 +75,20 @@ class Registration(models.Model):
         #     f"Calculating parking fee... tariff: {self.tariff_in}",
         # )
         current_time = timezone.now()  # отримуємо поточний час
+        last_payment = self.get_last_payment()
+        print(f"{last_payment=}")
         if self.exit_datetime:
             current_time = self.exit_datetime
         if self.entry_datetime:
             duration = current_time - self.entry_datetime
             hours = duration.total_seconds() / 3600  # переводимо час в години
-            
+
             #  Free first 15 mins
             if hours < 0.25:
                 hours = 0  # Free first 15 mins
             else:
                 hours = self.round_to_int__(hours)
-            # PayPass - free all time 
+            # PayPass - free all time
             if self.is_pay_pass():
                 hours = 0  # Free for pay pass
 
@@ -102,6 +105,13 @@ class Registration(models.Model):
     def calculate_total_payed(self) -> Decimal | None:
         total_amount = self.payment_set.aggregate(total=Sum("amount")).get("total")
         return total_amount
+
+    def get_last_payment(self) -> datetime | None:
+        last_payment = self.payment_set.order_by("-datetime").first()
+        if last_payment:
+            return last_payment.datetime
+        else:
+            return None
 
     def __str__(self):
         if self.invoice:
