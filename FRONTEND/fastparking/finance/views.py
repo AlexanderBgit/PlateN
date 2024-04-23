@@ -11,6 +11,8 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.utils import timezone
 
+from .models import Tariff
+
 from .models import Payment
 from photos.repository import (
     build_html_image,
@@ -39,16 +41,26 @@ def main(request):
 def add_tariff(request):
     if not is_admin(request):
         return redirect("finance:main")
+    
+    # Знайти останній тариф
+    last_tariff = Tariff.objects.last()
+    
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name
     if request.method == "POST":
         form = TariffForm(request.POST)
         if form.is_valid():
-            form.save()
+            new_tariff = form.save(commit=False)
+            
+            # Змінити кінець попереднього тарифу
+            if last_tariff:
+                last_tariff.end_date = new_tariff.start_date - timezone.timedelta(seconds=1)
+                last_tariff.save()
+
+            # Додати новий тариф
+            new_tariff.save()
             # Після успішного додавання тарифу можна перенаправити користувача на іншу сторінку
-            return redirect(
-                "finance:main"
-            )  # Замініть 'finance:main' на URL-адресу, куди потрібно перенаправити
+            return redirect("finance:main")
     else:
         form = TariffForm()
     context = {
@@ -57,6 +69,30 @@ def add_tariff(request):
         "title": "Finance | Tariff",
     }
     return render(request, "finance/add_tariff.html", context)
+
+
+# @login_required
+# def add_tariff(request):
+#     if not is_admin(request):
+#         return redirect("finance:main")
+#     resolved_view = resolve(request.path)
+#     active_menu = resolved_view.app_name
+#     if request.method == "POST":
+#         form = TariffForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             # Після успішного додавання тарифу можна перенаправити користувача на іншу сторінку
+#             return redirect(
+#                 "finance:main"
+#             )  # Замініть 'finance:main' на URL-адресу, куди потрібно перенаправити
+#     else:
+#         form = TariffForm()
+#     context = {
+#         "active_menu": active_menu,
+#         "form": form,
+#         "title": "Finance | Tariff",
+#     }
+#     return render(request, "finance/add_tariff.html", context)
 
 
 @login_required
