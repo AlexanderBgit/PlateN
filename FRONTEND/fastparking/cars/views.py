@@ -49,6 +49,7 @@ class CarListView(ListView):
         queryset = Car.objects.all().order_by("car_number")
         car_number = self.request.GET.get("car_number")
         blocked = self.request.GET.get("blocked")
+        paypass = self.request.GET.get("paypass")
 
         if car_number:
             car_number = car_number.strip().upper()
@@ -57,6 +58,9 @@ class CarListView(ListView):
         if blocked:  # Handle potential absence of 'blocked' parameter
             blocked = blocked.strip().lower() == "true"
             queryset = queryset.filter(blocked=blocked)
+        if paypass:  # Handle potential absence of 'blocked' parameter
+            paypass = paypass.strip().lower() == "true"
+            queryset = queryset.filter(PayPass=paypass)
 
         return queryset
 
