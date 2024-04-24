@@ -1,15 +1,25 @@
 import csv
+from datetime import datetime, timedelta
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.db.models import Sum
 
 from .models import Registration
 from .models import ParkingSpace
-from .models import ParkingSpace
+from photos.repository import get_price_per_hour
+from .services import format_hours
+
+
+def health_check(request):
+    # Add logic to check the health of the application
+    health_status = {"status": "ok"}
+    return JsonResponse(health_status)
 
 
 def main(request):
@@ -24,18 +34,21 @@ def main(request):
 
     active_menu = "home"
     version = settings.VERSION
-    return render(
-        request,
-        "parking/index.html",
-        {
-            "title": "Fast Parking",
-            "active_menu": active_menu,
-            "total_parking_spaces": total_parking_spaces,
-            "free_parking_spaces": free_parking_spaces,
-            "parking_progress": parking_progress,
-            "version": version,
-        },
-    )
+    current_tariff = get_price_per_hour(timezone.now())
+    current_tariff_formatted = "--"
+    currency = settings.PAYMENT_CURRENCY[0]
+    if current_tariff:
+        current_tariff_formatted = f"{current_tariff:.2f} {currency} per hour"
+    context = {
+        "title": "Fast Parking",
+        "active_menu": active_menu,
+        "total_parking_spaces": total_parking_spaces,
+        "free_parking_spaces": free_parking_spaces,
+        "parking_progress": parking_progress,
+        "version": version,
+        "current_tariff": current_tariff_formatted,
+    }
+    return render(request, "parking/index.html", context=context)
 
 
 def generate_report(request):
@@ -96,66 +109,56 @@ def is_admin(request):
     return user.is_superuser
 
 
+def validate_int(value: str | int | None) -> int | None:
+    if value is not None:
+        try:
+            value = int(value)
+        except (TypeError, ValueError):
+            value = 1
+        if value < 1:
+            value = 1
+    return value
+
+
 @login_required
 def registration_list(request):
     if not is_admin(request):
         return redirect("parking:main")
     active_menu = "registration"
-    registrations = Registration.objects.all()
+    page_number = validate_int(request.GET.get("page"))
+    registrations = Registration.objects.all().order_by(
+        "-exit_datetime",
+        "-entry_datetime",
+    )
+    days = validate_int(request.GET.get("days", 30))
+    if days:
+        days_delta = timezone.now() - timedelta(days=float(days))
+        registrations = registrations.filter(entry_datetime__gte=days_delta)
+        for registration in registrations:
+            total_amount = registration.calculate_total_payed()
+            duration = registration.get_duration()
+            duration_formatted = f"{duration:.2f}h"
+            duration_datetime = format_hours(duration)
+            registration.total_amount = total_amount
+            registration.duration = duration_formatted
+            registration.duration_datatime = duration_datetime
+    paginator = Paginator(registrations, settings.PAGE_ITEMS)
+    if page_number:
+        page_obj = paginator.get_page(page_number)
+    else:
+        page_obj = paginator.page(1)  # Get the first page by default
+
+    filter_params = {"days": days}
+
     content = {
         "title": "Registration list",
         "active_menu": active_menu,
-        "registrations": registrations,
+        "paginator": paginator,
+        "page_obj": page_obj,
+        "currency": settings.PAYMENT_CURRENCY[1],
+        "filter_params": filter_params,
     }
     return render(request, "parking/registration_list.html", content)
-
-
-# def entry_registration(request):
-#     active_menu = "registration"
-#     if request.method == "POST":
-#         # Отримання даних з форми
-#         parking_id = request.POST.get("parking_id")
-#         car_number_in = request.POST.get("car_number_in")
-
-#         # Створення реєстрації заїзду
-#         parking = ParkingSpace.objects.get(id=parking_id)
-#         entry_registration = Registration.objects.create(
-#             parking=parking, car_number_in=car_number_in
-#         )
-
-#         # Перенаправлення на сторінку з реєстрацією виїзду
-#         return redirect("exit_registration", entry_id=entry_registration.id)
-
-#     return render(request, "entry_registration_form.html")
-
-
-# def exit_registration(request, entry_id):
-#     active_menu = "registration"
-#     if request.method == "POST":
-#         # Отримання даних з форми
-#         exit_datetime = timezone.now()
-#         car_number_out = request.POST.get("car_number_out")
-
-#         # Отримання реєстрації заїзду
-#         entry_registration = Registration.objects.get(id=entry_id)
-
-#         # Створення реєстрації виїзду
-#         exit_registration = Registration.objects.create(
-#             parking=entry_registration.parking,
-#             entry_registration=entry_registration,
-#             exit_datetime=exit_datetime,
-#             car_number_out=car_number_out,
-#         )
-
-#         # Створення об'єднаної реєстрації
-#         combined_registration = Registration.create_combined_registration(
-#             entry_registration, exit_registration
-#         )
-
-#         # Перенаправлення на іншу сторінку
-#         return redirect("some_other_view")
-
-#     return render(request, "exit_registration_form.html")
 
 
 def registration_table(request):

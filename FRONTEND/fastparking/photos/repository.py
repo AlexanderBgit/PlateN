@@ -9,7 +9,8 @@ import qrcode
 import pytz
 
 from ds.predict_num import get_num_auto_png_io
-from parking.services import compare_plates
+from finance.repository import calculate_total_payments
+from parking.services import compare_plates, format_hours
 
 from .models import Photo
 from finance.models import Tariff
@@ -59,12 +60,12 @@ def save_image(
                 destination.write(chunk)
 
 
-def registration_car(utc_datetime, registration_data) -> dict:
-    print(f"registration_car: {utc_datetime=}, {registration_data=}")
-    # DEMO MODE
-    if registration_data.get("type") == "0":
-        registration_data["registration_id"] = random.randint(1, 999999)
-    return registration_data
+# def registration_car(utc_datetime, registration_data) -> dict:
+#     print(f"registration_car: {utc_datetime=}, {registration_data=}")
+#     # DEMO MODE
+#     if registration_data.get("type") == "0":
+#         registration_data["registration_id"] = random.randint(1, 999999)
+#     return registration_data
 
 
 def build_base64_image(binary_image_data):
@@ -110,9 +111,74 @@ def unsign_text(text):
         return None
 
 
+def check_and_register_car(registration_data) -> dict:
+    """
+    return {
+        "success": True,
+        "info": "The car does not exist, a new record has been created",
+        "car": car,
+    }
+    """
+    num_auto = registration_data.get("num_auto")
+    photo_id = registration_data.get("photo_id")
+    if not photo_id or not num_auto:
+        return {
+            "success": False,
+            "info": "No license plate information found",
+            "car": None,
+        }
+    photo_id = photo_id.pk
+    try:
+        car = Car.objects.get(car_number=num_auto)
+        if car.blocked:
+            return {"success": False, "info": "The car is blocked", "car": car}
+        else:
+            pay_pass_text = ""
+            if car.PayPass:
+                pay_pass_text = f", PayPass: {car.PayPass}"
+            return {
+                "success": True,
+                "info": f"The car exists and is not blocked{pay_pass_text}",
+                "car": car,
+            }
+    except Car.DoesNotExist:
+        # Створюємо новий запис в таблиці Car
+        car = Car.objects.create(car_number=num_auto, photo_car_id=photo_id)
+        return {
+            "success": True,
+            "info": "The car does not exist, a new record has been created",
+            "car": car,
+        }
+
+
 def handle_uploaded_file(
     f, type: str | None, filename: str | None = None, registration_id: str | None = None
-) -> dict:
+) -> dict | None:
+    """
+    RETURNED STRUCTURE of handle_uploaded_file:
+    img_predict: {"info": info, "predict": predict, "registration": registration}
+
+    info = str
+
+    predict = {
+    "num_avto_str": num_avto_str,
+    "accuracy": total_accuracy,
+    num_img": num_img,
+    }
+
+    registration = {
+        "id": registration_id_formatted,
+        "parking_place": parking_place,
+        "tariff_in": tariff_in,
+        "invoice": invoice,
+        "compare_plates": compare_plates_result,
+        "qr_code": qrcode_img,
+        "date": date_formatted,
+        "hash": hash_code,
+        "total_paid": total_paid
+        "duration": duration
+    }
+    """
     if f and type:
         utc_datetime = datetime.utcnow()
         utc_datetime = utc_datetime.replace(tzinfo=pytz.utc)
@@ -126,7 +192,6 @@ def handle_uploaded_file(
 
         # analyze and calculate prediction of image
         predict = get_num_auto_png_io(f.read())
-        if not predict["num_img"]: return {}
 
         # store information to database
         photo_id = db_save_photo_information(predict, type)
@@ -142,9 +207,13 @@ def handle_uploaded_file(
             "type": type,
             "registration_id": registration_id,
         }
-        register_car_result = check_and_register_car(registration_data)
-        # print(register_car_result)
-        info = register_car_result.get("info")
+        register_car_result = {}
+        if photo_id and num_auto:
+            register_car_result = check_and_register_car(registration_data)
+            # print(register_car_result)
+            info = register_car_result.get("info")
+        else:
+            info = "No license plate information found"
 
         registration_result = None
         registration = None
@@ -157,29 +226,32 @@ def handle_uploaded_file(
         if register_car_result.get("success"):
             # -------------------------------------------------------
             if num_auto and photo_id:
+                car = register_car_result.get("car")
                 registration_result = register_parking_event(
-                    utc_datetime, num_auto, type, photo_id, registration_id
+                    utc_datetime, num_auto, type, photo_id, registration_id, car
                 )
             # -------------------------------------------------------
             if registration_result:
-
                 registration_id = registration_result.get("registration_id")
                 info = f"Car: {register_car_result.get('info')}, Register: {registration_result.get('info')}"
 
             if registration_id:
-                date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S UTC")
+                date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
                 registration_id_formatted = f"{registration_id:06}"
                 parking_place = registration_result.get("parking_place")
                 tariff_in = registration_result.get("tariff_in")
                 invoice = registration_result.get("invoice")
                 compare_plates_result = registration_result.get("compare_plates")
-                invoice_str = ""
-                if invoice:
-                    invoice_str = f"invoice: {invoice},"
+                duration = registration_result.get("duration")
+                duration_formatted = (
+                    f"{duration:.2f}h = {format_hours(duration)}" if duration else None
+                )
+                invoice_str = f"invoice: {invoice}," if invoice is not None else ""
                 reg_info = f"id:{registration_id},place:{parking_place},{invoice_str}date:{int(utc_datetime.timestamp())}|"
                 encoded_text = sign_text(reg_info)
                 hash_code = encoded_text.split("|:")[-1]
                 qrcode_img = build_qrcode(encoded_text)
+                total_paid = calculate_total_payments(int(registration_id))
                 registration = {
                     "id": registration_id_formatted,
                     "parking_place": parking_place,
@@ -189,28 +261,10 @@ def handle_uploaded_file(
                     "qr_code": qrcode_img,
                     "date": date_formatted,
                     "hash": hash_code,
+                    "total_paid": total_paid,
+                    "duration": duration_formatted,
                 }
         return {"info": info, "predict": predict, "registration": registration}
-
-
-def check_and_register_car(registration_data):
-    num_auto = registration_data.get("num_auto")
-    photo_id = registration_data.get("photo_id")
-    photo_id = photo_id.pk
-
-    try:
-        car = Car.objects.get(car_number=num_auto)
-        if car.blocked:
-            return {"success": False, "info": "The car is blocked"}
-        else:
-            return {"success": True, "info": "The car exists and is not blocked"}
-    except Car.DoesNotExist:
-        # Створюємо новий запис в таблиці Car
-        car = Car.objects.create(car_number=num_auto, photo_car_id=photo_id)
-        return {
-            "success": True,
-            "info": "The car does not exist, a new record has been created",
-        }
 
 
 # def find_free_parking_space(num_auto) -> ParkingSpace:
@@ -255,6 +309,8 @@ def parking_space_status_change(id: int, status: bool) -> ParkingSpace | None:
     try:
         parking_space = ParkingSpace.objects.get(pk=id)
         parking_space.status = status
+        if not status:
+            parking_space.car_num = ""
         parking_space.save()
         return parking_space
     except ParkingSpace.DoesNotExist as e:
@@ -267,9 +323,10 @@ def register_parking_event(
     registration_type,
     photo_id: Photo,
     registration_id: int | str | None = None,
+    car: Car | None = None,
 ) -> dict | None:
     if registration_type == "0":
-        return register_parking_in_event(utc_datetime, num_auto, photo_id)
+        return register_parking_in_event(utc_datetime, num_auto, photo_id, car)
     elif registration_type == "1":
         return register_parking_out_event(
             utc_datetime, num_auto, photo_id, registration_id
@@ -277,9 +334,7 @@ def register_parking_event(
 
 
 def register_parking_in_event(
-    utc_datetime: datetime,
-    num_auto: str,
-    photo_id: Photo,
+    utc_datetime: datetime, num_auto: str, photo_id: Photo, car: Car | None = None
 ) -> dict:
     result = {"registration_id": None, "parking_space": None, "info": None}
 
@@ -296,6 +351,7 @@ def register_parking_in_event(
                 photo_in=photo_id,
                 parking=parking_space,
                 tariff_in=tariff_in,
+                car=car,
             )
             result = {
                 "registration_id": registration.pk,
@@ -323,27 +379,47 @@ def register_parking_out_event(
         registration_id = int(registration_id)
         try:
             registration = Registration.objects.get(pk=registration_id)
-            invoice = calculate_invoice(
-                registration.entry_datetime, utc_datetime, registration.tariff_in
-            )
-            if invoice:
-                registration.invoice = str(invoice)
+            calc_invoice = registration.calculate_parking_fee()
+            total_payed = registration.calculate_total_payed()
+            duration = registration.get_duration()
+            if calc_invoice is None:
+                result[
+                    "info"
+                ] = f"Failed. Missing finance information for id: {registration_id:06}."
+                return result
+            if total_payed is None:
+                total_payed = 0.0
+            if total_payed < calc_invoice:
+                currency = settings.PAYMENT_CURRENCY[0]
+                result["info"] = (
+                    f"Failed. Total paid: {total_payed} {currency} for what is less than the invoice "
+                    f"of {calc_invoice:.2f} {currency}. Please pay the rest."
+                )
+                return result
+
+            # invoice = calculate_invoice(
+            #     registration.entry_datetime, utc_datetime, registration.tariff_in
+            # )
+            if calc_invoice is not None:
+                registration.invoice = "{:.2f}".format(float(calc_invoice))
 
             registration.exit_datetime = utc_datetime
             registration.car_number_out = num_auto
             registration.photo_out = photo_id
             registration.save()
-            compare_plates_result = compare_plates(
-                registration.car_number_in, registration.car_number_out
-            )
+            # compare_plates_result = compare_plates(
+            #     registration.car_number_in, registration.car_number_out
+            # )
+            compare_plates_result = registration.compare_in_out()
             # Free parking space
             parking_space_status_change(registration.parking.pk, False)
             result = {
                 "registration_id": registration.pk,
                 "parking_place": registration.parking.number,
                 "tariff_in": registration.tariff_in,
-                "invoice": invoice,
+                "invoice": calc_invoice,
                 "compare_plates": compare_plates_result,
+                "duration": duration,
                 "info": "Success",
             }
         except Registration.DoesNotExist as e:
@@ -371,6 +447,7 @@ def get_price_per_hour(entry_time) -> float | None:
         return None
 
 
+# NO USED, USED - Registration.calculate_parking_fee()
 def calculate_invoice(
     entry_datetime: datetime | None,
     exit_datetime: datetime | None,
@@ -417,17 +494,36 @@ def calculate_invoice_for_reg_id(
     return result
 
 
-# def get_applicable_tariff(entry_time):
-#     """
-#     Returns the Tariff object applicable at the given time.
-#     """
-#     applicable_tariffs = Tariff.objects.filter(
-#         start_date__lte=entry_time,
-#         end_date__gte=entry_time,
-#         description__icontains='hourly'
-#     ).order_by('-start_date')  # Get the latest applicable tariff
+def get_registration_allowed_for_out():
+    # Filter registrations where invoice is null and payment is not null
+    # queryset = Registration.objects.filter(
+    #     invoice__isnull=True, payment__isnull=False
+    # )
 
-#     if applicable_tariffs.exists():
-#         return applicable_tariffs.first()
-#     else:
-#         return None
+    # Retrieve all registrations where invoice is null
+    queryset_inv = Registration.objects.filter(invoice__isnull=True)
+
+    # Filter registrations where invoice is null and payment is not null
+    queryset_pks = queryset_inv.filter(payment__isnull=False).values_list(
+        "pk", flat=True
+    )
+
+    # Filter registrations where calculate_parking_fee method returns 0
+    filtered_queryset_pks = [
+        registration.pk
+        for registration in queryset_inv
+        if registration.calculate_parking_fee() == 0
+    ]
+
+    # # Combine the two sets of registrations
+    # for registration in queryset:
+    #     if registration not in filtered_queryset:
+    #         filtered_queryset.append(registration)
+
+    # Combine the two sets of registrations
+    united_queryset_pks = set(queryset_pks) | (set(filtered_queryset_pks))
+    print(f"{united_queryset_pks=}")
+    # Convert the list to a queryset
+    return Registration.objects.filter(
+        pk__in=[reg_pk for reg_pk in united_queryset_pks]
+    ).order_by("entry_datetime")

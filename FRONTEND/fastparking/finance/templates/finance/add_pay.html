@@ -1,10 +1,18 @@
 <!-- У вашому файлі add_tariff.html -->
 {% extends "parking/base.html" %} {% block content %}
-<h2>Payments</h2>
+<h2>Pay the invoice</h2>
 <div class="container">
   <form method="post">
     {% csrf_token %} {{ form.as_p }}
-    <button class="btn btn-primary" type="submit">Pay</button>
+
+    <ul class="list-group list-group-horizontal">
+      <li class="list-group-item">
+        <button class="btn btn-primary" type="submit">Pay</button>
+      </li>
+      <li class="list-group-item">
+        <a class="btn btn-primary" href="{% url 'finance:main' %}">Back</a>
+      </li>
+    </ul>
   </form>
 </div>
 {% endblock content %}

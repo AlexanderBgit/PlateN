@@ -1,19 +1,169 @@
-# PlateN
-Plate license recognition
+![Python 3.11](https://img.shields.io/badge/python-3.11-blueviolet)
+![GitHub Pull Requests](https://img.shields.io/github/issues-pr/AlexanderBgit/PlateN?color=blueviolet)
+![Forks](https://img.shields.io/github/forks/AlexanderBgit/PlateN?style=social)
+![Latest Release](https://img.shields.io/github/v/release/AlexanderBgit/PlateN?include_prereleases&label=latest%20release)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/AlexanderBgit/PlateN?label=Version%20for%20development)
+
+
+# Fast Parking
+"Fast Parking" це веб-застосунок, який автоматично може визначати номери автомобільних знаків на зображеннях, відстежити тривалість паркування для кожного унікального транспортного засобу та розраховувати накопичені паркувальні витрати.
+
+### Функції застосунку:
+
+- Управління обліковими записами користувачів;
+- Приймання зображень від користувача. Детекція номерного знаку. Виявлення та виділення області з номерним знаком; 
+- Розпізнавання символів для ідентифікації тексту номерного знаку;
+- Перевірка номера авто у базі зареєстрованих транспортних засобів;
+- Запис часу в'їзду/виїзду кожного разу, коли визначається номерний знак. Відстеження тривалості паркування;
+- Розрахунок загальної тривалості паркування;
+- Зберігання даних про тривалість паркування в базі даних;
+- Розрахунок вартості паркування. Керування тарифами. Чек за QR-кодом;
+- Генерація звітів про розрахунки, які можна експортувати у форматі CSV;
+- Real Time сповіщення для подій в'їзду/виїзду у Telegram;
+- Візуалізація про кількість вільних та зайнятих паркомісць.
+
+<details open>
+  <summary style="display: flex; align-items: center; color: #0088CC; margin-bottom: -5px; margin-top: 0px;"><span style="margin-right: 5px;"></span><h2>
+  License plate recognition application (screenshots)</h2></summary>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/img-1.png">
+  <img src="/readme/Title.png">
+</div>
+
+Home
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Home_page_v2.png">
+</div>
+
+Plan of parking
+<div align="left" width="948" height="474">
+  <img src="/readme/Parking Plan_v2.png">
+</div>
+
+
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC; margin-bottom: -20px; margin-top: 0px;"><span style="margin-right: 5px;"></span><h3>Check-in and Check-out by cars </h3></summary>
+
+Car recognition In
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Photos IN_v2.png">
+</div>
+
+Car recognition Out
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Photos OUT_v2.png">
+</div>
+
+Cars
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Cars_v2.png">
+</div>
+
+Registration list
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Registration list_v2.png">
+</div>
+</details>
+
+
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC; margin-bottom: -20px; margin-top: 0px;"><span style="margin-right: 5px;"></span><h3>User account </h3></summary>
+
+Profile
+
+<div align="left" width="948" height="474">
+  <img src="/readme/User profile_v2.png">
+</div>
+
+User cars
+
+<div align="left" width="948" height="474">
+  <img src="/readme/My Cars_v2.png">
+</div>
+
+Registration
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Register new user_v2.png">
+</div>
+
+SignIn
+
+<div align="left" width="948" height="474">
+  <img src="/readme/https __edu202415.aacom.net.png">
+</div>
+</details>
+
+
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;margin-bottom: -20px; margin-top: 0px;"><span style="margin-right: 5px;"></span><h3>Payments </h3></summary>
+
+Finance
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Finance pay_v2.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/img-2.png">
+  <img src="/readme/Finance Pay the invoice_v2.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/img-3.png">
+  <img src="/readme/Finance Pay the invoice2_v2.png">
 </div>
 
-# Development environment
+<div align="left" width="948" height="474">
+  <img src="/readme/Payment list_v2.png">
+</div>
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Finance Tariff_v2.png">
+</div>
+
+</details>
+
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC; margin-bottom: -20px; margin-top: 0px;"><span style="margin-right: 5px;"></span><h3>Manage notifications </h3></summary>
+
+Messages
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Messages_v2.png">
+</div>
+
+Telegram
+<div align="left" width="948" height="474">
+  <img src="/readme/Telegram_bot.png">
+</div>
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Telegram_news.png">
+</div>
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Telegram_chat.png">
+</div>
+</details>
+
+
+## Presentation
+#### Application deployment and demonstration
+
+Youtube: https://youtu.be/BkJmMh1Nvzk
+
+#### Project presentation and main benefits
+Youtube: https://www.youtube.com/watch?v=iH9t5hpYwqI
+
+</details>
+
+
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h1>Development environment</h1></summary>
 
 ## env file
 На основі файлу `deploy/env-examples` створюємо власний  `deploy/.env` з власними змінними
@@ -79,7 +229,7 @@ else:
 </details>
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Local Database postgres</h3></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Local Database postgres</h2></summary>
 
 #### run database postgres docker container
 
@@ -94,7 +244,7 @@ else:
 </details>
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Запуск та обслуговування застосунку в докер</h3></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Launching and maintenance of the app in docker</h2></summary>
 
 #### run app locally
 Запускати з віртуального оточення poetry
@@ -137,7 +287,7 @@ python manage.py migrate
 
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Процедура підключення dev - Django з нуля:</h2></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Connection procedure dev - Django from scratch:</h2></summary>
 
 1. git checkout dev
 1. git pull
@@ -203,3 +353,17 @@ SOURCE=${HOME}/PlateN/PlateN
 
 </details>
 
+</details>
+
+## Development team
+1. Team Lead [@artem-dorofeev](https://github.com/artem-dorofeev) 
+1. Scrum Master [@RostislavB74](https://github.com/RostislavB74) 
+1. Django expert [@lumi-ua](https://github.com/lumi-ua) and 
+[@diixo](https://github.com/diixo) 
+1. Full stack devops [@lexxai](https://github.com/lexxai) 
+2. Art director [@plaha303](https://github.com/plaha303) 
+3. Tester [@AlexanderBgit](https://github.com/AlexanderBgit) 
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Team.png">
+</div>

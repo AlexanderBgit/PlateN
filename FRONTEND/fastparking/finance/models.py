@@ -3,7 +3,7 @@ from django.db import models
 from django.urls import reverse
 from parking.models import Registration
 
-end_date_default = "2999-01-01 00:00:00"
+end_date_default = "2999-12-31 23:59:59"
 
 
 class Tariff(models.Model):
@@ -16,7 +16,7 @@ class Tariff(models.Model):
     )
 
     def __str__(self):
-        return self.description
+        return f"{self.description}: {self.price_per_hour}"
 
     def get_absolute_url(self):
         return reverse("tariff-detail", kwargs={"pk": self.pk})

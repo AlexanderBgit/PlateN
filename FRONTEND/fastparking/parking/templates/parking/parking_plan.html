@@ -1,15 +1,15 @@
-{% extends "parking/base.html" %} {% block content %} {% load static %}
+{% extends "parking/base.html" %} 
+{% block content %} 
+{% load static %}
 <h2>Plan of parking</h2>
-<h3>Total number of parking spaces: {{ parking_spaces.count }}, including free spaces: {{parking_spaces_count}}</h3>
+<h3>Total number of parking spaces: {{ parking_spaces.count }}, including free spaces: {{ parking_spaces_count }}</h3>
 <div class="progress">
-  <div
-    class="progress-bar"
-    role="progressbar"
-    style="width: {{ parking_progress }}%;"
-    aria-valuenow="{{ parking_progress }}"
-    aria-valuemin="0"
-    aria-valuemax="100"
-  >
+  <div class="progress-bar"
+       role="progressbar"
+       style="width: {{ parking_progress }}%;"
+       aria-valuenow="{{ parking_progress }}"
+       aria-valuemin="0"
+       aria-valuemax="100">
     Filled: {{ parking_progress }}%
   </div>
 </div>
@@ -17,19 +17,26 @@
   <div class="row pt-4 mt-3 border rounded bg-light">
     {% for entry in parking_spaces %}
     <div class="col-xl-1 mb-3">
-      <div class="card" style="width: 100%; max-width: 70px">
-        <img
-          class="card-img-top"
-          width="100%"
-          alt="{{entry.number}}"
-          title="{{entry.number}} - {{entry.car_num}}"
-          src="{% if entry.status %}{% static 'parking/car-02.png' %}{% else %}{% static 'parking/car-01.png' %}{%endif%}"
-        />
-        <div class="text-center"><p class="card-title">{{entry.number}}</p></div>
+      <div class="card" style="width: 100%; max-width: 80px">
+        {% if entry.status %}
+          <img class="card-img-top"
+               width="100%"
+               alt="{{ entry.number }}"
+               title="{{ entry.number }}-{{ entry.car_num }}"
+               src="{% static 'parking/car-02.png' %}" />
+          <div class="text-center"><p class="car-number">{{ entry.number }}</p></div>
+          <div class="text-left"><p class="car-num">{{ entry.car_num }}</p></div>
+        {% else %}
+          <img class="card-img-top"
+               width="100%"
+               alt="{{ entry.number }}"
+               title="{{ entry.number }}"
+               src="{% static 'parking/car-01.png' %}" />
+          <div class="text-center"><p class="car-number">{{ entry.number }}</p></div>
+        {% endif %}
       </div>
     </div>
     {% endfor %}
   </div>
 </div>
-
 {% endblock %}

@@ -160,3 +160,9 @@ footer .icon {
     width: 20px;
     height: 20px;
 }
+
+.car-num {
+  font-size: small;
+  width: 100px; 
+  text-align: left;
+}

@@ -1,17 +1,28 @@
 <!-- finance/templates/finance/main.html -->
 
-{% extends "parking/base.html" %} {% block content %}
+{% extends "parking/base.html" %} {% block content %} {% load static %}
 <h2>Finance</h2>
 <!-- Додайте посилання на сторінку додавання тарифу -->
 <div class="container">
-  <ul class="list-group">
-    {% if user.is_superuser %}
-    <li class="list-group-item"><a class="btn btn-primary" href="{% url 'finance:add_tariff' %}">Add Tariff</a></li>
+  {% if user.is_superuser %}
+  <ul class="list-group list-group-horizontal">
+    <li class="list-group-item"><a class="btn btn-secondary" href="{% url 'finance:add_tariff' %}">Add Tariff</a></li>
     <li class="list-group-item">
-      <a class="btn btn-primary" target="_blank" href="/admin/finance/tariff/">Edit Tariff</a>
+      <a class="btn btn-secondary" target="_blank" href="/admin/finance/tariff/">Edit Tariff</a>
     </li>
-    {% endif %}
-    <li class="list-group-item"><a class="btn btn-primary" href="{% url 'finance:add_pay' %}">Payments</a></li>
+    <li class="list-group-item">
+      <a class="btn btn-secondary" href="{% url 'finance:payments_list' %}">Payments List</a>
+    </li>
+  </ul>
+  {% endif %}
+  <div class="container">
+    <img class="p-3" src="{% static 'finance/bobr_pay_medium.png' %}" style="max-height: 50vh;"/>
+  </div>
+  <ul class="list-group list-group-horizontal">
+    <li class="list-group-item"><a class="btn btn-primary" href="{% url 'finance:add_pay' %}">Pay the invoice</a></li>
+    <li class="list-group-item">
+      <a class="btn btn-primary" href="{% url 'parking:main' %}">Back</a>
+    </li>
   </ul>
 </div>
 

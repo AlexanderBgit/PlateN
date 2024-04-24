@@ -1,31 +1,37 @@
 {% extends "parking/base.html" %} {% block content %} {% load static %}
 
-<h1>Registration List</h1>
-<div class="container-fluid">
-  <div class="bd-example">
-    <table class="table table-striped table-hover">
-      <thead>
+<h2>Registration List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}</h2>
+  <div class="container-fluid table-responsive bd-example">
+    <table class="table table-striped table-hover text-nowrap">
+      <thead class="">
         <tr>
           <th scope="col">ID</th>
-          <th scope="col">Parking Space</th>
+          <th scope="col" title="Parking Space">P Space</th>
           <th scope="col">Entry Datetime</th>
           <th scope="col">Tariff</th>
           <th scope="col">Exit Datetime</th>
-          <th scope="col">Invoice</th>
-          <th scope="col">Car Number In</th>
-          <th scope="col">Car Number Out</th>
-          <th scope="col">Paid</th>
+          <th scope="col" title="Duration">Dur.</th>
+          <th scope="col" title="Invoice">Invoice</th>
+          <th scope="col" title="Total paid">Paid</th>
+          <th scope="col" title="Car Number In">Car NO IN</th>
+          <th scope="col" title="Car Number Out">Car NO OUT</th>
+          <th scope="col" title="Paid">P</th>
+          <th scope="col" title="Compare plate OUT with IN">C</th>
         </tr>
       </thead>
       <tbody>
-        {% for registration in registrations %}
+        {% for registration in page_obj %}
         <tr scope="row">
-          <td>{{ registration.id }}</td>
+          <td class="font-monospace">{{ registration.id|stringformat:"06d" }}</td>
           <td>{{ registration.parking }}</td>
           <td>{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
           <td>{{ registration.tariff_in }}</td>
           <td>{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
-          <td>{{ registration.invoice }}</td>
+          <td title="{{ registration.duration_datatime }}">{{ registration.duration }}</td>
+          <td title="Calc: {{ registration.calculate_parking_fee }}">{{ registration.invoice}}</td>
+          <td title="Total paid for this registration">
+            {% if registration.total_amount %}{{ registration.total_amount }}{% endif %}
+          </td>
           <td>{{ registration.car_number_in }}</td>
           <td>{{ registration.car_number_out }}</td>
           <td>
@@ -34,16 +40,90 @@
             {%else%}<img src="{% static 'parking/icon-no.svg' %}" alt="No" />
             {%endif%}
           </td>
+          <td>
+            {% if registration.compare_in_out.1 >= 0 %} 
+            {% if registration.compare_in_out.0 %}
+            <img
+              src="{% static 'parking/icon-yes.svg' %}"
+              alt="Positive"
+              title="Positive - {{ registration.compare_in_out.1 }}"
+            />
+            {%else%}<img
+              src="{% static 'parking/icon-no.svg' %}"
+              alt="Negative"
+              title="Negative - {{ registration.compare_in_out.1 }}"
+            />
+            {%endif%} {%else%} - {%endif%}
+          </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-</div>
+
+<nav>
+  <div class="d-flex justify-content-center">
+    <span class="text-center" style="width: 80px">
+      {% if page_obj.has_previous %}
+      <a
+        href="?page={{ page_obj.previous_page_number }}&days={{ filter_params.days }}"
+        class="btn btn-sm btn-outline-primary"
+        role="button"
+        >Prev</a
+      >
+      {% endif %}
+    </span>
+
+    <ul class="pagination pagination-sm">
+      {% for p in paginator.page_range %}
+      <li class="page-item{% if p == page_obj.number %} active{% endif %}">
+        <a href="?page={{ p }}&days={{ filter_params.days }}" class="page-link">{{ p }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <span class="text-center" style="width: 80px">
+      {% if page_obj.has_next %}
+      <a
+        href="?page={{ page_obj.next_page_number }}&days={{ filter_params.days }}"
+        class="btn btn-sm btn-outline-primary"
+        role="button"
+        >Next</a
+      >
+      {% endif %}
+    </span>
+  </div>
+</nav>
+
 <div class="container">
-  <ul class="list-group">
+  <ul class="list-group list-group-horizontal">
     <li class="list-group-item">
       <a class="btn btn-primary" target="_blank" href="{% url 'parking:download_csv' %}">Export to CSV</a>
+    </li>
+    <li class="list-group-item">
+      <a class="btn btn-primary" href="{% url 'parking:main' %}">Back</a>
+    </li>
+    <li class="list-group-item">
+      <form method="GET" action="">
+        <input type="hidden" name="page" value="{{ request.GET.page }}" />
+        <div class="input-group mb-2">
+          <label class="input-group-text" for="days">Days:</label>
+          <div class="col-3">
+            <!-- Apply col-2 class here -->
+            <input
+              type="number"
+              class="form-control"
+              name="days"
+              id="days"
+              value="{% if filter_params.days %}{{ filter_params.days }}{% endif %}"
+            />
+          </div>
+          <div class="col">
+            <!-- Adjust the width of the button -->
+            <button type="submit" class="btn btn-primary">Filter</button>
+          </div>
+        </div>
+      </form>
     </li>
   </ul>
 </div>
