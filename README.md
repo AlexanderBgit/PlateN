@@ -23,63 +23,73 @@
 - Візуалізація про кількість вільних та зайнятих паркомісць.
 
 <details open>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>
+  <summary style="display: flex; align-items: center; color: #0088CC; margin-bottom: -5px; margin-top: 0px;"><span style="margin-right: 5px;"></span><h2>
   License plate recognition application (screenshots)</h2></summary>
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Title.png">
+</div>
 
 Home
 
 <div align="left" width="948" height="474">
-  <img src="/readme/img-1.png">
+  <img src="/readme/Home_page_v2.png">
 </div>
 
 Plan of parking
 <div align="left" width="948" height="474">
-  <img src="/readme/Parking Plan_short.png">
+  <img src="/readme/Parking Plan_v2.png">
 </div>
 
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Check-in and Check-out by cars </h3></summary>
-
-Car recognition result
-
-<div align="left" width="948" height="474">
-  <img src="/readme/img-3.png">
-</div>
+  <summary style="display: flex; align-items: center; color: #0088CC; margin-bottom: -20px; margin-top: 0px;"><span style="margin-right: 5px;"></span><h3>Check-in and Check-out by cars </h3></summary>
 
 Car recognition In
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Photos IN.png">
+  <img src="/readme/Photos IN_v2.png">
 </div>
 
 Car recognition Out
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Photos OUT.png">
+  <img src="/readme/Photos OUT_v2.png">
 </div>
 
 Cars
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Cars.png">
+  <img src="/readme/Cars_v2.png">
+</div>
+
+Registration list
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Registration list_v2.png">
 </div>
 </details>
 
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>User account </h3></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC; margin-bottom: -20px; margin-top: 0px;"><span style="margin-right: 5px;"></span><h3>User account </h3></summary>
 
 Profile
 
 <div align="left" width="948" height="474">
-  <img src="/readme/User profile.png">
+  <img src="/readme/User profile_v2.png">
+</div>
+
+User cars
+
+<div align="left" width="948" height="474">
+  <img src="/readme/My Cars_v2.png">
 </div>
 
 Registration
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Register new user.png">
+  <img src="/readme/Register new user_v2.png">
 </div>
 
 SignIn
@@ -91,39 +101,39 @@ SignIn
 
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Payments </h3></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;margin-bottom: -20px; margin-top: 0px;"><span style="margin-right: 5px;"></span><h3>Payments </h3></summary>
 
 Finance
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Finance2.png">
+  <img src="/readme/Finance pay_v2.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Finance_Pay_result.png">
+  <img src="/readme/Finance Pay the invoice_v2.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Finance Pay the invoice.png">
+  <img src="/readme/Finance Pay the invoice2_v2.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Finance Pay the invoice2.png">
+  <img src="/readme/Payment list_v2.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/payment list.png">
+  <img src="/readme/Finance Tariff_v2.png">
 </div>
 
 </details>
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Manage notifications </h3></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC; margin-bottom: -20px; margin-top: 0px;"><span style="margin-right: 5px;"></span><h3>Manage notifications </h3></summary>
 
 Messages
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Messages_adm.png">
+  <img src="/readme/Messages_v2.png">
 </div>
 
 Telegram
@@ -141,12 +151,19 @@ Telegram
 </details>
 
 
-## Презентація
+## Presentation
+#### Application deployment and demonstration
+
+Youtube: https://www.youtube.com
+
+#### Project presentation and main benefits
 Youtube: https://www.youtube.com/watch?v=iH9t5hpYwqI
 
 </details>
 
-# Development environment
+
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h1>Development environment</h1></summary>
 
 ## env file
 На основі файлу `deploy/env-examples` створюємо власний  `deploy/.env` з власними змінними
@@ -212,7 +229,7 @@ else:
 </details>
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Local Database postgres</h3></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Local Database postgres</h2></summary>
 
 #### run database postgres docker container
 
@@ -227,7 +244,7 @@ else:
 </details>
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h3>Запуск та обслуговування застосунку в докер</h3></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Launching and maintenance of the app in docker</h2></summary>
 
 #### run app locally
 Запускати з віртуального оточення poetry
@@ -270,7 +287,7 @@ python manage.py migrate
 
 
 <details>
-  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Процедура підключення dev - Django з нуля:</h2></summary>
+  <summary style="display: flex; align-items: center; color: #0088CC;"><span style="margin-right: 5px;"></span><h2>Connection procedure dev - Django from scratch:</h2></summary>
 
 1. git checkout dev
 1. git pull
@@ -336,9 +353,9 @@ SOURCE=${HOME}/PlateN/PlateN
 
 </details>
 
-# Виконання
+</details>
 
-## Склад команди розробників
+## Development team
 1. Team Lead [@artem-dorofeev](https://github.com/artem-dorofeev) 
 1. Scrum Master [@RostislavB74](https://github.com/RostislavB74) 
 1. Django expert [@lumi-ua](https://github.com/lumi-ua) and 
@@ -346,3 +363,7 @@ SOURCE=${HOME}/PlateN/PlateN
 1. Full stack devops [@lexxai](https://github.com/lexxai) 
 2. Art director [@plaha303](https://github.com/plaha303) 
 3. Tester [@AlexanderBgit](https://github.com/AlexanderBgit) 
+
+<div align="left" width="948" height="474">
+  <img src="/readme/Team.png">
+</div>
