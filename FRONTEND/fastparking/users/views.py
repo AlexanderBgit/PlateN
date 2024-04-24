@@ -4,14 +4,12 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.contrib import messages
-from .forms import RegisterForm
-
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Car
-from .forms import CarAddForm
+
+from .forms import RegisterForm, PasswordForm
 
 @login_required
 def logout_view(request):
@@ -22,22 +20,41 @@ def logout_view(request):
     redirect(to="parking:main")
 
 
+
 class RegisterView(View):
-    form_class = RegisterForm
+    register_form_class = RegisterForm
+    password_form_class = PasswordForm
     template_name = "users/signup.html"
 
     def get(self, request):
-        return render(request, self.template_name, {"title":"Register new user", "form": self.form_class})
+        register_form = self.register_form_class()
+        password_form = self.password_form_class()
+        return render(request, self.template_name, 
+                      {
+                        "title": "Register new user", 
+                        "register_form": register_form, 
+                        "password_form": password_form
+                        })
 
     def post(self, request):
-        form = self.form_class(request.POST)
-        print(form)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data["username"]
-            messages.success(request, f'Вітаємо, {username}! Ваш акаунт успішно створений')
-            return redirect(to='users:username')
-        return render(request, self.template_name, {"form": form})
+        register_form = self.register_form_class(request.POST)
+        password_form = self.password_form_class(request.POST)
+        if register_form.is_valid() and password_form.is_valid():
+            user = register_form.save(commit=False)
+            user.set_password(password_form.cleaned_data['password1'])
+            user.save()
+        
+            username = register_form.cleaned_data["username"]
+            messages.success(request, f'Welcome, {username}! Your account has been successfully created')
+            return redirect('users:username')  
+        return render(request, self.template_name, 
+                      {
+                          "register_form": register_form, 
+                          "password_form": password_form
+                        })
+
+    
+
 
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     template_name = 'users/password_reset.html'
@@ -46,29 +63,3 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     success_url = reverse_lazy('users:password_reset_done')
     success_message = "An email with instructions to reset your password has been sent to %(email)s."
     subject_template_name = 'users/password_reset_subject.txt'
-
-
-
-def add_car(request):
-    if request.method == 'POST':
-        form = CarAddForm(request.POST)
-        if form.is_valid():
-            car_number = form.cleaned_data['car_number']
-            brand = form.cleaned_data['brand']
-            car_type = form.cleaned_data['car_type']
-            
-            # Перевірка наявності автомобіля з введеним номером
-            car = Car.objects.filter(car_number=car_number).first()
-            if car:
-                # Якщо автомобіль існує, прив'яжіть його до поточного користувача
-                car.owners.add(request.user)
-            else:
-                # Якщо автомобіль не існує, створіть новий запис
-                car = Car.objects.create(car_number=car_number, brand=brand, car_type=car_type)
-                car.owners.add(request.user)
-            
-            return redirect('profile')  # Перенаправлення на профіль користувача після успішного додавання автомобіля
-    else:
-        form = CarAddForm()
-    
-    return render(request, 'add_car.html', {'form': form})
