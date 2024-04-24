@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 from django.db import models
 from django.utils import timezone
@@ -73,21 +74,35 @@ class Registration(models.Model):
         # print(
         #     f"Calculating parking fee... tariff: {self.tariff_in}",
         # )
-        current_time = timezone.now()  # отримуємо поточний час
+        # PayPass - free all time
+        if self.is_pay_pass():
+            return 0.0  # Free for pay pass
+
+        current_time = timezone.now()
+
         if self.exit_datetime:
+            # Fix time for exit cars
             current_time = self.exit_datetime
+        else:
+            # Froze TIME during 15 min after last pay.
+            time_delta = timezone.timedelta(minutes=15)
+            last_payment = self.get_last_payment()
+            # Calculate the threshold time (15 minutes ago)
+            acceptable_time = current_time - time_delta
+            if last_payment and last_payment > acceptable_time:
+                current_time = last_payment
+            # print(f"{last_payment=}, {current_time=}")
+
+        # calculate duration
         if self.entry_datetime:
             duration = current_time - self.entry_datetime
             hours = duration.total_seconds() / 3600  # переводимо час в години
-            
+
             #  Free first 15 mins
             if hours < 0.25:
                 hours = 0  # Free first 15 mins
             else:
                 hours = self.round_to_int__(hours)
-            # PayPass - free all time 
-            if self.is_pay_pass():
-                hours = 0  # Free for pay pass
 
             if self.tariff_in:
                 price_per_hour = float(self.tariff_in)  # Зміна типу на float
@@ -96,12 +111,35 @@ class Registration(models.Model):
                 return parking_fee
         return None
 
+    def get_current_duration(self) -> float | None:
+        current_time = timezone.now()
+        if self.entry_datetime:
+            duration = current_time - self.entry_datetime
+            hours = duration.total_seconds() / 3600  # in hours
+            return hours
+
+    def get_duration(self) -> float | None:
+        if self.entry_datetime and self.exit_datetime:
+            duration = self.exit_datetime - self.entry_datetime
+            if isinstance(duration, timezone.timedelta):
+                hours = duration.total_seconds() / 3600  # in hours
+                return hours
+        else:
+            return self.get_current_duration()
+
     def compare_in_out(self):
         return compare_plates(self.car_number_in, self.car_number_out)
 
     def calculate_total_payed(self) -> Decimal | None:
         total_amount = self.payment_set.aggregate(total=Sum("amount")).get("total")
         return total_amount
+
+    def get_last_payment(self) -> datetime | None:
+        last_payment = self.payment_set.order_by("-datetime").first()
+        if last_payment:
+            return last_payment.datetime
+        else:
+            return None
 
     def __str__(self):
         if self.invoice:

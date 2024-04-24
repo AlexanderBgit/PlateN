@@ -54,7 +54,6 @@ class TariffForm(forms.ModelForm):
         end_date: datetime = self.cleaned_data.get("end_date")
         if end_date and end_date.minute == 59:
             end_date = end_date.replace(second=59)
-        print(f"clean_end_date: {end_date=}")
         return end_date
 
 
