@@ -163,6 +163,10 @@ footer .icon {
 
 .car-num {
   font-size: x-small;
-  width: 80px; 
+  min-height: 20px;
+  margin-bottom: 0;
+}
 
+.car-number {
+  margin-bottom: 0;
 }
