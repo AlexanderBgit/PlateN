@@ -154,7 +154,7 @@ Telegram
 ## Presentation
 #### Application deployment and demonstration
 
-Youtube: https://www.youtube.com
+Youtube: https://youtu.be/BkJmMh1Nvzk
 
 #### Project presentation and main benefits
 Youtube: https://www.youtube.com/watch?v=iH9t5hpYwqI
