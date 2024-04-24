@@ -14,7 +14,7 @@
   </div>
 </div>
 <div class="container-fluid">
-  <div class="row pt-4 mt-3 border rounded bg-light">
+  <div class="row row-cols-auto pt-4 mt-3 border rounded bg-light">
     {% for entry in parking_spaces %}
     <div class="col-xl-1 mb-3">
       <div class="card" style="width: 100%; max-width: 80px">
@@ -33,6 +33,7 @@
                title="{{ entry.number }}"
                src="{% static 'parking/car-01.png' %}" />
           <div class="text-center"><p class="car-number">{{ entry.number }}</p></div>
+          <div class="text-center"><p class="car-num"></p></div>
         {% endif %}
       </div>
     </div>
