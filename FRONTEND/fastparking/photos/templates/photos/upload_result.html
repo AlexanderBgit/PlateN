@@ -19,6 +19,12 @@
         <th>Accuracy:</th>
         <td>{{ predict.accuracy }}</td>
       </tr>
+      {% if registration.already_on_parking %}
+      <tr class="text-danger">
+        <th>Waring:</th>
+        <td>This number is already registered in the parking lot, are you sure?</td>
+      </tr>
+      {% endif %}
       {% endif %}
       <tr>
         {% if predict.num_img %}
@@ -44,8 +50,7 @@
         <th>Registration Date:</th>
         <td>{{ registration.date }}</td>
       </tr>
-      <tr>      
-        <tr>
+      <tr>
         <th>Parking place:</th>
         <td>{{ registration.parking_place }}</td>
       </tr>

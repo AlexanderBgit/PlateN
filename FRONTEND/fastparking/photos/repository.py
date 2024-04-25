@@ -10,6 +10,7 @@ import pytz
 
 from ds.predict_num import get_num_auto_png_io
 from finance.repository import calculate_total_payments
+from parking.repository import number_present_on_parking
 from parking.services import compare_plates, format_hours
 
 from .models import Photo
@@ -239,6 +240,7 @@ def handle_uploaded_file(
                 date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
                 registration_id_formatted = f"{registration_id:06}"
                 parking_place = registration_result.get("parking_place")
+                already_on_parking = registration_result.get("already_on_parking")
                 tariff_in = registration_result.get("tariff_in")
                 invoice = registration_result.get("invoice")
                 compare_plates_result = registration_result.get("compare_plates")
@@ -255,6 +257,7 @@ def handle_uploaded_file(
                 registration = {
                     "id": registration_id_formatted,
                     "parking_place": parking_place,
+                    "already_on_parking": already_on_parking,
                     "tariff_in": tariff_in,
                     "invoice": invoice,
                     "compare_plates": compare_plates_result,
@@ -338,6 +341,8 @@ def register_parking_in_event(
 ) -> dict:
     result = {"registration_id": None, "parking_space": None, "info": None}
 
+    already_on_parking = number_present_on_parking(num_auto)
+    print(f"register_parking_in_event. {num_auto=}, {already_on_parking=}")
     parking_space = find_free_parking_space(num_auto)
 
     if parking_space:
@@ -356,6 +361,7 @@ def register_parking_in_event(
             result = {
                 "registration_id": registration.pk,
                 "parking_place": parking_space.number,
+                "already_on_parking": already_on_parking,
                 "tariff_in": tariff_in,
                 "info": "Success",
             }
