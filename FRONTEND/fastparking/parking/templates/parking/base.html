@@ -29,12 +29,13 @@
     <main class="d-flex flex-nowrap">
       <h1 class="visually-hidden">Sidebars examples</h1>
 
-      <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-bg-custom" style="width: 320px">
+      <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-bg-custom">
         <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
           <svg class="bi pe-none me-2" width="10" height="32"><use xlink:href="#bootstrap" /></svg>
 
-          <img src="{% static 'parking/logo-main5.png' %}" width="60" height="60" />
-          <span class="ms-1 fs-4">NeuronCurveBobr</span>
+          <img src="{% static 'parking/logo-main5.png' %}" title="Neuron Curve Bobr" alt="NC Bobr" width="60" height="60" />
+          <span id="team-long" class="ms-1 fs-4"  title="Neuron Curve Bobr">NeuronCurveBobr</span>
+          <span class="ms-1 fs-4 team-short" title="Neuron Curve Bobr">NC Bobr</span>
         </a>
         <hr />
         <ul class="nav nav-pills flex-column">

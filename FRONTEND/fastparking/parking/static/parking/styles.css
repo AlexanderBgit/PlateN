@@ -31,6 +31,7 @@ h1, .h1, h2, .h2, h3, .h3 {
 }
 
 /* manually */
+
 .sidebar ul a i{
     margin-right: 16px;
 }
@@ -169,4 +170,27 @@ footer .icon {
 
 .car-number {
   margin-bottom: 0;
+}
+
+.team-short {
+  display: none
+}
+
+@media (max-width: 768px) {
+  #team-long {display: none}
+  .team-short {display: block}
+  .nav-link {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+  .sidebar.p-3 {
+    padding-right: 6px !important;
+    padding-left: 6px !important;
+  }
+  .sidebar ul a i {
+    margin-right: 8px;
+  }
+  svg.me-2 {
+    margin-right: unset !important;
+  }
 }
