@@ -34,6 +34,7 @@ def upload_file(request):
             file_in = request.FILES.get("photo")
             if file_in:
                 registration_id = form.cleaned_data.get("registration_id")
+                # MAIN ENGINE !!!
                 img_predict = handle_uploaded_file(
                     file_in, type_of_photo, filename, registration_id
                 )

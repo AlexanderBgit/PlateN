@@ -4,7 +4,7 @@ from django.db.models import Q
 from cars.models import Car
 from accounts.models import MyCars
 from .services import compare_plates
-from .models import Registration
+from .models import Registration, ParkingSpace
 
 
 def get_registration_instance(id: int) -> Registration | None:
@@ -100,3 +100,11 @@ def get_cars_number_user(user_id: int) -> list[str] | None:
                 result.append(car_number)
         return result
     return None
+
+
+def number_present_on_parking(car_num: str) -> bool:
+    if car_num:
+        car_num_exists = ParkingSpace.objects.filter(car_num=car_num.strip()).exists()
+        if car_num_exists:
+            return True
+    return False
