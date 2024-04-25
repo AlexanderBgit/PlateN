@@ -13,6 +13,7 @@ from django.db.models import Sum
 from .models import Registration
 from .models import ParkingSpace
 from photos.repository import get_price_per_hour
+from .repository import get_cars_user, get_cars_number_user
 from .services import format_hours
 
 
@@ -78,9 +79,10 @@ def generate_report(request):
 
 def parking_plan_view(request):
     user: User = request.user
-    allow_number = False
+    user_list_cars_numbers = None
     if user:
-        allow_number = user.is_superuser
+        user_list_cars_numbers = get_cars_number_user(user.pk)
+
     active_menu = "home"
     # parking_spaces = ParkingSpace.objects.all()
     parking_spaces = ParkingSpace.objects.all().order_by("number")
@@ -93,7 +95,10 @@ def parking_plan_view(request):
         )
 
     for space in parking_spaces:
-        space.allow_number = allow_number
+        space.allow_number = user.is_superuser
+        if user_list_cars_numbers and (space.car_num in user_list_cars_numbers):
+            space.owner_number = True
+            space.allow_number = True
 
     # Розбиття місць на рядки
     # row_length = 10  # Довжина рядка (кількість місць у рядку)

@@ -2,6 +2,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from cars.models import Car
+from accounts.models import MyCars
 from .services import compare_plates
 from .models import Registration
 
@@ -79,3 +80,23 @@ def process_car_registration(data: dict) -> bool:
         else:
             print("Автомобіль заблокований або не може бути зареєстрований.")
     return success
+
+
+def get_cars_user(user_id: int) -> list[Car] | None:
+    if user_id:
+        my_cars = MyCars.objects.filter(user=user_id)
+        if my_cars:
+            return my_cars
+    return None
+
+
+def get_cars_number_user(user_id: int) -> list[str] | None:
+    my_cars = get_cars_user(user_id)
+    if my_cars:
+        result: list[str] = []
+        for my_car in my_cars:
+            car_number = my_car.car_number.car_number
+            if car_number:
+                result.append(car_number)
+        return result
+    return None
