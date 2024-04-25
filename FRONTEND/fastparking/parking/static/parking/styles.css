@@ -176,6 +176,12 @@ footer .icon {
   display: none
 }
 
+.parking_place {
+    width: fit-content;
+    max-width: 80px;
+    text-wrap: nowrap;
+}
+
 @media (max-width: 768px) {
   #team-long {display: none}
   .team-short {display: block}
@@ -192,5 +198,8 @@ footer .icon {
   }
   svg.me-2 {
     margin-right: unset !important;
+  }
+  .parking_place {
+    max-width: 60px;
   }
 }
