@@ -150,6 +150,15 @@ Telegram
 </div>
 </details>
 
+<details>
+  <summary style="display: flex; align-items: center; color: #0088CC; margin-bottom: -20px; margin-top: 0px;"><span style="margin-right: 5px;"></span><h3>Mobile devices</h3></summary>
+
+Adaptive layout
+<div align="left" width="948" height="474">
+  <img src="/readme/Mobile adaptive.png">
+</div>
+
+</details>
 
 ## Presentation
 #### Application deployment and demonstration
