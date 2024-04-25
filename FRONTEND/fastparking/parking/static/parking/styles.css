@@ -182,6 +182,10 @@ footer .icon {
     text-wrap: nowrap;
 }
 
+.parking_place_users {
+    background-color: var(--bs-highlight-bg);
+}
+
 @media (max-width: 768px) {
   #team-long {display: none}
   .team-short {display: block}
@@ -200,6 +204,6 @@ footer .icon {
     margin-right: unset !important;
   }
   .parking_place {
-    max-width: 60px;
+    max-width: 58px;
   }
 }

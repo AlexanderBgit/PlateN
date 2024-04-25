@@ -77,6 +77,10 @@ def generate_report(request):
 
 
 def parking_plan_view(request):
+    user: User = request.user
+    allow_number = False
+    if user:
+        allow_number = user.is_superuser
     active_menu = "home"
     # parking_spaces = ParkingSpace.objects.all()
     parking_spaces = ParkingSpace.objects.all().order_by("number")
@@ -87,6 +91,9 @@ def parking_plan_view(request):
         parking_progress = int(
             (total_spaces - parking_spaces_count) / total_spaces * 100
         )
+
+    for space in parking_spaces:
+        space.allow_number = allow_number
 
     # Розбиття місць на рядки
     # row_length = 10  # Довжина рядка (кількість місць у рядку)
