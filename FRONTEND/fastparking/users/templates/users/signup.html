@@ -6,7 +6,7 @@
     {% csrf_token %}
     <div class="form-row">
         <div class="mb-3">
-            <label class="form-label">Username(required)</label>
+            <label class="form-label">Username (required)</label>
             {{ register_form.username }}
         </div>
         <span>{{ register_form.errors.username }}</span>
@@ -27,7 +27,7 @@
     </div>
     <div class="form-row">
         <div class="mb-3">
-            <label class="form-label">Email(required)</label>
+            <label class="form-label">Email (required)</label>
             {{ register_form.email }}
         </div>
         <span>{{ register_form.errors.email }}</span>
@@ -49,7 +49,7 @@
     <div class="form-row">
         <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" id="accept_oferta" name="accept_oferta">
-            <label class="form-check-label" for="accept_oferta">Accept Oferta(required)</label>
+            <label class="form-check-label" for="accept_oferta">Accept Oferta (required)</label>
             <a href="#" id="terms_link">Terms & Conditions</a>
         </div>
         <span>{{ register_form.errors.accept_oferta }}</span>
@@ -58,7 +58,27 @@
     <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
-                <!-- Оставлено без изменений -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">Умови та Положення</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>1. Прийняття Умов:</strong> Реєструючи обліковий запис у нашому застосунку, ви погоджуєтеся з цими Умовами та Положеннями.</p>
+                    <p><strong>2. Відповідальність Користувача:</strong> Ви несете відповідальність за збереження конфіденційності свого облікового запису та пароля. Ви згодні надавати точну та повну інформацію під час процесу реєстрації.</p>
+                    <p><strong>3. Захист Даних:</strong> Ми зобов'язані захищати вашу конфіденційність та особисту інформацію. Ваші дані будуть оброблятися відповідно до нашої Політики конфіденційності.</p>
+                    <p><strong>4. Припустиме Використання:</strong> Ви згодні використовувати наш застосунок тільки для законних цілей та утримуватися від будь-якої діяльності, яка може зашкодити цілісності або безпеці застосунку.</p>
+                    <p><strong>5. Інтелектуальна Власність:</strong> Весь контент та матеріали, доступні у нашому застосунку, захищені законами про інтелектуальну власність. Ви не маєте права відтворювати, розповсюджувати або модифікувати будь-який контент без попереднього письмового згоди.
+                    </p>
+                    <p><strong>6. Відмова від Відповідальності:</strong> Інформація, надана у нашому застосунку, призначена лише для загального ознайомлення. Ми не гарантуємо точність, повноту або надійність будь-якої інформації.</p>
+                    <p><strong>7. Обмеження Відповідальності:</strong> У жодному разі ми не будемо нести відповідальність за непрямі, випадкові, спеціальні або наслідкові збитки, що виникають в результаті використання нашого застосунку.</p>
+                    <p><strong>8. Зміни Умов:</strong> Ми залишаємо за собою право змінювати ці Умови та Положення у будь-який час без попереднього повідомлення. Продовження використання застосунку після таких змін буде означати вашу згоду з такими змінами.</p>
+                    <p>Натискаючи "Приймаю" нижче, ви підтверджуєте, що прочитали, зрозуміли та погоджуєтеся бути зв'язаними цими Умовами та Положеннями. Якщо ви не згодні з цими умовами, будь ласка, натисніть "Не приймаю" та утримайтеся від реєстрації облікового запису у нашому застосунку.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                    <button type="button" class="btn btn-primary" id="acceptBtn">Приймаю</button>
+                    <button type="button" class="btn btn-secondary" id="declineBtn">Не приймаю</button>
+                </div>
             </div>
         </div>
     </div>
