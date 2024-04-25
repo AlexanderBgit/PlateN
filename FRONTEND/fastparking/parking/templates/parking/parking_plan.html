@@ -17,7 +17,7 @@
   <div class="row row-cols-auto pt-4 mt-3 border rounded bg-light">
     {% for entry in parking_spaces %}
     <div class="col-xl-1 mb-3">
-      <div class="card parking_place">
+      <div class="card parking_place{% if entry.owner_number %} parking_place_users{% endif %}">
         {% if entry.status %}
           <img class="card-img-top"
                width="100%"
@@ -25,7 +25,7 @@
                title="{{ entry.number }}-{{ entry.car_num }}"
                src="{% static 'parking/car-02.png' %}" />
           <div class="text-center"><p class="car-number">{{ entry.number }}</p></div>
-          <div class="text-center"><p class="car-num">{{ entry.car_num }}</p></div>
+          <div class="text-center"><p class="car-num">{% if entry.allow_number %}{{ entry.car_num }}{% endif %}</p></div>
         {% else %}
           <img class="card-img-top"
                width="100%"
