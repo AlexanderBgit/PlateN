@@ -55,7 +55,7 @@
               <span class="nav-item">Profile</span>
             </a>
           </li>
-          {% if user.is_superuser %}
+          {% if user.is_authenticated %}
           <li>
             <a
               class="nav-link {% if active_menu == 'registration' %}active{% else %}text-white{% endif %}"

@@ -1,5 +1,7 @@
 # from .models import Registration
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
+
 from django.db.models import Q
 from cars.models import Car
 from accounts.models import MyCars
@@ -108,3 +110,16 @@ def number_present_on_parking(car_num: str) -> bool:
         if car_num_exists:
             return True
     return False
+
+
+def get_registrations(user: User) -> Registration | None:
+    registrations = None
+    if user:
+        if user.is_superuser:
+            registrations = Registration.objects.all().order_by(
+                "-exit_datetime",
+                "-entry_datetime",
+            )
+        else:
+            registrations = Registration.objects.none()
+    return registrations
