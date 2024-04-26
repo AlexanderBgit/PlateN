@@ -104,6 +104,12 @@ def get_cars_number_user(user_id: int) -> list[str] | None:
     return None
 
 
+def get_user_cars_pks(user_id: int) -> list[int]:
+    user_cars: list[Car] = get_cars_user(user_id)
+    user_cars_pks = [car.car_number.pk for car in user_cars]
+    return user_cars_pks
+
+
 def number_present_on_parking(car_num: str) -> bool:
     if car_num:
         car_num_exists = ParkingSpace.objects.filter(car_num=car_num.strip()).exists()
@@ -121,5 +127,14 @@ def get_registrations(user: User) -> list[Registration] | None:
                 "-entry_datetime",
             )
         else:
-            registrations = Registration.objects.none()
+            user_cars_pks: list[int] = get_user_cars_pks(user.pk)
+            if user_cars_pks:
+                registrations = Registration.objects.filter(
+                    car__in=user_cars_pks
+                ).order_by(
+                    "-exit_datetime",
+                    "-entry_datetime",
+                )
+            else:
+                registrations = Registration.objects.none()
     return registrations
