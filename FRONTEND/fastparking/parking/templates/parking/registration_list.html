@@ -30,16 +30,16 @@
         <tr scope="row">
           <td class="font-monospace">{{ registration.id|stringformat:"06d" }}</td>
           <td>{{ registration.parking }}</td>
-          <td class="text-center">{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
+          <td class="">{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
           <td class="text-center">{{ registration.tariff_in }}</td>
-          <td class="text-center">{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
+          <td class="">{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
           <td title="{{ registration.duration_datatime }}">{{ registration.duration }}</td>
           <td title="Calc: {{ registration.calculate_parking_fee }}">{{ registration.invoice}}</td>
           <td title="Total paid for this registration">
             {% if registration.total_amount %}{{ registration.total_amount }}{% endif %}
           </td>
-          <td class="text-center">{{ registration.car_number_in }}</td>
-          <td class="text-center">{{ registration.car_number_out }}</td>
+          <td class="">{{ registration.car_number_in }}</td>
+          <td class="">{{ registration.car_number_out }}</td>
           <td>
             {% if registration.exit_datetime %}
             <img src="{% static 'parking/icon-yes.svg' %}" alt="Yes" />
