@@ -11,18 +11,18 @@
       {% else %}
       <thead class="">
         <tr>
-          <th scope="col">ID</th>
-          <th scope="col" title="Parking Space">P Space</th>
-          <th scope="col">Entry Datetime</th>
-          <th scope="col">Tariff</th>
-          <th scope="col">Exit Datetime</th>
-          <th scope="col" title="Duration">Dur.</th>
-          <th scope="col" title="Invoice">Invoice</th>
-          <th scope="col" title="Total paid">Paid</th>
-          <th scope="col" title="Car Number In">Car NO IN</th>
-          <th scope="col" title="Car Number Out">Car NO OUT</th>
-          <th scope="col" title="Paid">P</th>
-          <th scope="col" title="Compare plate OUT with IN">C</th>
+          <th scope="col"><i class="bi bi-receipt"></i> ID</th>
+          <th scope="col" title="Parking Space"><i class="bi bi-p-square"></i> Space</th>
+          <th scope="col" class="text-center" title="Entry Datatime"><i class="bi bi-calendar"></i>&nbsp;Entry</th>
+          <th scope="col" class="text-center" ><i class="bi bi-cash-coin"></i> Tariff</th>
+          <th scope="col" class="text-center" title="Exit Datatime"><i class="bi bi-calendar"></i>&nbsp;Exit</th>
+          <th scope="col" class="text-center" title="Duration"><i class="bi bi-clock"></i></th>
+          <th scope="col" title="Invoice"><i class="bi bi-basket"></i> Inv.</th>
+          <th scope="col" title="Total paid"><i class="bi bi-cart-check"></i> Paid</th>
+          <th scope="col" class="text-center" title="Car Number In"><i class="bi bi-car-front"></i> IN</th>
+          <th scope="col" class="text-center" title="Car Number Out"><i class="bi bi-car-front"></i> OUT</th>
+          <th scope="col" title="Paid"><i class="bi bi-currency-exchange"></i></th>
+          <th scope="col" title="Compare plate OUT with IN"><i class="bi bi-emoji-smile"></i></th>
         </tr>
       </thead>
       <tbody>
@@ -30,16 +30,16 @@
         <tr scope="row">
           <td class="font-monospace">{{ registration.id|stringformat:"06d" }}</td>
           <td>{{ registration.parking }}</td>
-          <td>{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
-          <td>{{ registration.tariff_in }}</td>
-          <td>{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
+          <td class="text-center">{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
+          <td class="text-center">{{ registration.tariff_in }}</td>
+          <td class="text-center">{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
           <td title="{{ registration.duration_datatime }}">{{ registration.duration }}</td>
           <td title="Calc: {{ registration.calculate_parking_fee }}">{{ registration.invoice}}</td>
           <td title="Total paid for this registration">
             {% if registration.total_amount %}{{ registration.total_amount }}{% endif %}
           </td>
-          <td>{{ registration.car_number_in }}</td>
-          <td>{{ registration.car_number_out }}</td>
+          <td class="text-center">{{ registration.car_number_in }}</td>
+          <td class="text-center">{{ registration.car_number_out }}</td>
           <td>
             {% if registration.exit_datetime %}
             <img src="{% static 'parking/icon-yes.svg' %}" alt="Yes" />
@@ -101,38 +101,98 @@
     </span>
   </div>
 
-
-<div class="container-flex">
-  <ul class="list-group list-group-flush  list-group-horizontal">
-    <li class="list-group-item text-nowrap">
-      <a class="btn btn-primary" target="" href="{% url 'parking:download_csv' %}" title="Export to CSV"><span class="btn_text_short">Save </span><i class="bi bi-filetype-csv"></i></a>
-    </li>
-    <li class="list-group-item text-nowrap">
-      <a class="btn btn-primary" href="{% url 'parking:main' %}"><i class="bi bi-arrow-left-circle"></i><span class="btn_text_short"> Back</span></a>
-    </li>
-    <li class="list-group-item w-100">
-      <form method="GET" action="">
+<form method="GET" action="">
+ <div class="container">
+    <div class="row">
+      <div class="col">
         <input type="hidden" name="page" value="{{ request.GET.page }}" />
         <div class="input-group mb-2">
-          <label class="input-group-text" for="days" title="Days" aria-label="Days"><i class="bi bi-calendar"></i>&nbsp;<span class="btn_text_short">Days</span>:</label>
-          <div class="">
-            <!-- Apply col-2 class here -->
-            <input
-              type="number"
-              class="form-control h-100"
-              style="max-width: 65px;"
-              name="days"
-              id="days"
-              value="{% if filter_params.days %}{{ filter_params.days }}{% endif %}"
-            />
-          </div>
-          <div class="text-nowrap">
-            <button type="submit" class="btn btn-primary" title="Filter" aria-label="Filter"><i class="bi bi-filter-square"></i><span class="btn_text_short"> Filter</span></button>
-          </div>
+          <label class="input-group-text" for="days" title="Days" aria-label="Days">
+            <i class="bi bi-calendar"></i>&nbsp;<span class="btn_text_short">Days</span>:</label>
+          <input
+            type="number"
+            class="form-control h-100"
+            name="days"
+            id="days"
+            value="{% if filter_params.days %}{{ filter_params.days }}{% endif %}"
+          />
         </div>
-      </form>
-    </li>
-  </ul>
+      </div>
+      <div class="col-md-3">
+        <div class="input-group mb-2">
+          <label class="input-group-text" for="present"><i class="bi bi-flag"></i>
+            <span class="btn_text_short">&nbsp;Present:</span></label>
+          <select class="form-select" name="present">
+            <option value="" {% if request.GET.present == "" %}selected{% endif %}>Any</option>
+            <option value="True" {% if request.GET.present == "True" %}selected{% endif %}>Yes</option>
+            <option value="False" {% if request.GET.present == "False" %}selected{% endif %}>No</option>
+          </select>
+        </div>
+      </div>
+      <div class="col">
+        <div class="input-group mb-2">
+          <label class="input-group-text" for="car_number"><i class="bi bi-car-front"></i>
+            <span class="btn_text_short">&nbsp;IN:</span></label>
+          <input type="text" class="form-control" name="car_number" />
+        </div>
+      </div>
+       <div class="col">
+        <div class="input-group mb-2">
+          <label class="input-group-text" for="p_space"><i class="bi bi-p-square"></i>
+            <span class="btn_text_short">&nbsp;Space:</span></label>
+          <input type="text" class="form-control" name="p_space" />
+        </div>
+      </div>
+      <div class="col-md">
+        <button type="submit" class="btn btn-primary text-nowrap" title="Filter" aria-label="Filter">
+          <i class="bi bi-filter-square"></i><span class="btn_text_short"> Filter</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+
+ <div class="container mt-3">
+    <div class="col">
+      <a class="btn btn-primary" target="" href="{% url 'parking:download_csv' %}" title="Export to CSV">
+        <span class="btn_text_short">Save </span><i class="bi bi-filetype-csv"></i></a>
+
+    <a class="btn btn-primary" href="{% url 'parking:main' %}"><i class="bi bi-arrow-left-circle"></i>
+      <span class="btn_text_short"> Back</span></a>
+    </div>
 </div>
+
+<!--<div class="container-flex">-->
+<!--  <ul class="list-group list-group-flush  list-group-horizontal">-->
+<!--    <li class="list-group-item text-nowrap">-->
+<!--      <a class="btn btn-primary" target="" href="{% url 'parking:download_csv' %}" title="Export to CSV"><span class="btn_text_short">Save </span><i class="bi bi-filetype-csv"></i></a>-->
+<!--    </li>-->
+<!--    <li class="list-group-item text-nowrap">-->
+<!--      <a class="btn btn-primary" href="{% url 'parking:main' %}"><i class="bi bi-arrow-left-circle"></i><span class="btn_text_short"> Back</span></a>-->
+<!--    </li>-->
+<!--    <li class="list-group-item w-100">-->
+<!--      <form method="GET" action="">-->
+<!--        <input type="hidden" name="page" value="{{ request.GET.page }}" />-->
+<!--        <div class="input-group mb-2">-->
+<!--          <label class="input-group-text" for="days" title="Days" aria-label="Days"><i class="bi bi-calendar"></i>&nbsp;<span class="btn_text_short">Days</span>:</label>-->
+<!--          <div class="">-->
+<!--            &lt;!&ndash; Apply col-2 class here &ndash;&gt;-->
+<!--            <input-->
+<!--              type="number"-->
+<!--              class="form-control h-100"-->
+<!--              style="max-width: 65px;"-->
+<!--              name="days"-->
+<!--              id="days"-->
+<!--              value="{% if filter_params.days %}{{ filter_params.days }}{% endif %}"-->
+<!--            />-->
+<!--          </div>-->
+<!--          <div class="text-nowrap">-->
+<!--            <button type="submit" class="btn btn-primary" title="Filter" aria-label="Filter"><i class="bi bi-filter-square"></i><span class="btn_text_short"> Filter</span></button>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </form>-->
+<!--    </li>-->
+<!--  </ul>-->
+<!--</div>-->
 </nav>
 {% endblock %}
