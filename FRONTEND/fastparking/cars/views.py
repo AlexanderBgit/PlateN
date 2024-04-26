@@ -7,9 +7,15 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.core.paginator import Paginator
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
-class CarListView(ListView):
+class SuperuserRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class CarListView(SuperuserRequiredMixin, ListView):
     model = Car
     template_name = "car_list.html"  # Шаблон для відображення списку автомобілів
     context_object_name = "cars"  # Ім'я змінної в контексті шаблону
