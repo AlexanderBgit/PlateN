@@ -104,10 +104,11 @@ def get_cars_number_user(user_id: int) -> list[str] | None:
     return None
 
 
-def get_user_cars_pks(user_id: int) -> list[int]:
+def get_user_cars_pks(user_id: int) -> list[int] | None:
     user_cars: list[Car] = get_cars_user(user_id)
-    user_cars_pks = [car.car_number.pk for car in user_cars]
-    return user_cars_pks
+    if user_cars:
+        user_cars_pks = [car.car_number.pk for car in user_cars]
+        return user_cars_pks
 
 
 def number_present_on_parking(car_num: str) -> bool:
