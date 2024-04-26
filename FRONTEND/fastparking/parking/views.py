@@ -189,7 +189,8 @@ def registration_table(request):
 
 @login_required
 def download_csv(request):
-    if not is_admin(request):
+    registrations = get_registrations(request.user)
+    if registrations is None:
         return redirect("parking:main")
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="registrations.csv"'
@@ -208,7 +209,7 @@ def download_csv(request):
         ]
     )
 
-    registrations = Registration.objects.all()
+    # registrations = Registration.objects.all()
     iso_str = "%Y-%m-%dT%H:%M:%S"
     for registration in registrations:
         entry_datetime = None

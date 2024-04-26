@@ -112,7 +112,7 @@ def number_present_on_parking(car_num: str) -> bool:
     return False
 
 
-def get_registrations(user: User) -> Registration | None:
+def get_registrations(user: User) -> list[Registration] | None:
     registrations = None
     if user:
         if user.is_superuser:
