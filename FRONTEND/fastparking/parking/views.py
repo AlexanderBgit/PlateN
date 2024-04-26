@@ -132,6 +132,41 @@ def validate_int(value: str | int | None) -> int | None:
     return value
 
 
+def filter_alphanum(text: str, additional: list = None) -> str:
+    if additional is None:
+        additional = []
+    text = text.strip().upper()
+    text = "".join(char for char in text if char.isalnum() or char in additional)
+    return text
+
+
+def get_queryset(request, registrations):
+    queryset = registrations
+    car_no = request.GET.get("car_no", "")
+    p_space = request.GET.get("p_space", "")
+    present = request.GET.get("present", "")
+    days = validate_int(request.GET.get("days", 30))
+    if days:
+        days_delta = timezone.now() - timedelta(days=float(days))
+        queryset = queryset.filter(entry_datetime__gte=days_delta)
+    if car_no:
+        car_no = filter_alphanum(car_no)
+        queryset = queryset.filter(car_number_in__icontains=car_no)
+    if p_space:
+        p_space = filter_alphanum(p_space, ["-"])
+        queryset = queryset.filter(parking__number__icontains=p_space)
+    if present:
+        present = present.strip().lower() == "true"
+        queryset = queryset.filter(exit_datetime__isnull=present)
+    filter_params = {
+        "days": days,
+        "car_no": car_no,
+        "p_space": p_space,
+        "present": present,
+    }
+    return queryset, filter_params
+
+
 @login_required
 def registration_list(request):
     # if not is_admin(request):
@@ -145,10 +180,8 @@ def registration_list(request):
     registrations = get_registrations(request.user)
     if registrations is None:
         return redirect("parking:main")
-    days = validate_int(request.GET.get("days", 30))
-    if days:
-        days_delta = timezone.now() - timedelta(days=float(days))
-        registrations = registrations.filter(entry_datetime__gte=days_delta)
+    registrations, filter_params = get_queryset(request, registrations)
+    if registrations:
         for registration in registrations:
             total_amount = registration.calculate_total_payed()
             duration = registration.get_duration()
@@ -162,8 +195,6 @@ def registration_list(request):
         page_obj = paginator.get_page(page_number)
     else:
         page_obj = paginator.page(1)  # Get the first page by default
-
-    filter_params = {"days": days}
 
     content = {
         "title": "Registration list",

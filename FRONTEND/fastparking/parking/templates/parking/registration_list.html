@@ -1,6 +1,6 @@
 {% extends "parking/base.html" %} {% block content %} {% load static %}
 
-<h2>Registration List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}
+<h2 xmlns="http://www.w3.org/1999/html">Registration List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}
   {% if not user.is_superuser %} for the current user{% endif%}</h2>
   <div class="container-fluid table-responsive bd-example">
     <table class="table table-striped table-hover text-nowrap">
@@ -101,7 +101,7 @@
     </span>
   </div>
 
-<form method="GET" action="">
+<form id="form_filter" method="GET" action="">
  <div class="container">
     <div class="row">
       <div class="col">
@@ -144,6 +144,9 @@
         </div>
       </div>
       <div class="col-md">
+        <button type="button" onclick="clear_form()" title="Clear text fields"
+              class="btn btn-sm"><i class="fas fa-times"></i></button>
+
         <button type="submit" class="btn btn-primary text-nowrap" title="Filter" aria-label="Filter">
           <i class="bi bi-filter-square"></i><span class="btn_text_short"> Filter</span>
         </button>
@@ -195,4 +198,18 @@
 <!--  </ul>-->
 <!--</div>-->
 </nav>
+<script>
+  function clear_form(){
+    let form=document.getElementById('form_filter');
+    if (form) {
+      let inputs = form.getElementsByTagName('input');
+      let fieldsToClear = ['car_no', 'p_space'];
+      for (let i = 0; i < inputs.length; i++) {
+        if (fieldsToClear.includes(inputs[i].name)) {
+          inputs[i].value = '';
+        }
+      }
+     }
+  }
+</script>
 {% endblock %}
