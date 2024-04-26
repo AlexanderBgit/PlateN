@@ -99,39 +99,39 @@
       {% endif %}
     </span>
   </div>
-</nav>
 
-<div class="container">
-  <ul class="list-group list-group-horizontal">
-    <li class="list-group-item">
-      <a class="btn btn-primary" target="" href="{% url 'parking:download_csv' %}" title="Export to CSV"><i class="bi bi-save"></i> <i class="bi bi-filetype-csv"></i></a>
+
+<div class="container-flex">
+  <ul class="list-group list-group-flush  list-group-horizontal">
+    <li class="list-group-item text-nowrap">
+      <a class="btn btn-primary" target="" href="{% url 'parking:download_csv' %}" title="Export to CSV"><span class="btn_text_short">Save </span><i class="bi bi-filetype-csv"></i></a>
     </li>
-    <li class="list-group-item">
-      <a class="btn btn-primary" href="{% url 'parking:main' %}">Back</a>
+    <li class="list-group-item text-nowrap">
+      <a class="btn btn-primary" href="{% url 'parking:main' %}"><i class="bi bi-arrow-left-circle"></i><span class="btn_text_short"> Back</span></a>
     </li>
-    <li class="list-group-item">
+    <li class="list-group-item w-100">
       <form method="GET" action="">
         <input type="hidden" name="page" value="{{ request.GET.page }}" />
         <div class="input-group mb-2">
-          <label class="input-group-text" for="days">Days:</label>
-          <div class="col-3">
+          <label class="input-group-text" for="days" title="Days" aria-label="Days"><i class="bi bi-calendar"></i>&nbsp;<span class="btn_text_short">Days</span>:</label>
+          <div class="">
             <!-- Apply col-2 class here -->
             <input
               type="number"
-              class="form-control"
+              class="form-control h-100"
+              style="max-width: 65px;"
               name="days"
               id="days"
               value="{% if filter_params.days %}{{ filter_params.days }}{% endif %}"
             />
           </div>
-          <div class="col">
-            <!-- Adjust the width of the button -->
-            <button type="submit" class="btn btn-primary">Filter</button>
+          <div class="text-nowrap">
+            <button type="submit" class="btn btn-primary" title="Filter" aria-label="Filter"><i class="bi bi-filter-square"></i><span class="btn_text_short"> Filter</span></button>
           </div>
         </div>
       </form>
     </li>
   </ul>
 </div>
-
+</nav>
 {% endblock %}

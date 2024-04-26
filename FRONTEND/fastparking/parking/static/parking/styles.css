@@ -206,4 +206,9 @@ footer .icon {
   .parking_place {
     max-width: 58px;
   }
+  .btn_text_short {
+   display: none
+  }
+  nav .list-group-item {
+  padding: 4px;
 }
