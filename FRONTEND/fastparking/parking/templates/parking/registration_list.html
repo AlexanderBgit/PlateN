@@ -106,7 +106,7 @@
     <div class="row">
       <div class="col">
         <input type="hidden" name="page" value="{{ request.GET.page }}" />
-        <div class="input-group mb-2">
+        <div class="input-group mb-2" title="Show only last days">
           <label class="input-group-text" for="days" title="Days" aria-label="Days">
             <i class="bi bi-calendar"></i>&nbsp;<span class="btn_text_short">Days</span>:</label>
           <input
@@ -119,7 +119,7 @@
         </div>
       </div>
       <div class="col-md-3">
-        <div class="input-group mb-2">
+        <div class="input-group mb-2" title="Present on parking">
           <label class="input-group-text" for="present"><i class="bi bi-flag"></i>
             <span class="btn_text_short">&nbsp;Present:</span></label>
           <select class="form-select" name="present">
@@ -130,14 +130,14 @@
         </div>
       </div>
       <div class="col">
-        <div class="input-group mb-2">
+        <div class="input-group mb-2" title="Filter by car number">
           <label class="input-group-text" for="car_number"><i class="bi bi-car-front"></i>
             <span class="btn_text_short">&nbsp;IN:</span></label>
-          <input type="text" class="form-control" name="car_number" />
+          <input type="text" class="form-control" name="car_no" />
         </div>
       </div>
        <div class="col">
-        <div class="input-group mb-2">
+        <div class="input-group mb-2" title="Filter by parking space">
           <label class="input-group-text" for="p_space"><i class="bi bi-p-square"></i>
             <span class="btn_text_short">&nbsp;Space:</span></label>
           <input type="text" class="form-control" name="p_space" />
