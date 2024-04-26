@@ -13,7 +13,7 @@ from django.db.models import Sum
 from .models import Registration
 from .models import ParkingSpace
 from photos.repository import get_price_per_hour
-from .repository import get_cars_user, get_cars_number_user
+from .repository import get_cars_user, get_cars_number_user, get_registrations
 from .services import format_hours
 
 
@@ -134,14 +134,17 @@ def validate_int(value: str | int | None) -> int | None:
 
 @login_required
 def registration_list(request):
-    if not is_admin(request):
-        return redirect("parking:main")
+    # if not is_admin(request):
+    #     return redirect("parking:main")
     active_menu = "registration"
     page_number = validate_int(request.GET.get("page"))
-    registrations = Registration.objects.all().order_by(
-        "-exit_datetime",
-        "-entry_datetime",
-    )
+    # registrations = Registration.objects.all().order_by(
+    #     "-exit_datetime",
+    #     "-entry_datetime",
+    # )
+    registrations = get_registrations(request.user)
+    if registrations is None:
+        return redirect("parking:main")
     days = validate_int(request.GET.get("days", 30))
     if days:
         days_delta = timezone.now() - timedelta(days=float(days))
@@ -186,7 +189,8 @@ def registration_table(request):
 
 @login_required
 def download_csv(request):
-    if not is_admin(request):
+    registrations = get_registrations(request.user)
+    if registrations is None:
         return redirect("parking:main")
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="registrations.csv"'
@@ -205,7 +209,7 @@ def download_csv(request):
         ]
     )
 
-    registrations = Registration.objects.all()
+    # registrations = Registration.objects.all()
     iso_str = "%Y-%m-%dT%H:%M:%S"
     for registration in registrations:
         entry_datetime = None
