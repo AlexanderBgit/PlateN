@@ -55,7 +55,6 @@
               <span class="nav-item">Profile</span>
             </a>
           </li>
-          {% if user.is_authenticated %}
           <li>
             <a
               class="nav-link {% if active_menu == 'registration' %}active{% else %}text-white{% endif %}"
@@ -65,6 +64,7 @@
               <span class="nav-item">Registration</span>
             </a>
           </li>
+          {% if user.is_superuser %}
           <li>
             <a class="nav-link {% if active_menu == 'cars' %}active{% else %}text-white{% endif %}" href="/cars/">
               <i class="fa-solid fa-car"></i>

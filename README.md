@@ -36,9 +36,10 @@ Home
   <img src="/readme/Home_page_v2.png">
 </div>
 
-Plan of parking
+Parking plan from the point of view of users with their cars
+
 <div align="left" width="948" height="474">
-  <img src="/readme/Parking Plan_v2.png">
+  <img src="/readme/Parking Plan_v3.png">
 </div>
 
 
