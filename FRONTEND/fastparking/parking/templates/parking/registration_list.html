@@ -156,11 +156,10 @@
 
  <div class="container mt-3">
     <div class="col">
+      <a class="btn btn-primary" href="{% url 'parking:main' %}"><i class="bi bi-arrow-left-circle"></i>
+        <span class="btn_text_short"> Back</span></a>
       <a class="btn btn-primary" target="" href="{% url 'parking:download_csv' %}" title="Export to CSV">
         <span class="btn_text_short"></span><i class="bi bi-filetype-csv"></i> Save</a>
-
-    <a class="btn btn-primary" href="{% url 'parking:main' %}"><i class="bi bi-arrow-left-circle"></i>
-      <span class="btn_text_short"> Back</span></a>
     </div>
 </div>
 </nav>
