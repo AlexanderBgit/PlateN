@@ -14,9 +14,9 @@
   </div>
 </div>
 <div class="container-fluid">
-  <div class="row row-cols-auto pt-4 mt-3 border rounded bg-light">
+  <div class="row row-cols-auto gy-3 pt-1 pb-3 mt-3 border rounded bg-light">
     {% for entry in parking_spaces %}
-    <div class="col-xl-1 mb-3">
+    <div class="col-xl-1">
       <div class="card parking_place{% if entry.owner_number %} parking_place_users{% endif %}">
         {% if entry.status %}
           <img class="card-img-top"
