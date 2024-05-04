@@ -6,12 +6,12 @@
       <thead class="">
         <tr>
           <th scope="col">ID</th>
-          <th scope="col">Registration</th>
-          <th scope="col">Datetime</th>
-          <th scope="col">Car number in</th>
-          <th scope="col">Amount</th>
-          <th scope="col" title="Dynamic calculation for a car that hasn't left yet">Invoice*</th>
-          <th scope="col" title="Moved out">Left</th>
+          <th scope="col"><i class="bi bi-receipt"></i> Registration</th>
+          <th scope="col"><i class="bi bi-calendar"></i>&nbsp;Datetime</th>
+          <th scope="col" class="" title="Car Number In"><i class="bi bi-car-front"></i> IN</th>
+          <th scope="col"><i class="bi bi-cart-check"></i> Amount</th>
+          <th scope="col" title="Dynamic calculation for a car that hasn't left yet"><i class="bi bi-basket"></i> Inv.</th>
+          <th scope="col" title="Moved out"><i class="bi bi-arrow-right-square"></i></th>
         </tr>
       </thead>
       <tbody>
@@ -61,7 +61,8 @@
   <ul class="list-group list-group-horizontal">
     <li class="list-group-item">
       <a class="btn btn-primary" target="" href="{% url 'parking:download_csv' %}" title="Export to CSV">
-        <span class="btn_text_short"></span><i class="bi bi-filetype-csv"></i> Save</a>    </li>
+        <i class="bi bi-filetype-csv"></i><span class="btn_text_short"> Save</span></a>
+    </li>
     <li class="list-group-item">
     <a class="btn btn-primary" href="{% url 'parking:main' %}"><i class="bi bi-arrow-left-circle"></i>
       <span class="btn_text_short"> Back</span></a>    </li>
