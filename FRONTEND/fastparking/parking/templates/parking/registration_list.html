@@ -101,12 +101,10 @@
     </span>
   </div>
 
-<form id="form_filter" method="GET" action="">
- <div class="container">
-    <div class="row">
-      <div class="col">
+<form class="row gx-1 gy-2 align-items-baseline" id="form_filter" method="GET" action="">
+      <div class="col-2">
         <input type="hidden" name="page" value="{{ request.GET.page }}" />
-        <div class="input-group mb-2" title="Show only last days">
+        <div class="input-group" title="Show only last days">
           <label class="input-group-text" for="days" title="Days" aria-label="Days">
             <i class="bi bi-calendar"></i>&nbsp;<span class="btn_text_short">Days</span>:</label>
           <input
@@ -118,41 +116,42 @@
           />
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="input-group mb-2" title="Present on parking">
+      <div class="col-auto">
+        <div class="input-group" title="Present on parking">
           <label class="input-group-text" for="present"><i class="bi bi-flag"></i>
             <span class="btn_text_short">&nbsp;Present:</span></label>
-          <select class="form-select" name="present">
+          <select class="form-select" id="present" name="present">
             <option value="" {% if request.GET.present == "" %}selected{% endif %}>Any</option>
             <option value="True" {% if request.GET.present == "True" %}selected{% endif %}>Yes</option>
             <option value="False" {% if request.GET.present == "False" %}selected{% endif %}>No</option>
           </select>
         </div>
       </div>
-      <div class="col">
-        <div class="input-group mb-2" title="Filter by car number">
-          <label class="input-group-text" for="car_number"><i class="bi bi-car-front"></i>
+      <div class="col-2">
+        <div class="input-group" title="Filter by car number">
+          <label class="input-group-text" for="car_no"><i class="bi bi-car-front"></i>
             <span class="btn_text_short">&nbsp;IN:</span></label>
-          <input type="text" class="form-control" name="car_no" value="{{ filter_params.car_no }}" />
+          <input type="text" class="form-control" id="car_no" name="car_no" placeholder="Car NO IN" aria-label="Car NO" value="{{ filter_params.car_no }}" />
         </div>
       </div>
-       <div class="col">
-        <div class="input-group mb-2" title="Filter by parking space">
-          <label class="input-group-text" for="p_space"><i class="bi bi-p-square"></i>
-            <span class="btn_text_short">&nbsp;Space:</span></label>
-          <input type="text" class="form-control" name="p_space" value="{{ filter_params.p_space }}"/>
+       <div class="col-2">
+        <div class="input-group" title="Filter by parking space">
+          <label class="input-group-text" for="p_space"><i class="bi bi-p-square"></i></label>
+          <input type="text" class="form-control" list="datalistOptions" id="p_space" name="p_space" placeholder="P.Space" aria-label="P.Space" value="{{ filter_params.p_space }}"/>
+          <datalist id="datalistOptions">
+            <option value="P-00">
+            <option value="P-0">
+            <option value="P-">
+          </datalist>
         </div>
       </div>
-      <div class="col-md">
+      <div class="col">
         <button type="button" onclick="clear_form()" title="Clear text fields"
-              class="btn btn-sm"><i class="fas fa-times"></i></button>
-
-        <button type="submit" class="btn btn-primary text-nowrap" title="Filter" aria-label="Filter">
+              class="btn btn-sm "><i class="fas fa-times"></i></button>
+        <button type="submit" class="btn btn-sm btn-primary text-nowrap" title="Filter" aria-label="Filter">
           <i class="bi bi-filter-square"></i><span class="btn_text_short"> Filter</span>
         </button>
       </div>
-    </div>
-  </div>
 </form>
 
  <div class="container mt-3">
