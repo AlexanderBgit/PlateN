@@ -1,7 +1,6 @@
 {% extends "parking/base.html" %} {% block content %} {% load static %}
 
-<h2 xmlns="http://www.w3.org/1999/html">Registration List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}
-  {% if not user.is_superuser %} for the current user{% endif%}</h2>
+<h2 xmlns="http://www.w3.org/1999/html">Registration List{% if filter_params.days %} for last {{ filter_params.days}} days{%endif%}{% if not user.is_superuser %} for the current user{% endif%}. Total results: {{filter_params.total_rows}}</h2>
   <div class="container-fluid table-responsive bd-example">
     <table class="table table-striped table-hover text-nowrap">
       {% if not page_obj %}
