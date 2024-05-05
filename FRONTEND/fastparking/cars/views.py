@@ -55,6 +55,8 @@ class CarListView(SuperuserRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         filter_params = self.get_filter_params()
         queryset = context["object_list"]
+        total_rows = queryset.count()
+        filter_params["total_rows"] = total_rows
         paginator = Paginator(queryset, self.page_items)
         if filter_params.get("page"):
             page_obj = paginator.get_page(filter_params["page"])

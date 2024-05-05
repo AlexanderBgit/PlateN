@@ -158,11 +158,13 @@ def get_queryset(request, registrations):
     if present:
         present = present.strip().lower() == "true"
         queryset = queryset.filter(exit_datetime__isnull=present)
+    total_rows = queryset.count()
     filter_params = {
         "days": days,
         "car_no": car_no,
         "p_space": p_space,
         "present": present,
+        "total_rows": total_rows,
     }
     return queryset, filter_params
 
