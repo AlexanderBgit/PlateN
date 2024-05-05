@@ -2,6 +2,7 @@ import csv
 from datetime import datetime, timedelta
 from decimal import Decimal
 from django.conf import settings
+from django.db.models import Count
 from django.http import HttpResponse
 import pytz
 from django.urls import resolve
@@ -11,6 +12,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.utils import timezone
 
+from parking.views import filter_alphanum
 from .models import Tariff
 
 from .models import Payment
@@ -204,25 +206,45 @@ def validate_int(value: str | int | None) -> int | None:
     return value
 
 
+def get_queryset(request, payments):
+    queryset = payments
+    car_no = request.GET.get("car_no", "")
+    r_id = request.GET.get("r_id", "")
+    days = validate_int(request.GET.get("days", 30))
+    if days:
+        days_delta = timezone.now() - timedelta(days=float(days))
+        queryset = queryset.filter(datetime__gte=days_delta)
+    if car_no:
+        car_no = filter_alphanum(car_no)
+        queryset = queryset.filter(registration_id__car_number_in__icontains=car_no)
+    if r_id:
+        r_id = validate_int(r_id)
+        queryset = queryset.filter(registration_id=r_id)
+    page = validate_int(request.GET.get("page"))
+    total_rows = queryset.count()
+    filter_params = {
+        "days": days,
+        "car_no": car_no,
+        "r_id": r_id,
+        "page": page,
+        "total_rows": total_rows,
+    }
+    return queryset, filter_params
+
+
 @login_required
 def payments_list(request):
     if not is_admin(request):
         return redirect("parking:main")
     active_menu = "payment"
-    page_number = validate_int(request.GET.get("page"))
-    days = validate_int(request.GET.get("days", 30))
-    payments = Payment.objects.all().order_by("-datetime")
-    if days:
-        days_delta = timezone.now() - timedelta(days=float(days))
-        payments = payments.filter(datetime__gte=days_delta)
-
+    payments = Payment.objects.order_by("-datetime")
+    payments, filter_params = get_queryset(request, payments)
+    page_number = filter_params.get("page")
     paginator = Paginator(payments, PAGE_ITEMS)
     if page_number:
         page_obj = paginator.get_page(page_number)
     else:
         page_obj = paginator.page(1)  # Get the first page by default
-
-    filter_params = {"days": days}
 
     content = {
         "title": "payment list",
