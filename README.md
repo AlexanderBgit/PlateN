@@ -3,6 +3,8 @@
 ![Forks](https://img.shields.io/github/forks/AlexanderBgit/PlateN?style=social)
 ![Latest Release](https://img.shields.io/github/v/release/AlexanderBgit/PlateN?include_prereleases&label=latest%20release)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/AlexanderBgit/PlateN?label=Version%20for%20development)
+![Dynamic TOML Badge](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2FAlexanderBgit%2FPlateN%2Fdev%2FFRONTEND%2Fpyproject.toml&query=%24.tool.poetry.version&prefix=v&style=flat&label=toml%20dev%20version)
+
 
 
 # Fast Parking
@@ -36,9 +38,10 @@ Home
   <img src="/readme/Home_page_v2.png">
 </div>
 
-Plan of parking
+Parking plan from the point of view of users with their cars
+
 <div align="left" width="948" height="474">
-  <img src="/readme/Parking Plan_v2.png">
+  <img src="/readme/Parking Plan_v3.png">
 </div>
 
 

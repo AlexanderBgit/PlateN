@@ -1,17 +1,17 @@
 {% extends "parking/base.html" %} {% block content %} {% load static %}
 
-<h2>Payments List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}</h2>
+<h3>Payments List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}. Total results: {{filter_params.total_rows}}</h3>
   <div class="container-fluid table-responsive bd-example">
     <table class="table table-striped table-hover text-nowrap">
       <thead class="">
         <tr>
           <th scope="col">ID</th>
-          <th scope="col">Registration</th>
-          <th scope="col">Datetime</th>
-          <th scope="col">Car number in</th>
-          <th scope="col">Amount</th>
-          <th scope="col" title="Dynamic calculation for a car that hasn't left yet">Invoice*</th>
-          <th scope="col" title="Moved out">Left</th>
+          <th scope="col"><i class="bi bi-receipt"></i> Registration</th>
+          <th scope="col"><i class="bi bi-calendar"></i>&nbsp;Datetime</th>
+          <th scope="col" class="" title="Car Number In"><i class="bi bi-car-front"></i> IN</th>
+          <th scope="col"><i class="bi bi-cart-check"></i> Amount</th>
+          <th scope="col" title="Dynamic calculation for a car that hasn't left yet"><i class="bi bi-basket"></i> Inv.</th>
+          <th scope="col" title="Moved out"><i class="bi bi-arrow-right-square"></i></th>
         </tr>
       </thead>
       <tbody>
@@ -57,36 +57,64 @@
     </span>
   </div>
 </nav>
-<div class="container">
-  <ul class="list-group list-group-horizontal">
-    <li class="list-group-item">
-      <a class="btn btn-primary" target="_blank" href="{% url 'finance:download_csv' %}">Export to CSV</a>
-    </li>
-    <li class="list-group-item">
-      <a class="btn btn-primary" href="{% url 'finance:main' %}">Back</a>
-    </li>
-    <li class="list-group-item">
-      <form method="GET" action="">
+
+<form class="row gx-1 gy-2 align-items-baseline" id="form_filter" method="GET" action="">
+      <div class="col-2">
         <input type="hidden" name="page" value="{{ request.GET.page }}" />
-        <div class="input-group mb-2">
-          <label class="input-group-text" for="days">Days:</label>
-          <div class="col-3"> <!-- Apply col-2 class here -->
-            <input
-              type="number"
-              class="form-control"
-              name="days"
-              id="days"
-              value="{% if filter_params.days %}{{ filter_params.days }}{% endif %}"
-            />
-          </div>
-          <div class="col"> <!-- Adjust the width of the button -->
-            <button type="submit" class="btn btn-primary">Filter</button>
-          </div>
+        <div class="input-group" title="Show only last days">
+          <label class="input-group-text" for="days" title="Days" aria-label="Days">
+            <i class="bi bi-calendar"></i>&nbsp;<span class="btn_text_short">Days</span>:</label>
+          <input
+            type="number"
+            class="form-control h-100"
+            name="days"
+            id="days"
+            value="{% if filter_params.days %}{{ filter_params.days }}{% endif %}"
+          />
         </div>
-      </form>
-    </li>
-  </ul>
+      </div>
+      <div class="col-auto">
+        <div class="input-group" title="Filter by Registration ID">
+          <label class="input-group-text" for="r_id"><i class="bi bi-receipt"></i><span class="btn_text_short">&nbsp;Registration</span></label>
+          <input type="text" class="form-control" id="r_id" name="r_id" placeholder="Reg ID" aria-label="Reg ID" value="{{ filter_params.r_id }}"/>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="input-group" title="Filter by car number">
+          <label class="input-group-text" for="car_no"><i class="bi bi-car-front"></i>
+            <span class="btn_text_short">&nbsp;IN:</span></label>
+          <input type="text" class="form-control" id="car_no" name="car_no" placeholder="Car NO IN" aria-label="Car NO" value="{{ filter_params.car_no }}" />
+        </div>
+      </div>
+      <div class="col">
+        <button type="button" onclick="clear_form()" title="Clear text fields"
+              class="btn btn-sm "><i class="fas fa-times"></i></button>
+        <button type="submit" class="btn btn-sm btn-primary text-nowrap" title="Filter" aria-label="Filter">
+          <i class="bi bi-filter-square"></i><span class="btn_text_short"> Filter</span>
+        </button>
+      </div>
+</form>
+ <input type="hidden" name="page" value="{{ request.GET.page }}" />
+ <div class="container mt-3">
+    <div class="col">
+      <a class="btn btn-primary" href="{% url 'finance:main' %}"><i class="bi bi-arrow-left-circle"></i>
+         <span class="btn_text_short"> Back</span></a>
+      <a class="btn btn-primary" target="" href="{% url 'finance:download_csv' %}" title="Export to CSV">
+        <span class="btn_text_short"></span><i class="bi bi-filetype-csv"></i> Save</a>
+    </div>
 </div>
-
-
+<script>
+  function clear_form(){
+    let form=document.getElementById('form_filter');
+    if (form) {
+      let inputs = form.getElementsByTagName('input');
+      let fieldsToClear = ['car_no', 'r_id'];
+      for (let i = 0; i < inputs.length; i++) {
+        if (fieldsToClear.includes(inputs[i].name)) {
+          inputs[i].value = '';
+        }
+      }
+     }
+  }
+</script>
 {% endblock %}
