@@ -152,3 +152,14 @@ class UploadFileForm(forms.Form):
 
         #     class Meta:
         # fields = ["registration_id", "manual_registration_id"]
+
+
+class UploadScanQRForm(forms.Form):
+    photo = forms.ImageField(
+        widget=forms.FileInput(
+            attrs={
+                "class": "form-control",
+                "title": "Upload photo of QR code image",
+            }  # ,
+        ),
+    )

@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from .forms import UploadFileForm
+from .forms import UploadFileForm, UploadScanQRForm
 from django.urls import resolve, reverse
 from django.conf import settings
 
@@ -95,46 +95,47 @@ def scan_qr(request):
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name
     if request.method == "POST":
-        form = UploadFileForm(request.POST, request.FILES)
+        form = UploadScanQRForm(request.POST, request.FILES)
         if form.is_valid():
             uploaded_file = request.FILES.get("photo")
             if uploaded_file:
                 filename = uploaded_file.name
             file_in = request.FILES.get("photo")
             if file_in:
+                ...
                 # MAIN ENGINE !!!
                 # img_predict = handle_uploaded_file(
                 #     file_in, type_of_photo, filename, registration_id
                 # )
                 # info = img_predict.get("info")
+                registration = "registration_fake"
+                info = {
+                    "description": "Success",
+                    "p_space": "P-FAKE",
+                    "date": "Date-FAKE",
+                    "registration": registration,
+                }
                 # predict = img_predict.get("predict")
                 # registration = img_predict.get("registration")
                 context = {
                     "active_menu": active_menu,
-                    "title": f"Photos | { target_type.get('desc') }",
+                    "title": f"Scan QR code result",
                     "info": info,
-                    "registration": registration,
                 }
-                # print(f"{info}")
-                # if info:
-                #     return render(request, "photos/upload_result.html", context)
-                # else:
-                #     context = {
-                #         "active_menu": active_menu,
-                #         "title": "",
-                #         "target_type": {"type": 0},
-                #         "info": "Not recognized",
-                #         "predict": {
-                #             "num_avto_str": "Number not recognized",
-                #             "accuracy": "0",
-                #         },
-                #         "registration": "NOT registered",
-                #     }
-                #     return render(request, "photos/upload_result.html", context)
+                print(f"{info}")
+                if info:
+                    return render(request, "photos/qr_result.html", context)
+                else:
+                    context = {
+                        "active_menu": active_menu,
+                        "title": "",
+                        "info": {"description": "Not recognized"},
+                    }
+                    return render(request, "photos/upload_result.html", context)
             # upload_url = reverse("upload")
             return HttpResponseRedirect("")
     else:
-        form = UploadFileForm()
+        form = UploadScanQRForm()
     context = {
         "active_menu": active_menu,
         "form": form,
