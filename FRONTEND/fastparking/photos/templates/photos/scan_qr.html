@@ -1,9 +1,6 @@
 <!-- photos/templates/upload.html -->
-{% extends "parking/base.html" %} {% block content %} {% if target_type %}
-<h3>Upload photo: {{ target_type.desc}}</h3>
-{% else %}
-<h3>Upload photo</h3>
-{% endif %}
+{% extends "parking/base.html" %} {% block content %}
+<h3>Scan QR code:</h3>
 <form method="POST" action="" enctype="multipart/form-data">
   {% csrf_token %} {% if form.errors %}
   <ul class="text-danger">
@@ -12,7 +9,7 @@
     {% endfor %} {% endfor %}
   </ul>
   {% endif %}
-  <p {% if target_type %} class="d-none" {% endif %}>{{ form.type.label_tag }} {{ form.t_photo }}</p>
+
   {% if target_type.desc == "OUT" %}
   <p>{{ form.registration_id.label_tag }} {{ form.registration_id }}</p>
   {% if form.registration_id.errors %}
@@ -24,11 +21,7 @@
   {% endif %} {% endif %} 
   <p>{{ form.photo.label_tag }} {{ form.photo }}</p>
   
-  {% if target_type.desc == "OUT" %}
-  <div class="alert alert-info" role="alert">
-    You can leave only if you have paid the parking service invoice or if you have 0.00 to pay.
-  </div>
-  {% endif %}
+
   <div class="container">
     <ul class="list-group list-group-horizontal">
       <li class="list-group-item">
@@ -37,11 +30,6 @@
       <li class="list-group-item">
         <a href="{% url 'photos:main' %}" class="btn btn-primary">Back</a>
       </li>
-      {% if target_type.desc == "OUT" %}
-      <li class="list-group-item">
-        <a href="{% url 'finance:add_pay' %}" class="btn btn-primary">Pay</a>
-      </li>
-      {% endif %}
     </ul>
   </div>
 </form>

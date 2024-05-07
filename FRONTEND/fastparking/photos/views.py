@@ -89,3 +89,54 @@ def main(request):
     return render(
         request, "photos/main.html", {"active_menu": active_menu, "title": "Photos"}
     )  # або інша логіка відповідно до вашого проекту
+
+
+def scan_qr(request):
+    resolved_view = resolve(request.path)
+    active_menu = resolved_view.app_name
+    if request.method == "POST":
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            uploaded_file = request.FILES.get("photo")
+            if uploaded_file:
+                filename = uploaded_file.name
+            file_in = request.FILES.get("photo")
+            if file_in:
+                # MAIN ENGINE !!!
+                # img_predict = handle_uploaded_file(
+                #     file_in, type_of_photo, filename, registration_id
+                # )
+                # info = img_predict.get("info")
+                # predict = img_predict.get("predict")
+                # registration = img_predict.get("registration")
+                context = {
+                    "active_menu": active_menu,
+                    "title": f"Photos | { target_type.get('desc') }",
+                    "info": info,
+                    "registration": registration,
+                }
+                # print(f"{info}")
+                # if info:
+                #     return render(request, "photos/upload_result.html", context)
+                # else:
+                #     context = {
+                #         "active_menu": active_menu,
+                #         "title": "",
+                #         "target_type": {"type": 0},
+                #         "info": "Not recognized",
+                #         "predict": {
+                #             "num_avto_str": "Number not recognized",
+                #             "accuracy": "0",
+                #         },
+                #         "registration": "NOT registered",
+                #     }
+                #     return render(request, "photos/upload_result.html", context)
+            # upload_url = reverse("upload")
+            return HttpResponseRedirect("")
+    else:
+        form = UploadFileForm()
+    context = {
+        "active_menu": active_menu,
+        "form": form,
+    }
+    return render(request, "photos/scan_qr.html", context)
