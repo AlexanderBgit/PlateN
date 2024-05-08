@@ -112,7 +112,7 @@ def scan_qr(request):
                     qr_info["date"] = qr_info["date"].strftime("%Y-%m-%d %H:%M:%S")
                 info = {
                     "description": qr_info.get("result"),
-                    "p_space": qr_info.get("place"),
+                    "parking_place": qr_info.get("place"),
                     "date": qr_info.get("date"),
                     "registration": qr_info.get("id"),
                 }

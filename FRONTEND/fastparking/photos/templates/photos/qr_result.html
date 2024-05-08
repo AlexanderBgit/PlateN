@@ -4,106 +4,34 @@
   <h3>RESULT:</h3>
   <table class="table">
     <tbody>
-      {% if registration.id %}
+      {% if info.registration %}
       <tr>
         <th>Info:</th>
-        <td>{{ info }}</td>
+        <td>{{ info.description }}</td>
       </tr>
-      {% endif %}
-      {% if predict.num_avto_str %}
-      <tr>
-        <th>Recognized number:</th>
-        <td>{{ predict.num_avto_str }}</td>
-      </tr>
-      <tr>
-        <th>Accuracy:</th>
-        <td>{{ predict.accuracy }}</td>
-      </tr>
-      {% if registration.already_on_parking %}
-      <tr class="text-danger">
-        <th>Waring:</th>
-        <td>This number is already registered in the parking lot, are you sure?</td>
-      </tr>
-      {% endif %}
-      {% endif %}
-      <tr>
-        {% if predict.num_img %}
-        <th>Photo:</th>
-        <td>
-          <img
-            src="data:image/jpeg;base64,{{ predict.num_img }}"
-            alt="recognized license plate number: {{ predict.num_avto_str }}"
-            title="recognized license plate number: {{ predict.num_avto_str }}"
-          />
-        </td>
-        {% endif %}
-      </tr>
-      {% if registration.id %}
       <tr>
         <td colspan="2"><h3>Registration Information:</h3></td>
       </tr>
       <tr>
         <th>Registration ID:</th>
-        <td>{{ registration.id }}</td>
+        <td>{{  info.registration }}</td>
       </tr>
       <tr>
         <th>Registration Date:</th>
-        <td>{{ registration.date }}</td>
+        <td>{{ info.date }}</td>
       </tr>
       <tr>
         <th>Parking place:</th>
-        <td>{{ registration.parking_place }}</td>
+        <td>{{ info.parking_place }}</td>
       </tr>
-      <tr>
-        <th>Tariff:</th>
-        <td>{{ registration.tariff_in }}</td>
-      </tr>
-      {% if registration.invoice is not None %}
-      <tr>
-        <th>Invoice:</th>
-        <td>{{ registration.invoice }} {{currency}}</td>
-      </tr>
-      {% endif %}
-      {% if registration.total_paid %}
-      <tr>
-        <th>Total Payed:</th>
-        <td>{{ registration.total_paid }} {{currency}}</td>
-      </tr>
-      {% endif %}
-      {% if registration.duration %}
-      <tr>
-        <th>Duration:</th>
-        <td>{{ registration.duration }}</td>
-      </tr>
-      {% endif %}
-      <tr>
-        <th>QR Code:</th>
-        <td>
-          <img
-            src="data:image/jpeg;base64,{{ registration.qr_code }}"
-            alt="Registration ID: {{ registration.id }}"
-            title="Registration ID: {{ registration.id }}"
-          />
-        </td>
-      </tr>
-      {% if registration.compare_plates %}
-      <tr {% if not registration.compare_plates.0 %}class="text-danger" {% endif %}>
-        <th>Compare plates IN/OUT:</th>
-        <td>{{ registration.compare_plates }}</td>
-      </tr>
-      {% endif %}
-      <tr>
-        <th>Uniq code:</th>
-        <td>{{ registration.hash }}</td>
-      </tr>
-     {% endif %}
     </tbody>
+    {% endif %}
   </table>
 </div>
 
-{% if not registration.id %}
-<div class="p-2 bg-danger text-white">Registration denied</div>
-<div class="alert alert-info">{{ info }}</div>
+{% if not info.registration %}
+<div class="p-2 bg-danger text-white">QR information is not valid</div>
+<div class="alert alert-info">{{ info.description }}</div>
 {% endif %}
 
 <p></p>
