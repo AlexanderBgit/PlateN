@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import UploadFileForm, UploadScanQRForm
@@ -103,11 +105,14 @@ def scan_qr(request):
                 filename = uploaded_file.name
             file_in = request.FILES.get("photo")
             if file_in:
-                ...
                 qr_info = handle_uploaded_file_qr_code(file_in)
+                if qr_info.get("date") and isinstance(
+                    qr_info["date"], datetime.datetime
+                ):
+                    qr_info["date"] = qr_info["date"].strftime("%Y-%m-%d %H:%M:%S")
                 info = {
                     "description": qr_info.get("result"),
-                    "p_space": qr_info.get("p_space"),
+                    "p_space": qr_info.get("place"),
                     "date": qr_info.get("date"),
                     "registration": qr_info.get("id"),
                 }
