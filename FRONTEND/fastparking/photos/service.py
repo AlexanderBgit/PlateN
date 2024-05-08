@@ -1,3 +1,5 @@
+import os
+from datetime import datetime
 from pathlib import Path
 import base64
 from io import BytesIO
@@ -51,41 +53,71 @@ def build_qrcode(qr_data) -> str:
     return build_base64_image(mem_file.getvalue())
 
 
-def scan_qr_code(image_path):
+def scan_qr_code(image_path, debug: bool = False) -> str | None:
     # Read the image
     image = cv2.imread(image_path)
-
     # Convert the image to grayscale
+    if image is None or not image.any():
+        return None
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
     # Initialize the QRCode detector
     detector = cv2.QRCodeDetector()
-
     # Detect and decode QR codes
-    data, bbox, _ = detector.detectAndDecode(gray)
-
+    data_qr, bbox, _ = detector.detectAndDecode(gray)
     # If QR code is detected, print the data
     if bbox is not None:
-        print("Data:", data)
-        # Convert bbox to integers
-        bbox = bbox.astype(int)
+        # print("Data:", data)
+        if debug:
+            # Convert bbox to integers
+            bbox = bbox.astype(int)
+            # Draw bounding box around the QR code
+            for i in range(len(bbox)):
+                box = bbox[i]
+                cv2.polylines(
+                    image, [box], isClosed=True, color=(0, 255, 0), thickness=10
+                )
+            # Display the image
+            cv2.imshow("QR Code Scanner", image)
+            cv2.waitKey(30000)
+            cv2.destroyAllWindows()
+        return data_qr
 
-        # Draw bounding box around the QR code
-        for i in range(len(bbox)):
-            box = bbox[i]
-            cv2.polylines(image, [box], isClosed=True, color=(0, 255, 0), thickness=10)
 
-        # Display the image
-        cv2.imshow("QR Code Scanner", image)
-        cv2.waitKey(30000)
-        cv2.destroyAllWindows()
-    else:
-        print("No QR code found")
+def get_qr_code_data(image_path) -> dict | None:
+    data_decoded = {
+        "result": "Not found information",
+    }
+    data_qr = scan_qr_code(image_path)
+    if data_qr:
+        data_decoded_text = unsigned_text(data_qr)
+        if data_decoded_text:
+            key_value_pairs = [
+                item.strip() for item in data_decoded_text.rstrip("|").split(",")
+            ]
+            try:
+                data_decoded = dict(pair.split(":") for pair in key_value_pairs)
+            except ValueError:
+                ...
+            if data_decoded.get("date"):
+                try:
+                    data_decoded["date"] = datetime.utcfromtimestamp(
+                        int(data_decoded["date"])
+                    )
+                except ValueError:
+                    ...
+            if data_decoded and isinstance(data_decoded.get("date"), datetime):
+                data_decoded["result"] = "Success"
+        else:
+            data_decoded["result"] = "Error. Wrong QR code, maybe it's not our code?"
+    return data_decoded
 
 
 if __name__ == "__main__":
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fastparking.settings")
     # Example usage
     BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
-    img_file = str(BASE_DIR.joinpath("readme", "Photos IN_v2.png"))
+    # img_file = str(BASE_DIR.joinpath("readme", "Photos IN_v2.png"))
+    img_file = str(BASE_DIR.joinpath("img", "test", "Photos IN_v2.png"))
     print(img_file)
-    scan_qr_code(img_file)
+    data = get_qr_code_data(img_file)
+    print(data)
