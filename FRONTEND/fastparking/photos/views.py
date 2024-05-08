@@ -8,6 +8,7 @@ from django.conf import settings
 # Imaginary function to handle an uploaded file.
 from .repository import handle_uploaded_file, TYPES
 from finance.repository import calculate_total_payments
+from .service import handle_uploaded_file_qr_code
 
 
 def upload_file(request):
@@ -103,20 +104,13 @@ def scan_qr(request):
             file_in = request.FILES.get("photo")
             if file_in:
                 ...
-                # MAIN ENGINE !!!
-                # img_predict = handle_uploaded_file(
-                #     file_in, type_of_photo, filename, registration_id
-                # )
-                # info = img_predict.get("info")
-                registration = "registration_fake"
+                qr_info = handle_uploaded_file_qr_code(file_in)
                 info = {
-                    "description": "Success",
-                    "p_space": "P-FAKE",
-                    "date": "Date-FAKE",
-                    "registration": registration,
+                    "description": qr_info.get("result"),
+                    "p_space": qr_info.get("p_space"),
+                    "date": qr_info.get("date"),
+                    "registration": qr_info.get("id"),
                 }
-                # predict = img_predict.get("predict")
-                # registration = img_predict.get("registration")
                 context = {
                     "active_menu": active_menu,
                     "title": f"Scan QR code result",

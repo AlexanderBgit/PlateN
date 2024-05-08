@@ -1,8 +1,11 @@
+import io
 import os
 from datetime import datetime
 from pathlib import Path
 import base64
 from io import BytesIO
+
+import numpy as np
 from django.core import signing
 
 
@@ -53,12 +56,12 @@ def build_qrcode(qr_data) -> str:
     return build_base64_image(mem_file.getvalue())
 
 
-def scan_qr_code(image_path, debug: bool = False) -> str | None:
+def scan_qr_code(image, debug: bool = False) -> str | None:
     # Read the image
-    image = cv2.imread(image_path)
-    # Convert the image to grayscale
+    # image = cv2.imread(image_path)
     if image is None or not image.any():
         return None
+    # Convert the image to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # Initialize the QRCode detector
     detector = cv2.QRCodeDetector()
@@ -83,11 +86,19 @@ def scan_qr_code(image_path, debug: bool = False) -> str | None:
         return data_qr
 
 
-def get_qr_code_data(image_path) -> dict | None:
+def decode_io_file(f):
+    io_buf = io.BytesIO(f)
+    # io_buf.seek(0)
+    decode_img = cv2.imdecode(np.frombuffer(io_buf.getbuffer(), np.uint8), -1)
+    return decode_img
+
+
+def get_qr_code_data(f) -> dict | None:
     data_decoded = {
         "result": "Not found information",
     }
-    data_qr = scan_qr_code(image_path)
+    img = decode_io_file(f)
+    data_qr = scan_qr_code(img)
     if data_qr:
         data_decoded_text = unsigned_text(data_qr)
         if data_decoded_text:
@@ -110,6 +121,12 @@ def get_qr_code_data(image_path) -> dict | None:
         else:
             data_decoded["result"] = "Error. Wrong QR code, maybe it's not our code?"
     return data_decoded
+
+
+def handle_uploaded_file_qr_code(f) -> dict | None:
+    if not f:
+        return None
+    return get_qr_code_data(f.read())
 
 
 if __name__ == "__main__":
