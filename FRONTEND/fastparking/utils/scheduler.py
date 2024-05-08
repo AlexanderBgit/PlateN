@@ -67,7 +67,7 @@ if __name__ == "__main__":
     if args.sent_hello:
         version = settings.VERSION
         if platform.system() != "Linux":
-            text = f"Local developer run 'sheduler.py' v.{version} at: <datetime>"
+            text = f"Local developer run 'scheduler.py' v.{version} at: <datetime>"
         else:
             text = f"Hosting server just applied new changes of git branch v.{version} at: <datetime>"
         result = send_message_news(text)

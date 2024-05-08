@@ -1,1 +1,1 @@
-python utils\sheduler.py --loop -q --sent_hello
+python utils\scheduler.py --loop -q --sent_hello
