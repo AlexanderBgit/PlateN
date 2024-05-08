@@ -58,7 +58,8 @@ def build_qrcode(qr_data) -> str:
 
 def scan_qr_code(image, debug: bool = False) -> str | None:
     # Read the image
-    # image = cv2.imread(image_path)
+    if isinstance(image, str):
+        image = cv2.imread(image)
     if image is None or not image.any():
         return None
     # Convert the image to grayscale
@@ -87,7 +88,9 @@ def scan_qr_code(image, debug: bool = False) -> str | None:
 
 
 def decode_io_file(f):
-    io_buf = io.BytesIO(f)
+    if isinstance(f, str):
+        return cv2.imread(f)
+    io_buf = io.BytesIO(f.read())
     # io_buf.seek(0)
     decode_img = cv2.imdecode(np.frombuffer(io_buf.getbuffer(), np.uint8), -1)
     return decode_img
@@ -126,7 +129,7 @@ def get_qr_code_data(f) -> dict | None:
 def handle_uploaded_file_qr_code(f) -> dict | None:
     if not f:
         return None
-    return get_qr_code_data(f.read())
+    return get_qr_code_data(f)
 
 
 if __name__ == "__main__":
@@ -134,7 +137,7 @@ if __name__ == "__main__":
     # Example usage
     BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
     # img_file = str(BASE_DIR.joinpath("readme", "Photos IN_v2.png"))
-    img_file = str(BASE_DIR.joinpath("img", "test", "Photos IN_v2.png"))
+    img_file = str(BASE_DIR.joinpath("img", "test", "qr_news.png"))
     print(img_file)
     data = get_qr_code_data(img_file)
     print(data)
