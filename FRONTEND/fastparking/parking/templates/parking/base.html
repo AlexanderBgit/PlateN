@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="{% static 'parking/docs.css' %}" />
     <link rel="stylesheet" href="{% static 'parking/css/all.min.css' %}" />
     <link rel="icon" href="{% static 'parking/favicon.png' %}" />
-
+    {% block extra_head %}{% endblock %}
     <title>{{title}}</title>
   </head>
   <body>
