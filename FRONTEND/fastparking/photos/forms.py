@@ -1,8 +1,12 @@
+import os
+
 from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.core.exceptions import ValidationError
+
 
 from parking.models import Registration
 from .repository import TYPES
@@ -154,12 +158,33 @@ class UploadFileForm(forms.Form):
         # fields = ["registration_id", "manual_registration_id"]
 
 
+def validate_file_type(file):
+    allowed_extensions = ["jpg", "jpeg", "png", "pdf"]
+    extension = os.path.splitext(file.name)[1].lower()[1:]
+    if extension not in allowed_extensions:
+        raise ValidationError(
+            f"Only images and PDFs are allowed. Extension: {extension}"
+        )
+
+
+def validate_file_extension(value):
+    valid_extensions = ["pdf", "jpg", "jpeg", "png"]
+    ext = value.name.split(".")[-1]
+    if not ext.lower() in valid_extensions:
+        raise ValidationError(
+            f"Unsupported file extension. Allowed extensions are {', '.join(valid_extensions)}"
+        )
+
+
 class UploadScanQRForm(forms.Form):
-    photo = forms.ImageField(
+    photo = forms.FileField(
+        label="Upload an image or pdf document with a QR code:",
+        validators=[validate_file_extension],
         widget=forms.FileInput(
             attrs={
+                "accept": "image/*, application/pdf",
                 "class": "form-control",
-                "title": "Upload photo of QR code image",
+                "title": "Upload QR code. Image or PDF file can upload.",
             }  # ,
         ),
     )

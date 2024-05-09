@@ -11,7 +11,8 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 
 COPY ${APP_BASE}requirements.txt requirements.txt
-RUN pip install -r requirements.txt 
+RUN pip install -r requirements.txt
+RUN apt install poppler-utils
 
 # Скопіюємо інші файли в робочу директорію контейнера
 COPY $APP_BASE  ./

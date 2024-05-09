@@ -101,10 +101,12 @@ def scan_qr(request):
         form = UploadScanQRForm(request.POST, request.FILES)
         if form.is_valid():
             uploaded_file = request.FILES.get("photo")
+            content_type = None
             if uploaded_file:
-                filename = uploaded_file.name
+                pass
             file_in = request.FILES.get("photo")
             if file_in:
+                filename = file_in.name
                 qr_info = handle_uploaded_file_qr_code(file_in)
                 if qr_info.get("date") and isinstance(
                     qr_info["date"], datetime.datetime

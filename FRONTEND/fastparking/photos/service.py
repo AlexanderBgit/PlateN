@@ -11,6 +11,8 @@ from django.core import signing
 
 import cv2
 import qrcode
+from pdf2image import convert_from_bytes
+from pdf2image.exceptions import PDFInfoNotInstalledError
 
 
 def sign_text(text):
@@ -68,8 +70,9 @@ def scan_qr_code(image, debug: bool = False) -> str | None:
     detector = cv2.QRCodeDetector()
     # Detect and decode QR codes
     data_qr, bbox, _ = detector.detectAndDecode(gray)
+    print(f"{data_qr=}")
     # If QR code is detected, print the data
-    if bbox is not None:
+    if data_qr and bbox is not None:
         # print("Data:", data)
         if debug:
             # Convert bbox to integers
@@ -87,20 +90,46 @@ def scan_qr_code(image, debug: bool = False) -> str | None:
         return data_qr
 
 
+def read_pdf_image(in_bytes):
+    try:
+        pages = convert_from_bytes(in_bytes)
+        in_mem = io.BytesIO()
+        for page in pages:
+            page.save(in_mem, format="png")
+            break
+        in_mem.seek(0)
+        return in_mem
+    except PDFInfoNotInstalledError as err:
+        print(
+            "read_pdf_image: Installed poppler os app? (https://pypi.org/project/pdf2image)",
+            err,
+        )
+        return None
+
+
 def decode_io_file(f):
     if isinstance(f, str):
         return cv2.imread(f)
-    io_buf = io.BytesIO(f.read())
-    # io_buf.seek(0)
+    content_type = f.content_type
+    print(f"{content_type=}")
+    if content_type == "application/pdf":
+        io_buf = read_pdf_image(f.read())
+        if io_buf is None:
+            return None
+    else:
+        io_buf = io.BytesIO(f.read())
+        io_buf.seek(0)
     decode_img = cv2.imdecode(np.frombuffer(io_buf.getbuffer(), np.uint8), -1)
     return decode_img
 
 
-def get_qr_code_data(f) -> dict | None:
+def get_qr_code_data(f: object) -> dict | None:
     data_decoded = {
         "result": "Not found information",
     }
     img = decode_io_file(f)
+    if img is None:
+        return None
     data_qr = scan_qr_code(img)
     if data_qr:
         data_decoded_text = unsigned_text(data_qr)
@@ -137,7 +166,7 @@ if __name__ == "__main__":
     # Example usage
     BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
     # img_file = str(BASE_DIR.joinpath("readme", "Photos IN_v2.png"))
-    img_file = str(BASE_DIR.joinpath("img", "test", "qr_news.png"))
+    img_file = str(BASE_DIR.joinpath("img", "test", "qr_example_text.png"))
     print(img_file)
     data = get_qr_code_data(img_file)
     print(data)
