@@ -100,10 +100,6 @@ def scan_qr(request):
     if request.method == "POST":
         form = UploadScanQRForm(request.POST, request.FILES)
         if form.is_valid():
-            uploaded_file = request.FILES.get("photo")
-            content_type = None
-            if uploaded_file:
-                pass
             file_in = request.FILES.get("photo")
             if file_in:
                 filename = file_in.name
@@ -112,18 +108,22 @@ def scan_qr(request):
                     qr_info["date"], datetime.datetime
                 ):
                     qr_info["date"] = qr_info["date"].strftime("%Y-%m-%d %H:%M:%S")
+                registration_fmt = qr_info.get("id")
+                if registration_fmt:
+                    TOTAL_DIGITS_ID = settings.TOTAL_DIGITS_ID[1]
+                    registration_fmt = f"{int(registration_fmt):{TOTAL_DIGITS_ID}d}"
                 info = {
                     "description": qr_info.get("result"),
                     "parking_place": qr_info.get("place"),
                     "date": qr_info.get("date"),
-                    "registration": qr_info.get("id"),
+                    "registration": registration_fmt,
                 }
                 context = {
                     "active_menu": active_menu,
                     "title": f"Scan QR code result",
                     "info": info,
                 }
-                print(f"{info}")
+                # print(f"{info}")
                 if info:
                     return render(request, "photos/qr_result.html", context)
                 else:
