@@ -70,7 +70,7 @@ def scan_qr_code(image, debug: bool = False) -> str | None:
     detector = cv2.QRCodeDetector()
     # Detect and decode QR codes
     data_qr, bbox, _ = detector.detectAndDecode(gray)
-    print(f"{data_qr=}")
+    # print(f"{data_qr=}")
     # If QR code is detected, print the data
     if data_qr and bbox is not None:
         # print("Data:", data)
@@ -111,7 +111,7 @@ def decode_io_file(f):
     if isinstance(f, str):
         return cv2.imread(f)
     content_type = f.content_type
-    print(f"{content_type=}")
+    # print(f"{content_type=}")
     if content_type == "application/pdf":
         io_buf = read_pdf_image(f.read())
         if io_buf is None:

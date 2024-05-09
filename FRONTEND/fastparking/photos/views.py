@@ -100,10 +100,6 @@ def scan_qr(request):
     if request.method == "POST":
         form = UploadScanQRForm(request.POST, request.FILES)
         if form.is_valid():
-            uploaded_file = request.FILES.get("photo")
-            content_type = None
-            if uploaded_file:
-                pass
             file_in = request.FILES.get("photo")
             if file_in:
                 filename = file_in.name
@@ -123,7 +119,7 @@ def scan_qr(request):
                     "title": f"Scan QR code result",
                     "info": info,
                 }
-                print(f"{info}")
+                # print(f"{info}")
                 if info:
                     return render(request, "photos/qr_result.html", context)
                 else:
