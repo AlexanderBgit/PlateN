@@ -12,7 +12,7 @@ WORKDIR $APP_HOME
 
 COPY ${APP_BASE}requirements.txt requirements.txt
 RUN pip install -r requirements.txt
-RUN apt install poppler-utils
+RUN apt update -q; apt install -y poppler-utils
 
 # Скопіюємо інші файли в робочу директорію контейнера
 COPY $APP_BASE  ./
