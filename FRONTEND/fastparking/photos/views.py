@@ -108,11 +108,15 @@ def scan_qr(request):
                     qr_info["date"], datetime.datetime
                 ):
                     qr_info["date"] = qr_info["date"].strftime("%Y-%m-%d %H:%M:%S")
+                registration_fmt = qr_info.get("id")
+                if registration_fmt:
+                    TOTAL_DIGITS_ID = settings.TOTAL_DIGITS_ID[1]
+                    registration_fmt = f"{int(registration_fmt):{TOTAL_DIGITS_ID}d}"
                 info = {
                     "description": qr_info.get("result"),
                     "parking_place": qr_info.get("place"),
                     "date": qr_info.get("date"),
-                    "registration": qr_info.get("id"),
+                    "registration": registration_fmt,
                 }
                 context = {
                     "active_menu": active_menu,
