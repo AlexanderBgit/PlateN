@@ -1,11 +1,7 @@
-import base64
 import random
 from datetime import datetime
-from io import BytesIO
 from pathlib import Path
 from django.conf import settings
-from django.core import signing
-import qrcode
 import pytz
 
 from ds.predict_num import get_num_auto_png_io
@@ -18,6 +14,8 @@ from finance.models import Tariff
 from parking.models import ParkingSpace, Registration
 from cars.models import Car
 from datetime import datetime
+
+from .service import build_qrcode, build_base64_image, sign_text
 
 # from .repository import sign_text, build_qrcode
 
@@ -68,48 +66,48 @@ def save_image(
 #         registration_data["registration_id"] = random.randint(1, 999999)
 #     return registration_data
 
-
-def build_base64_image(binary_image_data):
-    return base64.b64encode(binary_image_data).decode("utf-8")
-
-
-def build_html_image(binary_image_data):
-    base64_image_data = build_base64_image(binary_image_data)
-    return f'<img src="data:image/jpeg;base64,{base64_image_data}">'
-
-
-def build_qrcode(qr_data) -> str:
-    qr = qrcode.QRCode(  # type: ignore
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_M,  # type: ignore
-        box_size=6,
-        border=2,
-    )
-    qr.add_data(qr_data)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color=(56, 64, 88), back_color="white")
-
-    # img = qrcode.make(qr_data, border=2)
-    mem_file = BytesIO()
-    img.save(mem_file)
-    mem_file.seek(0)
-    return build_base64_image(mem_file.getvalue())
-
-
-def sign_text(text):
-    signer = signing.Signer()
-    encoded_text = signer.sign(text)
-    return encoded_text
+#
+# def build_base64_image(binary_image_data):
+#     return base64.b64encode(binary_image_data).decode("utf-8")
+#
+#
+# def build_html_image(binary_image_data):
+#     base64_image_data = build_base64_image(binary_image_data)
+#     return f'<img src="data:image/jpeg;base64,{base64_image_data}">'
+#
+#
+# def build_qrcode(qr_data) -> str:
+#     qr = qrcode.QRCode(  # type: ignore
+#         version=1,
+#         error_correction=qrcode.constants.ERROR_CORRECT_M,  # type: ignore
+#         box_size=6,
+#         border=2,
+#     )
+#     qr.add_data(qr_data)
+#     qr.make(fit=True)
+#     img = qr.make_image(fill_color=(56, 64, 88), back_color="white")
+#
+#     # img = qrcode.make(qr_data, border=2)
+#     mem_file = BytesIO()
+#     img.save(mem_file)
+#     mem_file.seek(0)
+#     return build_base64_image(mem_file.getvalue())
 
 
-def unsign_text(text):
-    signer = signing.Signer()
-    try:
-        original = signer.unsign(text)
-        return original
-    except signing.BadSignature:
-        print("Tampering detected!")
-        return None
+# def sign_text(text):
+#     signer = signing.Signer()
+#     encoded_text = signer.sign(text)
+#     return encoded_text
+#
+#
+# def unsign_text(text):
+#     signer = signing.Signer()
+#     try:
+#         original = signer.unsign(text)
+#         return original
+#     except signing.BadSignature:
+#         print("Tampering detected!")
+#         return None
 
 
 def check_and_register_car(registration_data) -> dict:

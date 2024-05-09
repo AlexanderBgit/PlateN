@@ -1,0 +1,59 @@
+<!-- photos/templates/upload.html -->
+{% extends "parking/base.html" %} {% block content %}
+<div class="container" id="photo_result">
+  <h3>RESULT:</h3>
+  <table class="table">
+    <tbody>
+      {% if info.registration %}
+      <tr>
+        <th>Info:</th>
+        <td>{{ info.description }}</td>
+      </tr>
+      <tr>
+        <td colspan="2"><h3>Registration Information:</h3></td>
+      </tr>
+      <tr>
+        <th>Registration ID:</th>
+        <td>{{  info.registration }}</td>
+      </tr>
+      <tr>
+        <th>Registration Date:</th>
+        <td>{{ info.date }}</td>
+      </tr>
+      <tr>
+        <th>Parking place:</th>
+        <td>{{ info.parking_place }}</td>
+      </tr>
+    </tbody>
+    {% endif %}
+  </table>
+</div>
+
+{% if not info.registration %}
+<div class="p-2 bg-danger text-white">QR information is not valid</div>
+<div class="alert alert-info">{{ info.description }}</div>
+{% endif %}
+
+<p></p>
+
+<div class="container">
+  <p>
+    <a href="{% url 'photos:main' %}" class="btn btn-primary">Back</a>
+    <button onclick="printDiv('photo_result')" class="btn btn-primary">Print</button>
+  </p>
+</div>
+<script>
+  function printPage() {
+    window.print(); // Trigger print functionality
+  }
+  function printDiv(divName) {
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    window.print();
+
+    document.body.innerHTML = originalContents;
+  }
+</script>
+{% endblock content %}

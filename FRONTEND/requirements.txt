@@ -33,6 +33,7 @@ opencv-python-headless==4.9.0.80 ; python_version >= "3.10" and python_version <
 opencv-python==4.9.0.80 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "darwin")
 opt-einsum==3.3.0 ; python_version >= "3.10" and python_version < "3.12"
 packaging==24.0 ; python_version >= "3.10" and python_version < "3.12"
+pdf2image==1.17.0 ; python_version >= "3.10" and python_version < "3.12"
 pillow==10.3.0 ; python_version >= "3.10" and python_version < "3.12"
 protobuf==4.25.3 ; python_version >= "3.10" and python_version < "3.12"
 psycopg2-binary==2.9.9 ; python_version >= "3.10" and python_version < "3.12"
