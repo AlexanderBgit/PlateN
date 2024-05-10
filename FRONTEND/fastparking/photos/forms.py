@@ -177,6 +177,7 @@ def validate_file_extension(value):
 
 
 class UploadScanQRForm(forms.Form):
+    r_json = forms.BooleanField(required=False, widget=forms.HiddenInput())
     photo = forms.FileField(
         label="Upload an image or pdf document with a QR code:",
         validators=[validate_file_extension],

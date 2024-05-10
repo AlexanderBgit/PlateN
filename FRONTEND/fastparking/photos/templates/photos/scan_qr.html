@@ -2,16 +2,18 @@
 {% extends "parking/base.html" %} {% block content %}
 <h3>Scan QR code:</h3>
 <form method="POST" action="" enctype="multipart/form-data">
-  {% csrf_token %} {% if form.errors %}
+  {% csrf_token %}
+  {{ form.r_json }}
+  {% if form.errors %}
   <ul class="text-danger">
-    {% for field_name, error_list in form.errors.items %} {% for error in error_list %}
+    {% for field_name, error_list in form.non_field_errors.items %} {% for error in error_list %}
     <li>{{ error }}</li>
     {% endfor %} {% endfor %}
   </ul>
   {% endif %}
 
-  <p>{{ form.photo.label_tag }} {{ form.photo }}</p>
-  
+<!--  <p>{{ form.photo.label_tag }} {{ form.photo }}</p>-->
+  <p>{{ form.photo.as_field_group }}</p>
 
   <div class="container">
     <ul class="list-group list-group-horizontal">

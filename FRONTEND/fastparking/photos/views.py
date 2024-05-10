@@ -1,6 +1,6 @@
 import datetime
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from .forms import UploadFileForm, UploadScanQRForm
 from django.urls import resolve, reverse
@@ -99,7 +99,9 @@ def scan_qr(request):
     active_menu = resolved_view.app_name
     if request.method == "POST":
         form = UploadScanQRForm(request.POST, request.FILES)
+        r_json = request.POST.get("r_json")
         if form.is_valid():
+            r_json = form.cleaned_data.get("r_json")
             file_in = request.FILES.get("photo")
             if file_in:
                 filename = file_in.name
@@ -125,7 +127,10 @@ def scan_qr(request):
                 }
                 # print(f"{info}")
                 if info:
-                    return render(request, "photos/qr_result.html", context)
+                    if r_json:
+                        return JsonResponse(context["info"])
+                    else:
+                        return render(request, "photos/qr_result.html", context)
                 else:
                     context = {
                         "active_menu": active_menu,
@@ -134,9 +139,14 @@ def scan_qr(request):
                     }
                     return render(request, "photos/upload_result.html", context)
             # upload_url = reverse("upload")
+        if r_json:
+            context = {"error": form.errors.as_json()}
+            return JsonResponse(context)
+        else:
             return HttpResponseRedirect("")
     else:
         form = UploadScanQRForm()
+        # form.initial["r_json"] = True
     context = {
         "active_menu": active_menu,
         "form": form,
