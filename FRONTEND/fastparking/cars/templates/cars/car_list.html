@@ -5,7 +5,7 @@
 <script src="{% static 'cars/js/car_list.js' %}"></script>
 {% endblock %}
 {% block content %}
-<h3 class="mb-3 mt-3">List of Cars. Total results: {{filter_params.total_rows}}</h3>
+<h3 class="mb-3 mt-3"><i class="fa-solid fa-car"></i> List of Cars. Total results: {{filter_params.total_rows}}</h3>
 
 <form class="row gx-1 gy-2 align-items-baseline" id="form_filter" method="GET" action="{% url 'cars:car_list' %}">
       <input type="hidden" name="page" value="{{ filter_params.page }}" />
