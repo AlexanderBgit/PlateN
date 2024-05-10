@@ -23,7 +23,7 @@ from parking.models import ParkingSpace, Registration
 from cars.models import Car
 from datetime import datetime
 
-from .service import build_qrcode, build_base64_image, sign_text
+from .services import build_qrcode, build_base64_image, sign_text
 
 # from .repository import sign_text, build_qrcode
 
@@ -545,6 +545,7 @@ def get_registration_info(register_id: int | str) -> dict:
         return result
     registration = Registration.objects.filter(pk=register_id).first()
     if registration is not None:
+        result["registered"] = True
         result["parking_fee"] = format_currency(registration.calculate_parking_fee())
         result["tariff_in"] = format_currency(registration.tariff_in)
         result["car_number_in"] = registration.car_number_in

@@ -12,7 +12,7 @@ from django.conf import settings
 # Imaginary function to handle an uploaded file.
 from .repository import handle_uploaded_file, TYPES, get_registration_info
 from finance.repository import calculate_total_payments
-from .service import handle_uploaded_file_qr_code
+from .services import handle_uploaded_file_qr_code
 
 
 def upload_file(request):
@@ -151,7 +151,7 @@ def scan_qr(request):
             return HttpResponseRedirect("")
     else:
         form = UploadScanQRForm()
-        form.initial["r_json"] = True
+        # form.initial["r_json"] = True
     context = {
         "active_menu": active_menu,
         "form": form,

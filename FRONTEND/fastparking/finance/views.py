@@ -16,7 +16,7 @@ from parking.views import filter_alphanum
 from .models import Tariff
 
 from .models import Payment
-from photos.service import build_html_image
+from photos.services import build_html_image
 from .forms import TariffForm, PaymentsForm
 
 PAGE_ITEMS = settings.PAGE_ITEMS
