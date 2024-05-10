@@ -24,7 +24,56 @@
         <th>Parking place:</th>
         <td>{{ info.parking_place }}</td>
       </tr>
-    </tbody>
+      {% if not info.registered %}
+        <tr>
+        <th>Registration status:</th>
+        <td>This identifier is no longer registered in our system, it may be very old and has been archived.</td>
+      </tr>
+      {% else %}
+        {% if info.duration %}
+        <tr>
+          <th>Duration of the parking lot:</th>
+          <td>{{ info.duration }}</td>
+        </tr>
+        {% endif %}
+        {% if info.parking_fee %}
+        <tr>
+          <th>The current parking fee:</th>
+          <td>{{ info.parking_fee }}</td>
+        </tr>
+        {% endif %}
+        {% if info.tariff_in %}
+        <tr>
+          <th>The parking tariff for this registry:</th>
+          <td>{{ info.tariff_in }}</td>
+        </tr>
+        {% endif %}
+        {% if info.total_payed or info.total_payed != info.invoice %}
+        <tr>
+          <th>Total amount paid for the parking lot:</th>
+          <td>{{ info.total_payed }}</td>
+        </tr>
+        {% endif %}
+        {% if info.status %}
+        <tr>
+          <th>Car status:</th>
+          <td>{{ info.status }}</td>
+        </tr>
+        {% endif %}
+        {% if info.invoice %}
+        <tr>
+          <th>Paid for parking at check-out:</th>
+          <td>{{ info.invoice }}</td>
+        </tr>
+        {% endif %}
+        {% if info.car_number_in %}
+        <tr>
+          <th>Car number:</th>
+          <td>{{ info.car_number_in }}</td>
+        </tr>
+        {% endif %}
+      </tbody>
+      {% endif %}
     {% endif %}
   </table>
 </div>

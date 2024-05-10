@@ -3,11 +3,19 @@ from datetime import datetime
 from pathlib import Path
 from django.conf import settings
 import pytz
+from django.utils import timezone
 
 from ds.predict_num import get_num_auto_png_io
 from finance.repository import calculate_total_payments
 from parking.repository import number_present_on_parking
-from parking.services import compare_plates, format_hours
+from parking.services import (
+    compare_plates,
+    format_hours,
+    format_currency,
+    format_datetime,
+    format_registration_id,
+    format_duration,
+)
 
 from .models import Photo
 from finance.models import Tariff
@@ -15,7 +23,7 @@ from parking.models import ParkingSpace, Registration
 from cars.models import Car
 from datetime import datetime
 
-from .service import build_qrcode, build_base64_image, sign_text
+from .services import build_qrcode, build_base64_image, sign_text
 
 # from .repository import sign_text, build_qrcode
 
@@ -235,17 +243,15 @@ def handle_uploaded_file(
                 info = f"Car: {register_car_result.get('info')}, Register: {registration_result.get('info')}"
 
             if registration_id:
-                date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
-                registration_id_formatted = f"{registration_id:06}"
+                date_formatted = format_datetime(utc_datetime)
+                registration_id_formatted = format_registration_id(registration_id)
                 parking_place = registration_result.get("parking_place")
                 already_on_parking = registration_result.get("already_on_parking")
-                tariff_in = registration_result.get("tariff_in")
-                invoice = registration_result.get("invoice")
+                tariff_in = format_currency(registration_result.get("tariff_in"))
+                invoice = format_currency(registration_result.get("invoice"))
                 compare_plates_result = registration_result.get("compare_plates")
                 duration = registration_result.get("duration")
-                duration_formatted = (
-                    f"{duration:.2f}h = {format_hours(duration)}" if duration else None
-                )
+                duration_formatted = format_duration(duration)
                 invoice_str = f"invoice: {invoice}," if invoice is not None else ""
                 reg_info = f"id:{registration_id},place:{parking_place},{invoice_str}date:{int(utc_datetime.timestamp())}|"
                 encoded_text = sign_text(reg_info)
@@ -387,9 +393,9 @@ def register_parking_out_event(
             total_payed = registration.calculate_total_payed()
             duration = registration.get_duration()
             if calc_invoice is None:
-                result[
-                    "info"
-                ] = f"Failed. Missing finance information for id: {registration_id:06}."
+                result["info"] = (
+                    f"Failed. Missing finance information for id: {registration_id:06}."
+                )
                 return result
             if total_payed is None:
                 total_payed = 0.0
@@ -452,50 +458,50 @@ def get_price_per_hour(entry_time) -> float | None:
 
 
 # NO USED, USED - Registration.calculate_parking_fee()
-def calculate_invoice(
-    entry_datetime: datetime | None,
-    exit_datetime: datetime | None,
-    tariff_in,
-) -> float:
-    parking_fee = 0.0
-    if (
-        entry_datetime is not None
-        and exit_datetime is not None
-        and tariff_in is not None
-    ):
-        duration = exit_datetime.replace(tzinfo=pytz.utc) - entry_datetime.replace(
-            tzinfo=pytz.utc
-        )
-        hours = duration.total_seconds() / 3600  # переводимо час в години
-        if tariff_in:
-            price_per_hour = float(tariff_in)  # Зміна типу на float
-            parking_fee = round(hours * price_per_hour, 2)
-    return parking_fee
+# def calculate_invoice(
+#     entry_datetime: datetime | None,
+#     exit_datetime: datetime | None,
+#     tariff_in,
+# ) -> float:
+#     parking_fee = 0.0
+#     if (
+#         entry_datetime is not None
+#         and exit_datetime is not None
+#         and tariff_in is not None
+#     ):
+#         duration = exit_datetime.replace(tzinfo=pytz.utc) - entry_datetime.replace(
+#             tzinfo=pytz.utc
+#         )
+#         hours = duration.total_seconds() / 3600  # переводимо час в години
+#         if tariff_in:
+#             price_per_hour = float(tariff_in)  # Зміна типу на float
+#             parking_fee = round(hours * price_per_hour, 2)
+#     return parking_fee
 
 
-def calculate_invoice_for_reg_id(
-    registration_id: int, update_record: bool = False
-) -> float | None:
-    result = None
-
-    try:
-        registration = Registration.objects.get(pk=registration_id)
-        tariff_in = registration.tariff_in
-        if tariff_in:
-            tariff_in = float(registration.tariff_in)
-            result = calculate_invoice(
-                entry_datetime=registration.entry_datetime,
-                exit_datetime=registration.exit_datetime,
-                tariff_in=tariff_in,
-            )
-            if update_record and result:
-                registration.invoice = str(result)
-                registration.save()
-
-    except Registration.DoesNotExist as e:
-        print(f"Error: {e}")
-    print("calculate_invoice_for_reg_id", registration_id, result)
-    return result
+# def calculate_invoice_for_reg_id(
+#     registration_id: int, update_record: bool = False
+# ) -> float | None:
+#     result = None
+#
+#     try:
+#         registration = Registration.objects.get(pk=registration_id)
+#         tariff_in = registration.tariff_in
+#         if tariff_in:
+#             tariff_in = float(registration.tariff_in)
+#             result = calculate_invoice(
+#                 entry_datetime=registration.entry_datetime,
+#                 exit_datetime=registration.exit_datetime,
+#                 tariff_in=tariff_in,
+#             )
+#             if update_record and result:
+#                 registration.invoice = str(result)
+#                 registration.save()
+#
+#     except Registration.DoesNotExist as e:
+#         print(f"Error: {e}")
+#     print("calculate_invoice_for_reg_id", registration_id, result)
+#     return result
 
 
 def get_registration_allowed_for_out():
@@ -531,3 +537,25 @@ def get_registration_allowed_for_out():
     return Registration.objects.filter(
         pk__in=[reg_pk for reg_pk in united_queryset_pks]
     ).order_by("entry_datetime")
+
+
+def get_registration_info(register_id: int | str) -> dict:
+    result = {}
+    if not register_id:
+        return result
+    registration = Registration.objects.filter(pk=register_id).first()
+    if registration is not None:
+        result["registered"] = True
+        result["parking_fee"] = format_currency(registration.calculate_parking_fee())
+        result["tariff_in"] = format_currency(registration.tariff_in)
+        result["car_number_in"] = registration.car_number_in
+        result["invoice"] = format_currency(registration.invoice)
+        result["exit_datetime"] = format_datetime(registration.exit_datetime)
+        result["duration"] = format_duration(registration.get_duration())
+        result["total_payed"] = format_currency(registration.calculate_total_payed())
+        result["status"] = (
+            f'left the parking lot at {result["exit_datetime"]}'
+            if registration.exit_datetime
+            else "in the parking lot"
+        )
+    return result
