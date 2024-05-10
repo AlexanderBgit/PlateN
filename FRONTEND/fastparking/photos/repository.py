@@ -387,9 +387,9 @@ def register_parking_out_event(
             total_payed = registration.calculate_total_payed()
             duration = registration.get_duration()
             if calc_invoice is None:
-                result[
-                    "info"
-                ] = f"Failed. Missing finance information for id: {registration_id:06}."
+                result["info"] = (
+                    f"Failed. Missing finance information for id: {registration_id:06}."
+                )
                 return result
             if total_payed is None:
                 total_payed = 0.0
@@ -531,3 +531,9 @@ def get_registration_allowed_for_out():
     return Registration.objects.filter(
         pk__in=[reg_pk for reg_pk in united_queryset_pks]
     ).order_by("entry_datetime")
+
+
+def get_registration_info(register_id: int | str) -> dict:
+    result = {}
+    result["car_number"] = "FAKE"
+    return result
