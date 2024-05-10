@@ -42,6 +42,15 @@
               <span class="nav-item mx-auto">Home</span>
             </a>
           </li>
+          <li>
+            <a
+              class="nav-link {% if active_menu == 'accounts' %}active{% else %}text-white{% endif %}"
+              href="{% url 'parking:parking_plan' %}"
+            >
+              <i class="fa-solid fa-thumbtack"></i>
+              <span class="nav-item">Parking plan</span>
+            </a>
+          </li>
           {% if user.is_authenticated %}
           <li>
             <a
