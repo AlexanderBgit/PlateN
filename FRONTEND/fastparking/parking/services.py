@@ -75,7 +75,9 @@ def compare_plates(
     return result_trust, similarity
 
 
-def format_hours(hours: float) -> str:
+def format_hours(hours: float | None) -> str | None:
+    if hours is None:
+        return None
     duration_seconds = hours * 3600
     duration = timezone.timedelta(seconds=duration_seconds)
 
@@ -96,10 +98,28 @@ def format_hours(hours: float) -> str:
 
 def format_duration(duration: float | None) -> str | None:
     fmt = format_hours(duration)
+    if fmt is None:
+        return None
     if fmt:
         fmt = " = " + fmt
     return f"{duration:.2f}h{fmt}" if duration is not None else None
 
+
+def prepare_pagination_list(total_pages, page) -> list:
+    # Prepare pagination list
+    if total_pages <= 10:
+        pages = list(range(1, total_pages + 1))
+    elif page <= 5:
+        pages = range(1, 8)
+        pages = list(pages) + ['...', total_pages]
+    elif page >= total_pages - 4:
+        pages = [1, '...']
+        pages = pages + list(range(total_pages - 6, total_pages + 1))
+    else:
+        pages = [1, '...']
+        pages = pages + list(range(page - 3, page + 4))
+        pages = pages + ['...', total_pages]
+    return pages
 
 if __name__ == "__main__":
     pairs = [

@@ -19,7 +19,7 @@ from .repository import (
     get_parking_info,
     get_registrations,
 )
-from .services import format_hours
+from .services import format_hours, prepare_pagination_list
 
 
 def health_check(request):
@@ -181,20 +181,24 @@ def registration_list(request):
             duration = registration.get_duration()
             duration_formatted = f"{duration:.2f}h"
             duration_datetime = format_hours(duration)
-            registration.total_amount = total_amount
-            registration.duration = duration_formatted
-            registration.duration_datatime = duration_datetime
+            registration.total_amount = total_amount  # type: ignore
+            registration.duration = duration_formatted  # type: ignore
+            registration.duration_datatime = duration_datetime  # type: ignore
     paginator = Paginator(registrations, settings.PAGE_ITEMS)
     if page_number:
         page_obj = paginator.get_page(page_number)
     else:
         page_obj = paginator.page(1)  # Get the first page by default
 
+    pages = prepare_pagination_list(paginator.num_pages, page_obj.number)
+    print(pages)
+
     content = {
         "title": "Registration list",
         "active_menu": active_menu,
         "paginator": paginator,
         "page_obj": page_obj,
+        "pages": pages,
         "currency": settings.PAYMENT_CURRENCY[1],
         "filter_params": filter_params,
     }
