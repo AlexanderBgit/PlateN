@@ -48,16 +48,18 @@
           <td>{{ info.tariff_in }}</td>
         </tr>
         {% endif %}
-        {% if info.total_payed and invoice is None %}
+        {% if info.total_payed or info.total_payed != info.invoice %}
         <tr>
           <th>Total amount paid for the parking lot:</th>
           <td>{{ info.total_payed }}</td>
         </tr>
         {% endif %}
+        {% if info.status %}
         <tr>
           <th>Car status:</th>
-          <td>{% if exit_datetime is None %}in the parking lot{% else %}left the parking lot at {{ exit_datetime }}{% endif %}</td>
+          <td>{{ info.status }}</td>
         </tr>
+        {% endif %}
         {% if info.invoice %}
         <tr>
           <th>Paid for parking at check-out:</th>

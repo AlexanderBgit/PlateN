@@ -98,9 +98,7 @@ def format_duration(duration: float | None) -> str | None:
     fmt = format_hours(duration)
     if fmt:
         fmt = " = " + fmt
-    return (
-        f"{duration:.2f}h{fmt}" if duration is not None else None
-    )
+    return f"{duration:.2f}h{fmt}" if duration is not None else None
 
 
 if __name__ == "__main__":

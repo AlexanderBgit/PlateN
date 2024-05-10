@@ -553,5 +553,9 @@ def get_registration_info(register_id: int | str) -> dict:
         result["exit_datetime"] = format_datetime(registration.exit_datetime)
         result["duration"] = format_duration(registration.get_duration())
         result["total_payed"] = format_currency(registration.calculate_total_payed())
-
+        result["status"] = (
+            f'left the parking lot at {result["exit_datetime"]}'
+            if registration.exit_datetime
+            else "in the parking lot"
+        )
     return result
