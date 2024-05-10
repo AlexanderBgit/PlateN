@@ -191,7 +191,6 @@ def registration_list(request):
         page_obj = paginator.page(1)  # Get the first page by default
 
     pages = prepare_pagination_list(paginator.num_pages, page_obj.number)
-    print(pages)
 
     content = {
         "title": "Registration list",
