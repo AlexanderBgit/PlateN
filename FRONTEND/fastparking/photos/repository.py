@@ -3,6 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from django.conf import settings
 import pytz
+from django.utils import timezone
 
 from ds.predict_num import get_num_auto_png_io
 from finance.repository import calculate_total_payments
@@ -452,50 +453,50 @@ def get_price_per_hour(entry_time) -> float | None:
 
 
 # NO USED, USED - Registration.calculate_parking_fee()
-def calculate_invoice(
-    entry_datetime: datetime | None,
-    exit_datetime: datetime | None,
-    tariff_in,
-) -> float:
-    parking_fee = 0.0
-    if (
-        entry_datetime is not None
-        and exit_datetime is not None
-        and tariff_in is not None
-    ):
-        duration = exit_datetime.replace(tzinfo=pytz.utc) - entry_datetime.replace(
-            tzinfo=pytz.utc
-        )
-        hours = duration.total_seconds() / 3600  # переводимо час в години
-        if tariff_in:
-            price_per_hour = float(tariff_in)  # Зміна типу на float
-            parking_fee = round(hours * price_per_hour, 2)
-    return parking_fee
+# def calculate_invoice(
+#     entry_datetime: datetime | None,
+#     exit_datetime: datetime | None,
+#     tariff_in,
+# ) -> float:
+#     parking_fee = 0.0
+#     if (
+#         entry_datetime is not None
+#         and exit_datetime is not None
+#         and tariff_in is not None
+#     ):
+#         duration = exit_datetime.replace(tzinfo=pytz.utc) - entry_datetime.replace(
+#             tzinfo=pytz.utc
+#         )
+#         hours = duration.total_seconds() / 3600  # переводимо час в години
+#         if tariff_in:
+#             price_per_hour = float(tariff_in)  # Зміна типу на float
+#             parking_fee = round(hours * price_per_hour, 2)
+#     return parking_fee
 
 
-def calculate_invoice_for_reg_id(
-    registration_id: int, update_record: bool = False
-) -> float | None:
-    result = None
-
-    try:
-        registration = Registration.objects.get(pk=registration_id)
-        tariff_in = registration.tariff_in
-        if tariff_in:
-            tariff_in = float(registration.tariff_in)
-            result = calculate_invoice(
-                entry_datetime=registration.entry_datetime,
-                exit_datetime=registration.exit_datetime,
-                tariff_in=tariff_in,
-            )
-            if update_record and result:
-                registration.invoice = str(result)
-                registration.save()
-
-    except Registration.DoesNotExist as e:
-        print(f"Error: {e}")
-    print("calculate_invoice_for_reg_id", registration_id, result)
-    return result
+# def calculate_invoice_for_reg_id(
+#     registration_id: int, update_record: bool = False
+# ) -> float | None:
+#     result = None
+#
+#     try:
+#         registration = Registration.objects.get(pk=registration_id)
+#         tariff_in = registration.tariff_in
+#         if tariff_in:
+#             tariff_in = float(registration.tariff_in)
+#             result = calculate_invoice(
+#                 entry_datetime=registration.entry_datetime,
+#                 exit_datetime=registration.exit_datetime,
+#                 tariff_in=tariff_in,
+#             )
+#             if update_record and result:
+#                 registration.invoice = str(result)
+#                 registration.save()
+#
+#     except Registration.DoesNotExist as e:
+#         print(f"Error: {e}")
+#     print("calculate_invoice_for_reg_id", registration_id, result)
+#     return result
 
 
 def get_registration_allowed_for_out():
@@ -535,5 +536,13 @@ def get_registration_allowed_for_out():
 
 def get_registration_info(register_id: int | str) -> dict:
     result = {}
-    result["car_number"] = "FAKE"
+    if not register_id:
+        return result
+    registration = Registration.objects.filter(pk=register_id).first()
+    if registration is not None:
+        result["parking_fee"] = registration.calculate_parking_fee()
+        result["tariff_in"] = registration.tariff_in
+        result["car_number_in"] = registration.car_number_in
+        result["invoice"] = registration.invoice
+        result["exit_datetime"] = registration.exit_datetime
     return result
