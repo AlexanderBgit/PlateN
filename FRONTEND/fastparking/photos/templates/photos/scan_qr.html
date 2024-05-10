@@ -1,6 +1,6 @@
 <!-- photos/templates/upload.html -->
 {% extends "parking/base.html" %} {% block content %}
-<h3>Scan QR code:</h3>
+<h3><i class="fa-solid fa-camera"></i> Scan QR code:</h3>
 <form method="POST" action="" enctype="multipart/form-data">
   {% csrf_token %}
   {{ form.r_json }}
