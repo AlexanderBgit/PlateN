@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 
@@ -15,6 +16,7 @@ from finance.repository import calculate_total_payments
 from .services import handle_uploaded_file_qr_code
 
 
+@login_required
 def upload_file(request):
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name
