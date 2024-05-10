@@ -2,6 +2,8 @@ import datetime
 
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
+
+from parking.services import format_registration_id, format_datetime
 from .forms import UploadFileForm, UploadScanQRForm
 from django.urls import resolve, reverse
 from django.conf import settings
@@ -109,12 +111,11 @@ def scan_qr(request):
                 if qr_info.get("date") and isinstance(
                     qr_info["date"], datetime.datetime
                 ):
-                    qr_info["date"] = qr_info["date"].strftime("%Y-%m-%d %H:%M:%S")
+                    qr_info["date"] = format_datetime(qr_info["date"])
                 registration_fmt = qr_info.get("id")
                 registration_info = None
                 if registration_fmt:
-                    TOTAL_DIGITS_ID = settings.TOTAL_DIGITS_ID[1]
-                    registration_fmt = f"{int(registration_fmt):{TOTAL_DIGITS_ID}d}"
+                    registration_fmt = format_registration_id(registration_fmt)
                     registration_info = get_registration_info(qr_info.get("id"))
                 info = {
                     "description": qr_info.get("result"),

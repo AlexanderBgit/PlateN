@@ -8,7 +8,14 @@ from django.utils import timezone
 from ds.predict_num import get_num_auto_png_io
 from finance.repository import calculate_total_payments
 from parking.repository import number_present_on_parking
-from parking.services import compare_plates, format_hours
+from parking.services import (
+    compare_plates,
+    format_hours,
+    format_currency,
+    format_datetime,
+    format_registration_id,
+    format_duration,
+)
 
 from .models import Photo
 from finance.models import Tariff
@@ -236,17 +243,15 @@ def handle_uploaded_file(
                 info = f"Car: {register_car_result.get('info')}, Register: {registration_result.get('info')}"
 
             if registration_id:
-                date_formatted = utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
-                registration_id_formatted = f"{registration_id:06}"
+                date_formatted = format_datetime(utc_datetime)
+                registration_id_formatted = format_registration_id(registration_id)
                 parking_place = registration_result.get("parking_place")
                 already_on_parking = registration_result.get("already_on_parking")
-                tariff_in = registration_result.get("tariff_in")
-                invoice = registration_result.get("invoice")
+                tariff_in = format_currency(registration_result.get("tariff_in"))
+                invoice = format_currency(registration_result.get("invoice"))
                 compare_plates_result = registration_result.get("compare_plates")
                 duration = registration_result.get("duration")
-                duration_formatted = (
-                    f"{duration:.2f}h = {format_hours(duration)}" if duration else None
-                )
+                duration_formatted = format_duration(duration)
                 invoice_str = f"invoice: {invoice}," if invoice is not None else ""
                 reg_info = f"id:{registration_id},place:{parking_place},{invoice_str}date:{int(utc_datetime.timestamp())}|"
                 encoded_text = sign_text(reg_info)
@@ -540,9 +545,12 @@ def get_registration_info(register_id: int | str) -> dict:
         return result
     registration = Registration.objects.filter(pk=register_id).first()
     if registration is not None:
-        result["parking_fee"] = registration.calculate_parking_fee()
-        result["tariff_in"] = registration.tariff_in
+        result["parking_fee"] = format_currency(registration.calculate_parking_fee())
+        result["tariff_in"] = format_currency(registration.tariff_in)
         result["car_number_in"] = registration.car_number_in
-        result["invoice"] = registration.invoice
-        result["exit_datetime"] = registration.exit_datetime
+        result["invoice"] = format_currency(registration.invoice)
+        result["exit_datetime"] = format_datetime(registration.exit_datetime)
+        result["duration"] = format_duration(registration.get_duration())
+        result["total_payed"] = format_currency(registration.calculate_total_payed())
+
     return result
