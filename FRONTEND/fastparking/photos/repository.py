@@ -254,10 +254,6 @@ def handle_uploaded_file(
 
                 duration_formatted = format_duration(duration)
                 invoice_str = f"invoice: {invoice}," if invoice is not None else ""
-                print(int(utc_datetime.timestamp()))
-                print(utc_datetime.timestamp())
-                print(datetime.fromtimestamp(int(utc_datetime.timestamp())))
-                print(datetime.fromtimestamp(utc_datetime.timestamp()))
                 reg_info = f"id:{registration_id},place:{parking_place},{invoice_str}date:{int(utc_datetime.timestamp())}|"
                 encoded_text = sign_text(reg_info)
                 hash_code = encoded_text.split("|:")[-1]
