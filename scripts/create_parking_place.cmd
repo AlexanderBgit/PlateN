@@ -1,8 +1,8 @@
 @echo off
-echo "runed poetry shell?"
+@REM echo "runed poetry shell?"
 PUSHD "../FRONTEND/fastparking"
-poetry env info -p
-echo "\Scripts\activate"
+@REM poetry env info -p
+@REM echo "\Scripts\activate"
 set PYTHONPATH=.
-python ./parking/create_parking.py
+poetry run python ./parking/create_parking.py
 POPD

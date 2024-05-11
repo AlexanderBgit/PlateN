@@ -8,11 +8,11 @@ if command -v dos2unix &> /dev/null; then
   dos2unix *.sh &> /dev/null
 fi
 
-# simulate poetry shell
-pushd "../FRONTEND"
-pyact=$(poetry env info -p)
-source ${pyact}/bin/activate
-popd
+# # simulate poetry shell
+# pushd "../FRONTEND"
+# pyact=$(poetry env info -p)
+# source ${pyact}/bin/activate
+# popd
 pushd "../FRONTEND/fastparking"
-python ./parking/create_parking.py
+poetry run python ./parking/create_parking.py
 popd

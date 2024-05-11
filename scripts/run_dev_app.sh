@@ -8,6 +8,7 @@ if command -v dos2unix &> /dev/null; then
   dos2unix *.sh &> /dev/null
 fi
 
+# ./gen_static.sh
 ./migrate_dev_app.sh
 echo -e "\nStarting to check additional libraries..."
 if find /usr/local/lib -name "libpoppler*" -print -quit 2>/dev/null; then
@@ -24,5 +25,5 @@ git rev-parse --short HEAD > git-version.txt
 popd > /dev/null
 echo -e "\nStarting Django web server..."
 pushd  "../FRONTEND/fastparking" > /dev/null
-poetry run python manage.py runserver 0.0.0.0:8000
+poetry run python manage.py runserver 0.0.0.0:8000  --insecure
 popd > /dev/null

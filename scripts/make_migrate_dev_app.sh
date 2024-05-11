@@ -8,13 +8,14 @@ if command -v dos2unix &> /dev/null; then
   dos2unix *.sh &> /dev/null
 fi
 
-# simulate poetry shell
-pushd "../FRONTEND"
-pyact=$(poetry env info -p)
-source ${pyact}/bin/activate
-popd
+# # simulate poetry shell
+# pushd "../FRONTEND"
+# pyact=$(poetry env info -p)
+# source ${pyact}/bin/activate
+# popd
 
 echo PYTHONPATH=${PYTHONPATH}
 pushd "../FRONTEND/fastparking"
-python manage.py makemigrations
+echo -e "\nStarting Django makemigrations..."
+poetry run python manage.py makemigrations
 popd

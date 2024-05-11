@@ -5,14 +5,14 @@ cd "${script_dir}"
 
 if command -v dos2unix &> /dev/null; then
   echo "converting *.sh files from CRLF to LF"
-  dos2unix *.sh &> /dev/null
+  dos2unix *.sh &> /dev/null 
 fi
 
-# simulate poetry shell
-pushd "../FRONTEND"
-pyact=$(poetry env info -p)
-source ${pyact}/bin/activate
-popd
+# # simulate poetry shell
+# pushd "../FRONTEND"
+# pyact=$(poetry env info -p)
+# source ${pyact}/bin/activate
+# popd
 pushd "../FRONTEND/fastparking"
-python manage.py createsuperuser --username admin
+poetry run python manage.py createsuperuser --username admin
 popd

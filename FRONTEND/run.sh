@@ -14,7 +14,7 @@ python ./parking/create_parking.py
 echo RUN BACKGROUND SHEDULER
 ./cron_loop.sh &
 echo RUN FRONTEND - DJANGO
-python manage.py runserver 0.0.0.0:8000
+python manage.py runserver 0.0.0.0:8000 --insecure
 
 #bash
 

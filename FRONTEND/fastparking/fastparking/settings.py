@@ -52,14 +52,13 @@ DEBUG = bool(int(os.environ.get("DJANGO_DEBUG", 0)))
 DEBUG_SQL = bool(int(os.environ.get("DJANGO_DEBUG_SQL", 0)))
 
 DJANGO_ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS")
+ALLOWED_HOSTS = []
 if DJANGO_ALLOWED_HOSTS:
     ALLOWED_HOSTS = DJANGO_ALLOWED_HOSTS.split(",")
     CSRF_TRUSTED_ORIGINS = [
         f"https://{host}" for host in DJANGO_ALLOWED_HOSTS.split(",")
     ]
-else:
-    ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS.extend(["localhost","127.0.0.1"])
 
 # Application definition
 
@@ -177,6 +176,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
+
+STATIC_ROOT = BASE_DIR / "static"
 
 STATIC_URL = "static/"
 LOGIN_REDIRECT_URL = "/"

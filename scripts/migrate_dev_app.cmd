@@ -1,5 +1,6 @@
 @echo off
-@REM echo "runed poetry shell?"
+echo .
+echo Starting Django migrate...
 PUSHD "../FRONTEND/fastparking"
 poetry run python manage.py migrate
 POPD

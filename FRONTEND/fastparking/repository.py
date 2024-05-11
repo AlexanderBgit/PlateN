@@ -19,7 +19,7 @@ def find_registered_plate(num_auto: str, max_results: int = 1000) -> int | None:
             car_number_out__isnull=True, car_number_in__contains=num_auto
         )
         if reg:
-            return reg.id
+            return reg.pk
     except Registration.DoesNotExist:
         return None
 
@@ -30,7 +30,7 @@ def find_registered_plate(num_auto: str, max_results: int = 1000) -> int | None:
         reg_num_auto = reg.car_number_in
         result, sim = compare_plates(num_auto, reg_num_auto)
         if result:
-            return reg.id
+            return reg.pk
 
 # from parking.repository import get_registration_instance
 
@@ -43,19 +43,3 @@ def save_payment(registration_id: int, amount: float) -> Payment:
     else:
         raise ValueError("Registration does not exist.")
     
-
-
-def calculate_current_invoice(registration_id: int) -> float:
-    registration = get_registration_instance(registration_id)
-    if registration:
-        # Assuming duration is calculated somewhere
-        duration = 2  # Placeholder for duration calculation
-        tariff = Tariff.objects.first()  # Placeholder for fetching current tariff
-        if tariff:
-            price_per_hour = tariff.price_per_hour
-            result = duration * price_per_hour
-            return result
-        else:
-            raise ValueError("No tariff found.")
-    else:
-        raise ValueError("Registration does not exist.")
