@@ -1,24 +1,25 @@
 from datetime import datetime
+from decimal import Decimal
 
 from django.conf import settings
 from django.utils import timezone
 
 
-def format_datetime(date: datetime | int | str | None) -> str | None:
+def format_datetime(date: datetime | int | str | None) -> str | datetime | int | None:
     if date is None:
-        return date
+        return None
     try:
         if isinstance(date, str):
             date = datetime.fromisoformat(date)
         elif isinstance(date, int):
-            date = datetime.utcfromtimestamp(date)
+            date = datetime.fromtimestamp(date, tz=timezone.utc)
         date = date.strftime("%Y-%m-%d %H:%M:%S")
     except ValueError:
         ...
     return date
 
 
-def format_registration_id(id: int | str | None) -> str | None:
+def format_registration_id(id: int | str | None) -> str | int | None:
     if id is None:
         return id
     TOTAL_DIGITS_ID = settings.TOTAL_DIGITS_ID[1]
@@ -30,8 +31,8 @@ def format_registration_id(id: int | str | None) -> str | None:
 
 
 def format_currency(
-    invoice: float | str | None, short_format: bool = False
-) -> str | None:
+    invoice: Decimal | float | str | None, short_format: bool | None = False
+) -> str | Decimal | float | None:
     if invoice is not None:
         currency = (
             settings.PAYMENT_CURRENCY[1]
@@ -40,7 +41,7 @@ def format_currency(
         )
         try:
             invoice = float(invoice)
-            invoice = f"{invoice:.2f} {currency}"
+            invoice = f"{invoice:.2f}" if short_format is None else f"{invoice:.2f} {currency}"
         except ValueError:
             ...
     return invoice

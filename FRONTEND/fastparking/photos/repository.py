@@ -1,9 +1,11 @@
 import random
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from django.conf import settings
 import pytz
-from django.utils import timezone
+
+# from django.utils import timezone
+
 
 from ds.predict_num import get_num_auto_png_io
 from finance.repository import calculate_total_payments
@@ -187,9 +189,7 @@ def handle_uploaded_file(
     }
     """
     if f and type:
-        utc_datetime = datetime.utcnow()
-        utc_datetime = utc_datetime.replace(tzinfo=pytz.utc)
-
+        utc_datetime = datetime.now(tz=timezone.utc).replace(microsecond=0)
         info = f"File accepted, sizes: {len(f) // 1024} KB, {TYPES.get(type)}, {filename=}."
         #  try to save
         # try:
@@ -241,16 +241,17 @@ def handle_uploaded_file(
             if registration_result:
                 registration_id = registration_result.get("registration_id")
                 info = f"Car: {register_car_result.get('info')}, Register: {registration_result.get('info')}"
-
-            if registration_id:
-                date_formatted = format_datetime(utc_datetime)
-                registration_id_formatted = format_registration_id(registration_id)
                 parking_place = registration_result.get("parking_place")
                 already_on_parking = registration_result.get("already_on_parking")
                 tariff_in = format_currency(registration_result.get("tariff_in"))
                 invoice = format_currency(registration_result.get("invoice"))
                 compare_plates_result = registration_result.get("compare_plates")
                 duration = registration_result.get("duration")
+
+            if registration_id:
+                date_formatted = format_datetime(utc_datetime)
+                registration_id_formatted = format_registration_id(registration_id)
+
                 duration_formatted = format_duration(duration)
                 invoice_str = f"invoice: {invoice}," if invoice is not None else ""
                 reg_info = f"id:{registration_id},place:{parking_place},{invoice_str}date:{int(utc_datetime.timestamp())}|"
@@ -346,7 +347,7 @@ def register_parking_in_event(
     result = {"registration_id": None, "parking_space": None, "info": None}
 
     already_on_parking = number_present_on_parking(num_auto)
-    print(f"register_parking_in_event. {num_auto=}, {already_on_parking=}")
+    # print(f"register_parking_in_event. {num_auto=}, {already_on_parking=}")
     parking_space = find_free_parking_space(num_auto)
 
     if parking_space:
@@ -539,7 +540,7 @@ def get_registration_allowed_for_out():
     ).order_by("entry_datetime")
 
 
-def get_registration_info(register_id: int | str) -> dict:
+def get_registration_info(register_id: int | str | None) -> dict:
     result = {}
     if not register_id:
         return result
@@ -551,6 +552,7 @@ def get_registration_info(register_id: int | str) -> dict:
         result["car_number_in"] = registration.car_number_in
         result["invoice"] = format_currency(registration.invoice)
         result["exit_datetime"] = format_datetime(registration.exit_datetime)
+        result["entry_datetime"] = format_datetime(registration.entry_datetime)
         result["duration"] = format_duration(registration.get_duration())
         result["total_payed"] = format_currency(registration.calculate_total_payed())
         result["status"] = (

@@ -1,6 +1,6 @@
 import io
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 import base64
 from io import BytesIO
@@ -123,13 +123,13 @@ def decode_io_file(f):
     return decode_img
 
 
-def get_qr_code_data(f: object) -> dict | None:
+def get_qr_code_data(f: object) -> dict:
     data_decoded = {
         "result": "Not found information",
     }
     img = decode_io_file(f)
     if img is None:
-        return None
+        return data_decoded
     data_qr = scan_qr_code(img)
     if data_qr:
         data_decoded_text = unsigned_text(data_qr)
@@ -143,9 +143,7 @@ def get_qr_code_data(f: object) -> dict | None:
                 ...
             if data_decoded.get("date"):
                 try:
-                    data_decoded["date"] = datetime.utcfromtimestamp(
-                        int(data_decoded["date"])
-                    )
+                    data_decoded["date"] = datetime.fromtimestamp(int(data_decoded["date"]), tz=timezone.utc) # type: ignore
                 except ValueError:
                     ...
             if data_decoded and isinstance(data_decoded.get("date"), datetime):

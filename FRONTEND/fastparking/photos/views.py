@@ -109,29 +109,36 @@ def scan_qr(request):
             file_in = request.FILES.get("photo")
             if file_in:
                 # filename = file_in.name
+                info = None
                 qr_info = handle_uploaded_file_qr_code(file_in)
-                if qr_info.get("date") and isinstance(
-                    qr_info["date"], datetime.datetime
-                ):
-                    qr_info["date"] = format_datetime(qr_info["date"])
-                registration_fmt = qr_info.get("id")
-                registration_info = None
-                if registration_fmt:
-                    registration_fmt = format_registration_id(registration_fmt)
-                    registration_info = get_registration_info(qr_info.get("id"))
-                info = {
-                    "description": qr_info.get("result"),
-                    "parking_place": qr_info.get("place"),
-                    "date": qr_info.get("date"),
-                    "registration": registration_fmt,
-                }
-                if registration_info:
-                    info.update(registration_info)
-                context = {
-                    "active_menu": active_menu,
-                    "title": f"Scan QR code result",
-                    "info": info,
-                }
+                if qr_info:
+                    if qr_info.get("date") and isinstance(
+                        qr_info["date"], datetime.datetime
+                    ):
+                        qr_info["date"] = format_datetime(qr_info["date"])
+                    registration_fmt = qr_info.get("id")
+                    registration_info = None
+                    if registration_fmt:
+                        registration_fmt = format_registration_id(registration_fmt)
+                        registration_info = get_registration_info(qr_info.get("id"))
+                    if registration_info:
+                        if registration_info.get("entry_datetime") != qr_info["date"]:
+                            registration_info = {
+                                "registered": False
+                            }
+                    info = {
+                        "description": qr_info.get("result"),
+                        "parking_place": qr_info.get("place"),
+                        "date": qr_info.get("date"),
+                        "registration": registration_fmt,
+                    }
+                    if registration_info:
+                        info.update(registration_info)
+                    context = {
+                        "active_menu": active_menu,
+                        "title": f"Scan QR code result",
+                        "info": info,
+                    }
                 # print(f"{info}")
                 if info:
                     if r_json:

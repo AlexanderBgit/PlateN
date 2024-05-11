@@ -22,7 +22,7 @@ class ParkingSpace(models.Model):
 
 class Registration(models.Model):
     parking = models.ForeignKey(ParkingSpace, on_delete=models.CASCADE)
-    entry_datetime = models.DateTimeField(auto_now_add=True)
+    entry_datetime = models.DateTimeField(default=timezone.now)
     car_number_in = models.CharField(max_length=16)
     tariff_in = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True
