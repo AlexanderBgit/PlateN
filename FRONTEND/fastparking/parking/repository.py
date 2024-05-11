@@ -84,11 +84,11 @@ def process_car_registration(data: dict) -> bool:
     return success
 
 
-def get_cars_user(user_id: int) -> list[Car] | None:
+def get_cars_user(user_id: int) -> list[MyCars] | None:
     if user_id:
         my_cars = MyCars.objects.filter(user=user_id)
         if my_cars:
-            return my_cars
+            return my_cars  # type: ignore
     return None
 
 
@@ -97,17 +97,20 @@ def get_cars_number_user(user_id: int) -> list[str] | None:
     if my_cars:
         result: list[str] = []
         for my_car in my_cars:
-            car_number = my_car.car_number.car_number
-            if car_number:
-                result.append(car_number)
+            if my_car.car_number:
+                car_number = my_car.car_number.car_number
+                if car_number:
+                    result.append(car_number)
         return result
     return None
 
 
 def get_user_cars_pks(user_id: int) -> list[int] | None:
-    user_cars: list[Car] = get_cars_user(user_id)
+    user_cars: list[MyCars] | None = get_cars_user(user_id)
     if user_cars:
-        user_cars_pks = [car.car_number.pk for car in user_cars]
+        user_cars_pks = [
+            car.car_number.pk for car in user_cars if car.car_number is not None
+        ]
         return user_cars_pks
 
 
@@ -128,7 +131,7 @@ def get_registrations(user: User) -> list[Registration] | None:
                 "-entry_datetime",
             )
         else:
-            user_cars_pks: list[int] = get_user_cars_pks(user.pk)
+            user_cars_pks: list[int] | None = get_user_cars_pks(user.pk)
             if user_cars_pks:
                 registrations = Registration.objects.filter(
                     car__in=user_cars_pks
@@ -138,4 +141,11 @@ def get_registrations(user: User) -> list[Registration] | None:
                 )
             else:
                 registrations = Registration.objects.none()
-    return registrations
+    return registrations  # type: ignore
+
+
+def get_parking_info() -> tuple[int, int, list[ParkingSpace]]:
+    parking_spaces = ParkingSpace.objects.all().order_by("number")
+    parking_spaces_count = parking_spaces.filter(status=False).count()
+    total_spaces = parking_spaces.count()
+    return parking_spaces_count, total_spaces, parking_spaces # type: ignore

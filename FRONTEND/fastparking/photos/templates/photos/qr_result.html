@@ -1,5 +1,10 @@
 <!-- photos/templates/upload.html -->
-{% extends "parking/base.html" %} {% block content %}
+{% extends "parking/base.html" %}
+{% load static %}
+{% block extra_head %}
+<script src="{% static 'parking/js/local_datetime.js' %}"></script>
+{% endblock %}
+{% block content %}
 <div class="container" id="photo_result">
   <h3>RESULT:</h3>
   <table class="table">
@@ -18,7 +23,7 @@
       </tr>
       <tr>
         <th>Registration Date:</th>
-        <td>{{ info.date }}</td>
+        <td class="datetime_utc" title="{{ info.date }} UTC">{{ info.date }}</td>
       </tr>
       <tr>
         <th>Parking place:</th>

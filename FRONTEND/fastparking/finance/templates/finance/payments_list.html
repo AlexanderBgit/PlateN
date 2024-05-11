@@ -4,7 +4,7 @@
 <script src="{% static 'finance/js/payments_list.js' %}"></script>
 {% endblock %}
 {% block content %}
-<h3>Payments List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}. Total results: {{filter_params.total_rows}}</h3>
+<h3><i class="fa-solid fa-table-list"></i>  Payments List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}. Total results: {{filter_params.total_rows}}</h3>
   <div class="container-fluid table-responsive bd-example">
     <table class="table table-striped table-hover text-nowrap">
       <thead class="">

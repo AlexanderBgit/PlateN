@@ -148,11 +148,11 @@ class Registration(models.Model):
             invoice_predict = self.calculate_parking_fee()
         currency = settings.PAYMENT_CURRENCY[1]
         if invoice_predict:
-            invoice_predict = f"{invoice_predict:.2f} {currency}"
+            invoice_predict = f"{float(invoice_predict):.2f} {currency}"
         total_amount = self.calculate_total_payed()
         total_amount_formatted = ""
         if total_amount:
-            total_amount_formatted = f" - Payed: {total_amount:.2f} {currency}"
+            total_amount_formatted = f" - Payed: {float(total_amount):.2f} {currency}"
         e_date = self.entry_datetime.strftime("%Y-%m-%d %H:%M")
         result = f"Reg. ID: {self.pk:06} - Car NO: {self.car_number_in} - Parking: {self.parking.number} - Entry: {e_date} - Invoice*: {invoice_predict}{total_amount_formatted}"
 

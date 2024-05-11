@@ -1,6 +1,6 @@
 {% extends "parking/base.html" %}
 {% block content %}
-    <h1>Edit Profile</h1>
+    <h3><i class="fa-solid fa-user"></i> Edit Profile</h3>
     <form method="post">
         {% csrf_token %}        
         {{ user_form.as_p }}
