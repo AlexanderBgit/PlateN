@@ -2,6 +2,7 @@
 {% load static %}
 {% block extra_head %}
 <script src="{% static 'parking/js/registration_list.js' %}"></script>
+<script src="{% static 'parking/js/local_datetime.js' %}"></script>
 {% endblock %}
 {% block content %}
 <h3><i class="fa-solid fa-car-building"></i> Registration List{% if filter_params.days %} for last {{ filter_params.days}} days{%endif%}{% if not user.is_superuser %} for the current user{% endif%}. Total results: {{filter_params.total_rows}}</h3>
@@ -33,9 +34,9 @@
         <tr scope="row">
           <td class="font-monospace">{{ registration.id|stringformat:"06d" }}</td>
           <td>{{ registration.parking }}</td>
-          <td class="">{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
+          <td class="datetime_utc" title="{{ registration.entry_datetime|date:'Y-m-d H:i' }} UTC">{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
           <td class="text-center">{{ registration.tariff_in }}</td>
-          <td class="">{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
+          <td class="datetime_utc" title="{{ registration.exit_datetime|date:'Y-m-d H:i' }} UTC">{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
           <td title="{{ registration.duration_datatime }}">{{ registration.duration }}</td>
           <td title="Calc: {{ registration.calculate_parking_fee }}">{{ registration.invoice}}</td>
           <td title="Total paid for this registration">
