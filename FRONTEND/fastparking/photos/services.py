@@ -123,13 +123,13 @@ def decode_io_file(f):
     return decode_img
 
 
-def get_qr_code_data(f: object) -> dict | None:
+def get_qr_code_data(f: object) -> dict :
     data_decoded = {
         "result": "Not found information",
     }
     img = decode_io_file(f)
     if img is None:
-        return None
+        return data_decoded
     data_qr = scan_qr_code(img)
     if data_qr:
         data_decoded_text = unsigned_text(data_qr)
