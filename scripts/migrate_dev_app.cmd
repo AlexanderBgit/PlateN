@@ -1,5 +1,5 @@
 @echo off
-echo .
+echo.
 echo Starting Django migrate...
 PUSHD "../FRONTEND/fastparking"
 poetry run python manage.py migrate
