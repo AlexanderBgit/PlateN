@@ -1,7 +1,7 @@
 @echo off
-echo "runed poetry shell?"
-poetry env info -p
-echo "\Scripts\activate"
+@REM echo "runed poetry shell?"
+@REM poetry env info -p
+@REM echo "\Scripts\activate"
 PUSHD "../FRONTEND/fastparking"
-python ./admin/create_admin_user.py
+poetry run python ./admin/create_admin_user.py
 POPD

@@ -1,5 +1,6 @@
 @echo off
-echo "runed poetry shell?"
+echo ""
+echo  "Starting Django makemigrations..."
 PUSHD "../FRONTEND/fastparking"
-python manage.py makemigrations
+poetry run python manage.py makemigrations
 POPD

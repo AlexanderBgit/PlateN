@@ -1,7 +1,7 @@
 @echo off
 echo "runed poetry shell?"
-poetry env info -p
-echo "\Scripts\activate"
-PUSHD "../FRONTEND/fastparking"
-python manage.py createsuperuser --username admin
+@REM poetry env info -p
+@REM echo "\Scripts\activate"
+@REM PUSHD "../FRONTEND/fastparking"
+poetry run python manage.py createsuperuser --username admin
 POPD

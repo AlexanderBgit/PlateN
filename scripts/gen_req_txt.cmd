@@ -1,7 +1,7 @@
 @echo off
-echo "runed poetry shell?"
+@REM echo "runed poetry shell?"
 PUSHD "../FRONTEND"
-poetry env info -p
-echo "\Scripts\activate"
+@REM poetry env info -p
+@REM echo "\Scripts\activate"
 poetry export --without-hashes > requirements.txt
 POPD
