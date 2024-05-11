@@ -539,7 +539,7 @@ def get_registration_allowed_for_out():
     ).order_by("entry_datetime")
 
 
-def get_registration_info(register_id: int | str) -> dict:
+def get_registration_info(register_id: int | str | None) -> dict:
     result = {}
     if not register_id:
         return result
@@ -551,6 +551,7 @@ def get_registration_info(register_id: int | str) -> dict:
         result["car_number_in"] = registration.car_number_in
         result["invoice"] = format_currency(registration.invoice)
         result["exit_datetime"] = format_datetime(registration.exit_datetime)
+        result["entry_datetime"] = format_datetime(registration.entry_datetime)
         result["duration"] = format_duration(registration.get_duration())
         result["total_payed"] = format_currency(registration.calculate_total_payed())
         result["status"] = (

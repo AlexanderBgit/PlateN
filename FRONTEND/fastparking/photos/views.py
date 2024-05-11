@@ -121,6 +121,12 @@ def scan_qr(request):
                     if registration_fmt:
                         registration_fmt = format_registration_id(registration_fmt)
                         registration_info = get_registration_info(qr_info.get("id"))
+                    if registration_info:
+                        print(registration_info.get("entry_datetime"), qr_info["date"])
+                        if registration_info.get("entry_datetime") != qr_info["date"]:
+                            registration_info = {
+                                "registered": False
+                            }
                     info = {
                         "description": qr_info.get("result"),
                         "parking_place": qr_info.get("place"),
