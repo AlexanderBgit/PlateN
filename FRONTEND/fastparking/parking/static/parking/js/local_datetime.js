@@ -27,14 +27,14 @@ function parse_datetime_utc(){
         if (datetimeString) {
             const datetime = new Date(datetimeString+"Z");
             // Convert the datetime to the client's timezone
-            const clientTimeZoneDatetime = datetime.toLocaleString(undefined, {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: 'numeric',
-                minute: 'numeric',
-                timeZoneName: 'short'
-            });
+//            const clientTimeZoneDatetime = datetime.toLocaleString(undefined, {
+//                year: 'numeric',
+//                month: '2-digit',
+//                day: '2-digit',
+//                hour: 'numeric',
+//                minute: 'numeric',
+//                timeZoneName: 'short'
+//            });
 
             const formatter = new Intl.DateTimeFormat([], {
                 year: 'numeric',
