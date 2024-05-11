@@ -186,7 +186,16 @@ footer .icon {
     background-color: var(--bs-highlight-bg);
 }
 
+.sidebar ul li a i {
+  width: 26px;
+  margin: 0;
+}
+
+.sidebar {width: 300px}
+
+
 @media (max-width: 768px) {
+  .sidebar {width: unset}
   #team-long {display: none}
   .team-short {display: block}
   .nav-link {
@@ -211,4 +220,5 @@ footer .icon {
   }
   nav .list-group-item {
   padding: 4px;
+  }
 }

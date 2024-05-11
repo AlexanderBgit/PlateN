@@ -1,6 +1,10 @@
-{% extends "parking/base.html" %} {% block content %} {% load static %}
-
-<h3>Payments List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}. Total results: {{filter_params.total_rows}}</h3>
+{% extends "parking/base.html" %}
+{% load static %}
+{% block extra_head %}
+<script src="{% static 'finance/js/payments_list.js' %}"></script>
+{% endblock %}
+{% block content %}
+<h3><i class="fa-solid fa-table-list"></i>  Payments List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}. Total results: {{filter_params.total_rows}}</h3>
   <div class="container-fluid table-responsive bd-example">
     <table class="table table-striped table-hover text-nowrap">
       <thead class="">
@@ -103,18 +107,4 @@
         <span class="btn_text_short"></span><i class="bi bi-filetype-csv"></i> Save</a>
     </div>
 </div>
-<script>
-  function clear_form(){
-    let form=document.getElementById('form_filter');
-    if (form) {
-      let inputs = form.getElementsByTagName('input');
-      let fieldsToClear = ['car_no', 'r_id'];
-      for (let i = 0; i < inputs.length; i++) {
-        if (fieldsToClear.includes(inputs[i].name)) {
-          inputs[i].value = '';
-        }
-      }
-     }
-  }
-</script>
 {% endblock %}

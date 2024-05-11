@@ -7,23 +7,20 @@
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
     <link href="https://fonts.googleapis.com/css?family=DM Sans" rel="stylesheet" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" />
 
     {% load static %}
-    <link rel="stylesheet" href="{% static 'parking/styles.css' %}" />
-    <link rel="stylesheet" href="{% static 'parking/docs.css' %}" />
+    <link rel="stylesheet" href="{% static 'parking/css/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'parking/css/docs.css' %}" />
     <link rel="stylesheet" href="{% static 'parking/css/all.min.css' %}" />
     <link rel="icon" href="{% static 'parking/favicon.png' %}" />
-
+    {% block extra_head %}{% endblock %}
     <title>{{title}}</title>
   </head>
   <body>
@@ -32,9 +29,14 @@
 
       <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-bg-custom">
         <a href="/" class="mx-auto mb-1 text-white text-decoration-none">
-<!--          <svg class="bi pe-none me-2" width="10" height="32"><use xlink:href="#bootstrap" /></svg>-->
-          <img src="{% static 'parking/logo-main5.png' %}" title="Neuron Curve Bobr" alt="NC Bobr" style="max-width: 60px; width: 100%;" />
-          <span id="team-long" class="ms-1 fs-4"  title="Neuron Curve Bobr">NeuronCurveBobr</span>
+          <!--          <svg class="bi pe-none me-2" width="10" height="32"><use xlink:href="#bootstrap" /></svg>-->
+          <img
+            src="{% static 'parking/logo-main5.png' %}"
+            title="Neuron Curve Bobr"
+            alt="NC Bobr"
+            style="max-width: 60px; width: 100%"
+          />
+          <span id="team-long" class="ms-1 fs-4" title="Neuron Curve Bobr">NeuronCurveBobr</span>
         </a>
         <p class="m-0 fs-4 team-short text-center" title="Neuron Curve Bobr">NC Bobr</p>
         <hr class="m-2" />
@@ -45,13 +47,22 @@
               <span class="nav-item mx-auto">Home</span>
             </a>
           </li>
+          <li>
+            <a
+              class="nav-link {% if active_menu == 'plan' %}active{% else %}text-white{% endif %}"
+              href="{% url 'parking:parking_plan' %}"
+            >
+              <i class="fa-solid fa-thumbtack" style="padding-left: 3px"></i>
+              <span class="nav-item">Parking plan</span>
+            </a>
+          </li>
           {% if user.is_authenticated %}
           <li>
             <a
               class="nav-link {% if active_menu == 'accounts' %}active{% else %}text-white{% endif %}"
               href="{% url 'accounts:profile' %}"
             >
-              <i class="fa-solid fa-user"></i>
+              <i class="fa-solid fa-user" style="padding-left: 2px"></i>
               <span class="nav-item">Profile</span>
             </a>
           </li>
@@ -60,7 +71,7 @@
               class="nav-link {% if active_menu == 'registration' %}active{% else %}text-white{% endif %}"
               href="{% url 'parking:registration_list' %}"
             >
-              <i class="fa-solid fa-car-building"></i>
+              <i class="fa-solid fa-car-building" style="margin-left: -1px; margin-right: 1px"></i>
               <span class="nav-item">Registration</span>
             </a>
           </li>
@@ -91,7 +102,6 @@
             </a>
           </li>
           <li>
-          <li>
             <a
               class="nav-link {% if active_menu == 'messages' %}active{% else %}text-white{% endif %}"
               href="{% url 'communications:main' %}"
@@ -100,7 +110,7 @@
               <span class="nav-item">Messages</span>
             </a>
           </li>
-
+          <li>
             <a
               class="nav-link {% if active_menu == 'logout' %}active{% else %}text-white{% endif %}"
               href="{% url 'users:logout' %}"
@@ -147,48 +157,9 @@
           </a>
         </div>
       </div>
-      <div class="b-example-divider b-example-vr">
-      </div>
+      <div class="b-example-divider b-example-vr"></div>
 
-      <div class="container-fluid">
-        {% block content %} {% endblock %}
-      </div>
+      <div class="container-fluid">{% block content %} {% endblock %}</div>
     </main>
-
-    <!-- <footer class="footer mt-auto py-3 bg-dark">
-    <div class="container">
-        <span class="text-light">Developed by the NeuronCurveBobr team. &copy; 2024. All rights reserved.</span>
-        <span class="text-light">Contact us:
-            <a href="mailto:info@neuroncurvebobr.com" target="_blank" class="link-light">
-                <i class="fa-solid fa-envelopes-bulk"></i>
-                info@neuroncurvebobr.com
-            </a>
-        </span>
-        <span class="text-light">Follow us:
-            <a href="https://t.me/fastparking_bobr_bot" target="_blank" class="link-light">
-                <i class="fa-brands fa-telegram"></i>
-                Telegram bot
-            </a>
-        </span>
-    </div>
-</footer> -->
-
-    <!-- <script>
-      // Отримуємо посилання на поля форми
-      var phoneNumberInput = document.getElementById("id_phone_number");
-      var telegramNicknameInput = document.getElementById("id_telegram_nickname");
-
-      // Додаємо обробник події для поля "Phone Number"
-      phoneNumberInput.addEventListener("blur", function () {
-        // Отримуємо номер телефону, введений користувачем
-        var phoneNumber = phoneNumberInput.value;
-
-        // Тут можна реалізувати логіку для отримання телеграм нікнейму на основі номера телефону
-        // Наприклад, якщо користувач згодом підтвердить доступ до свого аккаунту Telegram, ви можете отримати його нікнейм.
-
-        // Поки що ми просто присвоюємо значення поля "Telegram nickname" номеру телефону
-        telegramNicknameInput.value = phoneNumber;
-      });
-    </script> -->
   </body>
 </html>

@@ -1,8 +1,7 @@
-{% extends "parking/base.html" %} 
+{% extends "parking/base.html" %} {% load static %}
 {% block content %} 
-{% load static %}
-<h2>Plan of parking</h2>
-<h3>Total number of parking spaces: {{ parking_spaces.count }}, including free spaces: {{ parking_spaces_count }}</h3>
+<h3><i class="fa-solid fa-thumbtack"></i> Plan of parking</h3>
+<h4>Total number of parking spaces: {{ parking_spaces.count }}, including free spaces: {{ parking_spaces_count }}</h4>
 <div class="progress">
   <div class="progress-bar"
        role="progressbar"

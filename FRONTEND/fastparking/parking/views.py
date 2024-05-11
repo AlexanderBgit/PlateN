@@ -13,8 +13,13 @@ from django.db.models import Sum
 from .models import Registration
 from .models import ParkingSpace
 from photos.repository import get_price_per_hour
-from .repository import get_cars_user, get_cars_number_user, get_registrations
-from .services import format_hours
+from .repository import (
+    get_cars_user,
+    get_cars_number_user,
+    get_parking_info,
+    get_registrations,
+)
+from .services import format_hours, prepare_pagination_list
 
 
 def health_check(request):
@@ -24,15 +29,12 @@ def health_check(request):
 
 
 def main(request):
-    parking_spaces = ParkingSpace.objects.all()
-    total_parking_spaces = parking_spaces.count()
-    free_parking_spaces = parking_spaces.filter(status=False).count()
+    parking_spaces_count, total_spaces, _ = get_parking_info()
     parking_progress = 0
-    if total_parking_spaces > 0:
+    if total_spaces > 0:
         parking_progress = int(
-            (total_parking_spaces - free_parking_spaces) / total_parking_spaces * 100
+            (total_spaces - parking_spaces_count) / total_spaces * 100
         )
-
     active_menu = "home"
     version = settings.VERSION
     current_tariff = get_price_per_hour(timezone.now())
@@ -43,8 +45,8 @@ def main(request):
     context = {
         "title": "Fast Parking",
         "active_menu": active_menu,
-        "total_parking_spaces": total_parking_spaces,
-        "free_parking_spaces": free_parking_spaces,
+        "total_parking_spaces": total_spaces,
+        "free_parking_spaces": parking_spaces_count,
         "parking_progress": parking_progress,
         "version": version,
         "current_tariff": current_tariff_formatted,
@@ -52,29 +54,29 @@ def main(request):
     return render(request, "parking/index.html", context=context)
 
 
-def generate_report(request):
-    active_menu = "home"
-    user = request.user
-    entry_datetime = request.GET.get("start_date")
-    exit_datetime = request.GET.get("end_date")
-    car = car
+# def generate_report(request):
+#     active_menu = "home"
+#     user = request.user
+#     entry_datetime = request.GET.get("start_date")
+#     exit_datetime = request.GET.get("end_date")
+#     car = None
 
-    parking_entries = Registration.objects.filter(
-        user=user, entry_time__range=[entry_datetime, exit_datetime]
-    )
+#     parking_entries = Registration.objects.filter(
+#         user=user, entry_time__range=[entry_datetime, exit_datetime]
+#     )
 
-    return render(
-        request,
-        "accounts/report.html",
-        {
-            "title": "Report",
-            "active_menu": active_menu,
-            "car": car,
-            "start_date": entry_datetime,
-            "end_date": exit_datetime,
-            "entries": parking_entries,
-        },
-    )
+#     return render(
+#         request,
+#         "accounts/report.html",
+#         {
+#             "title": "Report",
+#             "active_menu": active_menu,
+#             "car": car,
+#             "start_date": entry_datetime,
+#             "end_date": exit_datetime,
+#             "entries": parking_entries,
+#         },
+#     )
 
 
 def parking_plan_view(request):
@@ -82,12 +84,8 @@ def parking_plan_view(request):
     user_list_cars_numbers = None
     if user:
         user_list_cars_numbers = get_cars_number_user(user.pk)
-
-    active_menu = "home"
-    # parking_spaces = ParkingSpace.objects.all()
-    parking_spaces = ParkingSpace.objects.all().order_by("number")
-    parking_spaces_count = parking_spaces.filter(status=False).count()
-    total_spaces = parking_spaces.count()
+    active_menu = "plan"
+    parking_spaces_count, total_spaces, parking_spaces = get_parking_info()
     parking_progress = 0
     if total_spaces > 0:
         parking_progress = int(
@@ -95,17 +93,11 @@ def parking_plan_view(request):
         )
 
     for space in parking_spaces:
-        space.allow_number = user.is_superuser
+        space.allow_number = user.is_superuser  # type: ignore
         if user_list_cars_numbers and (space.car_num in user_list_cars_numbers):
-            space.owner_number = True
-            space.allow_number = True
+            space.owner_number = True  # type: ignore
+            space.allow_number = True  # type: ignore
 
-    # Розбиття місць на рядки
-    # row_length = 10  # Довжина рядка (кількість місць у рядку)
-    # parking_rows = [
-    #     parking_spaces[i : i + row_length]
-    #     for i in range(0, len(parking_spaces), row_length)
-    # ]
     content = {
         "title": "Parking Plan",
         "active_menu": active_menu,
@@ -189,20 +181,23 @@ def registration_list(request):
             duration = registration.get_duration()
             duration_formatted = f"{duration:.2f}h"
             duration_datetime = format_hours(duration)
-            registration.total_amount = total_amount
-            registration.duration = duration_formatted
-            registration.duration_datatime = duration_datetime
+            registration.total_amount = total_amount  # type: ignore
+            registration.duration = duration_formatted  # type: ignore
+            registration.duration_datatime = duration_datetime  # type: ignore
     paginator = Paginator(registrations, settings.PAGE_ITEMS)
     if page_number:
         page_obj = paginator.get_page(page_number)
     else:
         page_obj = paginator.page(1)  # Get the first page by default
 
+    pages = prepare_pagination_list(paginator.num_pages, page_obj.number)
+
     content = {
         "title": "Registration list",
         "active_menu": active_menu,
         "paginator": paginator,
         "page_obj": page_obj,
+        "pages": pages,
         "currency": settings.PAYMENT_CURRENCY[1],
         "filter_params": filter_params,
     }

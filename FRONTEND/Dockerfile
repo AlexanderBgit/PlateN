@@ -11,10 +11,13 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 
 COPY ${APP_BASE}requirements.txt requirements.txt
-RUN pip install -r requirements.txt 
+RUN pip install -r requirements.txt
+# OS package dependecy for pdf2impg
+RUN apt update -q; apt install -y poppler-utils dos2unix
 
 # Скопіюємо інші файли в робочу директорію контейнера
 COPY $APP_BASE  ./
+RUN dos2unix *.sh &> /dev/null  
 
 # CMD bash ./run.sh 
 CMD [ "bash" , "./run.sh" ] 

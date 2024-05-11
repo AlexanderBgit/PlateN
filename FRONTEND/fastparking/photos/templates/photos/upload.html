@@ -1,8 +1,8 @@
 <!-- photos/templates/upload.html -->
 {% extends "parking/base.html" %} {% block content %} {% if target_type %}
-<h1>Upload photo: {{ target_type.desc}}</h1>
+<h3><i class="fa-solid fa-camera"></i> Upload photo: {{ target_type.desc}}</h3>
 {% else %}
-<h1>Upload photo</h1>
+<h3>Upload photo</h3>
 {% endif %}
 <form method="POST" action="" enctype="multipart/form-data">
   {% csrf_token %} {% if form.errors %}

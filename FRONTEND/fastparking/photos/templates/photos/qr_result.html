@@ -1,0 +1,113 @@
+<!-- photos/templates/upload.html -->
+{% extends "parking/base.html" %}
+{% load static %}
+{% block extra_head %}
+<script src="{% static 'parking/js/local_datetime.js' %}"></script>
+{% endblock %}
+{% block content %}
+<div class="container" id="photo_result">
+  <h3>RESULT:</h3>
+  <table class="table">
+    <tbody>
+      {% if info.registration %}
+      <tr>
+        <th>Info:</th>
+        <td>{{ info.description }}</td>
+      </tr>
+      <tr>
+        <td colspan="2"><h3>Registration Information:</h3></td>
+      </tr>
+      <tr>
+        <th>Registration ID:</th>
+        <td>{{  info.registration }}</td>
+      </tr>
+      <tr>
+        <th>Registration Date:</th>
+        <td class="datetime_utc" title="{{ info.date }} UTC">{{ info.date }}</td>
+      </tr>
+      <tr>
+        <th>Parking place:</th>
+        <td>{{ info.parking_place }}</td>
+      </tr>
+      {% if not info.registered %}
+        <tr>
+        <th>Registration status:</th>
+        <td>This identifier is no longer registered in our system, it may be very old and has been archived.</td>
+      </tr>
+      {% else %}
+        {% if info.duration %}
+        <tr>
+          <th>Duration of the parking lot:</th>
+          <td>{{ info.duration }}</td>
+        </tr>
+        {% endif %}
+        {% if info.parking_fee %}
+        <tr>
+          <th>The current parking fee:</th>
+          <td>{{ info.parking_fee }}</td>
+        </tr>
+        {% endif %}
+        {% if info.tariff_in %}
+        <tr>
+          <th>The parking tariff for this registry:</th>
+          <td>{{ info.tariff_in }}</td>
+        </tr>
+        {% endif %}
+        {% if info.total_payed or info.total_payed != info.invoice %}
+        <tr>
+          <th>Total amount paid for the parking lot:</th>
+          <td>{{ info.total_payed }}</td>
+        </tr>
+        {% endif %}
+        {% if info.status %}
+        <tr>
+          <th>Car status:</th>
+          <td>{{ info.status }}</td>
+        </tr>
+        {% endif %}
+        {% if info.invoice %}
+        <tr>
+          <th>Paid for parking at check-out:</th>
+          <td>{{ info.invoice }}</td>
+        </tr>
+        {% endif %}
+        {% if info.car_number_in %}
+        <tr>
+          <th>Car number:</th>
+          <td>{{ info.car_number_in }}</td>
+        </tr>
+        {% endif %}
+      </tbody>
+      {% endif %}
+    {% endif %}
+  </table>
+</div>
+
+{% if not info.registration %}
+<div class="p-2 bg-danger text-white">QR information is not valid</div>
+<div class="alert alert-info">{{ info.description }}</div>
+{% endif %}
+
+<p></p>
+
+<div class="container">
+  <p>
+    <a href="{% url 'photos:main' %}" class="btn btn-primary">Back</a>
+    <button onclick="printDiv('photo_result')" class="btn btn-primary">Print</button>
+  </p>
+</div>
+<script>
+  function printPage() {
+    window.print(); // Trigger print functionality
+  }
+  function printDiv(divName) {
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    window.print();
+
+    document.body.innerHTML = originalContents;
+  }
+</script>
+{% endblock content %}

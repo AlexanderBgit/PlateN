@@ -1,5 +1,5 @@
 @echo off
-echo "runed poetry shell?"
+@REM echo "runed poetry shell?"
 PUSHD "../FRONTEND/fastparking"
-python manage.py migrate
+poetry run python manage.py migrate
 POPD

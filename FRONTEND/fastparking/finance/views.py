@@ -16,11 +16,7 @@ from parking.views import filter_alphanum
 from .models import Tariff
 
 from .models import Payment
-from photos.repository import (
-    build_html_image,
-    calculate_invoice,
-)
-from .repository import calculate_total_payments
+from photos.services import build_html_image
 from .forms import TariffForm, PaymentsForm
 
 PAGE_ITEMS = settings.PAGE_ITEMS
