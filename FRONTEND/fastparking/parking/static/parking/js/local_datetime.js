@@ -19,30 +19,36 @@ function get_client_tz_offset() {
 }
 
 function format_datetime_to_local(datetime, show_seconds = false) {
-  const options = {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
-  if (show_seconds) {
-    options.second = "2-digit";
+  if (datetime) {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    if (show_seconds) {
+      options.second = "2-digit";
+    }
+    const formatter = new Intl.DateTimeFormat([], options);
+    return formatter.format(datetime);
   }
-  const formatter = new Intl.DateTimeFormat([], options);
-  return formatter.format(datetime);
+  return datetime;
 }
 
 function formatDateInString(originalString) {
   const match = originalString.match(regexPattern_datetime);
-  const text_start_Part = match ? match[1] : null;
-  const dateTimePart = match ? match[2] : null;
-  const text_end_Part = match ? match[3] : null;
+  if (match) {
+    const text_start_Part = match ? match[1] : null;
+    const dateTimePart = match ? match[2] : null;
+    const text_end_Part = match ? match[3] : null;
 
-  const parsedDateTime = dateTimePart ? new Date(dateTimePart + "Z") : null;
-  const formattedDateTime = format_datetime_to_local(parsedDateTime);
-  const newString = formattedDateTime ? text_start_Part + formattedDateTime + text_end_Part : originalString;
-  return newString;
+    const parsedDateTime = dateTimePart ? new Date(dateTimePart + "Z") : null;
+    const formattedDateTime = format_datetime_to_local(parsedDateTime);
+    const newString = formattedDateTime ? text_start_Part + formattedDateTime + text_end_Part : originalString;
+    return newString;
+  }
+  return originalString;
 }
 
 function parse_datetime_utc() {
