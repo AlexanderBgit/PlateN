@@ -1,7 +1,7 @@
 {% extends "parking/base.html" %}
 {% load static %}
 {% block extra_head %}
-<script src="{% static 'parking/js/registration_list.js' %}"></script>
+<script src="{% static 'parking/js/misc.js' %}"></script>
 <script src="{% static 'parking/js/local_datetime.js' %}"></script>
 {% endblock %}
 {% block content %}
@@ -110,11 +110,11 @@
   </div>
 
 <form class="row gx-1 gy-2 align-items-baseline" id="form_filter" method="GET" action="">
-      <div class="col-2">
+      <div class="col-2" style="min-width: 110px;">
         <input type="hidden" name="page" value="{{ request.GET.page }}" />
         <div class="input-group" title="Show only last days">
           <label class="input-group-text" for="days" title="Days" aria-label="Days">
-            <i class="bi bi-calendar"></i>&nbsp;<span class="btn_text_short">Days</span>:</label>
+            <i class="bi-calendar"></i><span class="btn_text_short">&nbsp;Days:</span></label>
           <input
             type="number"
             class="form-control h-100"
@@ -126,7 +126,7 @@
       </div>
       <div class="col-auto">
         <div class="input-group" title="Present on parking">
-          <label class="input-group-text" for="present"><i class="bi bi-flag"></i>
+          <label class="input-group-text" for="present"><i class="bi-flag"></i>
             <span class="btn_text_short">&nbsp;Present:</span></label>
           <select class="form-select" id="present" name="present">
             <option value="" {% if request.GET.present == "" %}selected{% endif %}>Any</option>
@@ -135,16 +135,16 @@
           </select>
         </div>
       </div>
-      <div class="col-2">
+      <div class="col-2" style="min-width: 110px;">
         <div class="input-group" title="Filter by car number">
-          <label class="input-group-text" for="car_no"><i class="bi bi-car-front"></i>
+          <label class="input-group-text" for="car_no"><i class="bi-car-front"></i>
             <span class="btn_text_short">&nbsp;IN:</span></label>
           <input type="text" class="form-control" id="car_no" name="car_no" placeholder="Car NO IN" aria-label="Car NO" value="{{ filter_params.car_no }}" />
         </div>
       </div>
-       <div class="col-2">
+       <div class="col-2" style="min-width: 110px;">
         <div class="input-group" title="Filter by parking space">
-          <label class="input-group-text" for="p_space"><i class="bi bi-p-square"></i></label>
+          <label class="input-group-text" for="p_space"><i class="bi-p-square"></i></label>
           <input type="text" class="form-control" list="datalistOptions" id="p_space" name="p_space" placeholder="P.Space" aria-label="P.Space" value="{{ filter_params.p_space }}"/>
           <datalist id="datalistOptions">
             <option value="P-00">
@@ -162,13 +162,13 @@
       </div>
 </form>
 
- <div class="container mt-3">
-    <div class="col">
-      <a class="btn btn-primary" href="{% url 'parking:main' %}"><i class="bi bi-arrow-left-circle"></i>
-        <span class="btn_text_short"> Back</span></a>
-      <a class="btn btn-primary" target="" href="{% url 'parking:download_csv' %}" title="Export to CSV">
-        <span class="btn_text_short"></span><i class="bi bi-filetype-csv"></i> Save</a>
-    </div>
+<div class="col mt-3">
+  <a class="btn btn-primary" href="{% url 'parking:main' %}"><i class="bi-arrow-left-circle"></i>
+    <span class="btn_text_short"> Back</span></a>
+  <a class="btn btn-primary" target="" href="{% url 'parking:download_csv' %}" title="Export to CSV">
+    <span><i class="bi-filetype-csv"></i></span><span class="btn_text_short">&nbsp;Save</span></a>
 </div>
+
 </nav>
+<script>parse_datetime_utc()</script>
 {% endblock %}

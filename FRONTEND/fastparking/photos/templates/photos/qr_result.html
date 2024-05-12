@@ -3,6 +3,7 @@
 {% load static %}
 {% block extra_head %}
 <script src="{% static 'parking/js/local_datetime.js' %}"></script>
+<script src="{% static 'parking/js/misc.js' %}"></script>
 {% endblock %}
 {% block content %}
 <div class="container" id="photo_result">
@@ -62,7 +63,7 @@
         {% if info.status %}
         <tr>
           <th>Car status:</th>
-          <td class="datetime_utc">{{ info.status }}</td>
+          <td class="datetime_utc" title="{{ info.status }}">{{ info.status }}</td>
         </tr>
         {% endif %}
         {% if info.invoice %}
@@ -88,26 +89,17 @@
 <div class="alert alert-info">{{ info.description }}</div>
 {% endif %}
 
-<p></p>
-
-<div class="container">
-  <p>
-    <a href="{% url 'photos:main' %}" class="btn btn-primary">Back</a>
-    <button onclick="printDiv('photo_result')" class="btn btn-primary">Print</button>
-  </p>
+<div class="col mt-3">
+    <a href="{% url 'photos:main' %}" class="btn btn-primary">
+      <i class="bi-arrow-left-circle"></i>
+      <span class="btn_text_short"> Back</span>
+    </a>
+    <button onclick="printDiv('photo_result')" class="btn btn-primary">
+      <i class="bi-printer"></i>
+      <span class="btn_text_short"> Print</span>
+    </button>
 </div>
 <script>
-  function printPage() {
-    window.print(); // Trigger print functionality
-  }
-  function printDiv(divName) {
-    var printContents = document.getElementById(divName).innerHTML;
-    var originalContents = document.body.innerHTML;
-
-    document.body.innerHTML = printContents;
-    window.print();
-
-    document.body.innerHTML = originalContents;
-  }
+  parse_datetime_utc()
 </script>
 {% endblock content %}

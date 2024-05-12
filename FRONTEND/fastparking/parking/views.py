@@ -43,7 +43,7 @@ def main(request):
     if current_tariff:
         current_tariff_formatted = f"{current_tariff:.2f} {currency} per hour"
     context = {
-        "title": "Fast Parking",
+        "title": "",
         "active_menu": active_menu,
         "total_parking_spaces": total_spaces,
         "free_parking_spaces": parking_spaces_count,
