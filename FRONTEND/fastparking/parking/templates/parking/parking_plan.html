@@ -44,12 +44,16 @@
     {% endfor %}
   </div>
   {% if user.is_superuser %}
-  <div class="row row-cols-2 gy-2  mt-3 table">
+  <table class="mt-3 table table-striped">
+    <tbody>
     {% for stat in stats %}
-    <div class="col">{{stat.label}}:</div>
-    <div class="col {{stat.class}}" title="{{stat.label}}: {{stat.value}}">{{stat.value}}</div>
+     <tr>
+      <th class="col">{{stat.label}}:</th>
+      <td class="col {{stat.class}}" title="{{stat.label}}: {{stat.value}}">{{stat.value}}</td>
+     </tr>
     {% endfor %}
-  </div>
+    </tbody>
+  </table>
   <button onclick="printDiv('print_area')" class="btn btn-primary">
     <i class="bi-printer"></i>
     <span class="btn_text_short"> Print</span>
