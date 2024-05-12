@@ -2,7 +2,7 @@
 {% extends "parking/base.html" %}
 {% load static %}
 {% block extra_head %}
-<script src="{% static 'cars/js/car_list.js' %}"></script>
+<script src="{% static 'parking/js/misc.js' %}"></script>
 {% endblock %}
 {% block content %}
 <h3 class="mb-3 mt-3"><i class="fa-solid fa-car"></i> List of Cars. Total results: {{filter_params.total_rows}}</h3>
@@ -38,7 +38,7 @@
         </div>
       </div>
       <div class="col">
-        <button type="button" onclick="clear_form()" title="Clear text fields"
+        <button type="button" onclick="clear_form(['car_no'])" title="Clear text fields"
               class="btn btn-sm "><i class="fas fa-times"></i></button>
         <button type="submit" class="btn btn-sm btn-primary text-nowrap" title="Filter" aria-label="Filter">
           <i class="bi bi-filter-square"></i><span class="btn_text_short"> Filter</span>
