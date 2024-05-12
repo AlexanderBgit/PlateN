@@ -1,6 +1,8 @@
+from datetime import timedelta
 from decimal import Decimal
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
+from django.utils import timezone
 
 from .models import Payment, Tariff
 

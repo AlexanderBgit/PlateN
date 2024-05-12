@@ -18,6 +18,7 @@ from .repository import (
     get_cars_number_user,
     get_parking_info,
     get_registrations,
+    get_parking_stats,
 )
 from .services import (
     format_hours,
@@ -103,17 +104,34 @@ def parking_plan_view(request):
             space.owner_number = True  # type: ignore
             space.allow_number = True  # type: ignore
 
+    parking_stats = get_parking_stats()
+
     stats = [
         {
             "label": "Last activity",
-            "value": format_datetime(timezone.now()),
+            "value": format_datetime(parking_stats.get("last_activity")),
             "class": "datetime_utc",
         },
-        {"label": "Today's activity of car entries", "value": 20},
-        {"label": "Activity of car entries for yesterday", "value": 23},
-        {"label": "Today's payment amounts", "value": format_currency(200)},
-        {"label": "Yesterday's payment amounts", "value": format_currency(500)},
-        {"label": "Payment amounts per month", "value": format_currency(6000)},
+        {
+            "label": "Today's activity of car entries",
+            "value": parking_stats.get("today_activity"),
+        },
+        {
+            "label": "Activity of car entries for yesterday",
+            "value": parking_stats.get("yesterday_activity"),
+        },
+        {
+            "label": "Today's payment amounts",
+            "value": format_currency(parking_stats.get("total_amount_today", 0.0)),
+        },
+        {
+            "label": "Yesterday's payment amounts",
+            "value": format_currency(parking_stats.get("total_amount_yesterday", 0.0)),
+        },
+        {
+            "label": "Payment amounts per month",
+            "value": format_currency(parking_stats.get("total_amount_month", 0.0)),
+        },
     ]
 
     content = {
