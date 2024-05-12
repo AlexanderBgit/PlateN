@@ -60,4 +60,6 @@ function parse_datetime_utc() {
     }
   });
 }
-document.addEventListener("DOMContentLoaded", parse_datetime_utc);
+
+
+//document.addEventListener("DOMContentLoaded", parse_datetime_utc);
