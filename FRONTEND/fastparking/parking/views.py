@@ -118,6 +118,7 @@ def parking_plan_view(request):
 
     content = {
         "title": "Parking Plan",
+        "datetime_now": format_datetime(timezone.now()),
         "active_menu": active_menu,
         "parking_spaces": parking_spaces,
         "parking_spaces_count": parking_spaces_count,

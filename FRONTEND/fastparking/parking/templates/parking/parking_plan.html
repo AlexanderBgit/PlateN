@@ -1,10 +1,12 @@
 {% extends "parking/base.html" %} {% load static %}
 {% block extra_head %}
 <script src="{% static 'parking/js/local_datetime.js' %}"></script>
+<script src="{% static 'parking/js/misc.js' %}"></script>
 {% endblock %}
-{% block content %} 
+{% block content %}
+<div id="print_area">
 <h3><i class="fa-solid fa-thumbtack"></i> Plan of parking</h3>
-<h4>Total number of parking spaces: {{ parking_spaces.count }}, including free spaces: {{ parking_spaces_count }}</h4>
+<h4>Total number of parking spaces: {{ parking_spaces.count }}, including free spaces: {{ parking_spaces_count }} on <span class="datetime_utc" title="{{datetime_now}} UTC">{{datetime_now}}</span></h4>
 <div class="progress">
   <div class="progress-bar"
        role="progressbar"
@@ -42,13 +44,18 @@
     {% endfor %}
   </div>
   {% if user.is_superuser %}
-  <div class="row row-cols-2 gy-3 pt-1 pb-3 mt-3">
+  <div class="row row-cols-2 gy-2  mt-3 table">
     {% for stat in stats %}
     <div class="col">{{stat.label}}:</div>
-    <div class="col {{stat.class}}" title="{{stat.value}}">{{stat.value}}</div>
+    <div class="col {{stat.class}}" title="{{stat.label}}: {{stat.value}}">{{stat.value}}</div>
     {% endfor %}
   </div>
+  <button onclick="printDiv('print_area')" class="btn btn-primary">
+    <i class="bi-printer"></i>
+    <span class="btn_text_short"> Print</span>
+  </button>
   {% endif %}
+</div>
 </div>
 <script>parse_datetime_utc()</script>
 {% endblock %}
