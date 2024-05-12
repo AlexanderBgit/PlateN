@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{% static 'parking/css/all.min.css' %}" />
     <link rel="icon" href="{% static 'parking/favicon.png' %}" />
     {% block extra_head %}{% endblock %}
-    <title>{{title}}</title>
+    <title>{%if title %}{{title}} | {% endif %}Fast parking | Neuron Curve Bobr team</title>
   </head>
   <body>
     <main class="d-flex flex-nowrap">
