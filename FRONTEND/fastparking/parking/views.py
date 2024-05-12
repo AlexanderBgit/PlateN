@@ -19,7 +19,12 @@ from .repository import (
     get_parking_info,
     get_registrations,
 )
-from .services import format_hours, prepare_pagination_list
+from .services import (
+    format_hours,
+    prepare_pagination_list,
+    format_currency,
+    format_datetime,
+)
 
 
 def health_check(request):
@@ -98,12 +103,26 @@ def parking_plan_view(request):
             space.owner_number = True  # type: ignore
             space.allow_number = True  # type: ignore
 
+    stats = [
+        {
+            "label": "Last activity",
+            "value": format_datetime(timezone.now()),
+            "class": "datetime_utc",
+        },
+        {"label": "Today's activity of car entries", "value": 20},
+        {"label": "Activity of car entries for yesterday", "value": 23},
+        {"label": "Today's payment amounts", "value": format_currency(200)},
+        {"label": "Yesterday's payment amounts", "value": format_currency(500)},
+        {"label": "Payment amounts per month", "value": format_currency(6000)},
+    ]
+
     content = {
         "title": "Parking Plan",
         "active_menu": active_menu,
         "parking_spaces": parking_spaces,
         "parking_spaces_count": parking_spaces_count,
         "parking_progress": parking_progress,
+        "stats": stats,
     }
     return render(request, "parking/parking_plan.html", content)
 
