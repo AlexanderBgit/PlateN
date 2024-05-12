@@ -110,11 +110,11 @@
   </div>
 
 <form class="row gx-1 gy-2 align-items-baseline" id="form_filter" method="GET" action="">
-      <div class="col-2">
+      <div class="col-2" style="min-width: 110px;">
         <input type="hidden" name="page" value="{{ request.GET.page }}" />
         <div class="input-group" title="Show only last days">
           <label class="input-group-text" for="days" title="Days" aria-label="Days">
-            <i class="bi bi-calendar"></i><span class="btn_text_short">&nbsp;Days:</span></label>
+            <i class="bi-calendar"></i><span class="btn_text_short">&nbsp;Days:</span></label>
           <input
             type="number"
             class="form-control h-100"
@@ -126,7 +126,7 @@
       </div>
       <div class="col-auto">
         <div class="input-group" title="Present on parking">
-          <label class="input-group-text" for="present"><i class="bi bi-flag"></i>
+          <label class="input-group-text" for="present"><i class="bi-flag"></i>
             <span class="btn_text_short">&nbsp;Present:</span></label>
           <select class="form-select" id="present" name="present">
             <option value="" {% if request.GET.present == "" %}selected{% endif %}>Any</option>
@@ -135,16 +135,16 @@
           </select>
         </div>
       </div>
-      <div class="col-2">
+      <div class="col-2" style="min-width: 110px;">
         <div class="input-group" title="Filter by car number">
-          <label class="input-group-text" for="car_no"><i class="bi bi-car-front"></i>
+          <label class="input-group-text" for="car_no"><i class="bi-car-front"></i>
             <span class="btn_text_short">&nbsp;IN:</span></label>
           <input type="text" class="form-control" id="car_no" name="car_no" placeholder="Car NO IN" aria-label="Car NO" value="{{ filter_params.car_no }}" />
         </div>
       </div>
-       <div class="col-2">
+       <div class="col-2" style="min-width: 110px;">
         <div class="input-group" title="Filter by parking space">
-          <label class="input-group-text" for="p_space"><i class="bi bi-p-square"></i></label>
+          <label class="input-group-text" for="p_space"><i class="bi-p-square"></i></label>
           <input type="text" class="form-control" list="datalistOptions" id="p_space" name="p_space" placeholder="P.Space" aria-label="P.Space" value="{{ filter_params.p_space }}"/>
           <datalist id="datalistOptions">
             <option value="P-00">

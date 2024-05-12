@@ -9,16 +9,16 @@
 
 <form class="row gx-1 gy-2 align-items-baseline" id="form_filter" method="GET" action="{% url 'cars:car_list' %}">
       <input type="hidden" name="page" value="{{ filter_params.page }}" />
-      <div class="col-2">
+      <div class="col-3" style="min-width: 110px;">
         <div class="input-group" title="Filter by car number">
-          <label class="input-group-text" for="car_no"><i class="bi bi-car-front"></i>
+          <label class="input-group-text" for="car_no"><i class="bi-car-front"></i>
             <span class="btn_text_short">&nbsp;NO:</span></label>
           <input type="text" class="form-control" id="car_no" name="car_no" placeholder="Car NO" aria-label="Car NO" value="{{ filter_params.car_no }}" />
         </div>
       </div>
       <div class="col-auto">
         <div class="input-group" title="Blocked">
-          <label class="input-group-text" for="blocked"><span class="btn_text_short">&nbsp;Blocked:</span></label>
+          <label class="input-group-text" for="blocked"><i class="bi-ban"></i><span class="btn_text_short">&nbsp;Blocked:</span></label>
           <select class="form-select" id="blocked" name="blocked">
             <option value="" {% if filter_params.blocked == "" %}selected{% endif %}>Any</option>
             <option value="True" {% if filter_params.blocked == True %}selected{% endif %}>Yes</option>
@@ -28,7 +28,8 @@
       </div>
        <div class="col-auto">
         <div class="input-group" title="PayPass">
-          <label class="input-group-text" for="paypass">PayPass:</label>
+          <label class="input-group-text" for="paypass"><i class="bi-pass"></i>
+            <span class="btn_text_short">&nbsp;PayPass:</span></label>
           <select class="form-select" id="paypass" name="paypass">
             <option value="" {% if filter_params.paypass == "" %}selected{% endif %}>Any</option>
             <option value="True" {% if filter_params.paypass == True %}selected{% endif %}>Yes</option>
@@ -53,11 +54,11 @@
     <table class="table table-striped table-hover">
       <thead>
         <tr>
-          <th scope="col"><i class="bi bi-car-front"></i> Number</th>
+          <th scope="col"  title="Car Number" aria-label="Car Number"><i class="bi bi-car-front"></i><span class="btn_text_short">&nbsp;Number</span></th>
           <!-- <th scope="col">Photo</th>
         <th scope="col">Predict</th> -->
-          <th scope="col" class="text-center">Blocked</th>
-          <th scope="col" class="text-center">Pay Pass</th>
+          <th scope="col" class="text-center" title="Blocked" aria-label="Blocked"><i class="bi-ban"></i><span class="btn_text_short">&nbsp;Blocked</span></th>
+          <th scope="col" class="text-center" title="PayPass" aria-label="PayPass"><i class="bi-pass"></i><span class="btn_text_short">&nbsp;PayPass</span></th>
         </tr>
       </thead>
       <tbody>
@@ -118,7 +119,7 @@
         </span>
       </div>
     </nav>
-    <button class="btn btn-primary mb-3" type="submit"><i class="bi bi-save"></i>
+    <button class="btn btn-primary mb-3" type="submit"><i class="bi-save"></i>
         Save<span class="btn_text_short"> changes</span></button>
   </form>
 {% else %}
