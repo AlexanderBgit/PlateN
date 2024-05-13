@@ -309,7 +309,6 @@ python manage.py migrate
 1. cd ..
 1. cd scripts
 1. docker_db.cmd - run DB local docker, skip if remote used postgres
-1. migrate_dev_app.cmd - migrate DB
 1. create_django_auto_admin.cmd - create admin aromatically from .env
 1. run_dev_app.cmd - run app
 1. open browser: http://127.0.0.1:8000
