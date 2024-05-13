@@ -13,7 +13,6 @@ from finance.repository import (
     get_total_payments_today,
     get_total_payments_yesterday,
     get_total_payments_prev_month,
-    get_total_payments_prev_year,
 )
 from .models import Registration
 from photos.repository import get_price_per_hour
@@ -101,8 +100,6 @@ def get_parking_stats() -> dict:
     result.update(get_total_payments_yesterday())
     result.update(get_total_payments_prev_month(prev_months=0))
     result.update(get_total_payments_prev_month(prev_months=1))
-    result.update(get_total_payments_prev_year(prev_year=0))
-    result.update(get_total_payments_prev_year(prev_year=1))
     return result
 
 
@@ -161,18 +158,6 @@ def parking_plan_view(request):
                 "label": "Payment amounts for the previous month",
                 "value": format_currency(
                     parking_stats.get("total_amount_prev_1_month", 0.0)
-                ),
-            },
-            {
-                "label": "Payment amounts for the this year",
-                "value": format_currency(
-                    parking_stats.get("total_amount_prev_0_year", 0.0)
-                ),
-            },
-            {
-                "label": "Payment amounts for the previous year",
-                "value": format_currency(
-                    parking_stats.get("total_amount_prev_1_year", 0.0)
                 ),
             },
         ]
