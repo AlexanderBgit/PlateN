@@ -191,13 +191,12 @@ footer .icon {
   margin: 0;
 }
 
-.sidebar {width: 300px}
 
 
-@media (max-width: 900px) {
-  .sidebar {width: unset}
-  #team-long {display: none}
-  .team-short {display: block}
+ .sidebar {width: 300px}
+
+@media (max-width: 765px) {
+ .sidebar {width: 3.5em;}
   .nav-link {
     padding-right: 8px;
     padding-left: 8px;
@@ -208,6 +207,7 @@ footer .icon {
   }
   .sidebar ul a i {
     margin-right: 8px;
+    text-align: center;
   }
   svg.me-2 {
     margin-right: unset !important;
