@@ -18,8 +18,14 @@ from .repository import (
     get_cars_number_user,
     get_parking_info,
     get_registrations,
+    get_parking_stats,
 )
-from .services import format_hours, prepare_pagination_list
+from .services import (
+    format_hours,
+    prepare_pagination_list,
+    format_currency,
+    format_datetime,
+)
 
 
 def health_check(request):
@@ -98,12 +104,44 @@ def parking_plan_view(request):
             space.owner_number = True  # type: ignore
             space.allow_number = True  # type: ignore
 
+    parking_stats = get_parking_stats()
+
+    stats = [
+        {
+            "label": "Last activity",
+            "value": format_datetime(parking_stats.get("last_activity")),
+            "class": "datetime_utc",
+        },
+        {
+            "label": "Today's activity of car entries",
+            "value": parking_stats.get("today_activity"),
+        },
+        {
+            "label": "Activity of car entries for yesterday",
+            "value": parking_stats.get("yesterday_activity"),
+        },
+        {
+            "label": "Today's payment amounts",
+            "value": format_currency(parking_stats.get("total_amount_today", 0.0)),
+        },
+        {
+            "label": "Yesterday's payment amounts",
+            "value": format_currency(parking_stats.get("total_amount_yesterday", 0.0)),
+        },
+        {
+            "label": "Payment amounts per month",
+            "value": format_currency(parking_stats.get("total_amount_month", 0.0)),
+        },
+    ]
+
     content = {
         "title": "Parking Plan",
+        "datetime_now": format_datetime(timezone.now()),
         "active_menu": active_menu,
         "parking_spaces": parking_spaces,
         "parking_spaces_count": parking_spaces_count,
         "parking_progress": parking_progress,
+        "stats": stats,
     }
     return render(request, "parking/parking_plan.html", content)
 
