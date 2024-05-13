@@ -30,6 +30,8 @@ from .services import (
     prepare_pagination_list,
     format_currency,
     format_datetime,
+    validate_int,
+    filter_alphanum,
 )
 
 
@@ -185,30 +187,6 @@ def parking_plan_view(request):
         "stats": stats,
     }
     return render(request, "parking/parking_plan.html", content)
-
-
-def is_admin(request):
-    user: User = request.user
-    return user.is_superuser
-
-
-def validate_int(value: str | int | None) -> int | None:
-    if value is not None:
-        try:
-            value = int(value)
-        except (TypeError, ValueError):
-            value = 1
-        if value < 1:
-            value = 1
-    return value
-
-
-def filter_alphanum(text: str, additional: list = None) -> str:
-    if additional is None:
-        additional = []
-    text = text.strip().upper()
-    text = "".join(char for char in text if char.isalnum() or char in additional)
-    return text
 
 
 def get_queryset(request, registrations):

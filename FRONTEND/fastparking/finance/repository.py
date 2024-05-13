@@ -116,3 +116,7 @@ def get_total_payments_prev_year(prev_year: int = 1) -> dict:
         )
     }
     return stats
+
+
+def get_last_tariff():
+    return Tariff.objects.last()

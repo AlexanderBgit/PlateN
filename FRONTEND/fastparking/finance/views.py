@@ -12,12 +12,12 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.utils import timezone
 
-from parking.views import filter_alphanum
-from .models import Tariff
+from parking.services import filter_alphanum
 
 from .models import Payment
 from photos.services import build_html_image
 from .forms import TariffForm, PaymentsForm
+from .repository import get_last_tariff
 
 PAGE_ITEMS = settings.PAGE_ITEMS
 
@@ -31,17 +31,17 @@ def main(request):
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name
 
-    context = {"active_menu": active_menu, "title": "Finance", "is_admin": is_admin}
+    context = {"active_menu": active_menu, "title": "Finance"}
     return render(request, "finance/main.html", context)
 
 
 @login_required
 def add_tariff(request):
-    if not is_admin(request):
+    if not is_admin():
         return redirect("finance:main")
 
     # Знайти останній тариф
-    last_tariff = Tariff.objects.last()
+    last_tariff = get_last_tariff()
 
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name

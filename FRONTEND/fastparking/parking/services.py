@@ -143,3 +143,22 @@ if __name__ == "__main__":
     print(format_datetime(1111))
     print(format_datetime("2024-01-22"))
     print(format_datetime(datetime.now()))
+
+
+def validate_int(value: str | int | None) -> int | None:
+    if value is not None:
+        try:
+            value = int(value)
+        except (TypeError, ValueError):
+            value = 1
+        if value < 1:
+            value = 1
+    return value
+
+
+def filter_alphanum(text: str, additional: list = None) -> str:
+    if additional is None:
+        additional = []
+    text = text.strip().upper()
+    text = "".join(char for char in text if char.isalnum() or char in additional)
+    return text
