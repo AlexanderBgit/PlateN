@@ -120,3 +120,7 @@ def get_total_payments_prev_year(prev_year: int = 1) -> dict:
 
 def get_last_tariff():
     return Tariff.objects.last()
+
+
+def get_payments():
+    return Payment.objects.order_by("-datetime")

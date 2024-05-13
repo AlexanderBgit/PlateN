@@ -14,10 +14,9 @@ from django.utils import timezone
 
 from parking.services import filter_alphanum
 
-from .models import Payment
 from photos.services import build_html_image
 from .forms import TariffForm, PaymentsForm
-from .repository import get_last_tariff
+from .repository import get_last_tariff, get_payments
 
 PAGE_ITEMS = settings.PAGE_ITEMS
 
@@ -233,7 +232,7 @@ def payments_list(request):
     if not is_admin(request):
         return redirect("parking:main")
     active_menu = "payment"
-    payments = Payment.objects.order_by("-datetime")
+    payments = get_payments()
     payments, filter_params = get_queryset(request, payments)
     page_number = filter_params.get("page")
     paginator = Paginator(payments, PAGE_ITEMS)
@@ -271,7 +270,7 @@ def download_csv(request):
         ]
     )
 
-    payments = Payment.objects.all().order_by("-datetime")
+    payments = get_payments()
     iso_str = "%Y-%m-%dT%H:%M:%S"
     for payment in payments:
         formatted_datetime = None
