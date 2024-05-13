@@ -31,7 +31,9 @@ def format_registration_id(id: int | str | None) -> str | int | None:
 
 
 def format_currency(
-    invoice: Decimal | float | str | None, short_format: bool | None = False
+    invoice: Decimal | float | str | None,
+    short_format: bool | None = False,
+    thousands: bool = True,
 ) -> str | Decimal | float | None:
     if invoice is not None:
         currency = (
@@ -41,11 +43,18 @@ def format_currency(
         )
         try:
             invoice = float(invoice)
-            invoice = (
-                f"{invoice:.2f}"
-                if short_format is None
-                else f"{invoice:.2f} {currency}"
-            )
+            if thousands:
+                invoice = (
+                    f"{invoice:,.2f}"
+                    if short_format is None
+                    else f"{invoice:,.2f} {currency}"
+                ).replace(",", " ")
+            else:
+                invoice = (
+                    f"{invoice:.2f}"
+                    if short_format is None
+                    else f"{invoice:.2f} {currency}"
+                )
         except ValueError:
             ...
     return invoice
