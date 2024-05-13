@@ -43,7 +43,7 @@
                <span class="nav-item d-none d-md-inline">Home</span>
             </a>
           </li>
-          <li title="Parking plan">
+          <li title="Parking plan" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'plan' %}active{% else %}text-white{% endif %}"
               href="{% url 'parking:parking_plan' %}"
@@ -53,7 +53,7 @@
             </a>
           </li>
           {% if user.is_authenticated %}
-          <li title="Profile">
+          <li title="Profile" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'accounts' %}active{% else %}text-white{% endif %}"
               href="{% url 'accounts:profile' %}"
@@ -64,7 +64,7 @@
           </li>
           {% endif %}
           {% if user.is_authenticated %}
-          <li title="Finance">
+          <li title="Registration" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'registration' %}active{% else %}text-white{% endif %}"
               href="{% url 'parking:registration_list' %}"
@@ -75,7 +75,7 @@
           </li>
           {% endif %}
           {% if user.is_superuser %}
-          <li title="Finance">
+          <li title="Cars" data-bs-toggle="tooltip" data-bs-placement="right">
             <a class="nav-link {% if active_menu == 'cars' %}active{% else %}text-white{% endif %}" href="/cars/">
               <i class="fa-solid fa-car"></i>
                <span class="nav-item  d-none d-md-inline">Cars</span>
@@ -83,7 +83,7 @@
           </li>
           {% endif %}
           {% if user.is_authenticated %}
-          <li title="Finance">
+          <li title="Finance" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'finance' %}active{% else %}text-white{% endif %}"
               href="{% url 'finance:main' %}"
@@ -94,7 +94,7 @@
           </li>
           {% endif %}
           {% if user.is_authenticated %}
-          <li title="Car Recognition">
+          <li title="Car Recognition" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'photos' %}active{% else %}text-white{% endif %}"
               href="{% url 'photos:main' %}"
@@ -104,7 +104,7 @@
             </a>
           </li>
           {% endif %}
-          <li title="Messages">
+          <li title="Messages" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'messages' %}active{% else %}text-white{% endif %}"
               href="{% url 'communications:main' %}"
@@ -114,7 +114,7 @@
             </a>
           </li>
           {% if user.is_authenticated %}
-          <li title="Logout">
+          <li title="Logout" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'logout' %}active{% else %}text-white{% endif %}"
               href="{% url 'users:logout' %}"
@@ -125,7 +125,7 @@
           </li>
           {% endif %}
           {% if not user.is_authenticated %}
-          <li title="SignIn">
+          <li title="SignIn" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'signin' %}active{% else %}text-white{% endif %}"
               href="{% url 'users:username' %}"
@@ -134,7 +134,7 @@
                <span class="nav-item  d-none d-md-inline">SignIn</span>
             </a>
           </li>
-          <li title="SignUp">
+          <li title="SignUp" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'signup' %}active{% else %}text-white{% endif %}"
               href="{% url 'users:register' %}"
@@ -144,7 +144,7 @@
             </a>
           </li>
           {% endif %}
-          <li title=">>" id="btn_collapse" class="d-md-none">
+          <li title="Expand/Collapse menu" id="btn_collapse" class="d-md-none" data-bs-toggle="tooltip" data-bs-placement="right">
             <a class="nav-link text-white" onclick="toggle_md()">
               <i class="fa-solid fa-angles-right d-md-none"></i>
                <span class="nav-item d-none d-md-inline"><i class="fa-solid fa-angles-left me-1"></i>Collapse</span>
@@ -153,7 +153,7 @@
         </ul>
 
         <hr />
-        <div class="dropdown" title="Username {{user.username}}">
+        <div class="dropdown" title="Username {{user.username}}" data-bs-toggle="tooltip" data-bs-placement="right">
           <a
             href="#"
             class="d-flex align-items-center text-white text-decoration-none"
