@@ -122,56 +122,58 @@ def parking_plan_view(request):
         if user_list_cars_numbers and (space.car_num in user_list_cars_numbers):
             space.owner_number = True  # type: ignore
             space.allow_number = True  # type: ignore
-
-    parking_stats = get_parking_stats()
-
-    stats = [
-        {
-            "label": "Last activity",
-            "value": format_datetime(parking_stats.get("last_activity")),
-            "class": "datetime_utc",
-        },
-        {
-            "label": "Today's activity of car entries",
-            "value": parking_stats.get("today_activity"),
-        },
-        {
-            "label": "Activity of car entries for yesterday",
-            "value": parking_stats.get("yesterday_activity"),
-        },
-        {
-            "label": "Today's payment amounts",
-            "value": format_currency(parking_stats.get("total_amount_today", 0.0)),
-        },
-        {
-            "label": "Yesterday's payment amounts",
-            "value": format_currency(parking_stats.get("total_amount_yesterday", 0.0)),
-        },
-        {
-            "label": "Payment amounts for this month",
-            "value": format_currency(
-                parking_stats.get("total_amount_prev_0_month", 0.0)
-            ),
-        },
-        {
-            "label": "Payment amounts for the previous month",
-            "value": format_currency(
-                parking_stats.get("total_amount_prev_1_month", 0.0)
-            ),
-        },
-        {
-            "label": "Payment amounts for the this year",
-            "value": format_currency(
-                parking_stats.get("total_amount_prev_0_year", 0.0)
-            ),
-        },
-        {
-            "label": "Payment amounts for the previous year",
-            "value": format_currency(
-                parking_stats.get("total_amount_prev_1_year", 0.0)
-            ),
-        },
-    ]
+    stats = []
+    if user.is_superuser:
+        parking_stats = get_parking_stats()
+        stats = [
+            {
+                "label": "Last activity",
+                "value": format_datetime(parking_stats.get("last_activity")),
+                "class": "datetime_utc",
+            },
+            {
+                "label": "Today's activity of car entries",
+                "value": parking_stats.get("today_activity"),
+            },
+            {
+                "label": "Activity of car entries for yesterday",
+                "value": parking_stats.get("yesterday_activity"),
+            },
+            {
+                "label": "Today's payment amounts",
+                "value": format_currency(parking_stats.get("total_amount_today", 0.0)),
+            },
+            {
+                "label": "Yesterday's payment amounts",
+                "value": format_currency(
+                    parking_stats.get("total_amount_yesterday", 0.0)
+                ),
+            },
+            {
+                "label": "Payment amounts for this month",
+                "value": format_currency(
+                    parking_stats.get("total_amount_prev_0_month", 0.0)
+                ),
+            },
+            {
+                "label": "Payment amounts for the previous month",
+                "value": format_currency(
+                    parking_stats.get("total_amount_prev_1_month", 0.0)
+                ),
+            },
+            {
+                "label": "Payment amounts for the this year",
+                "value": format_currency(
+                    parking_stats.get("total_amount_prev_0_year", 0.0)
+                ),
+            },
+            {
+                "label": "Payment amounts for the previous year",
+                "value": format_currency(
+                    parking_stats.get("total_amount_prev_1_year", 0.0)
+                ),
+            },
+        ]
 
     content = {
         "title": "Parking Plan",
