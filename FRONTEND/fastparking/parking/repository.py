@@ -1,16 +1,13 @@
 # from .models import Registration
 from datetime import timedelta
-from dateutil.relativedelta import relativedelta
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 
-from django.db.models import Q, Sum
 from django.utils import timezone
 
 from cars.models import Car
 from accounts.models import MyCars
-from finance.models import Payment
 from .services import compare_plates
 from .models import Registration, ParkingSpace
 
@@ -204,66 +201,3 @@ def get_parking_yesterday_activity() -> dict:
     ).count()
     stats = {"yesterday_activity": activity}
     return stats
-
-
-def get_total_payments_today() -> dict:
-    today = timezone.now()
-    tomorrow = today + timedelta(days=1)
-    today_start = today.replace(hour=0, minute=0, second=0, microsecond=0)
-    today_end = tomorrow.replace(hour=0, minute=0, second=0, microsecond=0)
-    activity = Payment.objects.filter(
-        datetime__range=[today_start, today_end]
-    ).aggregate(Sum("amount"))
-    stats = {
-        "total_amount_today": (
-            activity.get("amount__sum") if activity.get("amount__sum") else 0.0
-        )
-    }
-    return stats
-
-
-def get_total_payments_yesterday() -> dict:
-    today = timezone.now()
-    yesterday_start = today - timedelta(days=1)
-    yesterday_start = yesterday_start.replace(hour=0, minute=0, second=0, microsecond=0)
-    yesterday_end = today.replace(hour=0, minute=0, second=0, microsecond=0)
-    print([yesterday_start, yesterday_end])
-    activity = Payment.objects.filter(
-        datetime__range=[yesterday_start, yesterday_end]
-    ).aggregate(Sum("amount"))
-    stats = {
-        "total_amount_yesterday": (
-            activity.get("amount__sum") if activity.get("amount__sum") else 0.0
-        )
-    }
-    return stats
-
-
-def get_total_payments_month() -> dict:
-    today = timezone.now()
-    next_month = today + relativedelta(months=1)
-    month_start = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    month_end = next_month.replace(
-        day=1, hour=23, minute=59, second=59, microsecond=999
-    ) - relativedelta(days=1)
-    print([month_start, month_end])
-    activity = Payment.objects.filter(
-        datetime__range=[month_start, month_end]
-    ).aggregate(Sum("amount"))
-    stats = {
-        "total_amount_month": (
-            activity.get("amount__sum") if activity.get("amount__sum") else 0.0
-        )
-    }
-    return stats
-
-
-def get_parking_stats() -> dict:
-    result = {}
-    result.update(get_parking_last_activity())
-    result.update(get_parking_today_activity())
-    result.update(get_parking_yesterday_activity())
-    result.update(get_total_payments_today())
-    result.update(get_total_payments_yesterday())
-    result.update(get_total_payments_month())
-    return result

@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
@@ -8,23 +8,29 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.db.models import Sum
 
+from finance.repository import (
+    get_total_payments_today,
+    get_total_payments_yesterday,
+    get_total_payments_prev_month,
+)
 from .models import Registration
-from .models import ParkingSpace
 from photos.repository import get_price_per_hour
 from .repository import (
-    get_cars_user,
     get_cars_number_user,
     get_parking_info,
     get_registrations,
-    get_parking_stats,
+    get_parking_last_activity,
+    get_parking_today_activity,
+    get_parking_yesterday_activity,
 )
 from .services import (
     format_hours,
     prepare_pagination_list,
     format_currency,
     format_datetime,
+    validate_int,
+    filter_alphanum,
 )
 
 
@@ -85,6 +91,18 @@ def main(request):
 #     )
 
 
+def get_parking_stats() -> dict:
+    result = {}
+    result.update(get_parking_last_activity())
+    result.update(get_parking_today_activity())
+    result.update(get_parking_yesterday_activity())
+    result.update(get_total_payments_today())
+    result.update(get_total_payments_yesterday())
+    result.update(get_total_payments_prev_month(prev_months=0))
+    result.update(get_total_payments_prev_month(prev_months=1))
+    return result
+
+
 def parking_plan_view(request):
     user: User = request.user
     user_list_cars_numbers = None
@@ -103,36 +121,46 @@ def parking_plan_view(request):
         if user_list_cars_numbers and (space.car_num in user_list_cars_numbers):
             space.owner_number = True  # type: ignore
             space.allow_number = True  # type: ignore
-
-    parking_stats = get_parking_stats()
-
-    stats = [
-        {
-            "label": "Last activity",
-            "value": format_datetime(parking_stats.get("last_activity")),
-            "class": "datetime_utc",
-        },
-        {
-            "label": "Today's activity of car entries",
-            "value": parking_stats.get("today_activity"),
-        },
-        {
-            "label": "Activity of car entries for yesterday",
-            "value": parking_stats.get("yesterday_activity"),
-        },
-        {
-            "label": "Today's payment amounts",
-            "value": format_currency(parking_stats.get("total_amount_today", 0.0)),
-        },
-        {
-            "label": "Yesterday's payment amounts",
-            "value": format_currency(parking_stats.get("total_amount_yesterday", 0.0)),
-        },
-        {
-            "label": "Payment amounts per month",
-            "value": format_currency(parking_stats.get("total_amount_month", 0.0)),
-        },
-    ]
+    stats = []
+    if user.is_superuser:
+        parking_stats = get_parking_stats()
+        stats = [
+            {
+                "label": "Last activity",
+                "value": format_datetime(parking_stats.get("last_activity")),
+                "class": "datetime_utc",
+            },
+            {
+                "label": "Today's activity of car entries",
+                "value": parking_stats.get("today_activity"),
+            },
+            {
+                "label": "Activity of car entries for yesterday",
+                "value": parking_stats.get("yesterday_activity"),
+            },
+            {
+                "label": "Today's payment amounts",
+                "value": format_currency(parking_stats.get("total_amount_today", 0.0)),
+            },
+            {
+                "label": "Yesterday's payment amounts",
+                "value": format_currency(
+                    parking_stats.get("total_amount_yesterday", 0.0)
+                ),
+            },
+            {
+                "label": "Payment amounts for this month",
+                "value": format_currency(
+                    parking_stats.get("total_amount_prev_0_month", 0.0)
+                ),
+            },
+            {
+                "label": "Payment amounts for the previous month",
+                "value": format_currency(
+                    parking_stats.get("total_amount_prev_1_month", 0.0)
+                ),
+            },
+        ]
 
     content = {
         "title": "Parking Plan",
@@ -144,30 +172,6 @@ def parking_plan_view(request):
         "stats": stats,
     }
     return render(request, "parking/parking_plan.html", content)
-
-
-def is_admin(request):
-    user: User = request.user
-    return user.is_superuser
-
-
-def validate_int(value: str | int | None) -> int | None:
-    if value is not None:
-        try:
-            value = int(value)
-        except (TypeError, ValueError):
-            value = 1
-        if value < 1:
-            value = 1
-    return value
-
-
-def filter_alphanum(text: str, additional: list = None) -> str:
-    if additional is None:
-        additional = []
-    text = text.strip().upper()
-    text = "".join(char for char in text if char.isalnum() or char in additional)
-    return text
 
 
 def get_queryset(request, registrations):

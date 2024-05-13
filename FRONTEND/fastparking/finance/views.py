@@ -12,12 +12,24 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.utils import timezone
 
-from parking.views import filter_alphanum
-from .models import Tariff
+from parking.repository import (
+    get_parking_last_activity,
+    get_parking_today_activity,
+    get_parking_yesterday_activity,
+)
+from parking.services import filter_alphanum, format_datetime, format_currency
+from parking.views import get_parking_stats
 
-from .models import Payment
 from photos.services import build_html_image
 from .forms import TariffForm, PaymentsForm
+from .repository import (
+    get_last_tariff,
+    get_payments,
+    get_total_payments_today,
+    get_total_payments_yesterday,
+    get_total_payments_prev_month,
+    get_total_payments_prev_year,
+)
 
 PAGE_ITEMS = settings.PAGE_ITEMS
 
@@ -31,17 +43,17 @@ def main(request):
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name
 
-    context = {"active_menu": active_menu, "title": "Finance", "is_admin": is_admin}
+    context = {"active_menu": active_menu, "title": "Finance"}
     return render(request, "finance/main.html", context)
 
 
 @login_required
 def add_tariff(request):
-    if not is_admin(request):
+    if not is_admin():
         return redirect("finance:main")
 
     # Знайти останній тариф
-    last_tariff = Tariff.objects.last()
+    last_tariff = get_last_tariff()
 
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name
@@ -233,7 +245,7 @@ def payments_list(request):
     if not is_admin(request):
         return redirect("parking:main")
     active_menu = "payment"
-    payments = Payment.objects.order_by("-datetime")
+    payments = get_payments()
     payments, filter_params = get_queryset(request, payments)
     page_number = filter_params.get("page")
     paginator = Paginator(payments, PAGE_ITEMS)
@@ -271,7 +283,7 @@ def download_csv(request):
         ]
     )
 
-    payments = Payment.objects.all().order_by("-datetime")
+    payments = get_payments()
     iso_str = "%Y-%m-%dT%H:%M:%S"
     for payment in payments:
         formatted_datetime = None
@@ -293,3 +305,83 @@ def download_csv(request):
             ]
         )
     return response
+
+
+def get_stats() -> dict:
+    result = {}
+    result.update(get_parking_last_activity())
+    result.update(get_parking_today_activity())
+    result.update(get_parking_yesterday_activity())
+    result.update(get_total_payments_today())
+    result.update(get_total_payments_yesterday())
+    result.update(get_total_payments_prev_month(prev_months=0))
+    result.update(get_total_payments_prev_month(prev_months=1))
+    result.update(get_total_payments_prev_year(prev_year=0))
+    result.update(get_total_payments_prev_year(prev_year=1))
+    return result
+
+
+@login_required
+def statistic(request):
+    resolved_view = resolve(request.path)
+    active_menu = resolved_view.app_name
+    stats = []
+    if request.user.is_superuser:
+        parking_stats = get_stats()
+        stats = [
+            {
+                "label": "Last activity",
+                "value": format_datetime(parking_stats.get("last_activity")),
+                "class": "datetime_utc",
+            },
+            {
+                "label": "Today's activity of car entries",
+                "value": parking_stats.get("today_activity"),
+            },
+            {
+                "label": "Activity of car entries for yesterday",
+                "value": parking_stats.get("yesterday_activity"),
+            },
+            {
+                "label": "Today's payment amounts",
+                "value": format_currency(parking_stats.get("total_amount_today", 0.0)),
+            },
+            {
+                "label": "Yesterday's payment amounts",
+                "value": format_currency(
+                    parking_stats.get("total_amount_yesterday", 0.0)
+                ),
+            },
+            {
+                "label": "Payment amounts for this month",
+                "value": format_currency(
+                    parking_stats.get("total_amount_prev_0_month", 0.0)
+                ),
+            },
+            {
+                "label": "Payment amounts for the previous month",
+                "value": format_currency(
+                    parking_stats.get("total_amount_prev_1_month", 0.0)
+                ),
+            },
+            {
+                "label": "Payment amounts for the this year",
+                "value": format_currency(
+                    parking_stats.get("total_amount_prev_0_year", 0.0)
+                ),
+            },
+            {
+                "label": "Payment amounts for the previous year",
+                "value": format_currency(
+                    parking_stats.get("total_amount_prev_1_year", 0.0)
+                ),
+            },
+        ]
+
+    content = {
+        "title": "Statistic",
+        "datetime_now": format_datetime(timezone.now()),
+        "active_menu": active_menu,
+        "stats": stats,
+    }
+    return render(request, "finance/stats.html", content)

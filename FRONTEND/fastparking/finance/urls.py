@@ -12,5 +12,6 @@ urlpatterns = [
     path("add_tariff/", views.add_tariff, name="add_tariff"),
     path("add_pay/", views.add_pay, name="add_pay"),
     path("payments/", views.payments_list, name="payments_list"),
+    path("statistic/", views.statistic, name="statistic"),
     path("download_csv/", views.download_csv, name="download_csv"),
 ]
