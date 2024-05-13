@@ -33,7 +33,7 @@
       <tbody>
         {% for registration in page_obj %}
         <tr scope="row">
-          <td class="font-monospace">{{ registration.id|stringformat:"06d" }}</td>
+          <td class="font-monospace">{{ registration.id|format_registration }}</td>
           <td>{{ registration.parking }}</td>
           <td class="datetime_utc" title="{{ registration.entry_datetime|date:'Y-m-d H:i' }} UTC">{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
           <td class="text-center" title="{{ registration.tariff_in|format_finance }} per hour">{{ registration.tariff_in|format_finance:True}}</td>

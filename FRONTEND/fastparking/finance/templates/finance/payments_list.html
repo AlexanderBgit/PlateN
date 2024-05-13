@@ -24,7 +24,7 @@
         {% for payment in page_obj.object_list %}
         <tr scope="row">
           <td>{{ payment.id }}</td>
-          <td class="font-monospace">{{ payment.registration_id.pk|stringformat:"06d" }}</td>
+          <td class="font-monospace">{{ payment.registration_id.pk|format_registration }}</td>
           <td class="datetime_utc" title="{{ payment.datetime|date:'Y-m-d H:i' }} UTC">{{ payment.datetime|date:'Y-m-d H:i' }}</td>
           <td>{{ payment.registration_id.car_number_in }}</td>
           <td>{{ payment.amount|format_finance }}</td>
