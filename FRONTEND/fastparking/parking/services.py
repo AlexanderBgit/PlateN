@@ -31,7 +31,9 @@ def format_registration_id(id: int | str | None) -> str | int | None:
 
 
 def format_currency(
-    invoice: Decimal | float | str | None, short_format: bool | None = False
+    invoice: Decimal | float | str | None,
+    short_format: bool | None = False,
+    thousands: bool = True,
 ) -> str | Decimal | float | None:
     if invoice is not None:
         currency = (
@@ -41,11 +43,18 @@ def format_currency(
         )
         try:
             invoice = float(invoice)
-            invoice = (
-                f"{invoice:.2f}"
-                if short_format is None
-                else f"{invoice:.2f} {currency}"
-            )
+            if thousands:
+                invoice = (
+                    f"{invoice:,.2f}"
+                    if short_format is None
+                    else f"{invoice:,.2f} {currency}"
+                ).replace(",", " ")
+            else:
+                invoice = (
+                    f"{invoice:.2f}"
+                    if short_format is None
+                    else f"{invoice:.2f} {currency}"
+                )
         except ValueError:
             ...
     return invoice
@@ -126,25 +135,6 @@ def prepare_pagination_list(total_pages: int, page: int) -> list:
     return pages
 
 
-if __name__ == "__main__":
-    pairs = [
-        ("ZNF2656", "INF2656"),
-        ("NF2656", "INF2656"),
-        ("ZNF2656", "INF265"),
-        ("ZNF2656", "NF265"),
-        ("ZNF2656", "ZNF2656"),
-        ("ZNF2656", "2656"),
-    ]
-
-    for string1, string2 in pairs:
-        result, sim = compare_plates(string1, string2)
-        print(f"Similarity between '{string1}' and '{string2}': {sim:.2f}", result)
-
-    print(format_datetime(1111))
-    print(format_datetime("2024-01-22"))
-    print(format_datetime(datetime.now()))
-
-
 def validate_int(value: str | int | None) -> int | None:
     if value is not None:
         try:
@@ -162,3 +152,22 @@ def filter_alphanum(text: str, additional: list = None) -> str:
     text = text.strip().upper()
     text = "".join(char for char in text if char.isalnum() or char in additional)
     return text
+
+
+if __name__ == "__main__":
+    pairs = [
+        ("ZNF2656", "INF2656"),
+        ("NF2656", "INF2656"),
+        ("ZNF2656", "INF265"),
+        ("ZNF2656", "NF265"),
+        ("ZNF2656", "ZNF2656"),
+        ("ZNF2656", "2656"),
+    ]
+
+    for string1, string2 in pairs:
+        result, sim = compare_plates(string1, string2)
+        print(f"Similarity between '{string1}' and '{string2}': {sim:.2f}", result)
+
+    print(format_datetime(1111))
+    print(format_datetime("2024-01-22"))
+    print(format_datetime(datetime.now()))
