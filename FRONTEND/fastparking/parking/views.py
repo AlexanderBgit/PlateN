@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
@@ -8,17 +8,22 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.db.models import Sum
 
+from finance.repository import (
+    get_total_payments_today,
+    get_total_payments_yesterday,
+    get_total_payments_prev_month,
+    get_total_payments_prev_year,
+)
 from .models import Registration
-from .models import ParkingSpace
 from photos.repository import get_price_per_hour
 from .repository import (
-    get_cars_user,
     get_cars_number_user,
     get_parking_info,
     get_registrations,
-    get_parking_stats,
+    get_parking_last_activity,
+    get_parking_today_activity,
+    get_parking_yesterday_activity,
 )
 from .services import (
     format_hours,
@@ -85,6 +90,20 @@ def main(request):
 #     )
 
 
+def get_parking_stats() -> dict:
+    result = {}
+    result.update(get_parking_last_activity())
+    result.update(get_parking_today_activity())
+    result.update(get_parking_yesterday_activity())
+    result.update(get_total_payments_today())
+    result.update(get_total_payments_yesterday())
+    result.update(get_total_payments_prev_month(prev_months=0))
+    result.update(get_total_payments_prev_month(prev_months=1))
+    result.update(get_total_payments_prev_year(prev_year=0))
+    result.update(get_total_payments_prev_year(prev_year=1))
+    return result
+
+
 def parking_plan_view(request):
     user: User = request.user
     user_list_cars_numbers = None
@@ -129,8 +148,28 @@ def parking_plan_view(request):
             "value": format_currency(parking_stats.get("total_amount_yesterday", 0.0)),
         },
         {
-            "label": "Payment amounts per month",
-            "value": format_currency(parking_stats.get("total_amount_month", 0.0)),
+            "label": "Payment amounts for this month",
+            "value": format_currency(
+                parking_stats.get("total_amount_prev_0_month", 0.0)
+            ),
+        },
+        {
+            "label": "Payment amounts for the previous month",
+            "value": format_currency(
+                parking_stats.get("total_amount_prev_1_month", 0.0)
+            ),
+        },
+        {
+            "label": "Payment amounts for the this year",
+            "value": format_currency(
+                parking_stats.get("total_amount_prev_0_year", 0.0)
+            ),
+        },
+        {
+            "label": "Payment amounts for the previous year",
+            "value": format_currency(
+                parking_stats.get("total_amount_prev_1_year", 0.0)
+            ),
         },
     ]
 

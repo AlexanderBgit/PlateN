@@ -41,7 +41,11 @@ def format_currency(
         )
         try:
             invoice = float(invoice)
-            invoice = f"{invoice:.2f}" if short_format is None else f"{invoice:.2f} {currency}"
+            invoice = (
+                f"{invoice:.2f}"
+                if short_format is None
+                else f"{invoice:.2f} {currency}"
+            )
         except ValueError:
             ...
     return invoice
