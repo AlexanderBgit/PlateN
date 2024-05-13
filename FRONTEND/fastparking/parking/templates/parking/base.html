@@ -34,11 +34,11 @@
           />
           <span id="team-long" class="ms-1 fs-4 d-none d-md-inline" title="Neuron Curve Bobr">NeuronCurveBobr</span>
         </a>
-        <p class="m-0 fs-4 team-short text-center" title="Neuron Curve Bobr">NC Bobr</p>
+        <p id="team_short" class="m-0 fs-4 d-none text-center" title="Neuron Curve Bobr">NC Bobr</p>
         <hr class="m-2" />
         <ul class="nav nav-pills flex-column">
-          <li title="Home">
-            <a class="nav-link {% if active_menu == 'home' %}active{% else %}text-white{% endif %}" href="/">
+          <li title="Home" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a class="nav-link {% if active_menu == 'home' %}active{% else %}text-white{% endif %}" href="/" data-bs-toggle="tooltip" data-bs-placement="right">
               <i class="fa-solid fa-home"></i>
                <span class="nav-item d-none d-md-inline">Home</span>
             </a>
@@ -144,7 +144,14 @@
             </a>
           </li>
           {% endif %}
+          <li title=">>" id="btn_collapse" class="d-md-none">
+            <a class="nav-link text-white" onclick="toggle_md()">
+              <i class="fa-solid fa-angles-right d-md-none"></i>
+               <span class="nav-item d-none d-md-inline"><i class="fa-solid fa-angles-left me-1"></i>Collapse</span>
+            </a>
+          </li>
         </ul>
+
         <hr />
         <div class="dropdown" title="Username {{user.username}}">
           <a
@@ -153,9 +160,9 @@
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            <img src="{% static 'parking/mdo.png' %}" alt="" class="rounded-circle me-2" style="max-width: 28px;" />
+            <img src="{% static 'parking/mdo.png' %}" alt="" class="rounded-circle" style="max-width: 24px;" />
             {% if user.is_authenticated %}
-            <strong class="d-none d-md-inline">{{user.username}}</strong><span style="color: #00d000"> &#9679;</span>
+            <strong class="d-none d-md-inline ms-2">{{user.username}}</strong><span class="d-none d-md-inline ms-2" style="color: #00d000"> &#9679;</span>
             {% else %}
             <strong class="d-none d-md-inline">Username </strong>
             {% endif %}
@@ -165,5 +172,6 @@
       <div class="b-example-divider b-example-vr"></div>
       <div class="container-fluid">{% block content %}{% endblock %}</div>
     </main>
+    <script src="{% static 'parking/js/sidebars.js' %}"></script>
   </body>
 </html>
