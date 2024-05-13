@@ -191,23 +191,27 @@ footer .icon {
   margin: 0;
 }
 
+
+.sidebar_mobile {width: 11em !important;}
+
 .sidebar {width: 300px}
 
-
-@media (max-width: 900px) {
-  .sidebar {width: unset}
-  #team-long {display: none}
-  .team-short {display: block}
+@media (max-width: 768px) {
+  .sidebar .rounded-circle {margin: auto;}
+  .sidebar {width: 2.0em;}
   .nav-link {
-    padding-right: 8px;
-    padding-left: 8px;
+    padding: 1px;
+    margin-top: 4px;
+    margin-bottom: 4px;
   }
   .sidebar.p-3 {
-    padding-right: 6px !important;
-    padding-left: 6px !important;
+    padding: 1px !important;
+/*    padding-right: 6px !important;
+    padding-left: 6px !important;*/
   }
   .sidebar ul a i {
     margin-right: 8px;
+    text-align: center;
   }
   svg.me-2 {
     margin-right: unset !important;

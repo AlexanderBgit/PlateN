@@ -32,132 +32,139 @@
             alt="NC Bobr"
             style="max-width: 60px; width: 100%"
           />
-          <span id="team-long" class="ms-1 fs-4" title="Neuron Curve Bobr">NeuronCurveBobr</span>
+          <span id="team-long" class="ms-1 fs-4 d-none d-md-inline" title="Neuron Curve Bobr">NeuronCurveBobr</span>
         </a>
-        <p class="m-0 fs-4 team-short text-center" title="Neuron Curve Bobr">NC Bobr</p>
+        <p id="team_short" class="m-0 fs-4 d-none text-center" title="Neuron Curve Bobr">NC Bobr</p>
         <hr class="m-2" />
         <ul class="nav nav-pills flex-column">
-          <li>
-            <a class="nav-link {% if active_menu == 'home' %}active{% else %}text-white{% endif %}" href="/">
+          <li title="Home" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a class="nav-link {% if active_menu == 'home' %}active{% else %}text-white{% endif %}" href="/" data-bs-toggle="tooltip" data-bs-placement="right">
               <i class="fa-solid fa-home"></i>
-              <span class="nav-item mx-auto">Home</span>
+               <span class="nav-item d-none d-md-inline">Home</span>
             </a>
           </li>
-          <li>
+          <li title="Parking plan" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'plan' %}active{% else %}text-white{% endif %}"
               href="{% url 'parking:parking_plan' %}"
             >
               <i class="fa-solid fa-thumbtack" style="padding-left: 3px"></i>
-              <span class="nav-item">Parking plan</span>
+               <span class="nav-item  d-none d-md-inline">Parking plan</span>
             </a>
           </li>
           {% if user.is_authenticated %}
-          <li>
+          <li title="Profile" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'accounts' %}active{% else %}text-white{% endif %}"
               href="{% url 'accounts:profile' %}"
             >
               <i class="fa-solid fa-user" style="padding-left: 2px"></i>
-              <span class="nav-item">Profile</span>
+               <span class="nav-item  d-none d-md-inline">Profile</span>
             </a>
           </li>
           {% endif %}
           {% if user.is_authenticated %}
-          <li>
+          <li title="Registration" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'registration' %}active{% else %}text-white{% endif %}"
               href="{% url 'parking:registration_list' %}"
             >
               <i class="fa-solid fa-car-building" style="margin-left: -1px; margin-right: 1px"></i>
-              <span class="nav-item">Registration</span>
+               <span class="nav-item  d-none d-md-inline">Registration</span>
             </a>
           </li>
           {% endif %}
           {% if user.is_superuser %}
-          <li>
+          <li title="Cars" data-bs-toggle="tooltip" data-bs-placement="right">
             <a class="nav-link {% if active_menu == 'cars' %}active{% else %}text-white{% endif %}" href="/cars/">
               <i class="fa-solid fa-car"></i>
-              <span class="nav-item">Cars</span>
+               <span class="nav-item  d-none d-md-inline">Cars</span>
             </a>
           </li>
           {% endif %}
           {% if user.is_authenticated %}
-          <li>
+          <li title="Finance" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'finance' %}active{% else %}text-white{% endif %}"
               href="{% url 'finance:main' %}"
             >
               <i class="fa-solid fa-table-list"></i>
-              <span class="nav-item">Finance</span>
+               <span class="nav-item  d-none d-md-inline">Finance</span>
             </a>
           </li>
           {% endif %}
           {% if user.is_authenticated %}
-          <li>
+          <li title="Car Recognition" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'photos' %}active{% else %}text-white{% endif %}"
               href="{% url 'photos:main' %}"
             >
               <i class="fa-solid fa-camera"></i>
-              <span class="nav-item">Car Recognition</span>
+               <span class="nav-item  d-none d-md-inline">Car Recognition</span>
             </a>
           </li>
           {% endif %}
-          <li>
+          <li title="Messages" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'messages' %}active{% else %}text-white{% endif %}"
               href="{% url 'communications:main' %}"
             >
               <i class="fa-solid fa-earth-americas"></i>
-              <span class="nav-item">Messages</span>
+               <span class="nav-item  d-none d-md-inline">Messages</span>
             </a>
           </li>
           {% if user.is_authenticated %}
-          <li>
+          <li title="Logout" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'logout' %}active{% else %}text-white{% endif %}"
               href="{% url 'users:logout' %}"
             >
               <i class="fa-solid fa-sign-out"></i>
-              <span class="nav-item">Logout</span>
+               <span class="nav-item  d-none d-md-inline">Logout</span>
             </a>
           </li>
           {% endif %}
           {% if not user.is_authenticated %}
-          <li>
+          <li title="SignIn" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'signin' %}active{% else %}text-white{% endif %}"
               href="{% url 'users:username' %}"
             >
               <i class="fa-solid fa-user"></i>
-              <span class="nav-item">SignIn</span>
+               <span class="nav-item  d-none d-md-inline">SignIn</span>
             </a>
           </li>
-          <li>
+          <li title="SignUp" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'signup' %}active{% else %}text-white{% endif %}"
               href="{% url 'users:register' %}"
             >
               <i class="fa-solid fa-user-check"></i>
-              <span class="nav-item">SignUp</span>
+               <span class="nav-item  d-none d-md-inline">SignUp</span>
             </a>
           </li>
           {% endif %}
+          <li title="Expand/Collapse menu" id="btn_collapse" class="d-md-none" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a class="nav-link text-white" onclick="toggle_md()">
+              <i class="fa-solid fa-angles-right d-md-none"></i>
+               <span class="nav-item d-none d-md-inline"><i class="fa-solid fa-angles-left me-1"></i>Collapse</span>
+            </a>
+          </li>
         </ul>
+
         <hr />
-        <div class="dropdown">
+        <div class="dropdown" title="Username {{user.username}}" data-bs-toggle="tooltip" data-bs-placement="right">
           <a
             href="#"
             class="d-flex align-items-center text-white text-decoration-none"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            <img src="{% static 'parking/mdo.png' %}" alt="" width="32" height="32" class="rounded-circle me-2" />
+            <img src="{% static 'parking/mdo.png' %}" alt="" class="rounded-circle" style="max-width: 24px;" />
             {% if user.is_authenticated %}
-            <strong>{{user.username}}</strong><span style="color: #00d000"> &#9679;</span>
+            <strong class="d-none d-md-inline ms-2">{{user.username}}</strong><span class="d-none d-md-inline ms-2" style="color: #00d000"> &#9679;</span>
             {% else %}
-            <strong>Username </strong>
+            <strong class="d-none d-md-inline">Username </strong>
             {% endif %}
           </a>
         </div>
@@ -165,5 +172,6 @@
       <div class="b-example-divider b-example-vr"></div>
       <div class="container-fluid">{% block content %}{% endblock %}</div>
     </main>
+    <script src="{% static 'parking/js/sidebars.js' %}"></script>
   </body>
 </html>
