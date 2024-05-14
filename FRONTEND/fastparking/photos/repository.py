@@ -6,8 +6,9 @@ import pytz
 
 # from django.utils import timezone
 
+if settings.USE_DS_NUMBER_DETECTION:
+    from ds.predict_num import get_num_auto_png_io
 
-from ds.predict_num import get_num_auto_png_io
 from finance.repository import calculate_total_payments
 from parking.repository import number_present_on_parking
 from parking.services import (
@@ -198,7 +199,14 @@ def handle_uploaded_file(
         #     ...
 
         # analyze and calculate prediction of image
-        predict = get_num_auto_png_io(f.read())
+        if settings.USE_DS_NUMBER_DETECTION:
+            predict = get_num_auto_png_io(f.read())
+        else:
+            predict = {
+                "num_avto_str": "DISABLED",
+                "accuracy": 0,
+                "num_img": None,
+            }
 
         # store information to database
         photo_id = db_save_photo_information(predict, type)

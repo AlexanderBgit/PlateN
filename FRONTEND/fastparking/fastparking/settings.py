@@ -58,7 +58,7 @@ if DJANGO_ALLOWED_HOSTS:
     CSRF_TRUSTED_ORIGINS = [
         f"https://{host}" for host in DJANGO_ALLOWED_HOSTS.split(",")
     ]
-ALLOWED_HOSTS.extend(["localhost","127.0.0.1"])
+ALLOWED_HOSTS.extend(["localhost", "127.0.0.1"])
 
 # Application definition
 
@@ -212,6 +212,8 @@ CACHES = {
 
 # print(f"{CACHES=}")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+USE_DS_NUMBER_DETECTION = os.getenv("USE_DS_NUMBER_DETECTION", "1").strip() == "1"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("MAIL_SERVER")

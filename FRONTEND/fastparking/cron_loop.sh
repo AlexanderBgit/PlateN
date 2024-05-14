@@ -1,5 +1,6 @@
 #!/bin/env sh
 
+USE_DS_NUMBER_DETECTION=0
 python ./utils/scheduler.py --loop -q --sent_hello
 
 # while true; do
