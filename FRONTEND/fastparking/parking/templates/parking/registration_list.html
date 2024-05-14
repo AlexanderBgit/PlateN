@@ -1,5 +1,6 @@
 {% extends "parking/base.html" %}
 {% load static %}
+{% load custom_filters %}
 {% block extra_head %}
 <script src="{% static 'parking/js/misc.js' %}"></script>
 <script src="{% static 'parking/js/local_datetime.js' %}"></script>
@@ -32,15 +33,15 @@
       <tbody>
         {% for registration in page_obj %}
         <tr scope="row">
-          <td class="font-monospace">{{ registration.id|stringformat:"06d" }}</td>
+          <td class="font-monospace">{{ registration.id|format_registration }}</td>
           <td>{{ registration.parking }}</td>
           <td class="datetime_utc" title="{{ registration.entry_datetime|date:'Y-m-d H:i' }} UTC">{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
-          <td class="text-center">{{ registration.tariff_in }}</td>
+          <td class="text-center" title="{{ registration.tariff_in|format_finance }} per hour">{{ registration.tariff_in|format_finance:True}}</td>
           <td class="datetime_utc" title="{{ registration.exit_datetime|date:'Y-m-d H:i' }} UTC">{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
           <td title="{{ registration.duration_datatime }}">{{ registration.duration }}</td>
-          <td title="Calc: {{ registration.calculate_parking_fee }}">{{ registration.invoice}}</td>
-          <td title="Total paid for this registration">
-            {% if registration.total_amount %}{{ registration.total_amount }}{% endif %}
+          <td title="Calc: {{ registration.calculate_parking_fee|format_finance }}">{{ registration.invoice}}</td>
+          <td title="Total paid for this registration: {{ registration.total_amount|format_finance }}">
+            {% if registration.total_amount %}{{ registration.total_amount|format_finance:True }}{% endif %}
           </td>
           <td class="">{{ registration.car_number_in }}</td>
           <td class="">{{ registration.car_number_out }}</td>

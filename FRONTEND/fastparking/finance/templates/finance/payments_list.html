@@ -4,6 +4,7 @@
 <script src="{% static 'parking/js/misc.js' %}"></script>
 <script src="{% static 'parking/js/local_datetime.js' %}"></script>
 {% endblock %}
+{% load custom_filters %}
 {% block content %}
 <h3><i class="fa-solid fa-table-list"></i>  Payments List{% if filter_params.days %} for last {{ filter_params.days}} days {%endif%}. Total results: {{filter_params.total_rows}}</h3>
   <div class="container-fluid table-responsive bd-example">
@@ -23,11 +24,11 @@
         {% for payment in page_obj.object_list %}
         <tr scope="row">
           <td>{{ payment.id }}</td>
-          <td class="font-monospace">{{ payment.registration_id.pk|stringformat:"06d" }}</td>
+          <td class="font-monospace">{{ payment.registration_id.pk|format_registration }}</td>
           <td class="datetime_utc" title="{{ payment.datetime|date:'Y-m-d H:i' }} UTC">{{ payment.datetime|date:'Y-m-d H:i' }}</td>
           <td>{{ payment.registration_id.car_number_in }}</td>
-          <td>{{ payment.amount }} {{ currency }}</td>
-          <td>{{ payment.registration_id.calculate_parking_fee }} {{ currency }}</td>
+          <td>{{ payment.amount|format_finance }}</td>
+          <td>{{ payment.registration_id.calculate_parking_fee|format_finance }}</td>
           <td>
             {% if payment.registration_id.exit_datetime %}
             <img src="{% static 'parking/icon-yes.svg' %}" alt="Yes" />
