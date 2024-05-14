@@ -1,0 +1,38 @@
+<!-- parking/templates/car_list.html -->
+{% extends "parking/base.html" %}
+{% load static %}
+{% block extra_head %}
+<script src="{% static 'parking/js/misc.js' %}"></script>
+{% endblock %}
+{% block content %}
+<h3 class="mb-3 mt-3"><i class="fa-solid fa-car"></i> Confirmation of changes</h3>
+<div class="bd-example">
+  <form method="post" action="{% url 'cars:confirm_changes' %}">
+    {% csrf_token %}
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th scope="col"  title="Car Number" aria-label="Car Number"><i class="bi bi-car-front"></i><span class="btn_text_short">&nbsp;Number</span></th>
+          <th scope="col" class="text-center" title="Status" aria-label="Status"><i class="bi-ban"></i><span class="btn_text_short"><i class="bi-pass"></i>&nbsp;Status</span></th>
+          <th scope="col" class="text-center" title="Location" aria-label="Location"><i class="bi-geo-alt"></i><span class="btn_text_short">&nbsp;Location</span></th>
+          <th scope="col" class="text-center" title="Comment" aria-label="Comment"><i class="bi-chat-right-text"></i><span class="btn_text_short">&nbsp;Comment</span></th>
+        </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td class="col-2">{{ form.number }}</td>
+        <td class="col-2">{{ form.status }}</td>
+        <td class="col-2">{{ form.location }}</td>
+        <td>{{ form.comment }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <button class="btn btn-primary mt-3" type="submit"><i class="bi-save"></i>
+    Save<span class="btn_text_short"> changes</span></button>
+  </form>
+</div>
+
+
+
+
+{% endblock content %}

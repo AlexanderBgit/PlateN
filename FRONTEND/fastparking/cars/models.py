@@ -1,7 +1,12 @@
+from enum import Enum, auto
+
 from django.urls import reverse
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
+
 from photos.models import Photo
+
 
 class Car(models.Model):
     car_number = models.CharField(max_length=16, null=True)
@@ -15,6 +20,7 @@ class Car(models.Model):
 
     def __str__(self):
         return self.car_number
+
     def save(self, *args, **kwargs):
         if self.photo_car:
             self.car_number = self.photo_car.recognized_car_number
@@ -28,3 +34,23 @@ class Car(models.Model):
         return reverse("car_list", kwargs={"pk": self.pk})
 
 
+class StatusEnum(Enum):
+    UNDEFINED = auto()
+    BLOCKED = auto()
+    UNBLOCKED = auto()
+    PASSED = auto()
+    UNPASSED = auto()
+
+
+STATUS_CHOICES = [(status.value, status.name) for status in StatusEnum]
+
+
+class Log(models.Model):
+    number = models.CharField(max_length=16)
+    status = models.PositiveSmallIntegerField(
+        choices=STATUS_CHOICES, default=StatusEnum.UNDEFINED.value
+    )
+    comment = models.TextField(max_length=255)
+    username = models.CharField(max_length=16)
+    location = models.CharField(max_length=16, null=True, blank=True)
+    datetime = models.DateTimeField(default=timezone.now)

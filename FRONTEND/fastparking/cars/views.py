@@ -1,8 +1,10 @@
 from django.conf import settings
-from cars.models import Car
+
+from cars.forms import LogsForm
+from cars.models import Car, Log, StatusEnum
 
 # from .forms import MyCarForm, CarNumberForm
-from django.views.generic import ListView
+from django.views.generic import ListView, FormView
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -101,3 +103,19 @@ class CarListView(SuperuserRequiredMixin, ListView):
                     ...
 
         return redirect(reverse("cars:car_list"))
+
+
+class ConfirmChangesView(SuperuserRequiredMixin, FormView):
+    form_class = LogsForm
+    initial = {
+        "number": "AC3344UT",
+        "status": StatusEnum.BLOCKED.name,
+        "username": "some_uer",
+    }
+    template_name = "cars/confirm_changes.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Cars"
+        context["active_menu"] = "cars"
+        return context
