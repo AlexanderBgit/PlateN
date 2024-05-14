@@ -3,6 +3,11 @@
 {% load static %}
 {% block extra_head %}
 <script src="{% static 'parking/js/misc.js' %}"></script>
+<style>
+  .center_row {
+    align-content: center;
+  }
+</style>
 {% endblock %}
 {% block content %}
 <h3 class="mb-3 mt-3"><i class="fa-solid fa-car"></i> Confirmation of changes</h3>
@@ -21,8 +26,8 @@
       <tbody>
       {% for form in forms %}
       <tr>
-        <td class="col-2">{{ form.number }}</td>
-        <td class="col-2">{{ form.status }}</td>
+        <td class="col-2 form-label center_row">{{ form.id }}{{ form.number.value }}</td>
+        <th class="col-2 form-label center_row text-center">{{ form.status }}{{ form.status.value }}</th>
         <td class="col-2">{{ form.location }}</td>
         <td>{{ form.comment }}</td>
       </tr>

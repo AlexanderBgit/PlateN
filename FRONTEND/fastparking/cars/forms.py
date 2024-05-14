@@ -39,7 +39,7 @@ class MyCarForm(forms.ModelForm):  # додано другий такий сам
         }
 
 
-class LogsForm(forms.ModelForm):  # додано другий такий самий клас
+class LogsForm(forms.ModelForm):
     class Meta:
         model = Log
         fields = [
@@ -48,20 +48,15 @@ class LogsForm(forms.ModelForm):  # додано другий такий сам�
             "comment",
             "location",
         ]
-
         widgets = {
-            "number": forms.TextInput(
-                attrs={"class": "form-control", "readonly": True, "disabled": True}
-            ),
-            "status": forms.TextInput(
-                attrs={
-                    "class": "form-control text-center",
-                    "readonly": True,
-                    "disabled": True,
-                }
-            ),
+            "number": forms.HiddenInput(),
+            "status": forms.HiddenInput(),
             "comment": forms.TextInput(attrs={"class": "form-control"}),
-            "location": forms.TextInput(
-                attrs={"class": "form-control", "required": False}
-            ),
+            "location": forms.TextInput(attrs={"class": "form-control"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["id"] = forms.HiddenInput()
+        self.fields["comment"] = forms.CharField(required=True)
+        print(self.fields)

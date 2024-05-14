@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.forms import formset_factory
 
 from cars.forms import LogsForm
 from cars.models import Car, Log, StatusEnum
@@ -108,22 +109,27 @@ class CarListView(SuperuserRequiredMixin, ListView):
 class ConfirmChangesView(SuperuserRequiredMixin, FormView):
     form_class = LogsForm
     template_name = "cars/confirm_changes.html"
+    success_url = "car:car_list"
 
     def get_context_data(self, **kwargs):
         initials = [
             {
+                "id": 22,
                 "number": "AC0344UT",
                 "status": StatusEnum.BLOCKED.name,
             },
             {
+                "id": 23,
                 "number": "AC1344UT",
                 "status": StatusEnum.UNBLOCKED.name,
             },
             {
+                "id": 29,
                 "number": "AC2344UT",
                 "status": StatusEnum.PASSED.name,
             },
             {
+                "id": 33,
                 "number": "AC3344UT",
                 "status": StatusEnum.UNPASSED.name,
             },
@@ -131,15 +137,32 @@ class ConfirmChangesView(SuperuserRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
         context["title"] = "Cars"
         context["active_menu"] = "cars"
-        context["forms"] = [
-            self.form_class(prefix=f"form-{i}", initial=initial)
-            for i, initial in enumerate(initials)
-        ]
+        FormSet = formset_factory(
+            LogsForm, extra=0
+        )  # Adjust 'extra' for initial blank forms
+        forms = FormSet(prefix="log_form", initial=initials)
+        context["forms"] = forms
         return context
 
-    def form_valid(self, form):
-        combined_data = {}
-        for form_instance in self.get_forms():
-            combined_data.update(form_instance.cleaned_data)
-        print(f"form_valid {form=}")
-        return super().form_valid(form)
+    def post(self, request, *args, **kwargs):
+        print(f"post {request.POST=}")
+        FormSet = formset_factory(LogsForm)
+        forms = FormSet(
+            request.POST, prefix="log_form"
+        )  # Use request data with the prefix
+
+        if forms.is_valid():
+            # Process valid form data
+            for form in forms:
+                car_number = form.cleaned_data["number"]
+                status = form.cleaned_data["status"]
+                location = form.cleaned_data["location"]
+                comment = form.cleaned_data["comment"]
+                print(form)
+
+            # Redirect after successful processing (optional)
+            return redirect("success_url")
+
+        return self.render_to_response(
+            self.get_context_data(forms=forms)
+        )  # Render forms again with errors

@@ -50,7 +50,7 @@ class Log(models.Model):
     status = models.PositiveSmallIntegerField(
         choices=STATUS_CHOICES, default=StatusEnum.UNDEFINED.value
     )
-    comment = models.TextField(max_length=255)
+    comment = models.TextField(max_length=255, blank=False)
     username = models.CharField(max_length=16)
     location = models.CharField(max_length=16, null=True, blank=True)
     datetime = models.DateTimeField(default=timezone.now)
