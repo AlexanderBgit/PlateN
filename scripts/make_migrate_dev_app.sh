@@ -17,5 +17,5 @@ fi
 echo PYTHONPATH=${PYTHONPATH}
 pushd "../FRONTEND/fastparking"
 echo -e "\nStarting Django makemigrations..."
-poetry run python manage.py makemigrations
+USE_DS_NUMBER_DETECTION=0 poetry run python manage.py makemigrations
 popd

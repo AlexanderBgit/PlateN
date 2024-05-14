@@ -27,6 +27,8 @@ TELEGRAM_TOKEN=""
 TELEGRAM_BOT_NAME="fastparking_bobr_bot"
 TELEGRAM_NEWS_NAME="@fastparking_news"
 
+USE_DS_NUMBER_DETECTION=1
+
 
 
 
