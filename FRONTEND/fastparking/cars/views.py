@@ -107,15 +107,39 @@ class CarListView(SuperuserRequiredMixin, ListView):
 
 class ConfirmChangesView(SuperuserRequiredMixin, FormView):
     form_class = LogsForm
-    initial = {
-        "number": "AC3344UT",
-        "status": StatusEnum.BLOCKED.name,
-        "username": "some_uer",
-    }
     template_name = "cars/confirm_changes.html"
 
     def get_context_data(self, **kwargs):
+        initials = [
+            {
+                "number": "AC0344UT",
+                "status": StatusEnum.BLOCKED.name,
+            },
+            {
+                "number": "AC1344UT",
+                "status": StatusEnum.UNBLOCKED.name,
+            },
+            {
+                "number": "AC2344UT",
+                "status": StatusEnum.PASSED.name,
+            },
+            {
+                "number": "AC3344UT",
+                "status": StatusEnum.UNPASSED.name,
+            },
+        ]
         context = super().get_context_data(**kwargs)
         context["title"] = "Cars"
         context["active_menu"] = "cars"
+        context["forms"] = [
+            self.form_class(prefix=f"form-{i}", initial=initial)
+            for i, initial in enumerate(initials)
+        ]
         return context
+
+    def form_valid(self, form):
+        combined_data = {}
+        for form_instance in self.get_forms():
+            combined_data.update(form_instance.cleaned_data)
+        print(f"form_valid {form=}")
+        return super().form_valid(form)

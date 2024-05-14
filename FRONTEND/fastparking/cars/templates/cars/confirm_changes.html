@@ -9,7 +9,7 @@
 <div class="bd-example">
   <form method="post" action="{% url 'cars:confirm_changes' %}">
     {% csrf_token %}
-    <table class="table table-striped table-hover">
+    <table class="table">
       <thead>
         <tr>
           <th scope="col"  title="Car Number" aria-label="Car Number"><i class="bi bi-car-front"></i><span class="btn_text_short">&nbsp;Number</span></th>
@@ -19,12 +19,14 @@
         </tr>
       </thead>
       <tbody>
+      {% for form in forms %}
       <tr>
         <td class="col-2">{{ form.number }}</td>
         <td class="col-2">{{ form.status }}</td>
         <td class="col-2">{{ form.location }}</td>
         <td>{{ form.comment }}</td>
       </tr>
+      {% endfor %}
       </tbody>
     </table>
     <button class="btn btn-primary mt-3" type="submit"><i class="bi-save"></i>
