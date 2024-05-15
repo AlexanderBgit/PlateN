@@ -63,8 +63,13 @@
       {% endfor %}
       </tbody>
     </table>
-    <button class="btn btn-primary mt-3" type="submit"><i class="bi-save"></i>
-    Save<span class="btn_text_short"> changes</span></button>
+    <p class="mt-3">
+      <a class="btn btn-primary" href="{% url 'cars:car_list' %}"><i class="bi-arrow-left-circle"></i>
+       <span class="btn_text_short"> Back</span></a>
+        <button class="btn btn-primary" type="submit"><i class="bi-save"></i>
+        Save<span class="btn_text_short"> changes</span></button>
+    </p>
+      <div class="alert alert-info mb-0"><i class="bi bi-info-circle fs-4"></i> Information about you and your actions will be stored in the records.</div>
   </form>
 </div>
 

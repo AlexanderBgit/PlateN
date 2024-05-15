@@ -15,16 +15,14 @@
 <!--  <p>{{ form.photo.label_tag }} {{ form.photo }}</p>-->
   <p>{{ form.photo.as_field_group }}</p>
 
-  <div class="container">
-    <ul class="list-group list-group-horizontal">
-      <li class="list-group-item">
-        <input class="btn btn-primary" type="submit" value="Submit" />
-      </li>
-      <li class="list-group-item">
-        <a href="{% url 'photos:main' %}" class="btn btn-primary">Back</a>
-      </li>
-    </ul>
-  </div>
+<p>
+  <a href="{% url 'photos:main' %}" class="btn btn-primary">
+      <i class="bi-arrow-left-circle"></i>
+      <span class="btn_text_short"> Back</span>
+    </a>
+  <button class="btn btn-primary" type="submit"><i class="bi-cloud-arrow-up"></i>
+      <span class="btn_text_short"> Upload</span></button>
+</p>
 </form>
 <p></p>
 

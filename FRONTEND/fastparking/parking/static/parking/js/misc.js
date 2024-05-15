@@ -22,3 +22,11 @@ function clear_form(fieldsToClear=['car_no', 'p_space']){
       }
      }
 }
+
+function goBackOnHistory(element){
+    if (window.history && window.history.length > 1) {
+      window.history.back();
+    }else{
+      window.location.href = '/';
+    }
+}
