@@ -1,5 +1,5 @@
 from django import forms
-from .models import Car, Log
+from .models import Car, Log, StatusEnum
 
 
 # from .forms import MyCarForm
@@ -40,23 +40,19 @@ class MyCarForm(forms.ModelForm):  # додано другий такий сам
 
 
 class LogsForm(forms.ModelForm):
+    row = forms.IntegerField(required=True, widget=forms.HiddenInput)
+
     class Meta:
         model = Log
         fields = [
-            "number",
+            "item",
             "status",
             "comment",
             "location",
         ]
         widgets = {
-            "number": forms.HiddenInput(),
+            "item": forms.HiddenInput(),
             "status": forms.HiddenInput(),
             "comment": forms.TextInput(attrs={"class": "form-control"}),
             "location": forms.TextInput(attrs={"class": "form-control"}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["id"] = forms.HiddenInput()
-        self.fields["comment"] = forms.CharField(required=True)
-        print(self.fields)

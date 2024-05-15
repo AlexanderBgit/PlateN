@@ -14,6 +14,16 @@
 <div class="bd-example">
   <form method="post" action="{% url 'cars:confirm_changes' %}">
     {% csrf_token %}
+    {{ forms.management_form }}
+    {% if forms.non_form_errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for error in forms.non_form_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
     <table class="table">
       <thead>
         <tr>
@@ -25,9 +35,28 @@
       </thead>
       <tbody>
       {% for form in forms %}
+        {% if form.errors %}
+            {% for field_name, field_errors in form.errors.items %}
+                {% for error in field_errors %}
+                    <tr class="alert alert-danger"><td colspan="4">{{ field_name }}: {{ error }}</td></tr>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
       <tr>
-        <td class="col-2 form-label center_row">{{ form.id }}{{ form.number.value }}</td>
-        <th class="col-2 form-label center_row text-center">{{ form.status }}{{ form.status.value }}</th>
+        <td class="col-2 form-label center_row">{{ form.row }}{{ form.item }}{{ form.item.value }}
+              {% if form.item.errors %}
+                {% for error in form.item.errors %}
+                    {{ error }}
+                {% endfor %}
+            {% endif %}</td>
+        <th class="col-2 form-label center_row text-center">{{ form.status }}{{ form.status.value }}
+
+          {% if form.status.errors %}
+                {% for error in form.status.errors %}
+                    {{ error }}
+                {% endfor %}
+            {% endif %}
+        </th>
         <td class="col-2">{{ form.location }}</td>
         <td>{{ form.comment }}</td>
       </tr>

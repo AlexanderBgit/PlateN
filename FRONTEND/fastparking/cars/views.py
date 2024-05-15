@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.forms import formset_factory
+from django.forms import formset_factory, BaseFormSet
 
 from cars.forms import LogsForm
 from cars.models import Car, Log, StatusEnum
@@ -11,6 +11,8 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
+from cars.repository import get_car_by_id
 
 
 class SuperuserRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -93,7 +95,7 @@ class CarListView(SuperuserRequiredMixin, ListView):
         blocked_id = request.POST.getlist("blocked")
         pay_pass_id = request.POST.getlist("pay_pass")
         for id in cars_id:
-            id = self.validate_int(id)
+            id = str(self.validate_int(id))
             if id:
                 blocked = id in blocked_id
                 pay_pass = id in pay_pass_id
@@ -106,63 +108,128 @@ class CarListView(SuperuserRequiredMixin, ListView):
         return redirect(reverse("cars:car_list"))
 
 
-class ConfirmChangesView(SuperuserRequiredMixin, FormView):
+class RequiredFormSet(BaseFormSet):
+    def __init__(self, *args, **kwargs):
+        super(RequiredFormSet, self).__init__(*args, **kwargs)
+        for form in self.forms:
+            form.empty_permitted = False
+            form.use_required_attribute = True
+
+
+class ConfirmChangesView(FormView):
     form_class = LogsForm
     template_name = "cars/confirm_changes.html"
-    success_url = "car:car_list"
+    success_url = "cars:car_list"
+    reply_url = "cars:car_list"
 
     def get_context_data(self, **kwargs):
-        initials = [
-            {
-                "id": 22,
-                "number": "AC0344UT",
-                "status": StatusEnum.BLOCKED.name,
-            },
-            {
-                "id": 23,
-                "number": "AC1344UT",
-                "status": StatusEnum.UNBLOCKED.name,
-            },
-            {
-                "id": 29,
-                "number": "AC2344UT",
-                "status": StatusEnum.PASSED.name,
-            },
-            {
-                "id": 33,
-                "number": "AC3344UT",
-                "status": StatusEnum.UNPASSED.name,
-            },
-        ]
         context = super().get_context_data(**kwargs)
         context["title"] = "Cars"
+        context["form"] = None
         context["active_menu"] = "cars"
-        FormSet = formset_factory(
-            LogsForm, extra=0
-        )  # Adjust 'extra' for initial blank forms
-        forms = FormSet(prefix="log_form", initial=initials)
-        context["forms"] = forms
         return context
 
-    def post(self, request, *args, **kwargs):
-        print(f"post {request.POST=}")
-        FormSet = formset_factory(LogsForm)
-        forms = FormSet(
-            request.POST, prefix="log_form"
-        )  # Use request data with the prefix
+    def get(self, request, *args, **kwargs):
+        return redirect(self.reply_url)
 
+    def validate_int(self, value: str | int | None) -> int | None:
+        if value is not None:
+            try:
+                value = int(value)
+            except (TypeError, ValueError):
+                value = 1
+            if value < 1:
+                value = 1
+        return value
+
+    def update_cars(self, id, status):
+        status = status.strip().upper()
+        # print(f"update_cars: {status=} {id=}")
+        if id:
+            updated = {}
+            if status == StatusEnum.BLOCKED.name:
+                updated["blocked"] = True
+            elif status == StatusEnum.UNBLOCKED.name:
+                updated["blocked"] = False
+            elif status == StatusEnum.PASSED.name:
+                updated["PayPass"] = True
+            elif status == StatusEnum.UNPASSED.name:
+                updated["PayPass"] = False
+            if updated:
+                # print(f"update_cars: {status=} {updated=}")
+                try:
+                    Car.objects.filter(pk=id).update(**updated)
+                except Car.DoesNotExist:
+                    ...
+
+    def generate_init(self, request) -> list | None:
+        cars_id = request.POST.getlist("cars")
+        blocked_id = request.POST.getlist("blocked")
+        pay_pass_id = request.POST.getlist("pay_pass")
+        # print(f"{blocked_id=} {pay_pass_id=}")
+        result = []
+        for id in cars_id:
+            id = str(self.validate_int(id))
+            if id:
+                car = get_car_by_id(id)
+                if car:
+                    blocked_was = car.blocked
+                    blocked_now = id in blocked_id
+                    # print(f"\n{id=} {blocked_was=} {blocked_now}")
+                    if blocked_was != blocked_now:
+                        status = (
+                            StatusEnum.BLOCKED.name
+                            if blocked_now
+                            else StatusEnum.UNBLOCKED.name
+                        )
+                        item = {
+                            "row": id,
+                            "item": car.car_number,
+                            "status": status,
+                        }
+
+                        result.append(item)
+                    pass_was = car.PayPass
+                    pass_now = id in pay_pass_id
+                    # print(f"{id=} {pass_was=} {pass_now}")
+                    if pass_was != pass_now:
+                        status = (
+                            StatusEnum.PASSED.name
+                            if pass_now
+                            else StatusEnum.UNPASSED.name
+                        )
+                        item = {
+                            "row": id,
+                            "item": car.car_number,
+                            "status": status,
+                        }
+                        result.append(item)
+        # print(f"generate_init: {result=}")
+        if len(result):
+            return result
+        return None
+
+    def post(self, request, *args, **kwargs):
+        is_confirm = request.POST.get("form-TOTAL_FORMS")
+        initials = self.generate_init(request)
+        if initials is None and not is_confirm:
+            return redirect(self.reply_url)
+        if initials:
+            FormSet = formset_factory(LogsForm, extra=0, formset=RequiredFormSet)
+            forms = FormSet(initial=initials)
+            return self.render_to_response(self.get_context_data(forms=forms))
+        FormSet = formset_factory(LogsForm, extra=0, formset=RequiredFormSet)
+        forms = FormSet(request.POST)
         if forms.is_valid():
-            # Process valid form data
             for form in forms:
-                car_number = form.cleaned_data["number"]
+                row = form.cleaned_data["row"]
+                item = form.cleaned_data["item"]
                 status = form.cleaned_data["status"]
                 location = form.cleaned_data["location"]
                 comment = form.cleaned_data["comment"]
-                print(form)
+                # print(item, status)
+                self.update_cars(row, status)
 
             # Redirect after successful processing (optional)
-            return redirect("success_url")
-
-        return self.render_to_response(
-            self.get_context_data(forms=forms)
-        )  # Render forms again with errors
+            return redirect(self.success_url)
+        return self.render_to_response(self.get_context_data(forms=forms))

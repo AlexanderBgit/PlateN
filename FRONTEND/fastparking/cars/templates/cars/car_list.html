@@ -8,7 +8,7 @@
 <h3 class="mb-3 mt-3"><i class="fa-solid fa-car"></i> List of Cars. Total results: {{filter_params.total_rows}}</h3>
 {% if cars %}
 <div class="bd-example">
-  <form method="post" action="{% url 'cars:car_list' %}">
+  <form method="post" action="{% url 'cars:confirm_changes' %}">
     {% csrf_token %}
     <table class="table table-striped table-hover">
       <thead>
@@ -55,6 +55,7 @@
         {% endfor %}
       </tbody>
     </table>
+    <button class="btn btn-primary mt-3" type="submit"><i class="bi-save"></i> Save<span class="btn_text_short"> changes</span></button>
   </form>
 </div>
 <nav>
@@ -120,8 +121,7 @@
       </div>
 </form>
 
-<button class="btn btn-primary mt-3" type="submit"><i class="bi-save"></i>
-Save<span class="btn_text_short"> changes</span></button>
+
 
 {% else %}
 <li>No cars found.</li>

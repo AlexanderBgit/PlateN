@@ -34,23 +34,35 @@ class Car(models.Model):
         return reverse("car_list", kwargs={"pk": self.pk})
 
 
+class ItemTypesEnum(Enum):
+    UNDEFINED = auto()
+    CAR = auto()
+    USER = auto()
+    REGISTRATION = auto()
+
+
 class StatusEnum(Enum):
     UNDEFINED = auto()
     BLOCKED = auto()
     UNBLOCKED = auto()
     PASSED = auto()
     UNPASSED = auto()
+    DELETED = auto()
+    REPLACED = auto()
+    ARCHIVED = auto()
 
 
-STATUS_CHOICES = [(status.value, status.name) for status in StatusEnum]
+STATUS_CHOICES = [(status.name, status.value) for status in StatusEnum]
+TYPES_CHOICES = [(type.name, type.value) for type in ItemTypesEnum]
 
 
 class Log(models.Model):
-    number = models.CharField(max_length=16)
-    status = models.PositiveSmallIntegerField(
-        choices=STATUS_CHOICES, default=StatusEnum.UNDEFINED.value
+    item = models.CharField(max_length=32)
+    item_type = models.CharField(
+        choices=TYPES_CHOICES, default=ItemTypesEnum.UNDEFINED.name
     )
-    comment = models.TextField(max_length=255, blank=False)
-    username = models.CharField(max_length=16)
-    location = models.CharField(max_length=16, null=True, blank=True)
+    status = models.CharField(choices=STATUS_CHOICES, default=StatusEnum.UNDEFINED.name)
+    comment = models.TextField(max_length=255)
+    username = models.CharField(max_length=32)
+    location = models.CharField(max_length=32, null=True, blank=True)
     datetime = models.DateTimeField(default=timezone.now)
