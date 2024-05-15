@@ -61,5 +61,15 @@ function parse_datetime_utc() {
   });
 }
 
+function parse_datetime_utc_title() {
+  const cells = document.querySelectorAll(".datetime_utc_title");
+  cells.forEach((cell) => {
+    const datetimeString = cell.title;
+    if (datetimeString) {
+      cell.title = formatDateInString(datetimeString);
+    }
+  });
+}
+
 
 //document.addEventListener("DOMContentLoaded", parse_datetime_utc);

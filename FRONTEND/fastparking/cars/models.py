@@ -52,8 +52,8 @@ class StatusEnum(Enum):
     ARCHIVED = auto()
 
 
-STATUS_CHOICES = [(status.name, status.value) for status in StatusEnum]
-TYPES_CHOICES = [(type.name, type.value) for type in ItemTypesEnum]
+STATUS_CHOICES = [(status.name, status.name) for status in StatusEnum]
+TYPES_CHOICES = [(type.name, type.name) for type in ItemTypesEnum]
 
 
 class Log(models.Model):
@@ -66,3 +66,6 @@ class Log(models.Model):
     username = models.CharField(max_length=32)
     location = models.CharField(max_length=32, null=True, blank=True)
     datetime = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.datetime} {self.item} {self.status}  {self.comment}"

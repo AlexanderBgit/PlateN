@@ -12,7 +12,12 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from cars.repository import get_car_by_id, log_add_record
+from cars.repository import (
+    get_car_by_id,
+    log_add_record,
+    log_get_latest_blocked,
+    log_get_latest_passed,
+)
 
 
 class SuperuserRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -73,6 +78,7 @@ class CarListView(SuperuserRequiredMixin, ListView):
         context["active_menu"] = "cars"
         context["paginator"] = paginator
         context["page_obj"] = page_obj
+        context["annotate"] = dict()
         context["filter_params"] = filter_params
 
         return context

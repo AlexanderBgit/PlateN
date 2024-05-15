@@ -1,8 +1,10 @@
 <!-- parking/templates/car_list.html -->
 {% extends "parking/base.html" %}
 {% load static %}
+{% load filter_car_logs %}
 {% block extra_head %}
 <script src="{% static 'parking/js/misc.js' %}"></script>
+<script src="{% static 'parking/js/local_datetime.js' %}"></script>
 {% endblock %}
 {% block content %}
 <h3 class="mb-3 mt-3"><i class="fa-solid fa-car"></i> List of Cars. Total results: {{filter_params.total_rows}}</h3>
@@ -29,7 +31,7 @@
               <img src="{{ car.photo_car.url }}" alt="Car photo">
         </td> -->
           <!-- <td>{{ car.predict }}</td> -->
-          <td class="text-center">
+          <td class="text-center datetime_utc_title" title="{{ car.car_number | get_log_banned  }}" data-bs-toggle="tooltip" data-bs-placement="top">
             <input
               type="checkbox"
               data-id="{{ car.pk }}"
@@ -40,7 +42,7 @@
               {% endif %}
             />
           </td>
-          <td class="text-center">
+          <td class="text-center datetime_utc_title"  title="{{ car.car_number | get_log_passed  }}"  data-bs-toggle="tooltip" data-bs-placement="top">
             <input
               type="checkbox"
               data-id="{{ car.pk }}"
@@ -124,9 +126,7 @@
         </button>
       </div>
 </form>
-
-
-
+<script>parse_datetime_utc_title();init_tooltip_const()</script>
 {% else %}
 <li>No cars found.</li>
 {% endif %}
