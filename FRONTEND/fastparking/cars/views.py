@@ -2,7 +2,7 @@ from django.conf import settings
 from django.forms import formset_factory, BaseFormSet
 
 from cars.forms import LogsForm
-from cars.models import Car, Log, StatusEnum
+from cars.models import Car, Log, StatusEnum, ItemTypesEnum
 
 # from .forms import MyCarForm, CarNumberForm
 from django.views.generic import ListView, FormView
@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from cars.repository import get_car_by_id
+from cars.repository import get_car_by_id, log_add_record
 
 
 class SuperuserRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -116,7 +116,7 @@ class RequiredFormSet(BaseFormSet):
             form.use_required_attribute = True
 
 
-class ConfirmChangesView(FormView):
+class ConfirmChangesView(SuperuserRequiredMixin, FormView):
     form_class = LogsForm
     template_name = "cars/confirm_changes.html"
     success_url = "cars:car_list"
@@ -229,6 +229,15 @@ class ConfirmChangesView(FormView):
                 comment = form.cleaned_data["comment"]
                 # print(item, status)
                 self.update_cars(row, status)
+                records = {
+                    "item": item,
+                    "item_type": ItemTypesEnum.CAR.name,
+                    "status": status,
+                    "location": location,
+                    "comment": comment,
+                    "username": request.user.username,
+                }
+                log_add_record(records)
 
             # Redirect after successful processing (optional)
             return redirect(self.success_url)
