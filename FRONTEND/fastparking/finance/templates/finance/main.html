@@ -21,12 +21,14 @@
   <div class="container">
     <img class="p-3" src="{% static 'finance/bobr_pay_medium.png' %}" style="max-height: 50vh;"/>
   </div>
-  <ul class="list-group list-group-horizontal">
-    <li class="list-group-item"><a class="btn btn-primary" href="{% url 'finance:add_pay' %}">Pay the invoice</a></li>
-    <li class="list-group-item">
-      <a class="btn btn-primary" href="{% url 'parking:main' %}">Back</a>
-    </li>
-  </ul>
+  <p>
+    <a href="{% url 'parking:main' %}" class="btn btn-primary">
+      <i class="bi-arrow-left-circle"></i>
+      <span class="btn_text_short"> Back</span>
+    </a>
+    <a class="btn btn-primary" href="{% url 'finance:add_pay' %}"><i class="bi-cart-check"></i>
+      <span class="btn_text_short"> Pay the invoice</span></a>
+  </p>
 </div>
 
 <!-- Інші елементи сторінки, такі як таблиці, графіки тощо -->

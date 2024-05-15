@@ -21,10 +21,10 @@ function toggle_md(e){
 /* global bootstrap: false */
 function init_tooltip(){
   'use strict'
-  const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  const tooltipTriggerList = Array.from(document.querySelectorAll('.sidebar [data-bs-toggle="tooltip"]'));
   tooltipTriggerList.forEach(tooltipTriggerEl => {
     const child_span = tooltipTriggerEl.querySelector('span')
-    const displayValue = window.getComputedStyle(child_span).getPropertyValue("display");
+    const displayValue = window.getComputedStyle(child_span)?.getPropertyValue("display");
     const tooltip = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
     if (tooltip) {
         tooltip.dispose();
@@ -35,5 +35,15 @@ function init_tooltip(){
   })
 }
 
-window.addEventListener("resize", init_tooltip);
-init_tooltip()
+function init_tooltip_const(){
+  'use strict'
+  const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]:not(.sidebar)'));
+  tooltipTriggerList.forEach(tooltipTriggerEl => {
+    const tooltip = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
+    if (tooltip) {
+        tooltip.dispose();
+    }
+     new bootstrap.Tooltip(tooltipTriggerEl);
+  })
+}
+

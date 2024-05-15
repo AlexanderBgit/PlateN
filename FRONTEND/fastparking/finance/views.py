@@ -49,7 +49,7 @@ def main(request):
 
 @login_required
 def add_tariff(request):
-    if not is_admin():
+    if not is_admin(request):
         return redirect("finance:main")
 
     # Знайти останній тариф

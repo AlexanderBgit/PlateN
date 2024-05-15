@@ -1,18 +1,22 @@
 <!-- У вашому файлі add_tariff.html -->
-{% extends "parking/base.html" %} {% block content %}
+{% extends "parking/base.html" %}
+{% load static %}
+{% block extra_head %}
+<script src="{% static 'parking/js/misc.js' %}"></script>
+{% endblock extra_head %}
+{% block content %}
 <h3><i class="fa-solid fa-table-list"></i>  Pay the invoice</h3>
 <div class="container">
   <form method="post">
     {% csrf_token %} {{ form.as_p }}
-
-    <ul class="list-group list-group-horizontal">
-      <li class="list-group-item">
-        <button class="btn btn-primary" type="submit">Pay</button>
-      </li>
-      <li class="list-group-item">
-        <a class="btn btn-primary" href="{% url 'finance:main' %}">Back</a>
-      </li>
-    </ul>
+    <p>
+      <button onclick="goBackOnHistory()" type="button" class="btn btn-primary">
+      <i class="bi-arrow-left-circle"></i>
+      <span class="btn_text_short"> Back</span>
+    </button>
+      <button class="btn btn-primary" type="submit"><i class="bi-cart-check"></i>
+      <span class="btn_text_short"> Pay</span></button>
+    </p>
   </form>
 </div>
 {% endblock content %}

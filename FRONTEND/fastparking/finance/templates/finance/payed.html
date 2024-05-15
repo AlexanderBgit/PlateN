@@ -1,5 +1,10 @@
 <!-- У вашому файлі add_tariff.html -->
-{% extends "parking/base.html" %} {% block content %}
+{% extends "parking/base.html" %}
+{% load static %}
+{% block extra_head %}
+<script src="{% static 'parking/js/misc.js' %}"></script>
+{% endblock extra_head %}
+{% block content %}
 <div class="container" id="payment_result">
   <h2>Payment Results</h2>
   <div class="container">
@@ -22,27 +27,14 @@
   </div>
   {% if payment.Underpayment %}
   <div class="alert alert-info" role="alert">
-    You have an underpayment for the parking service, please add the remaining {{payment.Underpayment}} for the service
+    <i class="bi bi-info-circle fs-4"></i> You have an underpayment for the parking service, please add the remaining {{payment.Underpayment}} for the service
     provided to you.
   </div>
   {% endif %}
   <p>
-    <a class="btn btn-primary" href="{% url 'finance:main' %}">MAIN</a>
+    <a class="btn btn-primary" href="{% url 'finance:main' %}"><i class="bi-arrow-left-circle"></i>
+       <span class="btn_text_short"> Back</span></a>
     <button onclick="printDiv('payment_result')" class="btn btn-primary">Print</button>
   </p>
 </div>
-<script>
-  function printPage() {
-    window.print(); // Trigger print functionality
-  }
-  function printDiv(divName) {
-    var printContents = document.getElementById(divName).innerHTML;
-    var originalContents = document.body.innerHTML;
-
-    document.body.innerHTML = printContents;
-    window.print();
-
-    document.body.innerHTML = originalContents;
-  }
-</script>
 {% endblock content %}

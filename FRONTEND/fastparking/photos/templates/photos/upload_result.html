@@ -1,5 +1,10 @@
 <!-- photos/templates/upload.html -->
-{% extends "parking/base.html" %} {% block content %}
+{% extends "parking/base.html" %}
+{% load static %}
+{% block extra_head %}
+<script src="{% static 'parking/js/misc.js' %}"></script>
+{% endblock extra_head%}
+{% block content %}
 <div class="container" id="photo_result">
   <h2>RESULT:</h2>
   <table class="table">
@@ -103,29 +108,16 @@
 
 {% if not registration.id %}
 <div class="p-2 bg-danger text-white">Registration denied</div>
-<div class="alert alert-info">{{ info }}</div>
+<div class="alert alert-info"> <i class="bi bi-info-circle fs-4"></i> {{ info }}</div>
 {% endif %}
-
-<p></p>
-
-<div class="container">
   <p>
-    <a href="{% url 'photos:main' %}" class="btn btn-primary">Back</a>
-    <button onclick="printDiv('photo_result')" class="btn btn-primary">Print</button>
+    <a href="{% url 'photos:main' %}" class="btn btn-primary">
+      <i class="bi-arrow-left-circle"></i>
+      <span class="btn_text_short"> Back</span>
+    </a>
+    <button onclick="printDiv('photo_result')" class="btn btn-primary">
+      <i class="bi-printer"></i>
+      <span class="btn_text_short"> Print</span>
+    </button>
   </p>
-</div>
-<script>
-  function printPage() {
-    window.print(); // Trigger print functionality
-  }
-  function printDiv(divName) {
-    var printContents = document.getElementById(divName).innerHTML;
-    var originalContents = document.body.innerHTML;
-
-    document.body.innerHTML = printContents;
-    window.print();
-
-    document.body.innerHTML = originalContents;
-  }
-</script>
 {% endblock content %}

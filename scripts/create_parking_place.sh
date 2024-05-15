@@ -14,5 +14,5 @@ fi
 # source ${pyact}/bin/activate
 # popd
 pushd "../FRONTEND/fastparking"
-poetry run python ./parking/create_parking.py
+USE_DS_NUMBER_DETECTION=0 poetry run python ./parking/create_parking.py
 popd

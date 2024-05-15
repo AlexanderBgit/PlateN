@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{% static 'parking/css/styles.css' %}" />
     <link rel="stylesheet" href="{% static 'parking/css/docs.css' %}" />
     <link rel="stylesheet" href="{% static 'parking/css/all.min.css' %}" />
+    <script src="{% static 'parking/js/sidebars.js' %}"></script>
     <link rel="icon" href="{% static 'parking/favicon.png' %}" />
     {% block extra_head %}{% endblock %}
     <title>{%if title %}{{title}} | {% endif %}Fast parking | Neuron Curve Bobr team</title>
@@ -172,6 +173,7 @@
       <div class="b-example-divider b-example-vr"></div>
       <div class="container-fluid">{% block content %}{% endblock %}</div>
     </main>
-    <script src="{% static 'parking/js/sidebars.js' %}"></script>
+    <script>init_tooltip();window.addEventListener("resize", init_tooltip);
+</script>
   </body>
 </html>
