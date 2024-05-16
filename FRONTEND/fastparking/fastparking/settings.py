@@ -197,6 +197,11 @@ TELEGRAM_BOT_NAME = os.getenv("TELEGRAM_BOT_NAME", "")
 TELEGRAM_NEWS_NAME = os.getenv("TELEGRAM_NEWS_NAME", "")
 TELEGRAM_NEWS_ID = os.getenv("TELEGRAM_NEWS_ID", "")
 
+DISCORD_WEB_HOOKS = {
+    "HOSTING": os.getenv("DISCORD_WEB_HOOK_CHANNEL_HOSTING", ""),
+    "NEWS": os.getenv("DISCORD_WEB_HOOK_CHANNEL_NEWS", ""),
+}
+
 # Generate a temporary directory name
 TEMP_DIR_NAME = "django_cache"
 

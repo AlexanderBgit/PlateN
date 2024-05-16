@@ -7,6 +7,7 @@ from django.conf import settings
 from telegram_api import crone_pool, send_message_news
 from communications.send_news import send_news_to_telegram
 from communications.notifications import send_limits
+from discord_api import send_message as discord_send_message
 
 
 def handler_telegram_pool(print_log: bool = False):
@@ -71,6 +72,7 @@ if __name__ == "__main__":
         else:
             text = f"Hosting server just applied new changes of git branch v.{version} at: <datetime>"
         result = send_message_news(text)
+        result_discord = discord_send_message(text, "HOSTING")
     # print(f"{result=}")
     if args.loop:
         loop_delay = args.delay
