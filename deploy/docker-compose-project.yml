@@ -1,5 +1,5 @@
 # docker-compose  --file docker-compose-project.yml --env-file .env_prod  up -d 
-name: fastparking
+name: fastparking${BRANCH:-""}
 services:
   pg:
     image: postgres
@@ -28,6 +28,8 @@ services:
       - "${APP_PORT:-8000}:8000"
     volumes:
       - ../Database/django_cache:/tmp/django_cache
+      - ../FRONTEND/fastparking/static:/app/fastparking/static
+
     # Health check command
     restart: always
     healthcheck:

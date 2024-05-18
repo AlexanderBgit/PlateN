@@ -1,26 +1,10 @@
-#!/bin/env bash
+#!/bin/bash
 
 export PATH=/usr/local/bin:${PATH}
+export TERM=xterm
 
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+cd "${script_dir}"
 
-SOURCE=${HOME}/PlateN/PlateN
-GIT_CMD="git --git-dir=${SOURCE}/.git --work-tree=${SOURCE}"
-BRANCH=dev
-
-
-${GIT_CMD} checkout ${BRANCH} --quiet
-${GIT_CMD} stash --quiet
-${GIT_CMD} fetch --quiet
-
-if ! ${GIT_CMD} diff origin/${BRANCH} --quiet
-then
-        ## for changes to stick, you need to pull them otherwise it will always have changes
-        ${GIT_CMD} pull --quiet
-        echo  do stuff
-        pushd  ${SOURCE}/scripts
-        chmod +x *.sh
-        ./re_deploy_docker.sh
-        popd
-        echo `date` > ${SOURCE}/../last_deployed.txt
-fi
-
+export BRANCH=dev
+./detect_changes_git_branch.sh

@@ -54,7 +54,7 @@ DEBUG_SQL = bool(int(os.environ.get("DJANGO_DEBUG_SQL", 0)))
 DJANGO_ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS")
 ALLOWED_HOSTS = []
 if DJANGO_ALLOWED_HOSTS:
-    ALLOWED_HOSTS = DJANGO_ALLOWED_HOSTS.split(",")
+    ALLOWED_HOSTS = [ h.split(":")[0] for h in DJANGO_ALLOWED_HOSTS.split(",")]
     CSRF_TRUSTED_ORIGINS = [
         f"https://{host}" for host in DJANGO_ALLOWED_HOSTS.split(",")
     ]

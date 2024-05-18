@@ -8,9 +8,13 @@ if command -v dos2unix &> /dev/null; then
   dos2unix *.sh &> /dev/null
 fi
 
+ENV=../deploy/.env
+[ ! -f ${ENV} ] || export $(grep '^BRANCH' ${ENV} | xargs)
+
+
 pushd "../deploy"
-echo "STOPPING SEPARATED DEV DB CONTAINER"
-docker stop fastparking-code-1
-docker stop fastparking-pg-1
+echo "STOPPING SEPARATED DEV DB CONTAINER ${BRANCH:-""}"
+docker stop fastparking${BRANCH:-""}-code-1
+docker stop fastparking${BRANCH:-""}-pg-1
 docker-compose  --file docker-compose-project.yml --env-file .env down
 popd

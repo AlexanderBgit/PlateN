@@ -1,3 +1,7 @@
 #!/bin/bash
 
-docker logs fastparking-code-1 -t -f
+ENV=../deploy/.env
+[ ! -f ${ENV} ] || export $(grep '^BRANCH' ${ENV} | xargs)
+
+
+docker logs fastparking${BRANCH}-code-1 -t -f
