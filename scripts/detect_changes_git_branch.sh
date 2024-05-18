@@ -27,9 +27,9 @@ then
         echo  do stuff
         pushd  ${SOURCE}/scripts
         chmod +x *.sh
-        ./re_deploy_docker.sh ${BRANCH}  > ${SOURCE}/../last_deployed.log
+        ./re_deploy_docker.sh ${BRANCH}  > ${SOURCE}/../last_deployed_${BRANCH}.log
         popd
-        echo `date` > ${SOURCE}/../last_deployed.txt
+        echo `date` > ${SOURCE}/../last_deployed_${BRANCH}.txt
 
 fi
 
