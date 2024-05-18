@@ -5,9 +5,15 @@ import platform
 from django.conf import settings
 
 from telegram_api import crone_pool, send_message_news
+
+try:
+    from discord_api import send_message as discord_send_message
+except ImportError:
+    from .discord_api import send_message as discord_send_message
+
 from communications.send_news import send_news_to_telegram
 from communications.notifications import send_limits
-from discord_api import send_message as discord_send_message
+
 
 
 def handler_telegram_pool(print_log: bool = False):

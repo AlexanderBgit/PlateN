@@ -28,7 +28,7 @@ TELEGRAM_BOT_NAME="fastparking_bobr_bot"
 TELEGRAM_NEWS_NAME="@fastparking_news"
 
 # full URL of web hook copied from Discord settings
-DISCORD_WEB_HOOK_HOSTING=""
+DISCORD_WEBHOOK_HOSTING=""
 DISCORD_WEBHOOK_NEWS=""
 # full URL to image with avatar
 DISCORD_AVATAR_HOSTING=""
