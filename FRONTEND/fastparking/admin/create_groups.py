@@ -21,13 +21,17 @@ MODELS_APPS = django.apps.apps.get_models(
 MODELS = []
 for model in MODELS_APPS:
     if model._meta.app_label in APPS:
-        MODELS.append(model._meta.label_lower.split(".")[1])
+        MODELS.append(model._meta.label_lower)
 # print(f"{MODELS=}")
 
 READ_PERMISSIONS = [
     "view",
 ]  # For now only view permission by default for all, others include add, delete, change
 WRITE_PERMISSIONS = ["add", "change", "delete"]
+
+GROUP_PERMISSIONS = {"admin": WRITE_PERMISSIONS + READ_PERMISSIONS}
+
+print(f"{GROUP_PERMISSIONS=}")
 
 
 def create_groups(
@@ -36,7 +40,7 @@ def create_groups(
     permissions=None,
 ):
     if permissions is None:
-        permissions = READ_PERMISSIONS
+        permissions = GROUP_PERMISSIONS
     if model_natural_keys is None:
         model_natural_keys = MODELS
     if groups is None:
@@ -44,18 +48,22 @@ def create_groups(
     for group_name in groups:
         group, created = Group.objects.get_or_create(name=group_name)
         print(f"{group_name=} , {group=}, {created=}")
+        group.permissions.clear()
         for model_natural_key in model_natural_keys:
-            print(f"{model_natural_key=}")
+            # print(f"{model_natural_key=}")
+            app_label, model_key = model_natural_key.split(".")
             perm_to_add = []
-            for permission in permissions:
+            for permission in permissions.get(group_name, []):
+                if permission is None:
+                    continue
                 # using the 2nd element of `model_natural_key` which is the
                 #  model name to derive the permission `codename`
-                permission_codename = f"{permission}_{model_natural_key}"
+                permission_codename = f"{permission}_{model_key}"
                 print(f"{permission_codename=}")
                 try:
                     perm_to_add.append(
                         Permission.objects.get_by_natural_key(
-                            permission_codename, *model_natural_key
+                            permission_codename, app_label=app_label, model=model_key
                         )
                     )
                 except Permission.DoesNotExist:
@@ -71,8 +79,8 @@ def create_groups(
                         f"natural name {model_natural_key!r}."
                     )
                     raise
-
-            group.permissions.add(*perm_to_add)
+                print(f"{perm_to_add=}")
+                group.permissions.add(*perm_to_add)
 
 
 # print(MODELS)
