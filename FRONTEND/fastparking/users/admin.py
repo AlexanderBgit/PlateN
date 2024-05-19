@@ -2,6 +2,8 @@ from django.contrib import admin
 
 # from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
+
+
 class ModelAdmin(admin.ModelAdmin):
 
     exclude = ("user_permissions", "is_staff", "is_superuser")
@@ -19,7 +21,7 @@ class ModelAdmin(admin.ModelAdmin):
     readonly_fields = ("last_login", "date_joined")
 
     fieldsets = (
-        (None, {"fields": ("username",)}),
+        (None, {"fields": ("username", "groups")}),
         (
             ("Personal info"),
             {
