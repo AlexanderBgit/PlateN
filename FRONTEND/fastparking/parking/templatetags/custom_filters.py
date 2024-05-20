@@ -30,8 +30,9 @@ def user_groups(user):
 
 
 @register.filter(name="is_in_group")
-def is_in_group(user, group_name):
-    if user.is_superuser:
+def is_in_group(user, group_name) -> bool:
+    group_name = group_name.strip()
+    if group_name == "admin" and user.is_superuser:
         return True
     if hasattr(user, "groups"):
         return user.groups.filter(name=group_name).exists()
@@ -40,13 +41,14 @@ def is_in_group(user, group_name):
 
 @register.filter(name="is_in_any_group")
 def is_in_any_group(user, group_names: str) -> bool:
-    if user.is_superuser:
-        return True
     if not group_names:
         return False
     if hasattr(user, "groups"):
         user_groups_filter = list(user.groups.values_list("name", flat=True))
         for group_name in group_names.split(","):
+            group_name = group_name.strip()
+            if group_name == "admin" and user.is_superuser:
+                return True
             if group_name in user_groups_filter:
                 return True
     return False

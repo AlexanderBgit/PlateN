@@ -54,10 +54,19 @@
     {% endfor %}
     </tbody>
   </table>
+  <p>
+  <button onclick="goBackOnHistory()" type="button" class="btn btn-primary">
+    <i class="bi-arrow-left-circle"></i>
+    <span class="btn_text_short"> Back</span>
+  </button>
   <button onclick="printDiv('print_area')" class="btn btn-primary">
     <i class="bi-printer"></i>
     <span class="btn_text_short"> Print</span>
   </button>
+  <a href="{% url 'finance:statistic' %}" class="btn btn-primary">
+   <i class="fa-solid fa-table-list"></i><span class="btn_text_short"> Statistic</span>
+  </a>
+  </p>
   {% endif %}
 </div>
 </div>

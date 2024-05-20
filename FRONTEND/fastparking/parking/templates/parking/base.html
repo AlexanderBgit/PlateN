@@ -76,7 +76,7 @@
             </a>
           </li>
           {% endif %}
-          {% if user.is_superuser %}
+          {% if user|is_in_any_group:"admin,operator" %}
           <li title="Cars" data-bs-toggle="tooltip" data-bs-placement="right">
             <a class="nav-link {% if active_menu == 'cars' %}active{% else %}text-white{% endif %}" href="/cars/">
               <i class="fa-solid fa-car"></i>
@@ -95,7 +95,18 @@
             </a>
           </li>
           {% endif %}
-          {% if user.is_authenticated and not user|is_in_group:"operator"%}
+          {% if user.is_authenticated and user|is_in_group:"operator" %}
+          <li title="Finance" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a
+              class="nav-link {% if active_menu == 'finance' %}active{% else %}text-white{% endif %}"
+              href="{% url 'finance:payments_list' %}"
+            >
+              <i class="fa-solid fa-table-list"></i>
+               <span class="nav-item  d-none d-md-inline">Payments</span>
+            </a>
+          </li>
+          {% endif %}
+          {% if user.is_authenticated and not user|is_in_group:"operator" %}
           <li title="Car Recognition" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'photos' %}active{% else %}text-white{% endif %}"
