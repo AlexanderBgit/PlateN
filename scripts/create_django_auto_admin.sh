@@ -15,4 +15,5 @@ fi
 # popd
 pushd "../FRONTEND/fastparking"
 USE_DS_NUMBER_DETECTION=0 poetry run python ./admin/create_admin_user.py
+USE_DS_NUMBER_DETECTION=0 poetry run python ./admin/create_groups.py
 popd

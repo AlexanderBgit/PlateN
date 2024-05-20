@@ -34,7 +34,7 @@ GROUP_PERMISSIONS = {
     "operator": READ_PERMISSIONS,
 }
 
-print(f"{GROUP_PERMISSIONS=}")
+# print(f"{GROUP_PERMISSIONS=}")
 
 
 def create_groups(
@@ -50,7 +50,9 @@ def create_groups(
         groups = GROUPS
     for group_name in groups:
         group, created = Group.objects.get_or_create(name=group_name)
-        print(f"{group_name=} , {group=}, {created=}")
+        if not created:
+            continue
+        print(f"{group_name=}, {created=}")
         group.permissions.clear()
         for model_natural_key in model_natural_keys:
             # print(f"{model_natural_key=}")
@@ -62,7 +64,7 @@ def create_groups(
                 # using the 2nd element of `model_natural_key` which is the
                 #  model name to derive the permission `codename`
                 permission_codename = f"{permission}_{model_key}"
-                print(f"{permission_codename=}")
+                # print(f"{permission_codename=}")
                 try:
                     perm_to_add.append(
                         Permission.objects.get_by_natural_key(
@@ -82,8 +84,9 @@ def create_groups(
                         f"natural name {model_natural_key!r}."
                     )
                     raise
-                print(f"{perm_to_add=}")
-                group.permissions.add(*perm_to_add)
+                # print(f"{perm_to_add=}")
+                if len(perm_to_add):
+                    group.permissions.add(*perm_to_add)
 
 
 # print(MODELS)
