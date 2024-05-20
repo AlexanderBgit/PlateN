@@ -1,5 +1,5 @@
 # docker-compose  --file docker-compose-project.yml --env-file .env_prod  up -d 
-name: fastparking${BRANCH:-""}
+name: fastparking${BRANCH:-}${PURPOSE:-}
 services:
   pg:
     image: postgres

@@ -10,13 +10,11 @@ if command -v dos2unix &> /dev/null; then
 fi
 
 ENV=../deploy/.env
-[ ! -f ${ENV} ] || export $(grep '^BRANCH' ${ENV} | xargs)
+[ ! -f ${ENV} ] || export $(grep -E '^BRANCH|^PURPOSE' ${ENV} | xargs)
 
 pushd "../deploy"
-# echo "STOPPING SEPARATED DEV DB CONTAINER"
-# docker stop fastparking-db-postgres-1
-echo $(git branch --show-current)-$(git rev-parse --short HEAD) > ../FRONTEND/git-version.txt
-echo "STARTING ${BRANCH}"
+echo $(git branch --show-current)${PURPOSE}-$(git rev-parse --short HEAD) > ../FRONTEND/git-version.txt
+echo "STARTING ${BRANCH}${PURPOSE}"
 docker-compose  --file docker-compose-project.yml --env-file .env up -d
 popd
 ./rsync_static.sh

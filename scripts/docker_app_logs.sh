@@ -1,7 +1,14 @@
 #!/bin/bash
 
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+cd "${script_dir}"
+
+
 ENV=../deploy/.env
-[ ! -f ${ENV} ] || export $(grep '^BRANCH' ${ENV} | xargs)
+[ ! -f ${ENV} ] || export $(grep -E '^BRANCH|^PURPOSE' ${ENV} | xargs)
 
 
-docker logs fastparking${BRANCH}-code-1 -t -f
+echo "LOGS OF  DB CONTAINER ${BRANCH:-}${PURPOSE:-}"
+
+
+docker logs fastparking${BRANCH:-}${PURPOSE:-}-code-1 -t -f
