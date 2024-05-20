@@ -32,6 +32,7 @@ from .services import (
     validate_int,
     filter_alphanum,
 )
+from .templatetags.custom_filters import is_in_any_group
 
 
 def health_check(request):
@@ -122,7 +123,7 @@ def parking_plan_view(request):
             space.owner_number = True  # type: ignore
             space.allow_number = True  # type: ignore
     stats = []
-    if user.is_superuser:
+    if is_in_any_group(user, "admin,operator"):
         parking_stats = get_parking_stats()
         stats = [
             {

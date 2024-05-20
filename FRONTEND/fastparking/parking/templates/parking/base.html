@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css?family=DM Sans" rel="stylesheet" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" />
     {% load static %}
+    {% load custom_filters %}
     <link rel="stylesheet" href="{% static 'parking/css/styles.css' %}" />
     <link rel="stylesheet" href="{% static 'parking/css/docs.css' %}" />
     <link rel="stylesheet" href="{% static 'parking/css/all.min.css' %}" />
@@ -53,7 +54,7 @@
                <span class="nav-item  d-none d-md-inline">Parking plan</span>
             </a>
           </li>
-          {% if user.is_authenticated %}
+          {% if user.is_authenticated and not user|is_in_group:"operator"%}
           <li title="Profile" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'accounts' %}active{% else %}text-white{% endif %}"
@@ -64,7 +65,7 @@
             </a>
           </li>
           {% endif %}
-          {% if user.is_authenticated %}
+          {% if user.is_authenticated and not user|is_in_group:"operator" %}
           <li title="Registration" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'registration' %}active{% else %}text-white{% endif %}"
@@ -83,7 +84,7 @@
             </a>
           </li>
           {% endif %}
-          {% if user.is_authenticated %}
+          {% if user.is_authenticated  and not user|is_in_group:"operator" %}
           <li title="Finance" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'finance' %}active{% else %}text-white{% endif %}"
@@ -94,7 +95,7 @@
             </a>
           </li>
           {% endif %}
-          {% if user.is_authenticated %}
+          {% if user.is_authenticated and not user|is_in_group:"operator"%}
           <li title="Car Recognition" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'photos' %}active{% else %}text-white{% endif %}"

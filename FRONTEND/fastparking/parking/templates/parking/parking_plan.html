@@ -1,4 +1,4 @@
-{% extends "parking/base.html" %} {% load static %}
+{% extends "parking/base.html" %} {% load static %} {% load custom_filters %}
 {% block extra_head %}
 <script src="{% static 'parking/js/local_datetime.js' %}"></script>
 <script src="{% static 'parking/js/misc.js' %}"></script>
@@ -43,7 +43,7 @@
     </div>
     {% endfor %}
   </div>
-  {% if user.is_superuser %}
+  {% if user|is_in_any_group:"admin,operator" %}
   <table class="mt-3 table table-striped">
     <tbody>
     {% for stat in stats %}
