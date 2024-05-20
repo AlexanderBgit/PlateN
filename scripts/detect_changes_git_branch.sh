@@ -4,7 +4,8 @@ export PATH=/usr/local/bin:${PATH}
 export TERM=xterm
 
 BRANCH=${BRANCH:-dev}
-SOURCE=${HOME}/PlateN/PlateN-${BRANCH}
+ROOTPATH=${ROOTPATH:-${HOME}/PlateN/}
+SOURCE=${ROOTPATH}/PlateN-${BRANCH}
 GIT_CMD="git --git-dir=${SOURCE}/.git --work-tree=${SOURCE}"
 GIT_PRJ="https://github.com/AlexanderBgit/PlateN.git"
 
