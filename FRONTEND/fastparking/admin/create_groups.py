@@ -26,12 +26,15 @@ for model in MODELS_APPS:
 
 READ_PERMISSIONS = [
     "view",
-]  # For now only view permission by default for all, others include add, delete, change
+]
 WRITE_PERMISSIONS = ["add", "change", "delete"]
 
 GROUP_PERMISSIONS = {
-    "admin": WRITE_PERMISSIONS + READ_PERMISSIONS,
-    "operator": READ_PERMISSIONS,
+    "admin": {
+        "default": WRITE_PERMISSIONS + READ_PERMISSIONS,
+        "cars.log": READ_PERMISSIONS,
+    },
+    "operator": {"default": READ_PERMISSIONS},
 }
 
 # print(f"{GROUP_PERMISSIONS=}")
@@ -54,11 +57,17 @@ def create_groups(
             continue
         print(f"{group_name=}, {created=}")
         group.permissions.clear()
+        group_perm = permissions.get(group_name)
+        if not group_perm:
+            continue
         for model_natural_key in model_natural_keys:
             # print(f"{model_natural_key=}")
             app_label, model_key = model_natural_key.split(".")
             perm_to_add = []
-            for permission in permissions.get(group_name, []):
+            app_perm = group_perm.get(model_natural_key, group_perm.get("default"))
+            if not app_perm:
+                continue
+            for permission in app_perm:
                 if permission is None:
                     continue
                 # using the 2nd element of `model_natural_key` which is the
