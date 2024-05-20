@@ -29,7 +29,10 @@ READ_PERMISSIONS = [
 ]  # For now only view permission by default for all, others include add, delete, change
 WRITE_PERMISSIONS = ["add", "change", "delete"]
 
-GROUP_PERMISSIONS = {"admin": WRITE_PERMISSIONS + READ_PERMISSIONS}
+GROUP_PERMISSIONS = {
+    "admin": WRITE_PERMISSIONS + READ_PERMISSIONS,
+    "operator": READ_PERMISSIONS,
+}
 
 print(f"{GROUP_PERMISSIONS=}")
 
