@@ -42,6 +42,7 @@ COMMANDS = {}
 def get_updates(offset: str = "") -> list[dict] | None:
     if not TOKEN:
         return None
+    print(f"get_updates not fond ?  '{TOKEN=}'")
     url_getUpdates = f"{BASE_URL}/getUpdates?offset={offset}"
     response = requests.get(url_getUpdates)
     data = response.json()
@@ -225,7 +226,7 @@ def answer_to_user(
     user_id: str | int, text: str, parse_mode: bool = False, debug=True
 ) -> bool | None:
     if not TOKEN:
-            return None
+        return None
     if debug:
         print(f"answer_to_user: {user_id=} {text=}")
     return send_message(text, user_id, parse_mode=parse_mode)
@@ -631,7 +632,8 @@ def check_payments():
 
 
 def crone_pool() -> None:
-    if not TOKEN:
+    print(f"get_updates not fond ?  '{TOKEN=}'")
+    if not TOKEN or len(TOKEN)<10:
         return None
     check_payments()
     # get latest updates
