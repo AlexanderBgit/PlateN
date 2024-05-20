@@ -10,6 +10,7 @@ from cars.models import Car
 from accounts.models import MyCars
 from .services import compare_plates
 from .models import Registration, ParkingSpace
+from .templatetags.custom_filters import is_in_group
 
 
 def get_registration_instance(id: int) -> Registration | None:
@@ -128,7 +129,7 @@ def number_present_on_parking(car_num: str) -> bool:
 def get_registrations(user: User) -> list[Registration] | None:
     registrations = None
     if user:
-        if user.is_superuser:
+        if not is_in_group(user, "user"):
             registrations = Registration.objects.all().order_by(
                 "-exit_datetime",
                 "-entry_datetime",
