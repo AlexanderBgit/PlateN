@@ -13,4 +13,4 @@ eval $(ssh-agent -t 600)
 echo  "LOADED SSH_AGENT_PID: ${SSH_AGENT_PID}... opened new BASH session, for exit use Ctrl-D or exit for kill ssh-agent"
 bash
 echo Killing ssh-agent...
-ssh-agent -k
+eval $(ssh-agent -k)
