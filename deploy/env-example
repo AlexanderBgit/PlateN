@@ -38,7 +38,11 @@ USE_DS_NUMBER_DETECTION=1
 PURPOSE=""
 BRANCH=dev
 APP_PORT=8000
-STATIC_DEPLOY="/var/www/html/fastparking${PURPOSE}"
+STATIC_DEPLOY="/var/www/html/fastparking"
+
+# DEMO-ADMIN:DEMO-OPERATOR:DEMO-USER
+DEMO_PASSWORDS="pwd1:pwd2:pwd3"
+DEMO_URL="https://some.url/users/login/"
 
 
 

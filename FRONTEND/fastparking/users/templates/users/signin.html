@@ -35,9 +35,28 @@
         </div>
         <span>{{form.errors.password}}</span>
     </div>
-    <button type="submit" class="btn btn-primary">Sing In</button>
-    <div class="small" style="padding-top: 15px;">
-        <a href="{% url 'users:password_reset' %}">Forgot Password?</a>
-    </div>
+    <p>
+        <button type="submit" class="btn btn-primary">Sing In</button>
+        <a class="btn btn-primary" href="{% url 'users:password_reset' %}">Forgot Password?</a>
+    </p>
 </form>
+{% if purpose != "demo" %}
+{% if demo_url %}
+ <a class="btn btn-primary mt-4" href="{{demo_url}}">DEMO ACCOUNTS HERE</a>
+{% endif %}
+{%elif demo_users%}
+<h4>DEMO VERSION OF SITE</h4>
+<table class="mt-4 table table-striped">
+    <tr>
+        <th>Username</th>
+        <th>Password</th>
+    </tr>
+    {% for demo_user in demo_users %}
+    <tr>
+        <td>{{demo_user.name}}</td>
+        <td>{{demo_user.password}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
 {% endblock %}

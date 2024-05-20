@@ -54,7 +54,7 @@ DEBUG_SQL = bool(int(os.environ.get("DJANGO_DEBUG_SQL", 0)))
 DJANGO_ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS")
 ALLOWED_HOSTS = []
 if DJANGO_ALLOWED_HOSTS:
-    ALLOWED_HOSTS = [ h.split(":")[0] for h in DJANGO_ALLOWED_HOSTS.split(",")]
+    ALLOWED_HOSTS = [h.split(":")[0] for h in DJANGO_ALLOWED_HOSTS.split(",")]
     CSRF_TRUSTED_ORIGINS = [
         f"https://{host}" for host in DJANGO_ALLOWED_HOSTS.split(",")
     ]
@@ -238,6 +238,9 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 PAYMENT_CURRENCY = ("UAH", "₴")
 TOTAL_DIGITS_ID = (6, "06")
 PAGE_ITEMS = 10
+
+DEMO_PASSWORDS = os.getenv("DEMO_PASSWORDS", "")
+DEMO_URL = os.getenv("DEMO_URL", None)
 
 
 # SQL LOG
