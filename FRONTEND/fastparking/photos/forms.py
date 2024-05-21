@@ -17,7 +17,14 @@ TOTAL_DIGITS_ID = settings.TOTAL_DIGITS_ID[0]
 class UploadFileForm(forms.Form):
     choices = TYPES.items()  # [(k, v) for k, v in TYPES.items()]
     current_user = forms.BooleanField(
-        required=False, label="User's data", initial=False, disabled=True
+        required=False,
+        label="User's data",
+        initial=False,
+        disabled=True,
+        help_text="Show only the current user's data",
+        widget=forms.CheckboxInput(
+            attrs={"class": "form-check-input", "data-bs-toggle": "tooltip"}
+        ),
     )
     t_photo = forms.ChoiceField(
         choices=choices,

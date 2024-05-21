@@ -16,10 +16,10 @@
   {% if target_type.desc == "OUT" %} {{ form.registration_id.label_tag }}
   <div class="input-group">
     {{ form.registration_id }}
-    <span class="input-group-text" title="Show only the current user's data" data-bs-toggle="tooltip"
-      ><i class="bi bi-person-lines-fill"></i
-      ><span class="btn_text_short">&nbsp;{{ form.current_user.label_tag }}</span>&nbsp;{{ form.current_user }}</span
-    >
+    <span class="input-group-text" title="Show only the current user's data" data-bs-toggle="tooltip">
+      <i class="bi bi-person-lines-fill"></i>
+      <span class="btn_text_short">&nbsp;{{ form.current_user.label_tag }}</span>&nbsp;{{ form.current_user }}
+    </span>
   </div>
   {% if form.registration_id.errors %}
   <p class="text-danger">{{ form.registration_id.errors }}</p>
