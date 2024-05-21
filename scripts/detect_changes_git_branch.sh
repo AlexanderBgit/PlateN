@@ -9,7 +9,7 @@ SOURCE=${ROOTPATH}/PlateN-${BRANCH}
 GIT_CMD="git --git-dir=${SOURCE}/.git --work-tree=${SOURCE}"
 GIT_PRJ="https://github.com/AlexanderBgit/PlateN.git"
 
-echo "CHECK GIT: branch - ${BRANCH}"
+echo "CHECK GIT: branch - ${BRANCH} ${PURPOSE}"
 
 if [ ! -d ${SOURCE} ]; then
  git clone ${GIT_PRJ} -b ${BRANCH} ${SOURCE}
