@@ -1,10 +1,10 @@
 <!-- finance/templates/finance/main.html -->
 
-{% extends "parking/base.html" %} {% block content %} {% load static %} {% load custom_filters %}
+{% extends "parking/base.html" %} {% load custom_filters %} {% load static %} {% block content %}
 <h3><i class="fa-solid fa-table-list"></i> Finance</h3>
 <!-- Додайте посилання на сторінку додавання тарифу -->
 <div class="container">
-  {% if user|is_in_group("admin") %}
+  {% if user|is_in_group:"admin" %}
   <ul class="list-group list-group-horizontal">
     <li class="list-group-item"><a class="btn btn-secondary" href="{% url 'finance:add_tariff' %}">Add Tariff</a></li>
     <li class="list-group-item">
