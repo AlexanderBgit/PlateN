@@ -16,6 +16,9 @@ TOTAL_DIGITS_ID = settings.TOTAL_DIGITS_ID[0]
 
 class UploadFileForm(forms.Form):
     choices = TYPES.items()  # [(k, v) for k, v in TYPES.items()]
+    current_user = forms.BooleanField(
+        required=False, label="User's data", initial=False, disabled=True
+    )
     t_photo = forms.ChoiceField(
         choices=choices,
         widget=forms.Select(
