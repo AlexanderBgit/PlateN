@@ -7,7 +7,7 @@ from django.contrib.auth.views import (
     PasswordResetCompleteView,
 )
 from django.conf import settings
-
+from django.core.cache import cache
 
 from .views import RegisterView, ResetPasswordView, logout_view
 from .forms import LoginForm
@@ -15,14 +15,12 @@ from .forms import LoginForm
 app_name = "users"
 
 
-demo_passwords = settings.DEMO_PASSWORDS.split(":")
-demo_users = None
-if demo_passwords and len(demo_passwords) == 3:
-    demo_users = [
-        {"name": "demo-admin", "password": demo_passwords[0]},
-        {"name": "demo-operator", "password": demo_passwords[1]},
-        {"name": "demo-user", "password": demo_passwords[2]},
-    ]
+def get_demo_users() -> None | list[dict]:
+    demo_users = cache.get("demo_users")
+    print(f"{demo_users=}")
+    return demo_users
+
+
 demo_url = settings.DEMO_URL
 
 urlpatterns = [
@@ -34,7 +32,7 @@ urlpatterns = [
             authentication_form=LoginForm,
             redirect_authenticated_user=True,
             extra_context={
-                "demo_users": demo_users,
+                "demo_users": get_demo_users(),
                 "demo_url": demo_url,
             },
         ),

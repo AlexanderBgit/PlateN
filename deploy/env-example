@@ -45,10 +45,6 @@ APP_PORT=8000
 # STATIC_DEPLOY="/var/www/html/fastparking"
 STATIC_DEPLOY=
 
-# DEMO-ADMIN:DEMO-OPERATOR:DEMO-USER
-#DEMO_PASSWORDS="pwd1:pwd2:pwd3"
-DEMO_PASSWORDS=
-
 # DEMO_URL="https://some.url/users/login/"
 DEMO_URL=
 

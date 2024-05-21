@@ -1,62 +1,51 @@
-{% extends "parking/base.html" %}
-
-{% block content %}
+{% extends "parking/base.html" %} {% block content %}
 <h3><i class="fa-solid fa-user"></i> SignIn</h3>
 
 <!-- Виводимо Flash сповіщення-->
-{% if messages %}
-{% for message in messages %}
-<div {% if message.tags %} class="alert alert-{{message.tags}}" {% endif %} role="alert">
-    {{message}}
-</div>
-{% endfor %}
-{% endif %}
+{% if messages %} {% for message in messages %}
+<div {% if message.tags %} class="alert alert-{{message.tags}}" {% endif %} role="alert">{{message}}</div>
+{% endfor %} {% endif %}
 
 <!--Обробляємо помилки форми які не відносяться до полів -->
 {% if form.errors %}
-<div class="alert alert-danger" role="alert">
-    {{ form.non_field_errors}}
-</div>
+<div class="alert alert-danger" role="alert">{{ form.non_field_errors}}</div>
 {% endif %}
 
 <form method="post">
-    {% csrf_token %}
-    <div class="form-row">
-        <div class="mb-3">
-            <label class="form-label">Username</label>
-            {{form.username}}
-        </div>
-        <span>{{form.errors.username}}</span>
+  {% csrf_token %}
+  <div class="form-row">
+    <div class="mb-3">
+      <label class="form-label">Username</label>
+      {{form.username}}
     </div>
-    <div class="form-row">
-        <div class="mb-3">
-            <label class="form-label">Password</label>
-            {{form.password}}
-        </div>
-        <span>{{form.errors.password}}</span>
+    <span>{{form.errors.username}}</span>
+  </div>
+  <div class="form-row">
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      {{form.password}}
     </div>
-    <p>
-        <button type="submit" class="btn btn-primary">Sing In</button>
-        <a class="btn btn-primary" href="{% url 'users:password_reset' %}">Forgot Password?</a>
-    </p>
+    <span>{{form.errors.password}}</span>
+  </div>
+  <p>
+    <button type="submit" class="btn btn-primary">Sing In</button>
+    <a class="btn btn-primary" href="{% url 'users:password_reset' %}">Forgot Password?</a>
+  </p>
 </form>
-{% if purpose != "demo" %}
-{% if demo_url %}
- <a class="btn btn-primary mt-4" href="{{demo_url}}">DEMO ACCOUNTS HERE</a>
-{% endif %}
-{%elif demo_users %}
+{% if purpose != "demo" %} {% if demo_url %}
+<a class="btn btn-primary mt-4" href="{{demo_url}}">DEMO ACCOUNTS HERE</a>
+{% endif %} {%elif demo_users %}
 <h4>DEMO VERSION OF SITE</h4>
 <table class="mt-4 table table-striped">
-    <tr>
-        <th>Username</th>
-        <th>Password</th>
-    </tr>
-    {% for demo_user in demo_users %}
-    <tr>
-        <td>{{demo_user.name}}</td>
-        <td>{{demo_user.password}}</td>
-    </tr>
-    {% endfor %}
+  <tr>
+    <th>Username</th>
+    <th>Password</th>
+  </tr>
+  {% for demo_user in demo_users %}
+  <tr>
+    <td>{{demo_user.username}}</td>
+    <td>{{demo_user.password}}</td>
+  </tr>
+  {% endfor %}
 </table>
-{% endif %}
-{% endblock %}
+{% endif %} {% endblock %}

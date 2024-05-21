@@ -240,7 +240,6 @@ PAYMENT_CURRENCY = ("UAH", "₴")
 TOTAL_DIGITS_ID = (6, "06")
 PAGE_ITEMS = 10
 
-DEMO_PASSWORDS = os.getenv("DEMO_PASSWORDS", "")
 DEMO_URL = os.getenv("DEMO_URL", None)
 
 
