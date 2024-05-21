@@ -17,7 +17,7 @@ app_name = "users"
 
 def get_demo_users() -> None | list[dict]:
     demo_users = cache.get("demo_users")
-    print(f"{demo_users=}")
+    # print(f"{demo_users=}")
     return demo_users
 
 
