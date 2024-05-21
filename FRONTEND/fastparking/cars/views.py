@@ -18,6 +18,7 @@ from cars.repository import (
     log_get_latest_blocked,
     log_get_latest_passed,
 )
+from parking.templatetags.custom_filters import is_in_any_group
 
 
 class SuperuserRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -25,7 +26,13 @@ class SuperuserRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
         return self.request.user.is_superuser
 
 
-class CarListView(SuperuserRequiredMixin, ListView):
+class AdminOperatorRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    def test_func(self):
+        return is_in_any_group(self.request.user, "admin,operator")
+        # return self.request.user.is_superuser
+
+
+class CarListView(AdminOperatorRequiredMixin, ListView):
     model = Car
     template_name = "car_list.html"  # Шаблон для відображення списку автомобілів
     context_object_name = "cars"  # Ім'я змінної в контексті шаблону
@@ -122,7 +129,7 @@ class RequiredFormSet(BaseFormSet):
             form.use_required_attribute = True
 
 
-class ConfirmChangesView(SuperuserRequiredMixin, FormView):
+class ConfirmChangesView(AdminOperatorRequiredMixin, FormView):
     form_class = LogsForm
     template_name = "cars/confirm_changes.html"
     success_url = "cars:car_list"

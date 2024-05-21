@@ -102,10 +102,15 @@
 </form>
  <input type="hidden" name="page" value="{{ request.GET.page }}" />
 <div class="col mt-3">
-  <a class="btn btn-primary" href="{% url 'finance:main' %}"><i class="bi-arrow-left-circle"></i>
-     <span class="btn_text_short"> Back</span></a>
+  <button onclick="goBackOnHistory()" type="button" class="btn btn-primary">
+    <i class="bi-arrow-left-circle"></i>
+    <span class="btn_text_short"> Back</span>
+  </button>
   <a class="btn btn-primary" target="" href="{% url 'finance:download_csv' %}" title="Export to CSV">
     <span class="btn_text_short"></span><i class="bi-filetype-csv"></i> Save</a>
+  <a href="{% url 'finance:statistic' %}" class="btn btn-primary">
+   <i class="fa-solid fa-table-list"></i><span class="btn_text_short"> Statistic</span>
+  </a>
 </div>
 <script>parse_datetime_utc()</script>
 {% endblock %}

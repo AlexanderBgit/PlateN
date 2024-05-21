@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastparking"
-version = "0.5.17"
+version = "0.5.21"
 description = "GoIT DataScience Team Project - Fast Parking"
 authors = ["neuron_curva_bobr <info@neuron.curva.bobr.app>"]
 license = "MIT"

@@ -8,7 +8,12 @@ if command -v dos2unix &> /dev/null; then
   dos2unix *.sh &> /dev/null
 fi
 
+ENV=../deploy/.env
+[ ! -f ${ENV} ] || export $(grep -E '^BRANCH|^PURPOSE' ${ENV} | xargs)
+
 pushd "../deploy"
-git rev-parse --short HEAD > ../FRONTEND/git-version.txt
+echo $(git branch --show-current)${PURPOSE}-$(git rev-parse --short HEAD) > ../FRONTEND/git-version.txt
+echo "STARTING DEPLOY ${BRANCH}${PURPOSE}"
+
 docker-compose  --file docker-compose-project.yml --env-file .env build code
 popd

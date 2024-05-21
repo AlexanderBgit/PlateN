@@ -1,9 +1,9 @@
 <!-- communications/templates/communications/main.html -->
-{% extends "parking/base.html" %} {% block content %} {% load static %}
+{% extends "parking/base.html" %} {% block content %} {% load static %} {% load custom_filters %}
 <div class="container p-3">
   <!-- <h2>Messages</h2> -->
   <h3 class="text-center">We check for relevant news and speed it up to send it to the news channel.</h3>
-  {% if user.is_superuser %}
+  {% if user|is_in_group:"admin" %}
   <div class="container text-center">
     <div class="btn-group btn-group-horizontal" role="group" aria-label="Button group" style="margin-right: 10px;">
       <a class="btn btn-primary" target="_blank" href="/admin/communications/message/add/">Add News</a>
@@ -11,16 +11,12 @@
     </div>
   </div>
   {% endif %}
-  <table class="table mt-2">
-    <tr>
-      <th class="text-center">Our news channel: <a href="https://t.me/{{ news_channel }}">@{{ news_channel }}.</a></td>
-      <th class="text-center">Our Telegram bot: <a href="https://t.me/{{ t_bot }}">@{{ t_bot }}.</a></td>
-    </tr>
-    <tr>
-      <td class="text-center"><img class="mt-2" src="{% static 'parking/qr_t_news.png' %}" width="80%" /></td>
-      <td class="text-center"><img src="{% static 'parking/qr_t_bot.png' %}" width="80%" /></td>
-    </tr>
-  </table>
+  <div class="row row-cols-2 mt-2">
+      <div class="col text-center"><a href="https://t.me/{{ news_channel }}" target="_blank"><img class="mt-2" src="{% static 'parking/qr_t_news.png' %}" style="width:100%;max-width:240px" /></a></div>
+      <div class="col text-center"><a href="https://t.me/{{ t_bot }}" target="_blank"><img src="{% static 'parking/qr_t_bot.png' %}" style="width:100%;max-width:240px" /></a></div>
+      <div class="col text-center"><a class="text-decoration-none" href="https://t.me/{{ news_channel }}" target="_blank">News channel</a></div>
+      <div class="col text-center"><a class="text-decoration-none" href="https://t.me/{{ t_bot }}" target="_blank">Telegram bot</a></div>
+  </div>
 
   {% if sent_messages %}
   <p>Messages sent: {{ sent_messages }}.</p>

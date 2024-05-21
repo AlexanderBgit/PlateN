@@ -6,7 +6,7 @@
 <script src="{% static 'parking/js/local_datetime.js' %}"></script>
 {% endblock %}
 {% block content %}
-<h3><i class="fa-solid fa-car-building"></i> Registration List{% if filter_params.days %} for last {{ filter_params.days}} days{%endif%}{% if not user.is_superuser %} for the current user{% endif%}. Total results: {{filter_params.total_rows}}</h3>
+<h3><i class="fa-solid fa-car-building"></i> Registration List{% if filter_params.days %} for last {{ filter_params.days}} days{%endif%}{% if user|is_in_group:"user"%} for the current user{% endif%}. Total results: {{filter_params.total_rows}}</h3>
   <div class="container-fluid table-responsive bd-example">
     <table class="table table-striped table-hover text-nowrap">
       {% if not page_obj %}

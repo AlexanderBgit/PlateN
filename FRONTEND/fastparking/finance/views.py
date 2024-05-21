@@ -18,6 +18,7 @@ from parking.repository import (
     get_parking_yesterday_activity,
 )
 from parking.services import filter_alphanum, format_datetime, format_currency
+from parking.templatetags.custom_filters import is_in_any_group, is_in_group
 from parking.views import get_parking_stats
 
 from photos.services import build_html_image
@@ -35,6 +36,14 @@ PAGE_ITEMS = settings.PAGE_ITEMS
 
 
 def is_admin(request):
+    return is_in_group(request.user, "admin")
+
+
+def is_admin_operator(request):
+    return is_in_any_group(request.user, "admin,operator")
+
+
+def is_super_admin(request):
     user: User = request.user
     return user.is_superuser
 
@@ -242,7 +251,7 @@ def get_queryset(request, payments):
 
 @login_required
 def payments_list(request):
-    if not is_admin(request):
+    if not is_admin_operator(request):
         return redirect("parking:main")
     active_menu = "payment"
     payments = get_payments()
@@ -267,7 +276,7 @@ def payments_list(request):
 
 @login_required
 def download_csv(request):
-    if not is_admin(request):
+    if not is_admin_operator(request):
         return redirect("parking:main")
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="payments.csv"'
@@ -326,7 +335,7 @@ def statistic(request):
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name
     stats = []
-    if request.user.is_superuser:
+    if is_admin_operator(request):
         parking_stats = get_stats()
         stats = [
             {

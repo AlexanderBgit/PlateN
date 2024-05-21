@@ -1,5 +1,5 @@
 # docker-compose  --file docker-compose-project.yml --env-file .env_prod  up -d 
-name: fastparking
+name: fastparking${BRANCH:-}${PURPOSE:-}
 services:
   pg:
     image: postgres
@@ -28,6 +28,8 @@ services:
       - "${APP_PORT:-8000}:8000"
     volumes:
       - ../Database/django_cache:/tmp/django_cache
+      - ../FRONTEND/fastparking/static:/app/fastparking/static
+
     # Health check command
     restart: always
     healthcheck:
@@ -60,10 +62,11 @@ services:
       DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
       DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
       DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
-      DISCORD_WEBHOOK_HOSTING: ${DISCORD_WEBHOOK_HOSTING:-""}
-      DISCORD_WEBHOOK_NEWS: ${DISCORD_WEBHOOK_NEWS:-""}
-      DISCORD_AVATAR_HOSTING: ${DISCORD_AVATAR_HOSTING:-""}
-      DISCORD_AVATAR_NEWS: ${DISCORD_AVATAR_NEWS:-""}
+      DISCORD_WEBHOOK_HOSTING: ${DISCORD_WEBHOOK_HOSTING:-}
+      DISCORD_WEBHOOK_NEWS: ${DISCORD_WEBHOOK_NEWS:-}
+      DISCORD_AVATAR_HOSTING: ${DISCORD_AVATAR_HOSTING:-}
+      DISCORD_AVATAR_NEWS: ${DISCORD_AVATAR_NEWS:-}
+      DEMO_URL: ${DEMO_URL:-}
 
       
 

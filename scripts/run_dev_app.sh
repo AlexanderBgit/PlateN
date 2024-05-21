@@ -19,7 +19,7 @@ fi
 
 # simulate poetry shell
 pushd  "../FRONTEND"  > /dev/null
-git rev-parse --short HEAD > git-version.txt
+echo $(git branch --show-current)-$(git rev-parse --short HEAD) > git-version.txt
 #pyact=$(poetry env info -p)
 #source ${pyact}/bin/activate
 popd > /dev/null
