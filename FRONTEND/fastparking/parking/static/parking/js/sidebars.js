@@ -1,49 +1,48 @@
-function toggle_md(e){
-  const team_short = document.querySelector('#team_short');
-  if (team_short){
+function toggle_md(e) {
+  const team_short = document.querySelector("#team_short");
+  if (team_short) {
     team_short.classList.toggle("d-none");
   }
-  const btn = document.querySelector('#btn_collapse .fa-solid.fa-angles-right');
-  if (btn){
+  const btn = document.querySelector("#btn_collapse .fa-solid.fa-angles-right");
+  if (btn) {
     btn.classList.toggle("d-none");
   }
-  const sidebar = document.querySelector('.sidebar');
-  if (sidebar){
-     sidebar.classList.toggle("sidebar_mobile");
+  const sidebar = document.querySelector(".sidebar");
+  if (sidebar) {
+    sidebar.classList.toggle("sidebar_mobile");
   }
-  const nav_items = Array.from(document.querySelectorAll('.nav-item'));
-  nav_items.forEach(nav_item => {
+  const nav_items = Array.from(document.querySelectorAll(".nav-item"));
+  nav_items.forEach((nav_item) => {
     nav_item.classList.toggle("d-none");
-    })
+  });
 }
-
 
 /* global bootstrap: false */
-function init_tooltip(){
-  'use strict'
+function init_tooltip() {
+  "use strict";
   const tooltipTriggerList = Array.from(document.querySelectorAll('.sidebar [data-bs-toggle="tooltip"]'));
-  tooltipTriggerList.forEach(tooltipTriggerEl => {
-    const child_span = tooltipTriggerEl.querySelector('span')
-    const displayValue = window.getComputedStyle(child_span)?.getPropertyValue("display");
+  tooltipTriggerList.forEach((tooltipTriggerEl) => {
+    const child_span = tooltipTriggerEl?.querySelector("span");
+    const displayValue = child_span ? window.getComputedStyle(child_span)?.getPropertyValue("display") : "none";
     const tooltip = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
     if (tooltip) {
-        tooltip.dispose();
+      tooltip.dispose();
     }
     if (displayValue == "none") {
-        new bootstrap.Tooltip(tooltipTriggerEl);
+      new bootstrap.Tooltip(tooltipTriggerEl);
+      console.log(tooltipTriggerEl);
     }
-  })
+  });
 }
 
-function init_tooltip_const(){
-  'use strict'
+function init_tooltip_const() {
+  "use strict";
   const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]:not(.sidebar)'));
-  tooltipTriggerList.forEach(tooltipTriggerEl => {
+  tooltipTriggerList.forEach((tooltipTriggerEl) => {
     const tooltip = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
     if (tooltip) {
-        tooltip.dispose();
+      tooltip.dispose();
     }
-     new bootstrap.Tooltip(tooltipTriggerEl);
-  })
+    new bootstrap.Tooltip(tooltipTriggerEl);
+  });
 }
-

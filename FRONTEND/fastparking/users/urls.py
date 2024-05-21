@@ -8,13 +8,13 @@ from django.contrib.auth.views import (
 )
 from django.conf import settings
 
-from .views import RegisterView, ResetPasswordView, logout_view
 
+from .views import RegisterView, ResetPasswordView, logout_view
 from .forms import LoginForm
 
 app_name = "users"
 
-purpose = "demo" if settings.VERSION.find("-demo-") != -1 else None
+
 demo_passwords = settings.DEMO_PASSWORDS.split(":")
 demo_users = None
 if demo_passwords and len(demo_passwords) == 3:
@@ -34,7 +34,6 @@ urlpatterns = [
             authentication_form=LoginForm,
             redirect_authenticated_user=True,
             extra_context={
-                "purpose": purpose,
                 "demo_users": demo_users,
                 "demo_url": demo_url,
             },

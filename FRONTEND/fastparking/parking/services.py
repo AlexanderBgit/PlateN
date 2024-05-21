@@ -154,6 +154,10 @@ def filter_alphanum(text: str, additional: list = None) -> str:
     return text
 
 
+def get_purpose() -> str | None:
+    return "demo" if settings.VERSION.find("-demo-") != -1 else None
+
+
 if __name__ == "__main__":
     pairs = [
         ("ZNF2656", "INF2656"),
