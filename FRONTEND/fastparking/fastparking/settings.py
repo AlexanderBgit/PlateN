@@ -198,6 +198,13 @@ TELEGRAM_BOT_NAME = os.getenv("TELEGRAM_BOT_NAME", "")
 TELEGRAM_NEWS_NAME = os.getenv("TELEGRAM_NEWS_NAME", "")
 TELEGRAM_NEWS_ID = os.getenv("TELEGRAM_NEWS_ID", "")
 
+MSG_TELEGRAM = {
+    "TOKEN": os.getenv("TELEGRAM_TOKEN", ""),
+    "BOT_NAME": os.getenv("TELEGRAM_BOT_NAME", ""),
+    "NEWS_NAME": os.getenv("TELEGRAM_NEWS_NAME", ""),
+    "NEWS_ID": os.getenv("TELEGRAM_NEWS_ID", ""),
+}
+
 DISCORD_WEB_HOOKS = {
     "HOSTING": os.getenv("DISCORD_WEBHOOK_HOSTING", ""),
     "NEWS": os.getenv("DISCORD_WEBHOOK_NEWS", ""),
@@ -205,6 +212,19 @@ DISCORD_WEB_HOOKS = {
 DISCORD_AVATAR = {
     "HOSTING": os.getenv("DISCORD_AVATAR_HOSTING", ""),
     "NEWS": os.getenv("DISCORD_AVATAR_NEWS", ""),
+}
+DISCORD_FEEDBACK = os.getenv("DISCORD_FEEDBACK", "")
+
+MSG_DISCORD = {
+    "WEB_HOOK": {
+        "HOSTING": os.getenv("DISCORD_WEBHOOK_HOSTING", ""),
+        "NEWS": os.getenv("DISCORD_WEBHOOK_NEWS", ""),
+    },
+    "AVATAR": {
+        "HOSTING": os.getenv("DISCORD_AVATAR_HOSTING", ""),
+        "NEWS": os.getenv("DISCORD_AVATAR_NEWS", ""),
+    },
+    "CHANNEL": {"FEEDBACK": os.getenv("DISCORD_FEEDBACK", "")},
 }
 
 

@@ -15,14 +15,21 @@ def main(request):
     # active_menu = resolved_view.app_name
     active_menu = "messages"
     sent_messages = check_news()
-    return render(
-        request,
-        "communications/main.html",
-        {
-            "active_menu": active_menu,
-            "news_channel": settings.TELEGRAM_NEWS_NAME[1:],
-            "t_bot": settings.TELEGRAM_BOT_NAME,
-            "sent_messages": sent_messages,
-            "title": "Messages",
-        },
-    )  # або інша логіка відповідно до вашого проекту
+    t_news_channel = settings.MSG_TELEGRAM.get("NEWS_NAME")
+    if t_news_channel:
+        t_news_channel = t_news_channel[1:]
+    t_bot = settings.MSG_TELEGRAM.get("BOT_NAME")
+    d_feedback = settings.MSG_DISCORD.get("CHANNEL")
+    if d_feedback:
+        d_feedback = d_feedback.get("FEEDBACK")
+
+    context = {
+        "active_menu": active_menu,
+        "t_news_channel": t_news_channel,
+        "t_bot": t_bot,
+        "d_feedback": d_feedback,
+        "sent_messages": sent_messages,
+        "title": "Messages",
+    }
+
+    return render(request, "communications/main.html", context=context)

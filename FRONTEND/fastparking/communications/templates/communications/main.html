@@ -5,17 +5,64 @@
   <h3 class="text-center">We check for relevant news and speed it up to send it to the news channel.</h3>
   {% if user|is_in_group:"admin" %}
   <div class="container text-center">
-    <div class="btn-group btn-group-horizontal" role="group" aria-label="Button group" style="margin-right: 10px;">
+    <div class="btn-group btn-group-horizontal" role="group" aria-label="Button group" style="margin-right: 10px">
       <a class="btn btn-primary" target="_blank" href="/admin/communications/message/add/">Add News</a>
       <a class="btn btn-primary" target="_blank" href="/admin/communications/message/">News list</a>
     </div>
   </div>
   {% endif %}
-  <div class="row row-cols-2 mt-2">
-      <div class="col text-center"><a href="https://t.me/{{ news_channel }}" target="_blank"><img class="mt-2" src="{% static 'parking/qr_t_news.png' %}" style="width:100%;max-width:240px" /></a></div>
-      <div class="col text-center"><a href="https://t.me/{{ t_bot }}" target="_blank"><img src="{% static 'parking/qr_t_bot.png' %}" style="width:100%;max-width:240px" /></a></div>
-      <div class="col text-center"><a class="text-decoration-none" href="https://t.me/{{ news_channel }}" target="_blank">News channel</a></div>
-      <div class="col text-center"><a class="text-decoration-none" href="https://t.me/{{ t_bot }}" target="_blank">Telegram bot</a></div>
+  <div class="row justify-content-center mt-3 mx-auto gy-3">
+    {% if t_news_channel %}
+    <div class="col-auto text-center"  title="Telegram News channel">
+      <div class="card" style="width: 100%; max-width: 18rem">
+        <a href="https://t.me/{{ t_news_channel }}" target="_blank">
+          <img
+            class="card-img-top mt-2"
+            src="{% static 'parking/qr_t_news_0.png' %}"
+            alt="News channel"
+            style="width: 100%; max-width: 220px"
+          />
+        </a>
+        <div class="card-body text-truncate">
+          <a class="text-decoration-none" href="https://t.me/{{ t_news_channel }}" target="_blank"
+            >Telegram News channel</a
+          >
+        </div>
+      </div>
+    </div>
+    {%endif%} {% if t_bot %}
+    <div class="col-auto text-center"  title="Telegram bot">
+      <div class="card" style="width: 100%; max-width: 18rem">
+        <a href="https://t.me/{{ t_bot }}" target="_blank">
+          <img
+            class="card-img-top mt-2"
+            src="{% static 'parking/qr_t_bot_0.png' %}"
+            alt="Telegram bot"
+            style="width: 100%; max-width: 220px"
+          />
+        </a>
+        <div class="card-body text-truncate">
+          <a class="card-text text-decoration-none" href="https://t.me/{{ t_bot }}" target="_blank">Telegram bot</a>
+        </div>
+      </div>
+    </div>
+    {%endif%} {% if d_feedback %}
+    <div class="col-auto text-center"  title="Discord feedback">
+      <div class="card" style="width: 100%; max-width: 18rem">
+        <a href="{{d_feedback}}" target="_blank">
+          <img
+            class="card-img-top mt-2"
+            src="{% static 'parking/qr_d_feedback_0.png' %}"
+            alt="Telegram bot"
+            style="width: 100%; max-width: 220px"
+          />
+        </a>
+        <div class="card-body text-truncate">
+          <a class="card-text text-decoration-none" href="{{d_feedback}}" target="_blank">Discord feedback</a>
+        </div>
+      </div>
+    </div>
+    {%endif%}
   </div>
 
   {% if sent_messages %}
