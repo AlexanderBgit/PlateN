@@ -5,7 +5,7 @@ from django import template
 # from django.utils import formats
 
 register = template.Library()
-from parking.services import format_currency, format_registration_id
+from parking.services import format_currency, format_registration_id, format_full_tariff
 
 
 @register.filter(name="format_finance")
@@ -20,6 +20,11 @@ def format_finance(
 @register.filter(name="format_registration")
 def format_registration(id: int | str | None) -> str | int | None:
     return format_registration_id(id)
+
+
+@register.filter(name="format_tariff")
+def format_tariff(tariff: dict | None, long_text: bool = True) -> str | None:
+    return format_full_tariff(tariff, long_text)
 
 
 @register.filter(name="user_groups")

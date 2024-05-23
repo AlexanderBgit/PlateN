@@ -66,12 +66,21 @@ def format_full_tariff(
     short_format: bool = False,
     thousands: bool = False,
 ) -> str:
+    text_l = []
     result_h = format_currency(tariff.get("h"), short_format, thousands)
     result_d = format_currency(tariff.get("d"), short_format, thousands)
     if long_text:
-        return f"Hour: {result_h}, Day: {result_d}"
+        if result_h:
+            text_l.append(f"Hour: {result_h}")
+        if result_d:
+            text_l.append(f"Day: {result_d}")
+        return ", ".join(text_l)
     else:
-        return f"{result_h}/{result_d}"
+        if result_h:
+            text_l.append(result_h)
+        if result_d:
+            text_l.append(result_d)
+        return " / ".join(text_l)
 
 
 def levenshtein_distance(str1: str, str2: str):

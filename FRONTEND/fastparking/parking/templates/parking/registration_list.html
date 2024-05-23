@@ -36,7 +36,7 @@
           <td class="font-monospace">{{ registration.id|format_registration }}</td>
           <td>{{ registration.parking }}</td>
           <td class="datetime_utc" title="{{ registration.entry_datetime|date:'Y-m-d H:i' }} UTC">{{ registration.entry_datetime|date:'Y-m-d H:i' }}</td>
-          <td class="text-center" title="{{ registration.tariff_in.h|format_finance }} per hour">{{ registration.tariff_in.h|format_finance:True}}</td>
+          <td class="text-center" title="{{ registration.tariff_in|format_tariff }}">{{ registration.tariff_in.h|format_finance:True}}</td>
           <td class="datetime_utc" title="{{ registration.exit_datetime|date:'Y-m-d H:i' }} UTC">{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
           <td title="{{ registration.duration_datatime }}">{{ registration.duration }}</td>
           <td title="Calc: {{ registration.calculate_parking_fee|format_finance }}">{{ registration.invoice}}</td>
