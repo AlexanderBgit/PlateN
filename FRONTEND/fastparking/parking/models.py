@@ -24,9 +24,10 @@ class Registration(models.Model):
     parking = models.ForeignKey(ParkingSpace, on_delete=models.CASCADE)
     entry_datetime = models.DateTimeField(default=timezone.now)
     car_number_in = models.CharField(max_length=16)
-    tariff_in = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True
-    )  # Змінено поле на DecimalField
+    # tariff_in = models.DecimalField(
+    #     max_digits=10, decimal_places=2, null=True, blank=True
+    # )
+    tariff_in = models.JSONField(null=True, blank=True)
     exit_datetime = models.DateTimeField(null=True, blank=True)
     invoice = models.CharField(max_length=255, null=True, blank=True)
     car_number_out = models.CharField(max_length=16, null=True, blank=True)
