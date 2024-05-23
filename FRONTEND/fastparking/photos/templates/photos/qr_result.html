@@ -48,10 +48,10 @@
           <td>{{ info.parking_fee }}</td>
         </tr>
         {% endif %}
-        {% if info.tariff_in %}
+        {% if info.tariff_in.h %}
         <tr>
           <th>The parking tariff for this registry:</th>
-          <td>{{ info.tariff_in }}</td>
+          <td>{{ info.tariff_in.h }}</td>
         </tr>
         {% endif %}
         {% if info.total_payed or info.total_payed != info.invoice %}

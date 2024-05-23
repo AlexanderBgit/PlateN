@@ -60,6 +60,20 @@ def format_currency(
     return invoice
 
 
+def format_full_tariff(
+    tariff: dict,
+    long_text: bool = True,
+    short_format: bool = False,
+    thousands: bool = False,
+) -> str:
+    result_h = format_currency(tariff.get("h"), short_format, thousands)
+    result_d = format_currency(tariff.get("d"), short_format, thousands)
+    if long_text:
+        return f"Hour: {result_h}, Day: {result_d}"
+    else:
+        return f"{result_h}/{result_d}"
+
+
 def levenshtein_distance(str1: str, str2: str):
     n_m = len(str1) + 1
     dp = [[0 for _ in range(n_m)] for _ in range(len(str2) + 1)]
