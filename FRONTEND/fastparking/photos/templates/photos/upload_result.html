@@ -2,6 +2,7 @@
 {% extends "parking/base.html" %}
 {% load static %}
 {% block extra_head %}
+<script src="{% static 'parking/js/local_datetime.js' %}"></script>
 <script src="{% static 'parking/js/misc.js' %}"></script>
 {% endblock extra_head%}
 {% block content %}
@@ -26,7 +27,7 @@
       </tr>
       {% if registration.already_on_parking %}
       <tr class="text-danger">
-        <th>Waring:</th>
+        <th>Warning:</th>
         <td>This number is already registered in the parking lot, are you sure?</td>
       </tr>
       {% endif %}
@@ -53,7 +54,7 @@
       </tr>
       <tr>
         <th>Registration Date:</th>
-        <td>{{ registration.date }}</td>
+        <td class="datetime_utc" title="{{ registration.date }} UTC">{{ registration.date }}</td>
       </tr>
       <tr>
         <th>Parking place:</th>
@@ -66,7 +67,7 @@
       {% if registration.invoice is not None %}
       <tr>
         <th>Invoice:</th>
-        <td>{{ registration.invoice }} {{currency}}</td>
+        <td>{{ registration.invoice }}</td>
       </tr>
       {% endif %}
       {% if registration.total_paid %}
@@ -120,4 +121,7 @@
       <span class="btn_text_short"> Print</span>
     </button>
   </p>
+<script>
+  parse_datetime_utc()
+</script>
 {% endblock content %}

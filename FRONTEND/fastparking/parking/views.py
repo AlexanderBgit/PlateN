@@ -15,7 +15,7 @@ from finance.repository import (
     get_total_payments_prev_month,
 )
 from .models import Registration
-from photos.repository import get_price_per_hour
+from photos.repository import get_price_per_hour, get_tariff_by_date
 from .repository import (
     get_cars_number_user,
     get_parking_info,
@@ -31,6 +31,7 @@ from .services import (
     format_datetime,
     validate_int,
     filter_alphanum,
+    format_full_tariff,
 )
 from .templatetags.custom_filters import is_in_any_group
 
@@ -50,11 +51,11 @@ def main(request):
         )
     active_menu = "home"
     version = settings.VERSION
-    current_tariff = get_price_per_hour(timezone.now())
+    current_tariff = get_tariff_by_date(timezone.now())
     current_tariff_formatted = "--"
     currency = settings.PAYMENT_CURRENCY[0]
     if current_tariff:
-        current_tariff_formatted = f"{current_tariff:.2f} {currency} per hour"
+        current_tariff_formatted = format_full_tariff(current_tariff)
     context = {
         "title": "",
         "active_menu": active_menu,
@@ -273,7 +274,8 @@ def download_csv(request):
             "Parking Space",
             "Entry Datetime",
             "Exit Datetime",
-            "Tariff",
+            "Tariff (hour)",
+            "Tariff (day)",
             "invoice",
             "Car Number In",
             "Car Number Out",
@@ -295,7 +297,8 @@ def download_csv(request):
                 registration.parking,
                 entry_datetime,
                 exit_datetime,
-                registration.tariff_in,
+                registration.tariff_in.get("h"),
+                registration.tariff_in.get("d"),
                 registration.invoice,
                 registration.car_number_in,
                 registration.car_number_out,

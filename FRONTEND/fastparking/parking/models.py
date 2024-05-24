@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from django.db import models
 from django.utils import timezone
-from django.db.models import Sum
+from django.db.models import Sum, JSONField
 from django.conf import settings
 
 
@@ -24,9 +24,10 @@ class Registration(models.Model):
     parking = models.ForeignKey(ParkingSpace, on_delete=models.CASCADE)
     entry_datetime = models.DateTimeField(default=timezone.now)
     car_number_in = models.CharField(max_length=16)
-    tariff_in = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True
-    )  # Змінено поле на DecimalField
+    # tariff_in = models.DecimalField(
+    #     max_digits=10, decimal_places=2, null=True, blank=True
+    # )
+    tariff_in: JSONField = models.JSONField(null=True, blank=True)
     exit_datetime = models.DateTimeField(null=True, blank=True)
     invoice = models.CharField(max_length=255, null=True, blank=True)
     car_number_out = models.CharField(max_length=16, null=True, blank=True)
@@ -103,11 +104,12 @@ class Registration(models.Model):
                 hours = 0  # Free first 15 mins
             else:
                 hours = self.round_to_int__(hours)
-
-            if self.tariff_in:
-                price_per_hour = float(self.tariff_in)  # Зміна типу на float
+            # get price_per_hour
+            if self.tariff_in.get("h"):
+                price_per_hour = float(self.tariff_in["h"])  # Зміна типу на float
                 parking_fee = round(price_per_hour * hours, 2)
                 # print(hours, self.round_to_int(hours), parking_fee, self.round_to_int(1.01),self.round_to_int(0.9))
+                # print(f"{parking_fee=}")
                 return parking_fee
         return None
 

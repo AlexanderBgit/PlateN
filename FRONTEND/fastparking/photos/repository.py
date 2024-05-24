@@ -18,6 +18,7 @@ from parking.services import (
     format_datetime,
     format_registration_id,
     format_duration,
+    format_full_tariff,
 )
 
 from .models import Photo
@@ -251,7 +252,7 @@ def handle_uploaded_file(
                 info = f"Car: {register_car_result.get('info')}, Register: {registration_result.get('info')}"
                 parking_place = registration_result.get("parking_place")
                 already_on_parking = registration_result.get("already_on_parking")
-                tariff_in = format_currency(registration_result.get("tariff_in"))
+                tariff_in = format_full_tariff(registration_result.get("tariff_in"))
                 invoice = format_currency(registration_result.get("invoice"))
                 compare_plates_result = registration_result.get("compare_plates")
                 duration = registration_result.get("duration")
@@ -362,20 +363,23 @@ def register_parking_in_event(
         # Реєструємо нову подію на парковці
         try:
             tariff_in = get_price_per_hour(utc_datetime)
+            tariff_in_dict = get_tariff_by_date(utc_datetime)
+            print(f"tariff_in_dict : {tariff_in_dict=}")
             # print(f"register_parking_in_event : {photo_id=}")
+
             registration = Registration.objects.create(
                 entry_datetime=utc_datetime,
                 car_number_in=num_auto,
                 photo_in=photo_id,
                 parking=parking_space,
-                tariff_in=tariff_in,
+                tariff_in=tariff_in_dict,
                 car=car,
             )
             result = {
                 "registration_id": registration.pk,
                 "parking_place": parking_space.number,
                 "already_on_parking": already_on_parking,
-                "tariff_in": tariff_in,
+                "tariff_in": tariff_in_dict,
                 "info": "Success",
             }
         except Exception as e:
@@ -452,16 +456,46 @@ def get_price_per_hour(entry_time) -> float | None:
     """
     Returns the price per hour from the Tariff object applicable at the given time.
     """
-    applicable_tariffs = Tariff.objects.filter(
-        start_date__lte=entry_time.replace(tzinfo=pytz.utc),
-        end_date__gte=entry_time.replace(tzinfo=pytz.utc),
-    ).order_by(
-        "-start_date"
+    applicable_tariff = (
+        Tariff.objects.filter(
+            start_date__lte=entry_time.replace(tzinfo=pytz.utc),
+            end_date__gte=entry_time.replace(tzinfo=pytz.utc),
+        )
+        .order_by("-start_date")
+        .first()
     )  # Get the latest applicable tariff
 
-    if applicable_tariffs.exists():
-        applicable_tariff = applicable_tariffs.first()
+    if applicable_tariff:
         return float(applicable_tariff.price_per_hour)
+    else:
+        return None
+
+
+def get_tariff_by_date(entry_time) -> dict | None:
+    """
+    Returns the price per hour from the Tariff object applicable at the given time.
+    """
+    applicable_tariff = (
+        Tariff.objects.filter(
+            start_date__lte=entry_time.replace(tzinfo=pytz.utc),
+            end_date__gte=entry_time.replace(tzinfo=pytz.utc),
+        )
+        .order_by("-start_date")
+        .first()
+    )
+    if applicable_tariff:
+        return {
+            "h": (
+                float(applicable_tariff.price_per_hour)
+                if applicable_tariff.price_per_day
+                else None
+            ),
+            "d": (
+                float(applicable_tariff.price_per_day)
+                if applicable_tariff.price_per_day
+                else None
+            ),
+        }
     else:
         return None
 

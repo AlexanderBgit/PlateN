@@ -29,17 +29,17 @@ def calculate_total_payments(registration_id: int) -> Decimal:
     return total_amount
 
 
-def calculate_current_invoice(registration_id: int) -> str:
-    result = "HZ ?"
-    registration = parking_repo.get_registration_instance(registration_id)
-    if registration:
-        tariff_id = 1
-        duration = 2
-        tariff = get_tariff_instance(tariff_id)
-        if tariff:
-            price_per_hour = tariff.price_per_hour
-            result = duration * price_per_hour
-    return str(result)
+# def calculate_current_invoice(registration_id: int) -> str:
+#     result = "HZ ?"
+#     registration = parking_repo.get_registration_instance(registration_id)
+#     if registration:
+#         tariff_id = 1
+#         duration = 2
+#         tariff = get_tariff_instance(tariff_id)
+#         if tariff:
+#             price_per_hour = tariff.price_per_hour
+#             result = duration * price_per_hour
+#     return str(result)
 
 
 def save_payment(registration_id: str, amount: str): ...

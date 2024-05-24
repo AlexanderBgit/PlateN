@@ -17,5 +17,5 @@ fi
 #echo PYTHONPATH=${PYTHONPATH}
 echo -e "\nStarting Django migrate..."
 pushd "../FRONTEND/fastparking" > /dev/null
-USE_DS_NUMBER_DETECTION=0 poetry run python manage.py migrate
+USE_DS_NUMBER_DETECTION=0 poetry run python manage.py migrate $@
 popd > /dev/null
