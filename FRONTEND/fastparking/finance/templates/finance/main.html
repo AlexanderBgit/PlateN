@@ -1,10 +1,10 @@
 <!-- finance/templates/finance/main.html -->
 
-{% extends "parking/base.html" %} {% block content %} {% load static %}
+{% extends "parking/base.html" %} {% load custom_filters %} {% load static %} {% block content %}
 <h3><i class="fa-solid fa-table-list"></i> Finance</h3>
 <!-- Додайте посилання на сторінку додавання тарифу -->
 <div class="container">
-  {% if user.is_superuser %}
+  {% if user|is_in_group:"admin" %}
   <ul class="list-group list-group-horizontal">
     <li class="list-group-item"><a class="btn btn-secondary" href="{% url 'finance:add_tariff' %}">Add Tariff</a></li>
     <li class="list-group-item">
@@ -19,15 +19,16 @@
   </ul>
   {% endif %}
   <div class="container">
-    <img class="p-3" src="{% static 'finance/bobr_pay_medium.png' %}" style="max-height: 50vh;"/>
+    <img class="p-3" src="{% static 'finance/bobr_pay_medium.png' %}" style="max-height: 50vh" />
   </div>
   <p>
     <a href="{% url 'parking:main' %}" class="btn btn-primary">
       <i class="bi-arrow-left-circle"></i>
       <span class="btn_text_short"> Back</span>
     </a>
-    <a class="btn btn-primary" href="{% url 'finance:add_pay' %}"><i class="bi-cart-check"></i>
-      <span class="btn_text_short"> Pay the invoice</span></a>
+    <a class="btn btn-primary" href="{% url 'finance:add_pay' %}"
+      ><i class="bi-cart-check"></i> <span class="btn_text_short"> Pay the invoice</span></a
+    >
   </p>
 </div>
 

@@ -1,13 +1,25 @@
 <!-- У вашому файлі add_tariff.html -->
-{% extends "parking/base.html" %} {% block content %}
+{% extends "parking/base.html" %} {% load static %} {% block extra_head %}
+<script src="{% static 'parking/js/misc.js' %}"></script>
+{% endblock extra_head %} {% block content %}
 <h2>Add Tariff</h2>
 <div class="container">
   <div class="col-md-6">
-  <form method="post">
-    {% csrf_token %} {{ form.as_p }}
-    <p class="alert alert-info">The end date of the previous tariff will be automatically changed to the start date of this tariff.</p>
-    <button class="btn btn-primary" type="submit">Save</button>
-  </form>
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+      <p class="alert alert-info">
+        The end date of the previous tariff will be automatically changed to the start date of this tariff.
+      </p>
+      <p>
+        <button onclick="goBackOnHistory()" type="button" class="btn btn-primary">
+          <i class="bi-arrow-left-circle"></i>
+          <span class="btn_text_short"> Back</span>
+        </button>
+        <button class="btn btn-primary" type="submit">
+          <i class="bi-plus-circle"></i><span class="btn_text_short"> Add</span>
+        </button>
+      </p>
+    </form>
   </div>
 </div>
 {% endblock content %}

@@ -4,9 +4,12 @@ import pytz
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils import timezone
+from django.conf import settings
 
 from .models import Tariff, Payment, Registration
 from parking.repository import get_registration_instance
+
+TOTAL_DIGITS_ID = settings.TOTAL_DIGITS_ID[0]
 
 
 class TariffForm(forms.ModelForm):
@@ -58,6 +61,16 @@ class TariffForm(forms.ModelForm):
 
 
 class PaymentsForm(forms.ModelForm):
+    current_user = forms.BooleanField(
+        required=False,
+        label="User's data",
+        initial=False,
+        disabled=True,
+        help_text="Show only the current user's data",
+        widget=forms.CheckboxInput(
+            attrs={"class": "form-check-input", "data-bs-toggle": "tooltip"}
+        ),
+    )
     registration_id = forms.ModelChoiceField(
         # queryset=Registration.objects.filter(invoice__isnull=True).exclude(payment__isnull=False),
         queryset=Registration.objects.filter(invoice__isnull=True),
@@ -73,13 +86,13 @@ class PaymentsForm(forms.ModelForm):
 
     manual_registration_id = forms.DecimalField(
         min_value=1,
-        max_digits=6,
-        max_value=10**6 - 1,
+        max_digits=TOTAL_DIGITS_ID,
+        max_value=10**TOTAL_DIGITS_ID - 1,
         required=False,
         widget=forms.NumberInput(
             attrs={
                 "class": "form-control col-8",
-                "placeholder": "XXXXXX",
+                "placeholder": "X" * TOTAL_DIGITS_ID,
                 "title": "Enter a valid registration ID with which you want to pay",
             }  # ,
         ),

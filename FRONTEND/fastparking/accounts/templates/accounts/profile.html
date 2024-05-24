@@ -1,4 +1,5 @@
 {% extends "parking/base.html" %}
+{% load custom_filters %}
 {% block content %}
 
     <h3><i class="fa-solid fa-user"></i> User Profile</h3>
@@ -31,9 +32,9 @@
     </div>
     
     <br>
-
+    {% if user|is_in_group:"user" %}
     <a href="{% url 'accounts:my_cars' %}" class="btn btn-primary">My Cars</a>
-
+    {% endif %}
     <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">Edit profile</a>
 
 {% endblock content %}
