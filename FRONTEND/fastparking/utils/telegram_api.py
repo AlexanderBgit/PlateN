@@ -31,9 +31,9 @@ django.setup()
 
 # https://t.me/fastparking_bobr_bot
 
-TOKEN = settings.TELEGRAM_TOKEN
-BASE_URL = f"https://api.telegram.org/bot{TOKEN}"
-TELEGRAM_NEWS_NAME = settings.TELEGRAM_NEWS_NAME
+TOKEN = settings.MSG_TELEGRAM.get("TOKEN")
+TELEGRAM_NEWS_NAME = settings.MSG_TELEGRAM.get("TELEGRAM_NEWS_NAME")
+BASE_URL = f"https://api.telegram.org/bot{TOKEN}" if TOKEN else None
 TZ = "Europe/Kyiv"
 
 COMMANDS = {}
@@ -41,8 +41,8 @@ COMMANDS = {}
 
 def get_updates(offset: str = "") -> list[dict] | None:
     if not TOKEN:
+        print(f"get_updates not fond ?  '{TOKEN=}'")
         return None
-    print(f"get_updates not fond ?  '{TOKEN=}'")
     url_getUpdates = f"{BASE_URL}/getUpdates?offset={offset}"
     response = requests.get(url_getUpdates)
     data = response.json()
@@ -632,8 +632,7 @@ def check_payments():
 
 
 def crone_pool() -> None:
-    print(f"get_updates not fond ?  '{TOKEN=}'")
-    if not TOKEN or len(TOKEN)<10:
+    if not TOKEN or len(TOKEN) < 10:
         return None
     check_payments()
     # get latest updates
