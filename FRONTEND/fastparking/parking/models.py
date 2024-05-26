@@ -83,7 +83,7 @@ class Registration(models.Model):
             parking_fee = round(price_per_hour * hours, 2)
             # print(f"H: {hours=}")
         elif price_per_day:
-            parking_fee = round(price_per_day * hours / 24.0, 2)
+            parking_fee = round(price_per_day * hours / 24.0, 1)
             # print(f"D: {hours / 24.0=}")
         else:
             parking_fee = None
