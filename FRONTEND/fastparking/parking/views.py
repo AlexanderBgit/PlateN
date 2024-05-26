@@ -53,7 +53,7 @@ def main(request):
     version = settings.VERSION
     current_tariff = get_tariff_by_date(timezone.now())
     current_tariff_formatted = "--"
-    currency = settings.PAYMENT_CURRENCY[0]
+    # currency = settings.PAYMENT_CURRENCY[0]
     if current_tariff:
         current_tariff_formatted = format_full_tariff(current_tariff)
     context = {

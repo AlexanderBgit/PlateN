@@ -71,6 +71,25 @@ class Registration(models.Model):
         if car:
             return car.PayPass
 
+    def calculate_fee_from_duration(self, hours: float) -> float | None:
+        price_per_day = float(self.tariff_in["d"]) if self.tariff_in.get("d") else None
+        price_per_hour = float(self.tariff_in["h"]) if self.tariff_in.get("h") else None
+        if price_per_day and price_per_hour:
+            days = hours // 24
+            hours_of_day = hours % 24
+            parking_fee = round(price_per_day * days + price_per_hour * hours_of_day, 2)
+            # print(f"D+H: {hours=}, {days=}, {hours_of_day=}")
+        elif price_per_hour:
+            parking_fee = round(price_per_hour * hours, 2)
+            # print(f"H: {hours=}")
+        elif price_per_day:
+            parking_fee = round(price_per_day * hours / 24.0, 2)
+            # print(f"D: {hours / 24.0=}")
+        else:
+            parking_fee = None
+        # print(f"*** {parking_fee=}, {price_per_day=}, {price_per_hour=}")
+        return parking_fee
+
     def calculate_parking_fee(self) -> float | None:
         # print(
         #     f"Calculating parking fee... tariff: {self.tariff_in}",
@@ -104,13 +123,8 @@ class Registration(models.Model):
                 hours = 0  # Free first 15 mins
             else:
                 hours = self.round_to_int__(hours)
-            # get price_per_hour
-            if self.tariff_in.get("h"):
-                price_per_hour = float(self.tariff_in["h"])  # Зміна типу на float
-                parking_fee = round(price_per_hour * hours, 2)
-                # print(hours, self.round_to_int(hours), parking_fee, self.round_to_int(1.01),self.round_to_int(0.9))
-                # print(f"{parking_fee=}")
-                return parking_fee
+            # get price_from_hour
+            return self.calculate_fee_from_duration(hours)
         return None
 
     def get_current_duration(self) -> float | None:
