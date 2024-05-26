@@ -49,19 +49,23 @@ class RegisterView(View):
         return Group.objects.filter(name=name).first()
 
     def is_valid_username(self, register_form) -> bool:
-        username = register_form.cleaned_data["username"]
-        if username:
-            return not username.startsWith("demo_")
-        return False
+        result = False
+        if register_form.is_valid():
+            username = register_form.cleaned_data["username"]
+            if username:
+                result = not username.startswith("demo_")
+        return result
 
     def post(self, request):
         register_form = self.register_form_class(request.POST)
         password_form = self.password_form_class(request.POST)
-        if (
-            register_form.is_valid()
-            and password_form.is_valid()
-            and self.is_valid_username(register_form)
-        ):
+        valid_username = self.is_valid_username(register_form)
+        if not valid_username:
+            messages.warning(
+                request,
+                f"This username is not allowed, please select another.",
+            )
+        if register_form.is_valid() and password_form.is_valid() and valid_username:
             user = register_form.save(commit=False)
             user.set_password(password_form.cleaned_data["password1"])
             user.save()
