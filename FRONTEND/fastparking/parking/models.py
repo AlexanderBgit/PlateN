@@ -13,8 +13,10 @@ from cars.models import Car
 
 class ParkingSpace(models.Model):
     number = models.CharField(max_length=10, unique=True)
-    status = models.BooleanField(default=False)  # False - вільно, True - зайнято
-    car_num = models.CharField(max_length=16, default="")
+    status = models.BooleanField(default=False, help_text="False is free")  # False - вільно, True - зайнято
+    car_num = models.CharField(max_length=16, blank=True, null=True)
+    description = models.CharField(max_length=64, blank=True, null=True)
+    category = models.CharField(max_length=16, blank=True, null=True)
 
     def __str__(self):
         return self.number
