@@ -368,7 +368,7 @@ def register_parking_in_event(
         try:
             tariff_in = get_price_per_hour(utc_datetime)
             tariff_in_dict = get_tariff_by_date(utc_datetime)
-            print(f"tariff_in_dict : {tariff_in_dict=}")
+            # print(f"tariff_in_dict : {tariff_in_dict=}")
             # print(f"register_parking_in_event : {photo_id=}")
 
             registration = Registration.objects.create(
