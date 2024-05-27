@@ -39,7 +39,15 @@
           <td class="text-center" title="{{ registration.tariff_in|format_tariff }}">{% if registration.tariff_in.h %}{{ registration.tariff_in.h|format_finance:True}}{% else %}{{registration.tariff_in.d|format_finance:True}}{% endif %}</td>
           <td class="datetime_utc" title="{{ registration.exit_datetime|date:'Y-m-d H:i' }} UTC">{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
           <td title="{{ registration.duration_datatime }}">{{ registration.duration }}</td>
-          <td title="Calc: {{ registration.calculate_parking_fee|format_finance }}">{{ registration.invoice}}</td>
+          <td title="Calculated fee: {{ registration.calculate_parking_fee|format_finance }}">{% if registration.invoice %} {{ registration.invoice|format_finance:True}} {% else %}
+            {%if registration.pay_pass %}
+            <i class="bi-pass"></i><span class="btn_text_short" title="PayPass">&nbsp;Pass</span>
+            {% else %}
+            <em>({{ registration.calculate_parking_fee|format_finance:True }})</em>
+            {% endif %}
+            {% endif %}
+          
+          </td>
           <td title="Total paid for this registration: {{ registration.total_amount|format_finance }}">
             {% if registration.total_amount %}{{ registration.total_amount|format_finance:True }}{% endif %}
           </td>

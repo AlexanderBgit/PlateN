@@ -37,7 +37,7 @@ urlpatterns = [
                 "active_menu": "signin",
             },
         ),
-        name="username",
+        name="login",
     ),
     path("logout/", logout_view, name="logout"),
     path("logout_sure/", logout_sure_view, name="logout_sure"),

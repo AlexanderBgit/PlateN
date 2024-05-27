@@ -106,7 +106,7 @@ class RegisterView(View):
                 request,
                 f"Welcome, {username}! Your account has been successfully created",
             )
-            return redirect("users:username")
+            return redirect("users:login")
         context = {
             "register_form": register_form,
             "password_form": password_form,
