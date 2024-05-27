@@ -40,13 +40,16 @@
           <td class="datetime_utc" title="{{ registration.exit_datetime|date:'Y-m-d H:i' }} UTC">{{ registration.exit_datetime|date:'Y-m-d H:i' }}</td>
           <td title="{{ registration.duration_datatime }}">{{ registration.duration }}</td>
           <td title="Calculated fee: {{ registration.calculate_parking_fee|format_finance }}">{% if registration.invoice %} {{ registration.invoice|format_finance:True}} {% else %}
+            <div class="text-muted">
             {%if registration.pay_pass %}
-            <i class="bi-pass"></i><span class="btn_text_short" title="PayPass">&nbsp;Pass</span>
+            <i class="bi-pass"></i>&nbsp;Pass
             {% else %}
-            <em>({{ registration.calculate_parking_fee|format_finance:True }})</em>
+             {% if registration.invoice == 0 %}<i class="bi bi-clock"></i>&nbsp;Free
+              {% else %}<em>({{ registration.calculate_parking_fee|format_finance:True }})</em>
+             {% endif %}
             {% endif %}
+            </div>
             {% endif %}
-          
           </td>
           <td title="Total paid for this registration: {{ registration.total_amount|format_finance }}">
             {% if registration.total_amount %}{{ registration.total_amount|format_finance:True }}{% endif %}
