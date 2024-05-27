@@ -4,6 +4,6 @@ echo Starting Django migrate...
 PUSHD "../FRONTEND/fastparking"
 SETLOCAL
 SET USE_DS_NUMBER_DETECTION=0 
-poetry run python manage.py migrate
+poetry run python manage.py migrate %1 %2
 ENDLOCAL
 POPD

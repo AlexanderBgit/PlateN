@@ -16,7 +16,7 @@ class ParkingSpace(models.Model):
     status = models.BooleanField(default=False, help_text="False is free")  # False - вільно, True - зайнято
     car_num = models.CharField(max_length=16, blank=True, null=True)
     description = models.CharField(max_length=64, blank=True, null=True)
-    category = models.CharField(max_length=16, blank=True, null=True)
+    category = models.SmallIntegerField(blank=True, null=True, help_text="The smallest number is filled in first")
 
     def __str__(self):
         return self.number
