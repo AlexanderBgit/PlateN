@@ -28,12 +28,12 @@
     <span>{{form.errors.password}}</span>
   </div>
   <p>
-    <button type="submit" class="mt-2 btn btn-primary">Sing In</button>
-    <a class="mt-2 btn btn-primary" href="{% url 'users:password_reset' %}">Forgot Password?</a>
+    <button type="submit" class="mt-2 btn btn-primary"><i class="fa-solid fa-user"></i> <span class="btn_text_short"> Sing </span>In</button>
+    <a class="mt-2 btn btn-primary" href="{% url 'users:password_reset' %}">Forgot<span class="btn_text_short"> Password</span>?</a>
   </p>
 </form>
 {% if purpose != "demo" %} {% if demo_url %}
-<a class="btn btn-primary mt-4" href="{{demo_url}}" target="_blank">DEMO ACCOUNTS HERE</a>
+<a class="btn btn-primary mt-4" href="{{demo_url}}" target="_blank">DEMO<span class="btn_text_short"> ACCOUNTS</span> HERE</a>
 {% endif %} {%elif demo_users %}
 <h4>DEMO VERSION OF SITE</h4>
 <table class="mt-4 table table-striped">

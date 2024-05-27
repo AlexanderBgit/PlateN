@@ -37,6 +37,7 @@ class RegisterForm(ModelForm):
         min_length=6,
         max_length=20,
         required=False,
+        help_text="It can be either a nickname or a phone number if a nickname is not defined",
         validators=[
             RegexValidator(
                 regex=r"^(@[\w\d]{5,}|\+\d{10,})$",
@@ -44,7 +45,11 @@ class RegisterForm(ModelForm):
             )
         ],
         widget=forms.TextInput(
-            attrs={"placeholder": "@Nickname | +380XXXXXXXXX", "class": "form-control"}
+            attrs={
+                "placeholder": "@Nickname | +380XXXXXXXXX",
+                "class": "form-control",
+                "title": "It can be either a nickname or a phone number if a nickname is not defined",
+            }
         ),
     )
     phone_number = forms.CharField(
