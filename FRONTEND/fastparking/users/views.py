@@ -18,31 +18,56 @@ from .forms import RegisterForm, PasswordForm
 def logout_view(request):
     if request.method == "GET":
         username = request.user.username
+        active_menu = "logout"
         logout(request)
+        context = {
+            "title": "Logout user",
+            "username": username,
+            "active_menu": active_menu,
+        }
         return render(
             request,
             "users/signout.html",
-            {"title": "Logout user", "username": username},
+            context=context,
         )
     redirect(to="parking:main")
+
+
+@login_required
+def logout_sure_view(request):
+    username = request.user.username
+    active_menu = "logout"
+    context = {
+        "title": "Log out of the system?",
+        "username": username,
+        "active_menu": active_menu,
+    }
+    return render(
+        request,
+        "users/signout_sure.html",
+        context=context,
+    )
 
 
 class RegisterView(View):
     register_form_class = RegisterForm
     password_form_class = PasswordForm
     template_name = "users/signup.html"
+    active_menu = "signup"
 
     def get(self, request):
         register_form = self.register_form_class()
         password_form = self.password_form_class()
+        context = {
+            "title": "Register new user",
+            "register_form": register_form,
+            "password_form": password_form,
+            "active_menu": self.active_menu,
+        }
         return render(
             request,
             self.template_name,
-            {
-                "title": "Register new user",
-                "register_form": register_form,
-                "password_form": password_form,
-            },
+            context=context,
         )
 
     def get_group(self, name):
@@ -82,10 +107,15 @@ class RegisterView(View):
                 f"Welcome, {username}! Your account has been successfully created",
             )
             return redirect("users:username")
+        context = {
+            "register_form": register_form,
+            "password_form": password_form,
+            "active_menu": self.active_menu,
+        }
         return render(
             request,
             self.template_name,
-            {"register_form": register_form, "password_form": password_form},
+            context=context,
         )
 
 
@@ -98,3 +128,6 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
         "An email with instructions to reset your password has been sent to %(email)s."
     )
     subject_template_name = "users/password_reset_subject.txt"
+    extra_context = {
+        "active_menu": "signin",
+    }

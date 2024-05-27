@@ -28,8 +28,8 @@
     <span>{{form.errors.password}}</span>
   </div>
   <p>
-    <button type="submit" class="btn btn-primary">Sing In</button>
-    <a class="btn btn-primary" href="{% url 'users:password_reset' %}">Forgot Password?</a>
+    <button type="submit" class="mt-2 btn btn-primary">Sing In</button>
+    <a class="mt-2 btn btn-primary" href="{% url 'users:password_reset' %}">Forgot Password?</a>
   </p>
 </form>
 {% if purpose != "demo" %} {% if demo_url %}

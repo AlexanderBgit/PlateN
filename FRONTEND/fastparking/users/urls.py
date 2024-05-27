@@ -9,7 +9,7 @@ from django.contrib.auth.views import (
 from django.conf import settings
 from django.core.cache import cache
 
-from .views import RegisterView, ResetPasswordView, logout_view
+from .views import RegisterView, ResetPasswordView, logout_sure_view, logout_view
 from .forms import LoginForm
 
 app_name = "users"
@@ -34,15 +34,20 @@ urlpatterns = [
             extra_context={
                 "demo_users": get_demo_users(),
                 "demo_url": demo_url,
+                "active_menu": "signin",
             },
         ),
         name="username",
     ),
     path("logout/", logout_view, name="logout"),
+    path("logout_sure/", logout_sure_view, name="logout_sure"),
     path("reset-password/", ResetPasswordView.as_view(), name="password_reset"),
     path(
         "reset-password/done/",
-        PasswordResetDoneView.as_view(template_name="users/password_reset_done.html"),
+        PasswordResetDoneView.as_view(
+            template_name="users/password_reset_done.html",
+            extra_context={"active_menu": "signin"},
+        ),
         name="password_reset_done",
     ),
     path(
@@ -50,13 +55,15 @@ urlpatterns = [
         PasswordResetConfirmView.as_view(
             template_name="users/password_reset_confirm.html",
             success_url="/users/reset-password/complete/",
+            extra_context={"active_menu": "signin"},
         ),
         name="password_reset_confirm",
     ),
     path(
         "reset-password/complete/",
         PasswordResetCompleteView.as_view(
-            template_name="users/password_reset_complete.html"
+            template_name="users/password_reset_complete.html",
+            extra_context={"active_menu": "signin"},
         ),
         name="password_reset_complete",
     ),
