@@ -305,7 +305,11 @@ def handle_uploaded_file(
 def find_free_parking_space(num_auto=None) -> ParkingSpace | None:
     try:
         # Шукаємо перше вільне місце на парковці
-        parking_space = ParkingSpace.objects.filter(status=False).first()
+        parking_space = (
+            ParkingSpace.objects.filter(status=False)
+            .order_by("category", "number")
+            .first()
+        )
         if parking_space:
             # Змінюємо статус місця на зайнято
             parking_space.status = True
