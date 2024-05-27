@@ -1,133 +1,219 @@
-{% extends "parking/base.html" %}
-{% load static %}
-{% block extra_head %}
+{% extends "parking/base.html" %} {% load static %} {% block extra_head %}
 <!-- JavaScript для управління модальним вікном -->
 <script src="{% static 'users/js/signup.js' %}"></script>
-{% endblock %}
-{% block content %}
+{% endblock %} {% block content %}
 <h3><i class="fa-solid fa-user-check"></i> SignUp</h3>
+{% if messages %} {% for message in messages %}
+<div {% if message.tags %} class="alert alert-{{message.tags}}" {% endif %} role="alert">{{message}}</div>
+{% endfor %} {% endif %}
 <form method="post">
-    {% csrf_token %}
-    <div class="form-row">
-        <div class="mb-3">
-            <label class="form-label">Username (required)</label>
-            {{ register_form.username }}
-        </div>
-        <span>{{ register_form.errors.username }}</span>
+  {% csrf_token %}
+  <div class="form-row">
+    <div class="mb-3">
+      <label class="form-label">Username (required)</label>
+      {{ register_form.username }}
     </div>
-    <div class="form-row">
-        <div class="mb-3">
-            <label class="form-label">First Name</label>
-            {{ register_form.first_name }}
-        </div>
-        <span>{{ register_form.errors.first_name }}</span>
+    <span>{{ register_form.errors.username }}</span>
+  </div>
+  <div class="form-row">
+    <div class="mb-3">
+      <label class="form-label">First Name</label>
+      {{ register_form.first_name }}
     </div>
-    <div class="form-row">
-        <div class="mb-3">
-            <label class="form-label">Last Name</label>
-            {{ register_form.last_name }}
-        </div>
-        <span>{{ register_form.errors.last_name }}</span>
+    <span>{{ register_form.errors.first_name }}</span>
+  </div>
+  <div class="form-row">
+    <div class="mb-3">
+      <label class="form-label">Last Name</label>
+      {{ register_form.last_name }}
     </div>
-    <div class="form-row">
-        <div class="mb-3">
-            <label class="form-label">Email (required)</label>
-            {{ register_form.email }}
-        </div>
-        <span>{{ register_form.errors.email }}</span>
+    <span>{{ register_form.errors.last_name }}</span>
+  </div>
+  <div class="form-row">
+    <div class="mb-3">
+      <label class="form-label">Email (required)</label>
+      {{ register_form.email }}
     </div>
-    <div class="form-row">
-        <div class="mb-3">
-            <label class="form-label">Telegram</label>
-            {{ register_form.telegram_nickname }}
-        </div>
-        <span>{{ register_form.errors.telegram_nickname }}</span>
+    <span>{{ register_form.errors.email }}</span>
+  </div>
+  <div class="form-row">
+    <div class="mb-3">
+      <label class="form-label">Telegram</label>
+      {{ register_form.telegram_nickname }}
     </div>
-    <div class="form-row">
-        <div class="mb-3">
-            <label class="form-label">Phone Number</label>
-            {{ register_form.phone_number }}
-        </div>
-        <span>{{ register_form.errors.phone_number }}</span>
+    <span>{{ register_form.errors.telegram_nickname }}</span>
+  </div>
+  <div class="form-row">
+    <div class="mb-3">
+      <label class="form-label">Phone Number</label>
+      {{ register_form.phone_number }}
     </div>
-    <div class="form-row">
-        <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="accept_oferta" name="accept_oferta">
-            <label class="form-check-label" for="accept_oferta">Accept the offer (required)</label>
-            <a href="#" id="terms_link">Terms & Conditions</a>
-        </div>
-        <span>{{ register_form.errors.accept_oferta }}</span>
+    <span>{{ register_form.errors.phone_number }}</span>
+  </div>
+  <div class="form-row">
+    <div class="mb-3 form-check">
+      <input type="checkbox" class="form-check-input" id="accept_oferta" name="accept_oferta" />
+      <label class="form-check-label" for="accept_oferta">Accept the offer (required)</label>
+      <a href="#" id="terms_link">Terms & Conditions</a>
     </div>
-    <!-- Модальне вікно для умов паркування -->
-    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
-                    <button type="button" title="Close" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                      <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="eng-tab" data-bs-toggle="tab" data-bs-target="#eng" type="button" role="tab" aria-controls="eng" aria-selected="true">English</button>
-                      </li>
-                      <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="ukr-tab" data-bs-toggle="tab" data-bs-target="#ukr" type="button" role="tab" aria-controls="ukr" aria-selected="false">Ukrainian</button>
-                      </li>
-                    </ul>
-                    <!-- Tab panes -->
-                    <div class="tab-content">
-                      <div class="tab-pane fade show active" id="eng" role="tabpanel" aria-labelledby="eng-tab">
-                       <p><strong>1. Acceptance of Terms:</strong> By registering an account in our application, you agree to these Terms and Conditions.</p>
-                        <p><strong>2. User Responsibility:</strong> You are responsible for maintaining the confidentiality of your account and password. You agree to provide accurate and complete information during the registration process.</p>
-                        <p><strong>3. Data Protection:</strong> We are committed to protecting your privacy and personal information. Your data will be processed in accordance with our Privacy Policy.</p>
-                        <p><strong>4. Permissible Use:</strong> You agree to use our application only for lawful purposes and refrain from any activity that may compromise the integrity or security of the application.</p>
-                        <p><strong>5. Intellectual Property:</strong> All content and materials available in our application are protected by intellectual property laws. You are not permitted to reproduce, distribute, or modify any content without prior written consent.</p>
-                        <p><strong>6. Disclaimer:</strong> The information provided in our application is for general informational purposes only. We do not guarantee the accuracy, completeness, or reliability of any information.</p>
-                        <p><strong>7. Limitation of Liability:</strong> In no event shall we be liable for indirect, incidental, special, or consequential damages arising from the use of our application.</p>
-                        <p><strong>8. Changes to Terms:</strong> We reserve the right to change these Terms and Conditions at any time without prior notice. Continued use of the application after such changes will constitute your acceptance of the changes.</p>
-                        <p>By clicking "I Agree" below, you confirm that you have read, understood, and agree to be bound by these Terms and Conditions. If you do not agree to these terms, please click "I Do Not Agree" and refrain from registering an account in our application.</p>
-                      </div>
-                      <div class="tab-pane fade" id="ukr" role="tabpanel" aria-labelledby="ukr-tab">
-                        <p><strong>1. Прийняття Умов:</strong> Реєструючи обліковий запис у нашому застосунку, ви погоджуєтеся з цими Умовами та Положеннями.</p>
-                        <p><strong>2. Відповідальність Користувача:</strong> Ви несете відповідальність за збереження конфіденційності свого облікового запису та пароля. Ви згодні надавати точну та повну інформацію під час процесу реєстрації.</p>
-                        <p><strong>3. Захист Даних:</strong> Ми зобов'язані захищати вашу конфіденційність та особисту інформацію. Ваші дані будуть оброблятися відповідно до нашої Політики конфіденційності.</p>
-                        <p><strong>4. Припустиме Використання:</strong> Ви згодні використовувати наш застосунок тільки для законних цілей та утримуватися від будь-якої діяльності, яка може зашкодити цілісності або безпеці застосунку.</p>
-                        <p><strong>5. Інтелектуальна Власність:</strong> Весь контент та матеріали, доступні у нашому застосунку, захищені законами про інтелектуальну власність. Ви не маєте права відтворювати, розповсюджувати або модифікувати будь-який контент без попереднього письмового згоди.
-                        </p>
-                        <p><strong>6. Відмова від Відповідальності:</strong> Інформація, надана у нашому застосунку, призначена лише для загального ознайомлення. Ми не гарантуємо точність, повноту або надійність будь-якої інформації.</p>
-                        <p><strong>7. Обмеження Відповідальності:</strong> У жодному разі ми не будемо нести відповідальність за непрямі, випадкові, спеціальні або наслідкові збитки, що виникають в результаті використання нашого застосунку.</p>
-                        <p><strong>8. Зміни Умов:</strong> Ми залишаємо за собою право змінювати ці Умови та Положення у будь-який час без попереднього повідомлення. Продовження використання застосунку після таких змін буде означати вашу згоду з такими змінами.</p>
-                        <p>Натискаючи "Приймаю" (I Agree) нижче, ви підтверджуєте, що прочитали, зрозуміли та погоджуєтеся бути зв'язаними цими Умовами та Положеннями. Якщо ви не згодні з цими умовами, будь ласка, натисніть "Не приймаю" (I Do Not Agree) та утримайтеся від реєстрації облікового запису у нашому застосунку.</p>
-                      </div>
-                    </div>
-                    </div>
-                <div class="modal-footer">
-<!--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-                    <button type="button" class="btn btn-primary" id="acceptBtn">I Agree</button>
-                    <button type="button" class="btn btn-secondary" id="declineBtn">I Do Not Agree</button>
-                </div>
+    <span>{{ register_form.errors.accept_oferta }}</span>
+  </div>
+  <!-- Модальне вікно для умов паркування -->
+  <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+          <button type="button" title="Close" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="eng-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#eng"
+                type="button"
+                role="tab"
+                aria-controls="eng"
+                aria-selected="true"
+              >
+                English
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="ukr-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#ukr"
+                type="button"
+                role="tab"
+                aria-controls="ukr"
+                aria-selected="false"
+              >
+                Ukrainian
+              </button>
+            </li>
+          </ul>
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="eng" role="tabpanel" aria-labelledby="eng-tab">
+              <p>
+                <strong>1. Acceptance of Terms:</strong> By registering an account in our application, you agree to
+                these Terms and Conditions.
+              </p>
+              <p>
+                <strong>2. User Responsibility:</strong> You are responsible for maintaining the confidentiality of your
+                account and password. You agree to provide accurate and complete information during the registration
+                process.
+              </p>
+              <p>
+                <strong>3. Data Protection:</strong> We are committed to protecting your privacy and personal
+                information. Your data will be processed in accordance with our Privacy Policy.
+              </p>
+              <p>
+                <strong>4. Permissible Use:</strong> You agree to use our application only for lawful purposes and
+                refrain from any activity that may compromise the integrity or security of the application.
+              </p>
+              <p>
+                <strong>5. Intellectual Property:</strong> All content and materials available in our application are
+                protected by intellectual property laws. You are not permitted to reproduce, distribute, or modify any
+                content without prior written consent.
+              </p>
+              <p>
+                <strong>6. Disclaimer:</strong> The information provided in our application is for general informational
+                purposes only. We do not guarantee the accuracy, completeness, or reliability of any information.
+              </p>
+              <p>
+                <strong>7. Limitation of Liability:</strong> In no event shall we be liable for indirect, incidental,
+                special, or consequential damages arising from the use of our application.
+              </p>
+              <p>
+                <strong>8. Changes to Terms:</strong> We reserve the right to change these Terms and Conditions at any
+                time without prior notice. Continued use of the application after such changes will constitute your
+                acceptance of the changes.
+              </p>
+              <p>
+                By clicking "I Agree" below, you confirm that you have read, understood, and agree to be bound by these
+                Terms and Conditions. If you do not agree to these terms, please click "I Do Not Agree" and refrain from
+                registering an account in our application.
+              </p>
             </div>
+            <div class="tab-pane fade" id="ukr" role="tabpanel" aria-labelledby="ukr-tab">
+              <p>
+                <strong>1. Прийняття Умов:</strong> Реєструючи обліковий запис у нашому застосунку, ви погоджуєтеся з
+                цими Умовами та Положеннями.
+              </p>
+              <p>
+                <strong>2. Відповідальність Користувача:</strong> Ви несете відповідальність за збереження
+                конфіденційності свого облікового запису та пароля. Ви згодні надавати точну та повну інформацію під час
+                процесу реєстрації.
+              </p>
+              <p>
+                <strong>3. Захист Даних:</strong> Ми зобов'язані захищати вашу конфіденційність та особисту інформацію.
+                Ваші дані будуть оброблятися відповідно до нашої Політики конфіденційності.
+              </p>
+              <p>
+                <strong>4. Припустиме Використання:</strong> Ви згодні використовувати наш застосунок тільки для
+                законних цілей та утримуватися від будь-якої діяльності, яка може зашкодити цілісності або безпеці
+                застосунку.
+              </p>
+              <p>
+                <strong>5. Інтелектуальна Власність:</strong> Весь контент та матеріали, доступні у нашому застосунку,
+                захищені законами про інтелектуальну власність. Ви не маєте права відтворювати, розповсюджувати або
+                модифікувати будь-який контент без попереднього письмового згоди.
+              </p>
+              <p>
+                <strong>6. Відмова від Відповідальності:</strong> Інформація, надана у нашому застосунку, призначена
+                лише для загального ознайомлення. Ми не гарантуємо точність, повноту або надійність будь-якої
+                інформації.
+              </p>
+              <p>
+                <strong>7. Обмеження Відповідальності:</strong> У жодному разі ми не будемо нести відповідальність за
+                непрямі, випадкові, спеціальні або наслідкові збитки, що виникають в результаті використання нашого
+                застосунку.
+              </p>
+              <p>
+                <strong>8. Зміни Умов:</strong> Ми залишаємо за собою право змінювати ці Умови та Положення у будь-який
+                час без попереднього повідомлення. Продовження використання застосунку після таких змін буде означати
+                вашу згоду з такими змінами.
+              </p>
+              <p>
+                Натискаючи "Приймаю" (I Agree) нижче, ви підтверджуєте, що прочитали, зрозуміли та погоджуєтеся бути
+                зв'язаними цими Умовами та Положеннями. Якщо ви не згодні з цими умовами, будь ласка, натисніть "Не
+                приймаю" (I Do Not Agree) та утримайтеся від реєстрації облікового запису у нашому застосунку.
+              </p>
+            </div>
+          </div>
         </div>
-    </div>
-    <div class="form-row">
-        <div class="mb-3">
-            <label class="form-label">Password</label>
-            {{ password_form.password1 }}
+        <div class="modal-footer">
+          <!--                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+          <button type="button" class="btn btn-primary" id="acceptBtn">I Agree</button>
+          <button type="button" class="btn btn-secondary" id="declineBtn">I Do Not Agree</button>
         </div>
-        <span>{{ password_form.errors.password1 }}</span>
+      </div>
     </div>
-    <div class="form-row">
-        <div class="mb-3">
-            <label class="form-label">Confirm password</label>
-            {{ password_form.password2 }}
-        </div>
-        <span>{{ password_form.errors.password2 }}</span>
+  </div>
+  <div class="form-row">
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      {{ password_form.password1 }}
     </div>
-    <button type="submit" class="btn btn-primary mb-5">Sign Up</button>
+    <span>{{ password_form.errors.password1 }}</span>
+  </div>
+  <div class="form-row">
+    <div class="mb-3">
+      <label class="form-label">Confirm password</label>
+      {{ password_form.password2 }}
+    </div>
+    <span>{{ password_form.errors.password2 }}</span>
+  </div>
+  <button type="submit" class="btn btn-primary mb-5">Sign Up</button>
 </form>
 <script>
-    console.log("signup.html end")
+  console.log("signup.html end");
 </script>
 {% endblock %}

@@ -193,13 +193,13 @@ MEDIA_URL = "/media/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 TELEGRAM_BOT_NAME = os.getenv("TELEGRAM_BOT_NAME", "")
 TELEGRAM_NEWS_NAME = os.getenv("TELEGRAM_NEWS_NAME", "")
 TELEGRAM_NEWS_ID = os.getenv("TELEGRAM_NEWS_ID", "")
 
 MSG_TELEGRAM = {
-    "TOKEN": os.getenv("TELEGRAM_TOKEN", ""),
+    "TOKEN": os.getenv("TELEGRAM_TOKEN"),
     "BOT_NAME": os.getenv("TELEGRAM_BOT_NAME", ""),
     "NEWS_NAME": os.getenv("TELEGRAM_NEWS_NAME", ""),
     "NEWS_ID": os.getenv("TELEGRAM_NEWS_ID", ""),

@@ -48,10 +48,27 @@ class RegisterView(View):
     def get_group(self, name):
         return Group.objects.filter(name=name).first()
 
+    def is_valid_username(self, register_form) -> bool:
+        result = False
+        try:
+            username = register_form.cleaned_data.get("username")
+            if username:
+                result = not username.startswith("demo-")
+        except AttributeError:
+            ...
+        return result
+
     def post(self, request):
         register_form = self.register_form_class(request.POST)
         password_form = self.password_form_class(request.POST)
-        if register_form.is_valid() and password_form.is_valid():
+        register_form_valid = register_form.is_valid()
+        valid_username = self.is_valid_username(register_form)
+        if not valid_username:
+            messages.warning(
+                request,
+                f"This username is not allowed, please select another.",
+            )
+        if register_form_valid and password_form.is_valid() and valid_username:
             user = register_form.save(commit=False)
             user.set_password(password_form.cleaned_data["password1"])
             user.save()

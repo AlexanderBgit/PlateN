@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.db import connection
 
 from finance.repository import (
     get_total_payments_today,
@@ -37,8 +38,17 @@ from .templatetags.custom_filters import is_in_any_group
 
 
 def health_check(request):
-    # Add logic to check the health of the application
-    health_status = {"status": "ok"}
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        health_status = {"status": "ok"}
+    except Exception as e:
+        e = str(e).split("\n")[0]
+        health_status = {
+            "status": "fail",
+            "description": f"Database connection error: {e}",
+        }
+
     return JsonResponse(health_status)
 
 
@@ -53,7 +63,7 @@ def main(request):
     version = settings.VERSION
     current_tariff = get_tariff_by_date(timezone.now())
     current_tariff_formatted = "--"
-    currency = settings.PAYMENT_CURRENCY[0]
+    # currency = settings.PAYMENT_CURRENCY[0]
     if current_tariff:
         current_tariff_formatted = format_full_tariff(current_tariff)
     context = {

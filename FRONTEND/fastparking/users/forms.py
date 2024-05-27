@@ -5,6 +5,7 @@ from django.contrib.auth.forms import (
     UserChangeForm,
 )
 from django.forms import ModelForm, CharField, TextInput, PasswordInput
+from django.core.validators import RegexValidator
 from django import forms
 
 from users.models import CustomUser
@@ -33,15 +34,29 @@ class RegisterForm(ModelForm):
         widget=forms.EmailInput(attrs={"class": "form-control"}),
     )
     telegram_nickname = forms.CharField(
+        min_length=6,
         max_length=20,
         required=False,
+        validators=[
+            RegexValidator(
+                regex=r"^(@[\w\d]{5,}|\+\d{10,})$",
+                message="Telegram nickname must start with '@' followed by letters or digits, or '+' followed by digits.",
+            )
+        ],
         widget=forms.TextInput(
-            attrs={"placeholder": "@nickname", "class": "form-control"}
+            attrs={"placeholder": "@Nickname | +380XXXXXXXXX", "class": "form-control"}
         ),
     )
     phone_number = forms.CharField(
+        min_length=11,
         max_length=20,
         required=False,
+        validators=[
+            RegexValidator(
+                regex=r"^(\+\d{10,})$",
+                message="Phone must start with '+' followed by digits.",
+            )
+        ],
         widget=forms.TextInput(
             attrs={"placeholder": "+380XXXXXXXXX", "class": "form-control"}
         ),
