@@ -44,7 +44,7 @@
             {%if registration.pay_pass %}
             <i class="bi-pass"></i>&nbsp;Pass
             {% else %}
-             {% if registration.invoice == 0 %}<i class="bi bi-clock"></i>&nbsp;Free
+             {% if registration.calculate_parking_fee == 0 %}<i class="bi bi-clock"></i>&nbsp;Free
               {% else %}<em>({{ registration.calculate_parking_fee|format_finance:True }})</em>
              {% endif %}
             {% endif %}
