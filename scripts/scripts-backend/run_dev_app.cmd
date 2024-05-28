@@ -26,6 +26,10 @@ if exist %ENV% (
         if !errorlevel! equ 0 (
             for /f "tokens=1,2 delims==" %%a in ("!line!") do set "%%a=%%b"
         )
+        echo !line! | findstr /r "^APP_PORT_API" >nul
+        if !errorlevel! equ 0 (
+            for /f "tokens=1,2 delims==" %%a in ("!line!") do set "%%a=%%b"
+        )
     )
 )
 
@@ -43,8 +47,8 @@ endlocal
 
 rem git rev-parse --short HEAD > ..\git-version.txt
 echo.
-echo Starting Django web server...
-poetry run python manage.py runserver 0.0.0.0:8000 --insecure
+echo Starting FastAPI web server...
+poetry run uvicorn main:app --port ${APP_PORT_API:-9000} --host 0.0.0.0 --reload
 POPD
 ENDLOCAL
 POPD

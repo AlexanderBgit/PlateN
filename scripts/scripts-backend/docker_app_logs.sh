@@ -8,7 +8,7 @@ ENV=../../deploy/.env
 [ ! -f ${ENV} ] || export $(grep -E '^BRANCH|^PURPOSE' ${ENV} | xargs)
 
 
-echo "LOGS OF  DB CONTAINER ${BRANCH:-}${PURPOSE:-}"
+echo "LOGS OF CONTAINER ${BRANCH:-}${PURPOSE:-}"
 
 
-docker logs fastparking-api${BRANCH:-}${PURPOSE:-}-api-1 -t -f
+docker logs fastparking-backend${BRANCH:-}${PURPOSE:-}-api-1 -t -f

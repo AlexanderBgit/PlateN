@@ -13,6 +13,11 @@ ENV=../../deploy/.env
 
 pushd "../../deploy"
 echo -e "\nRunning docker BACKEND API"
-docker-compose  --file docker-compose-api.yml --env-file .env  \
- run --name fastparking-backend-api --build -p ${APP_PORT_API:-9000}:${APP_PORT_API:-9000} --rm api
+
+#docker compose  --file docker-compose-api.yml --env-file .env  \
+# run --name fastparking-backend-api --build -p ${APP_PORT_API:-9000}:${APP_PORT_API:-9000} --rm api
+
+docker compose  --file docker-compose-api.yml --env-file .env  up --build -d
+
+
 popd
