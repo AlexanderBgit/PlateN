@@ -160,9 +160,9 @@ cython_debug/
 .idea/
 */poetry.lock
 */.*
-*/.tmp
+*/*.tmp
 Database/*
-
-
-
-
+FRONTEND/git-version.txt
+FRONTEND/fastparking/static
+LIBS/poppler/*
+/FRONTEND/fastparking/*.json.gz

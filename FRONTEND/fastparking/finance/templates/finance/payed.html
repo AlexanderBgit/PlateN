@@ -1,0 +1,40 @@
+<!-- У вашому файлі add_tariff.html -->
+{% extends "parking/base.html" %}
+{% load static %}
+{% block extra_head %}
+<script src="{% static 'parking/js/misc.js' %}"></script>
+{% endblock extra_head %}
+{% block content %}
+<div class="container" id="payment_result">
+  <h2>Payment Results</h2>
+  <div class="container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Field Name</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for field, value in payment.items %} {% if value %}
+        <tr>
+          <td>{{ field }}:</td>
+          <td>{{ value | safe }}</td>
+        </tr>
+        {% endif %} {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if payment.Underpayment %}
+  <div class="alert alert-info" role="alert">
+    <i class="bi bi-info-circle fs-4"></i> You have an underpayment for the parking service, please add the remaining {{payment.Underpayment}} for the service
+    provided to you.
+  </div>
+  {% endif %}
+  <p>
+    <a class="btn btn-primary" href="{% url 'finance:main' %}"><i class="bi-arrow-left-circle"></i>
+       <span class="btn_text_short"> Back</span></a>
+    <button onclick="printDiv('payment_result')" class="btn btn-primary">Print</button>
+  </p>
+</div>
+{% endblock content %}

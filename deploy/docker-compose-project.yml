@@ -1,27 +1,50 @@
 # docker-compose  --file docker-compose-project.yml --env-file .env_prod  up -d 
-version: "3.8"
-name: fastparking
+name: fastparking${BRANCH:-}${PURPOSE:-}
 services:
   pg:
-    image: postgres
+    image: postgres:16
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    #expose:
-    #  - "${POSTGRES_PORT}"
-    ports:
-       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    expose:
+      - ${POSTGRES_PORT}
+    # ports:
+    #    - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
-      - ../database/postgres-data:/var/lib/postgresql/data
+      - ../Database/postgres-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
-  code :
+  code:
     build: ../FRONTEND
     stdin_open: true # docker run -i
-    tty: true        # docker run -t
+    tty: true # docker run -t
     ports:
-      - "8000:8000"
-      
+      - ${APP_PORT:-8000}:8000
+    volumes:
+      - ../Database/django_cache:/tmp/django_cache
+      - ../FRONTEND/fastparking/static:/app/fastparking/static
+
+    # Health check command
+    restart: always
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail http://localhost:8000/health/ | grep -q '\"status\": \"ok\"' || exit 1"
+        ]
+      interval: 120s
+      timeout: 10s
+      retries: 5
+      start_period: 60s # Delay the first health check by 60 seconds
+    depends_on:
+      pg:
+        condition: service_healthy
     environment:
       POSTGRES_HOST: pg
       POSTGRES_DB: ${POSTGRES_DB}
@@ -34,6 +57,18 @@ services:
       MAIL_PORT: ${MAIL_PORT}
       MAIL_SERVER: ${MAIL_SERVER}
       MAIL_FROM_NAME: ${MAIL_FROM_NAME}
-    depends_on:
-      - pg
- 
+      TELEGRAM_TOKEN: ${TELEGRAM_TOKEN:-}
+      TELEGRAM_BOT_NAME: ${TELEGRAM_BOT_NAME:-}
+      TELEGRAM_NEWS_NAME: ${TELEGRAM_NEWS_NAME:-}
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-}
+      DJANGO_DEBUG: ${DJANGO_DEBUG}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD}
+      DISCORD_WEBHOOK_HOSTING: ${DISCORD_WEBHOOK_HOSTING:-}
+      DISCORD_WEBHOOK_NEWS: ${DISCORD_WEBHOOK_NEWS:-}
+      DISCORD_AVATAR_HOSTING: ${DISCORD_AVATAR_HOSTING:-}
+      DISCORD_AVATAR_NEWS: ${DISCORD_AVATAR_NEWS:-}
+      DISCORD_FEEDBACK: ${DISCORD_FEEDBACK:-}
+      DEMO_URL: ${DEMO_URL:-}

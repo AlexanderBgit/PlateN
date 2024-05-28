@@ -1,0 +1,66 @@
+{% extends "parking/base.html" %}
+{% load static %}
+{% block extra_head %}
+<script src="{% static 'users/js/copy_info.js' %}"></script>
+{% endblock extra_head %}
+{% block content %}
+<h3><i class="fa-solid fa-user"></i> SignIn</h3>
+
+<!-- Виводимо Flash сповіщення-->
+{% if messages %} 
+{% for message in messages %}
+<div {% if message.tags %} class="alert alert-{{message.tags}}" {% endif %} role="alert">{{message}}</div>
+{% endfor %} 
+{% endif %}
+
+<!--Обробляємо помилки форми які не відносяться до полів -->
+{% if form.errors %}
+<div class="alert alert-danger" role="alert">{{ form.non_field_errors}}</div>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  <div class="form-row">
+    <div class="mb-3">
+      <label class="form-label">Username</label>
+      {{form.username}}
+    </div>
+    <span>{{form.errors.username}}</span>
+  </div>
+  <div class="form-row">
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      {{form.password}}
+    </div>
+    <span>{{form.errors.password}}</span>
+  </div>
+  <p>
+    <button type="submit" class="mt-2 btn btn-primary">
+      <i class="fa-solid fa-user"></i> <span class="btn_text_short"> Sing </span>In
+    </button>
+    <a class="mt-2 btn btn-primary" href="{% url 'users:password_reset' %}"
+      >Forgot<span class="btn_text_short"> Password</span>?</a
+    >
+  </p>
+</form>
+{% if purpose != "demo" %} {% if demo_url %}
+<a class="btn btn-primary mt-4" href="{{demo_url}}" target="_blank"
+  >DEMO<span class="btn_text_short"> ACCOUNTS</span> HERE</a
+>
+{% endif %} {%elif demo_users %}
+<h4>DEMO VERSION OF SITE</h4>
+<table class="mt-4 table table-striped">
+  <tr>
+    <th>Username</th>
+    <th>Password</th>
+    <th></th>
+  </tr>
+  {% for demo_user in demo_users %}
+  <tr>
+    <td>{{demo_user.username}}</td>
+    <td>{{demo_user.password}}</td>
+    <td><button class="btn btn-sm btn-primary" type="button" title="Copies and fills in the username and password fields"  onclick="copy_user_pwd()"><i class="bi-copy"></i></a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %} {% endblock %}

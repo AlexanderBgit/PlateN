@@ -1,0 +1,54 @@
+{% extends "parking/base.html" %} {% block content %}
+    <style>
+        .container-a1 {
+            display: grid;
+            grid-template-rows: auto 1fr; /* Auto height for the first row, remaining space for the second */
+            height: 100%; /* Full viewport height */
+        }
+        .cell {
+            justify-content: center;
+            align-items: center;
+        }
+        .cell img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the image covers the entire area */
+        }
+    </style>
+<div class="px-1 my-2 text-center container-a1">
+  <div class="cell">
+    <h3 class="display-6 fw-bold mt-1" style="font-size: 5vh;">Fast Parking - Швидка паркова</h3>
+    <div class="col-lg-8 mx-auto">
+      <div class="mt-2 mb-2 pt-2 pb-1" style="border: 1px solid #ccc; border-radius: 5px">
+        <div class="mb-1" title="The basic tariff for today" data-bs-toggle="tooltip" ><span class="d-none d-md-inline">The basic tariff for today: </span>{{current_tariff}}</div>
+        <div class="mb-1" title="Total parking spaces and free spaces" data-bs-toggle="tooltip" >Total<span class="d-none d-md-inline"> parking spaces</span>: {{ total_parking_spaces }} | Free<span class="d-none d-md-inline"> spaces</span>: {{ free_parking_spaces }}</div>
+        <a href="{% url 'parking:parking_plan' %}">
+        <div class="progress ms-2 me-2" title="Click for view parking plan more detail" data-bs-toggle="tooltip" >
+            <div
+              class="progress-bar"
+              role="progressbar"
+              style="width: {{ parking_progress }}%;"
+              aria-valuenow="{{ parking_progress }}"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              Filled: {{ parking_progress }}%
+            </div>
+        </div>
+        </a>
+<!--        <a href="{% url 'parking:parking_plan' %}" class="btn btn-primary mt-3">View<span class="d-none d-md-inline"> the parking</span> plan</a>-->
+      </div>
+    </div>
+  </div>
+  <div class="cell">
+    <img  style="border-radius: 0.5rem;" src="static/parking/cont1.jpg" alt=""  />
+  </div>
+  <div class="cell">
+    <p class="lead m-0 d-none d-md-block">A new generation of parking</p>
+    <p class="small mt-1" title="Version" data-bs-toggle="tooltip"><em>{% if version %}<span class="d-none d-md-inline">Version: </span>{{ version }}{% endif %}</em></p>
+  </div>
+</div>
+<script>
+        init_tooltip_const();
+</script>
+{% endblock %}

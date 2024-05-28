@@ -1,0 +1,127 @@
+<!-- photos/templates/upload.html -->
+{% extends "parking/base.html" %}
+{% load static %}
+{% block extra_head %}
+<script src="{% static 'parking/js/local_datetime.js' %}"></script>
+<script src="{% static 'parking/js/misc.js' %}"></script>
+{% endblock extra_head%}
+{% block content %}
+<div class="container" id="photo_result">
+  <h2>RESULT:</h2>
+  <table class="table">
+    <tbody>
+      {% if registration.id %}
+      <tr>
+        <th>Info:</th>
+        <td>{{ info }}</td>
+      </tr>
+      {% endif %}
+      {% if predict.num_avto_str %}
+      <tr>
+        <th>Recognized number:</th>
+        <td>{{ predict.num_avto_str }}</td>
+      </tr>
+      <tr>
+        <th>Accuracy:</th>
+        <td>{{ predict.accuracy }}</td>
+      </tr>
+      {% if registration.already_on_parking %}
+      <tr class="text-danger">
+        <th>Warning:</th>
+        <td>This number is already registered in the parking lot, are you sure?</td>
+      </tr>
+      {% endif %}
+      {% endif %}
+      <tr>
+        {% if predict.num_img %}
+        <th>Photo:</th>
+        <td>
+          <img
+            src="data:image/jpeg;base64,{{ predict.num_img }}"
+            alt="recognized license plate number: {{ predict.num_avto_str }}"
+            title="recognized license plate number: {{ predict.num_avto_str }}"
+          />
+        </td>
+        {% endif %}
+      </tr>
+      {% if registration.id %}
+      <tr>
+        <td colspan="2"><h3>Registration Information:</h3></td>
+      </tr>
+      <tr>
+        <th>Registration ID:</th>
+        <td>{{ registration.id }}</td>
+      </tr>
+      <tr>
+        <th>Registration Date:</th>
+        <td class="datetime_utc" title="{{ registration.date }} UTC">{{ registration.date }}</td>
+      </tr>
+      <tr>
+        <th>Parking place:</th>
+        <td>{{ registration.parking_place }}</td>
+      </tr>
+      <tr>
+        <th>Tariff:</th>
+        <td>{{ registration.tariff_in }}</td>
+      </tr>
+      {% if registration.invoice is not None %}
+      <tr>
+        <th>Invoice:</th>
+        <td>{{ registration.invoice }}</td>
+      </tr>
+      {% endif %}
+      {% if registration.total_paid %}
+      <tr>
+        <th>Total Payed:</th>
+        <td>{{ registration.total_paid }} {{currency}}</td>
+      </tr>
+      {% endif %}
+      {% if registration.duration %}
+      <tr>
+        <th>Duration:</th>
+        <td>{{ registration.duration }}</td>
+      </tr>
+      {% endif %}
+      <tr>
+        <th>QR Code:</th>
+        <td>
+          <img
+            src="data:image/jpeg;base64,{{ registration.qr_code }}"
+            alt="Registration ID: {{ registration.id }}"
+            title="Registration ID: {{ registration.id }}"
+          />
+        </td>
+      </tr>
+      {% if registration.compare_plates %}
+      <tr {% if not registration.compare_plates.0 %}class="text-danger" {% endif %}>
+        <th>Compare plates IN/OUT:</th>
+        <td>{{ registration.compare_plates }}</td>
+      </tr>
+      {% endif %}
+      <tr>
+        <th>Uniq code:</th>
+        <td>{{ registration.hash }}</td>
+      </tr>
+     {% endif %}
+    </tbody>
+  </table>
+</div>
+
+{% if not registration.id %}
+<div class="p-2 bg-danger text-white">Registration denied</div>
+<div class="alert alert-info"> <i class="bi bi-info-circle fs-4"></i> {{ info }}</div>
+{% endif %}
+  <p>
+    <a href="{% url 'photos:main' %}" class="btn btn-primary">
+      <i class="bi-arrow-left-circle"></i>
+      <span class="btn_text_short"> Back</span>
+    </a>
+    <button onclick="printDiv('photo_result')" class="btn btn-primary">
+      <i class="bi-printer"></i>
+      <span class="btn_text_short"> Print</span>
+    </button>
+  </p>
+<script>
+  parse_datetime_utc()
+</script>
+{% endblock content %}

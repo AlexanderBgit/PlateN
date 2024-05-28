@@ -1,0 +1,29 @@
+<!-- photos/templates/upload.html -->
+{% extends "parking/base.html" %} {% block content %}
+<h3><i class="fa-solid fa-camera"></i> Scan QR code:</h3>
+<form method="POST" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.r_json }}
+  {% if form.errors %}
+  <ul class="text-danger">
+    {% for field_name, error_list in form.non_field_errors.items %} {% for error in error_list %}
+    <li>{{ error }}</li>
+    {% endfor %} {% endfor %}
+  </ul>
+  {% endif %}
+
+<!--  <p>{{ form.photo.label_tag }} {{ form.photo }}</p>-->
+  <p>{{ form.photo.as_field_group }}</p>
+
+<p>
+  <a href="{% url 'photos:main' %}" class="btn btn-primary">
+      <i class="bi-arrow-left-circle"></i>
+      <span class="btn_text_short"> Back</span>
+    </a>
+  <button class="btn btn-primary" type="submit"><i class="bi-cloud-arrow-up"></i>
+      <span class="btn_text_short"> Upload</span></button>
+</p>
+</form>
+<p></p>
+
+{% endblock content %}

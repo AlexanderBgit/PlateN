@@ -1,14 +1,18 @@
 # docker-compose --file docker-compose-db.yml --env-file .env  up -d 
-version: '3'
 name: fastparking-db
 services:
   postgres:
-    image: postgres
+    image: postgres:16
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     volumes:
-      - ../database/postgres-data:/var/lib/postgresql/data
+      - ../Database/postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10

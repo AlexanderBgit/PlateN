@@ -1,5 +1,9 @@
 @echo off
-echo "runed poetry shell?"
+echo.
+echo Starting Django migrate...
 PUSHD "../FRONTEND/fastparking"
-python manage.py migrate
+SETLOCAL
+SET USE_DS_NUMBER_DETECTION=0 
+poetry run python manage.py migrate %1 %2
+ENDLOCAL
 POPD

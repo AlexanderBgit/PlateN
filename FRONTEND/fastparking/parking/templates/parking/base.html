@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=DM Sans" rel="stylesheet" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" />
+    {% load static %} {% load custom_filters %}
+    <link rel="stylesheet" href="{% static 'parking/css/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'parking/css/docs.css' %}" />
+    <link rel="stylesheet" href="{% static 'parking/css/all.min.css' %}" />
+    <script src="{% static 'parking/js/sidebars.js' %}"></script>
+    <link rel="icon" href="{% static 'parking/favicon.png' %}" />
+    {% block extra_head %}{% endblock %}
+    <title>
+      {%if purpose %}[{{purpose}}] {% endif %}{%if title %}{{title}} | {% endif %}Fast parking | Neuron Curve Bobr team
+    </title>
+  </head>
+  <body>
+    <main class="d-flex flex-nowrap">
+      <h1 class="visually-hidden">Sidebars examples</h1>
+      <div class="sidebar d-flex flex-column flex-shrink-0 p-3 text-bg-custom">
+        <a href="/" class="mx-auto mb-1 text-white text-decoration-none">
+          <!--          <svg class="bi pe-none me-2" width="10" height="32"><use xlink:href="#bootstrap" /></svg>-->
+          <img
+            src="{% static 'parking/logo-main5.png' %}"
+            title="Neuron Curve Bobr"
+            alt="NC Bobr"
+            style="max-width: 60px; width: 100%"
+          />
+          <span id="team-long" class="ms-1 fs-4 d-none d-md-inline" title="Neuron Curve Bobr">NeuronCurveBobr</span>
+        </a>
+        <p id="team_short" class="m-0 fs-4 d-none text-center" title="Neuron Curve Bobr">NC Bobr</p>
+        <hr class="m-2" />
+        <ul class="nav nav-pills flex-column">
+          <li title="Home" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a
+              class="nav-link {% if active_menu == 'home' %}active{% else %}text-white{% endif %}"
+              href="/"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+            >
+              <i class="fa-solid fa-home"></i>
+              <span class="nav-item d-none d-md-inline">Home</span>
+            </a>
+          </li>
+          <li title="Parking plan" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a
+              class="nav-link {% if active_menu == 'plan' %}active{% else %}text-white{% endif %}"
+              href="{% url 'parking:parking_plan' %}"
+            >
+              <i class="fa-solid fa-thumbtack" style="padding-left: 3px"></i>
+              <span class="nav-item d-none d-md-inline">Parking plan</span>
+            </a>
+          </li>
+          {% if user.is_authenticated and not user|is_in_group:"operator"%}
+          <li title="Profile" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a
+              class="nav-link {% if active_menu == 'accounts' %}active{% else %}text-white{% endif %}"
+              href="{% url 'accounts:profile' %}"
+            >
+              <i class="fa-solid fa-user" style="padding-left: 2px"></i>
+              <span class="nav-item d-none d-md-inline">Profile</span>
+            </a>
+          </li>
+          {% endif %} {% if user.is_authenticated %}
+          <li title="Registration" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a
+              class="nav-link {% if active_menu == 'registration' %}active{% else %}text-white{% endif %}"
+              href="{% url 'parking:registration_list' %}"
+            >
+              <i class="fa-solid fa-car-building" style="margin-left: -1px; margin-right: 1px"></i>
+              <span class="nav-item d-none d-md-inline">Registration</span>
+            </a>
+          </li>
+          {% endif %} {% if user|is_in_any_group:"admin,operator" %}
+          <li title="Cars" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a class="nav-link {% if active_menu == 'cars' %}active{% else %}text-white{% endif %}" href="/cars/">
+              <i class="fa-solid fa-car"></i>
+              <span class="nav-item d-none d-md-inline">Cars</span>
+            </a>
+          </li>
+          {% endif %} {% if user.is_authenticated and not user|is_in_group:"operator" %}
+          <li title="Finance" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a
+              class="nav-link {% if active_menu == 'finance' %}active{% else %}text-white{% endif %}"
+              href="{% url 'finance:main' %}"
+            >
+              <i class="fa-solid fa-table-list"></i>
+              <span class="nav-item d-none d-md-inline">Finance</span>
+            </a>
+          </li>
+          {% endif %} {% if user.is_authenticated and user|is_in_group:"operator" %}
+          <li title="Finance" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a
+              class="nav-link {% if active_menu == 'finance' %}active{% else %}text-white{% endif %}"
+              href="{% url 'finance:payments_list' %}"
+            >
+              <i class="fa-solid fa-table-list"></i>
+              <span class="nav-item d-none d-md-inline">Payments</span>
+            </a>
+          </li>
+          {% endif %} {% if user.is_authenticated and not user|is_in_group:"operator" %}
+          <li title="Car Recognition" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a
+              class="nav-link {% if active_menu == 'photos' %}active{% else %}text-white{% endif %}"
+              href="{% url 'photos:main' %}"
+            >
+              <i class="fa-solid fa-camera"></i>
+              <span class="nav-item d-none d-md-inline">Car Recognition</span>
+            </a>
+          </li>
+          {% endif %}
+          <li title="Messages" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a
+              class="nav-link {% if active_menu == 'messages' %}active{% else %}text-white{% endif %}"
+              href="{% url 'communications:main' %}"
+            >
+              <i class="fa-solid fa-earth-americas"></i>
+              <span class="nav-item d-none d-md-inline">Messages</span>
+            </a>
+          </li>
+          {% if user.is_authenticated %}
+          <li title="Logout" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a
+              class="nav-link {% if active_menu == 'logout' %}active{% else %}text-white{% endif %}"
+              href="{% url 'users:logout_sure' %}"
+            >
+              <i class="fa-solid fa-sign-out"></i>
+              <span class="nav-item d-none d-md-inline">Logout</span>
+            </a>
+          </li>
+          {% endif %} {% if not user.is_authenticated %}
+          <li title="SignIn" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a
+              class="nav-link {% if active_menu == 'signin' %}active{% else %}text-white{% endif %}"
+              href="{% url 'users:login' %}"
+            >
+              <i class="fa-solid fa-user"></i>
+              <span class="nav-item d-none d-md-inline">SignIn</span>
+            </a>
+          </li>
+          <li title="SignUp" data-bs-toggle="tooltip" data-bs-placement="right">
+            <a
+              class="nav-link {% if active_menu == 'signup' %}active{% else %}text-white{% endif %}"
+              href="{% url 'users:register' %}"
+            >
+              <i class="fa-solid fa-user-check"></i>
+              <span class="nav-item d-none d-md-inline">SignUp</span>
+            </a>
+          </li>
+          {% endif %}
+          <li
+            title="Expand/Collapse menu"
+            id="btn_collapse"
+            class="d-md-none"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+          >
+            <a class="nav-link text-white" onclick="toggle_md()">
+              <i class="fa-solid fa-angles-right d-md-none"></i>
+              <span class="nav-item d-none d-md-inline"><i class="fa-solid fa-angles-left me-1"></i>Collapse</span>
+            </a>
+          </li>
+        </ul>
+
+        <hr />
+        <div class="nav-link" title="Username {{user.username}}" data-bs-toggle="tooltip" data-bs-placement="right">
+          <a href="#" class="text-white text-decoration-none">
+            <img src="{% static 'parking/mdo.png' %}" alt="" class="rounded-circle" style="max-width: 24px" />
+            {% if user.is_authenticated %}
+            <strong class="nav-item d-none d-md-inline ms-2">{{user.username}}</strong
+            ><span class="d-none d-md-inline ms-2" style="color: #00d000"> &#9679;</span>
+            {% else %}
+            <strong class="nav-item d-none d-md-inline ms-2">Username </strong>
+            {% endif %}
+          </a>
+        </div>
+        {%if purpose %}
+        <div
+          class="mt-2 p-0 alert alert-info text-center"
+          title="{{purpose}} mode"
+          data-bs-toggle="tooltip"
+          data-bs-placement="right"
+        >
+          <i class="bi bi-info-circle fs-4"></i><span class="nav-item d-none d-md-inline">&nbsp;{{purpose}} mode</span>
+        </div>
+        {% endif %}
+      </div>
+      <div class="b-example-divider b-example-vr"></div>
+      <div class="container-fluid">{% block content %}{% endblock %}</div>
+    </main>
+    <script>
+      init_tooltip();
+      window.addEventListener("resize", init_tooltip);
+    </script>
+  </body>
+</html>

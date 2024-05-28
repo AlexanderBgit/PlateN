@@ -1,0 +1,56 @@
+{% extends "parking/base.html" %}
+{% block content %}
+
+    <h3><i class="fa-solid fa-user"></i> {{ title }}</h3>
+
+    {% if my_cars %}
+
+    <div class="bd-example">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Brand</th>
+                <th scope="col">Type</th>
+                <th scope="col">Number</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delit</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for car in my_cars %}
+                    <tr>
+                        <th scope="row">{{ car.brand }}</th>
+                        <td>{{ car.car_type }}</td>
+                        <td>{{ car.car_number }}</td>
+
+                        <td>
+                            <h5><a class="badge rounded-pill text-bg-info" style="color: white !important;"
+                                href="{% url 'accounts:edit_car' car.pk %}">Edit</a>
+                            </h5>
+                        </td>
+                        <td>
+                            <h5><a class="badge rounded-pill text-bg-danger" style="color: white !important;"
+                                href="{% url 'accounts:delete' car.pk %}">Delete</a>
+                            </h5>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <br>
+
+    {% else %}
+        <p>No cars found.</p>
+    {% endif %}
+
+
+    <div class="card-body" style="display: inline-block">
+
+        <a href="{% url 'accounts:add_car' %}" class="btn btn-success">Add new Car</a>
+
+    </div>
+</div>
+
+{% endblock content %}
+

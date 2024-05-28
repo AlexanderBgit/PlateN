@@ -1,0 +1,79 @@
+<!-- parking/templates/car_list.html -->
+{% extends "parking/base.html" %}
+{% load static %}
+{% block extra_head %}
+<script src="{% static 'parking/js/misc.js' %}"></script>
+<style>
+  .center_row {
+    align-content: center;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<h3 class="mb-3 mt-3"><i class="fa-solid fa-car"></i> Confirmation of changes</h3>
+<div class="bd-example">
+  <form method="post" action="{% url 'cars:confirm_changes' %}">
+    {% csrf_token %}
+    {{ forms.management_form }}
+    {% if forms.non_form_errors %}
+    <div class="alert alert-danger">
+        <ul>
+            {% for error in forms.non_form_errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col"  title="Car Number" aria-label="Car Number"><i class="bi bi-car-front"></i><span class="btn_text_short">&nbsp;Number</span></th>
+          <th scope="col" class="text-center" title="Status" aria-label="Status"><i class="bi-ban"></i><span class="btn_text_short"><i class="bi-pass"></i>&nbsp;Status</span></th>
+          <th scope="col" class="text-center" title="Location" aria-label="Location"><i class="bi-geo-alt"></i><span class="btn_text_short">&nbsp;Location</span></th>
+          <th scope="col" class="text-center" title="Comment" aria-label="Comment"><i class="bi-chat-right-text"></i><span class="btn_text_short">&nbsp;Comment</span></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for form in forms %}
+        {% if form.errors %}
+            {% for field_name, field_errors in form.errors.items %}
+                {% for error in field_errors %}
+                    <tr class="alert alert-danger"><td colspan="4">{{ field_name }}: {{ error }}</td></tr>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+      <tr>
+        <td class="col-2 form-label center_row">{{ form.row }}{{ form.item }}{{ form.item.value }}
+              {% if form.item.errors %}
+                {% for error in form.item.errors %}
+                    {{ error }}
+                {% endfor %}
+            {% endif %}</td>
+        <th class="col-2 form-label center_row text-center">{{ form.status }}{{ form.status.value }}
+
+          {% if form.status.errors %}
+                {% for error in form.status.errors %}
+                    {{ error }}
+                {% endfor %}
+            {% endif %}
+        </th>
+        <td class="col-2">{{ form.location }}</td>
+        <td>{{ form.comment }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <p class="mt-3">
+      <a class="btn btn-primary" href="{% url 'cars:car_list' %}"><i class="bi-arrow-left-circle"></i>
+       <span class="btn_text_short"> Back</span></a>
+        <button class="btn btn-primary" type="submit"><i class="bi-save"></i>
+        Save<span class="btn_text_short"> changes</span></button>
+    </p>
+      <div class="alert alert-info mb-0"><i class="bi bi-info-circle fs-4"></i> Information about you and your actions will be stored in the records.</div>
+  </form>
+</div>
+
+
+
+
+{% endblock content %}

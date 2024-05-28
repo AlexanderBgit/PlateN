@@ -1,0 +1,40 @@
+{% extends "parking/base.html" %}
+{% load custom_filters %}
+{% block content %}
+
+    <h3><i class="fa-solid fa-user"></i> User Profile</h3>
+
+    <div class="card mt-3">
+        <div class="card-header"><strong>Details:</strong></div>
+        <div class="card-body">
+
+          <h6 class="card-title mb-3 mt-3"><strong>Username: </strong>{{ request.user.username }}</h6>
+
+          {% if request.user.first_name %}
+          <h6 class="card-title mb-3 mt-3"><strong>First name: </strong>{{ request.user.first_name }}</h6>
+          {% endif %}
+
+          {% if request.user.last_name %}
+          <h6 class="card-title mb-3 mt-3"><strong>Last name: </strong>{{ request.user.last_name }}</h6>
+          {% endif %}
+
+          <h6 class="card-title mb-3 mt-3"><strong>Email: </strong>{{ request.user.email }}</h6>
+
+          {% if request.user.phone_number %}
+          <h6 class="card-title mb-3 mt-3"><strong>Phone number: </strong>{{ request.user.phone_number }}</h6>
+          {% endif %}
+
+          {% if request.user.telegram_nickname  %}
+          <h6 class="card-title mb-3 mt-3"><strong>Telegram nickname: </strong>{{ request.user.telegram_nickname }}</h6>
+          {% endif %}
+      
+        </div>
+    </div>
+    
+    <br>
+    {% if user|is_in_group:"user" %}
+    <a href="{% url 'accounts:my_cars' %}" class="btn btn-primary">My Cars</a>
+    {% endif %}
+    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">Edit profile</a>
+
+{% endblock content %}

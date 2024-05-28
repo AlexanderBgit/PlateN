@@ -1,0 +1,38 @@
+{% extends "parking/base.html" %} {% load static %}
+{% block extra_head %}
+<script src="{% static 'parking/js/local_datetime.js' %}"></script>
+<script src="{% static 'parking/js/misc.js' %}"></script>
+{% endblock %}
+{% load custom_filters %}
+{% block content %}
+<div id="print_area">
+<h3><i class="fa-solid fa-table-list"></i> Statistic</h3>
+<h4>on <span class="datetime_utc" title="{{datetime_now}} UTC">{{datetime_now}}</span></h4>
+<div class="container-fluid">
+  {% if user|is_in_any_group:"admin,operator" %}
+  <table class="mt-3 table table-striped">
+    <tbody>
+    {% for stat in stats %}
+     <tr>
+      <th class="col">{{stat.label}}:</th>
+      <td class="col {{stat.class}}" title="{{stat.label}}: {{stat.value}}">{{stat.value}}</td>
+     </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+    <p>
+      <button onclick="goBackOnHistory()" type="button" class="btn btn-primary">
+          <i class="bi-arrow-left-circle"></i>
+          <span class="btn_text_short"> Back</span>
+      </button>
+      <button onclick="printDiv('print_area')" class="btn btn-primary">
+          <i class="bi-printer"></i>
+          <span class="btn_text_short"> Print</span>
+      </button>
+    </p>
+
+</div>
+</div>
+<script>parse_datetime_utc()</script>
+{% endblock %}

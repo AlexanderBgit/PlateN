@@ -1,0 +1,74 @@
+{% extends "parking/base.html" %} {% load static %} {% load custom_filters %}
+{% block extra_head %}
+<script src="{% static 'parking/js/local_datetime.js' %}"></script>
+<script src="{% static 'parking/js/misc.js' %}"></script>
+{% endblock %}
+{% block content %}
+<div id="print_area">
+<h3><i class="fa-solid fa-thumbtack"></i> Plan of parking</h3>
+<h4>Total number of parking spaces: {{ parking_spaces.count }}, including free spaces: {{ parking_spaces_count }} on <span class="datetime_utc" title="{{datetime_now}} UTC">{{datetime_now}}</span></h4>
+<div class="progress">
+  <div class="progress-bar"
+       role="progressbar"
+       style="width: {{ parking_progress }}%;"
+       aria-valuenow="{{ parking_progress }}"
+       aria-valuemin="0"
+       aria-valuemax="100">
+    Filled: {{ parking_progress }}%
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row row-cols-auto gy-3 pt-1 pb-3 mt-3 border rounded bg-light">
+    {% for entry in parking_spaces %}
+    <div class="col-xl-1">
+      <div class="card parking_place{% if entry.owner_number %} parking_place_users{% endif %}">
+        {% if entry.status %}
+          <img class="card-img-top"
+               width="100%"
+               alt="{{ entry.number }}"
+               title="{{ entry.number }}{% if entry.allow_number %}-{{ entry.car_num }}{% endif %}"
+               src="{% static 'parking/car-02.png' %}" />
+          <div class="text-center"><p class="car-number">{{ entry.number }}</p></div>
+          <div class="text-center"><p class="car-num">{% if entry.allow_number %}{{ entry.car_num }}{% endif %}</p></div>
+        {% else %}
+          <img class="card-img-top"
+               width="100%"
+               alt="{{ entry.number }}"
+               title="{{ entry.number }}"
+               src="{% static 'parking/car-01.png' %}" />
+          <div class="text-center"><p class="car-number">{{ entry.number }}</p></div>
+          <div class="text-center"><p class="car-num"></p></div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% if user|is_in_any_group:"admin,operator" %}
+  <table class="mt-3 table table-striped">
+    <tbody>
+    {% for stat in stats %}
+     <tr>
+      <th class="col">{{stat.label}}:</th>
+      <td class="col {{stat.class}}" title="{{stat.label}}: {{stat.value}}">{{stat.value}}</td>
+     </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p>
+  <button onclick="goBackOnHistory()" type="button" class="btn btn-primary">
+    <i class="bi-arrow-left-circle"></i>
+    <span class="btn_text_short"> Back</span>
+  </button>
+  <button onclick="printDiv('print_area')" class="btn btn-primary">
+    <i class="bi-printer"></i>
+    <span class="btn_text_short"> Print</span>
+  </button>
+  <a href="{% url 'finance:statistic' %}" class="btn btn-primary">
+   <i class="fa-solid fa-table-list"></i><span class="btn_text_short"> Statistic</span>
+  </a>
+  </p>
+  {% endif %}
+</div>
+</div>
+<script>parse_datetime_utc()</script>
+{% endblock %}

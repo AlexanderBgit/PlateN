@@ -1,0 +1,58 @@
+<!-- photos/templates/upload.html -->
+{% extends "parking/base.html" %} {% block content %} {% if target_type %}
+<h3><i class="fa-solid fa-camera"></i> Upload photo: {{ target_type.desc}}</h3>
+{% else %}
+<h3>Upload photo</h3>
+{% endif %}
+<form method="POST" action="" enctype="multipart/form-data">
+  {% csrf_token %} {% if form.errors %}
+  <ul class="text-danger">
+    {% for field_name, error_list in form.errors.items %} {% for error in error_list %}
+    <li>{{ error }}</li>
+    {% endfor %} {% endfor %}
+  </ul>
+  {% endif %}
+  <p {% if target_type %} class="d-none" {% endif %}>{{ form.type.label_tag }} {{ form.t_photo }}</p>
+  {% if target_type.desc == "OUT" %} {{ form.registration_id.label_tag }}
+  <div class="input-group">
+    {{ form.registration_id }}
+    <span class="input-group-text" title="Show only the current user's data" data-bs-toggle="tooltip">
+      <i class="bi bi-person-lines-fill"></i>
+      <span class="btn_text_short">&nbsp;{{ form.current_user.label_tag }}</span>&nbsp;{{ form.current_user }}
+    </span>
+  </div>
+  {% if form.registration_id.errors %}
+  <p class="text-danger">{{ form.registration_id.errors }}</p>
+  {% endif %}
+  <p>{{ form.manual_registration_id.label_tag }} {{ form.manual_registration_id }}</p>
+  {% if form.manual_registration_id.errors %}
+  <p class="text-danger">{{ form.manual_registration_id.errors }}</p>
+  {% endif %} {% endif %}
+  <p>{{ form.photo.label_tag }} {{ form.photo }}</p>
+
+  {% if target_type.desc == "OUT" %}
+  <div class="alert alert-info" role="alert">
+    <i class="bi bi-info-circle fs-4"></i> You can leave only if you have paid the parking service invoice or if you
+    have 0.00 to pay.
+  </div>
+  {% endif %}
+  <p>
+    <a href="{% url 'photos:main' %}" class="btn btn-primary">
+      <i class="bi-arrow-left-circle"></i>
+      <span class="btn_text_short"> Back</span>
+    </a>
+    <button class="btn btn-primary" type="submit">
+      <i class="bi-cloud-arrow-up"></i> <span class="btn_text_short"> Upload</span>
+    </button>
+    {% if target_type.desc == "OUT" %}
+    <a href="{% url 'finance:add_pay' %}" class="btn btn-primary"
+      ><i class="bi-cart-check"></i> <span class="btn_text_short"> Pay</span></a
+    >
+    {% endif %}
+  </p>
+</form>
+<p></p>
+<script>
+  init_tooltip_const();
+</script>
+{% endblock content %}
