@@ -20,6 +20,16 @@ services:
       timeout: 5s
       retries: 10
 
+  api:
+    build: ../BACKEND
+#    expose:
+#      - ${APP_PORT_API:-9000}
+    ports:
+      - ${APP_PORT_API:-9000}:${APP_PORT_API:-9000}
+
+    environment:
+      APP_PORT_API: ${APP_PORT_API:-9000}
+
   code:
     build: ../FRONTEND
     stdin_open: true # docker run -i
@@ -43,8 +53,8 @@ services:
       retries: 5
       start_period: 60s # Delay the first health check by 60 seconds
     depends_on:
-      pg:
-        condition: service_healthy
+      - api
+      - pg
     environment:
       POSTGRES_HOST: pg
       POSTGRES_DB: ${POSTGRES_DB}
@@ -72,3 +82,5 @@ services:
       DISCORD_AVATAR_NEWS: ${DISCORD_AVATAR_NEWS:-}
       DISCORD_FEEDBACK: ${DISCORD_FEEDBACK:-}
       DEMO_URL: ${DEMO_URL:-}
+      APP_HOST_API: api
+      APP_PORT_API: ${APP_PORT_API:-9000}

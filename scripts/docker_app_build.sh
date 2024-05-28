@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/bash
 
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "${script_dir}"
@@ -15,5 +15,5 @@ pushd "../deploy"
 echo $(git branch --show-current)${PURPOSE}-$(git rev-parse --short HEAD) > ../FRONTEND/git-version.txt
 echo "STARTING DEPLOY ${BRANCH}${PURPOSE}"
 
-docker-compose  --file docker-compose-project.yml --env-file .env build code
+docker-compose  --file docker-compose-project.yml --env-file .env build
 popd
