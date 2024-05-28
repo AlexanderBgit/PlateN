@@ -43,6 +43,7 @@ PURPOSE=
 BRANCH=dev
 
 APP_PORT=8000
+APP_PORT_API=9000
 
 # STATIC_DEPLOY="/var/www/html/fastparking"
 STATIC_DEPLOY=

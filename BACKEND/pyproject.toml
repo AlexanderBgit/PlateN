@@ -1,14 +1,14 @@
 [tool.poetry]
 name = "fastparking-api"
-version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+version = "0.5.28"
+description = "GoIT DataScience Team Project - Fast Parking API module"
+authors = ["neuron_curva_bobr <info@neuron.curva.bobr.app>"]
 license = "MIT"
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.11"
-python-telegram-bot = "^21.0.1"
+python = ">=3.10,<3.12"
 fastapi = "^0.110.1"
 uvicorn = "^0.29.0"
 python-dotenv = "^1.0.1"

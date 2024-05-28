@@ -1,7 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
-cd api
-python main.py
+cd ./api
 
-#bash
+echo -e "\nStarting FastAPI web server..."
+uvicorn main:app --port ${APP_PORT_API:-9000} --host 0.0.0.0
+
 
