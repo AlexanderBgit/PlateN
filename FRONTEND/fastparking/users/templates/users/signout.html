@@ -1,10 +1,9 @@
-{% extends "parking/base.html" %}
-
-{% block content %}
-<br>
-<h3><i class="fa-solid fa-sign-out"></i> Logged out: {{username}} </h3>
-<br>
-<div class="alert alert-info" role="alert">
-    Have you logged-out already? It's so sadly.
-</div>
+{% extends "parking/base.html" %} {% block content %}
+<br />
+<h3><i class="fa-solid fa-sign-out"></i> Logged out: {{username}}</h3>
+<br />
+<div class="alert alert-info" role="alert">Have you logged-out already? It's so sadly.</div>
+<a href="{% url 'users:login' %}" class="btn btn-primary">
+  <i class="fa-solid fa-user"></i> <span class="btn_text_short"> Sing </span>In
+</a>
 {% endblock %}

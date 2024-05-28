@@ -138,7 +138,7 @@ def edit_profile(request):
 
     if request.method == "POST":
         user_form = EditForm(request.POST, instance=request.user)
-        if user_form.is_valid():
+        if not request.user.username.startswith("demo-") and user_form.is_valid():
             new_data = user_form.save(commit=False)
             fields_to_check = [
                 "first_name",
@@ -156,6 +156,11 @@ def edit_profile(request):
     else:
         user_form = EditForm(instance=request.user)
 
+    if request.user.username.startswith("demo-"):
+        # Set all fields to read-only
+        for field in user_form.fields.values():
+            field.widget.attrs["disabled"] = True
+
     context = {"active_menu": active_menu, "user_form": user_form}
     return render(request, "accounts/edit_profile.html", context)
 
@@ -164,7 +169,7 @@ def edit_profile(request):
 def password_change(request):
     resolved_view = resolve(request.path)
     active_menu = resolved_view.app_name
-    if request.method == "POST":
+    if not request.user.username.startswith("demo-") and request.method == "POST":
         form = EditPassword(request.user, request.POST)
         if form.is_valid():
             user = form.save()
@@ -172,5 +177,9 @@ def password_change(request):
             return redirect(to="accounts:profile")
     else:
         form = EditPassword(request.user)
+    if request.user.username.startswith("demo-"):
+        # Set all fields to read-only
+        for field in form.fields.values():
+            field.widget.attrs["disabled"] = True
     context = {"active_menu": active_menu, "form": form}
     return render(request, "accounts/password_change.html", context)

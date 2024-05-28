@@ -131,7 +131,7 @@
           <li title="Logout" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'logout' %}active{% else %}text-white{% endif %}"
-              href="{% url 'users:logout' %}"
+              href="{% url 'users:logout_sure' %}"
             >
               <i class="fa-solid fa-sign-out"></i>
               <span class="nav-item d-none d-md-inline">Logout</span>
@@ -141,7 +141,7 @@
           <li title="SignIn" data-bs-toggle="tooltip" data-bs-placement="right">
             <a
               class="nav-link {% if active_menu == 'signin' %}active{% else %}text-white{% endif %}"
-              href="{% url 'users:username' %}"
+              href="{% url 'users:login' %}"
             >
               <i class="fa-solid fa-user"></i>
               <span class="nav-item d-none d-md-inline">SignIn</span>

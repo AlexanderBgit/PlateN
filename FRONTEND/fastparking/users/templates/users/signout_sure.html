@@ -1,0 +1,15 @@
+{% extends "parking/base.html" %} {% block content %}
+<br />
+<h3><i class="fa-solid fa-sign-out"></i> Logged out: {{username}}</h3>
+<br />
+<div class="alert alert-info" role="alert">You want to log out of the system?</div>
+<p>
+  <a href="{% url 'parking:main' %}" class="btn btn-primary">
+    <i class="bi-arrow-left-circle"></i>
+    <span class="btn_text_short"> Back</span>
+  </a>
+  <a class="btn btn-primary" href="{% url 'users:logout' %}"
+    ><i class="fa-solid fa-sign-out"></i> <span class="btn_text_short"> Logout</span></a
+  >
+</p>
+{% endblock %}

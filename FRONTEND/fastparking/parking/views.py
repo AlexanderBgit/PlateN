@@ -232,6 +232,7 @@ def registration_list(request):
     if registrations:
         for registration in registrations:
             total_amount = registration.calculate_total_payed()
+            registration.pay_pass = registration.is_pay_pass()  # type: ignore
             duration = registration.get_duration()
             duration_formatted = f"{duration:.2f}h"
             duration_datetime = format_hours(duration)

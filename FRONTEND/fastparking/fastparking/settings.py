@@ -123,7 +123,7 @@ WSGI_APPLICATION = "fastparking.wsgi.application"
 #         "NAME": BASE_DIR / "db.sqlite3",
 #     }
 # }
-
+ADMIN_SITE_HEADER = "Fast Parking administration"
 POSTGRES_DB = os.getenv("POSTGRES_DB", "postgres")
 POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "XXXXXXXX")

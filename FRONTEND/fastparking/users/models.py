@@ -40,6 +40,13 @@ class CustomUser(AbstractUser):
 
     def clean(self):
         super().clean()
+        # clear some fields for demo users
+        if self.username.startswith("demo-"):
+            demo_fields_to_clear = ["email", "phone_number", "telegram_nickname"]
+            for field in demo_fields_to_clear:
+                if getattr(self, field):
+                    setattr(self, field, "")
+
         # Check if telegram_nickname is unique
         if self.telegram_nickname:
             existing_users = CustomUser.objects.filter(

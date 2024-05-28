@@ -96,7 +96,11 @@ class EditForm(UserChangeForm):
             )
         ],
         widget=forms.TextInput(
-            attrs={"placeholder": "@Nickname | +380XXXXXXXXX", "class": "form-control"}
+            attrs={
+                "placeholder": "@Nickname | +380XXXXXXXXX",
+                "class": "form-control",
+                "title": "It can be either a nickname or a phone number if a nickname is not defined",
+            }
         ),
     )
 
@@ -127,3 +131,8 @@ class EditPassword(PasswordChangeForm):
             "accept_oferta",
             "telegram_nickname",
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs["class"] = "form-control"

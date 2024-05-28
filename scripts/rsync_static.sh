@@ -12,7 +12,7 @@ pushd "../FRONTEND/fastparking"
 ST_D=${STATIC_DEPLOY}/${BRANCH}
 if [ ! -z "${STATIC_DEPLOY}" ] && [ -d ${ST_D} ];then
  echo -e "\nRSYNC STATIC DEPLOY... ${ST_D}"
- rsync -a static ${ST_D}
+ rsync -av static ${ST_D}
 else
  echo -e "\nRSYNC STATIC DEPLOY not found ${STATIC_DEPLOY}"
 fi

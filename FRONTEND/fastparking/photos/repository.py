@@ -305,7 +305,11 @@ def handle_uploaded_file(
 def find_free_parking_space(num_auto=None) -> ParkingSpace | None:
     try:
         # Шукаємо перше вільне місце на парковці
-        parking_space = ParkingSpace.objects.filter(status=False).first()
+        parking_space = (
+            ParkingSpace.objects.filter(status=False)
+            .order_by("category", "number")
+            .first()
+        )
         if parking_space:
             # Змінюємо статус місця на зайнято
             parking_space.status = True
@@ -364,7 +368,7 @@ def register_parking_in_event(
         try:
             tariff_in = get_price_per_hour(utc_datetime)
             tariff_in_dict = get_tariff_by_date(utc_datetime)
-            print(f"tariff_in_dict : {tariff_in_dict=}")
+            # print(f"tariff_in_dict : {tariff_in_dict=}")
             # print(f"register_parking_in_event : {photo_id=}")
 
             registration = Registration.objects.create(

@@ -29,19 +29,19 @@
   License plate recognition application (screenshots)</h2></summary>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Title.png">
+  <img src="readme/Title.png">
 </div>
 
 Home
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Home_page_v2.png">
+  <img src="readme/Home_page_v2.png">
 </div>
 
 Parking plan from the point of view of users with their cars
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Parking Plan_v3.png">
+  <img src="readme/Parking Plan_v3.png">
 </div>
 
 
@@ -51,25 +51,25 @@ Parking plan from the point of view of users with their cars
 Car recognition In
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Photos IN_v2.png">
+  <img src="readme/Photos IN_v2.png">
 </div>
 
 Car recognition Out
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Photos OUT_v2.png">
+  <img src="readme/Photos OUT_v2.png">
 </div>
 
 Cars
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Cars_v2.png">
+  <img src="readme/Cars_v2.png">
 </div>
 
 Registration list
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Registration list_v2.png">
+  <img src="readme/Registration list_v2.png">
 </div>
 </details>
 
@@ -80,25 +80,25 @@ Registration list
 Profile
 
 <div align="left" width="948" height="474">
-  <img src="/readme/User profile_v2.png">
+  <img src="readme/User profile_v2.png">
 </div>
 
 User cars
 
 <div align="left" width="948" height="474">
-  <img src="/readme/My Cars_v2.png">
+  <img src="readme/My Cars_v2.png">
 </div>
 
 Registration
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Register new user_v2.png">
+  <img src="readme/Register new user_v2.png">
 </div>
 
 SignIn
 
 <div align="left" width="948" height="474">
-  <img src="/readme/https __edu202415.aacom.net.png">
+  <img src="readme/https __edu202415.aacom.net.png">
 </div>
 </details>
 
@@ -109,23 +109,23 @@ SignIn
 Finance
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Finance pay_v2.png">
+  <img src="readme/Finance pay_v2.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Finance Pay the invoice_v2.png">
+  <img src="readme/Finance Pay the invoice_v2.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Finance Pay the invoice2_v2.png">
+  <img src="readme/Finance Pay the invoice2_v2.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Payment list_v2.png">
+  <img src="readme/Payment list_v2.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Finance Tariff_v2.png">
+  <img src="readme/Finance Tariff_v2.png">
 </div>
 
 </details>
@@ -136,20 +136,20 @@ Finance
 Messages
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Messages_v2.png">
+  <img src="readme/Messages_v2.png">
 </div>
 
 Telegram
 <div align="left" width="948" height="474">
-  <img src="/readme/Telegram_bot.png">
+  <img src="readme/Telegram_bot.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Telegram_news.png">
+  <img src="readme/Telegram_news.png">
 </div>
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Telegram_chat.png">
+  <img src="readme/Telegram_chat.png">
 </div>
 </details>
 
@@ -158,7 +158,7 @@ Telegram
 
 Adaptive layout
 <div align="left" width="948" height="474">
-  <img src="/readme/Mobile adaptive.png">
+  <img src="readme/Mobile adaptive.png">
 </div>
 
 </details>
@@ -376,5 +376,16 @@ SOURCE=${HOME}/PlateN/PlateN
 3. Tester [@AlexanderBgit](https://github.com/AlexanderBgit) 
 
 <div align="left" width="948" height="474">
-  <img src="/readme/Team.png">
+  <img src="readme/Team.png">
 </div>
+
+
+## Live Demo
+https://fastparking.x-server.net/
+
+Can use a special demo version of the site with specially created users of different roles: admin, operator, user.
+<div align="left" width="948">
+  <img src="readme/demo_users_login.png">
+</div>
+
+
