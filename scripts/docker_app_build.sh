@@ -9,7 +9,7 @@ if command -v dos2unix &> /dev/null; then
 fi
 
 ENV=../deploy/.env
-[ ! -f ${ENV} ] || export $(grep -E '^BRANCH|^PURPOSE' ${ENV} | xargs)
+[ ! -f ${ENV} ] || export $(grep -E '^BRANCH|^PURPOSE' ${ENV} | xargs) &> /dev/null
 
 pushd "../deploy"
 echo $(git branch --show-current)${PURPOSE}-$(git rev-parse --short HEAD) > ../FRONTEND/git-version.txt

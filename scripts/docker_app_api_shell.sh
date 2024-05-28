@@ -10,4 +10,4 @@ ENV=../deploy/.env
 echo "SHELL OF DEV DB CONTAINER ${BRANCH:-}${PURPOSE:-}"
 
 
-docker exec -it  fastparking${BRANCH:-}${PURPOSE:-}-code-1 bash
+docker exec -it  fastparking${BRANCH:-}${PURPOSE:-}-api-1 bash

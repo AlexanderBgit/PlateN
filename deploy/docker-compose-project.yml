@@ -1,4 +1,6 @@
 # docker-compose  --file docker-compose-project.yml --env-file .env_prod  up -d 
+version: '3'
+
 name: fastparking${BRANCH:-}${PURPOSE:-}
 services:
   pg:
@@ -27,8 +29,25 @@ services:
     ports:
       - ${APP_PORT_API:-9000}:${APP_PORT_API:-9000}
 
+    # Health check command
+    restart: always
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail http://127.0.0.1:${APP_PORT_API:-9000}/health/ | grep -q '\"status\": \"ok\"' || exit 1"
+        ]
+      interval: 120s
+      timeout: 10s
+      retries: 5
+#      start_period: 60s # Delay the first health check by 60 seconds
+
     environment:
       APP_PORT_API: ${APP_PORT_API:-9000}
+    depends_on:
+      pg:
+        condition: service_healthy
+
 
   code:
     build: ../FRONTEND
@@ -46,7 +65,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl --fail http://localhost:8000/health/ | grep -q '\"status\": \"ok\"' || exit 1"
+          "curl --fail http://127.0.0.1:${APP_PORT:-8000}/health/ | grep -q '\"status\": \"ok\"' || exit 1"
         ]
       interval: 120s
       timeout: 10s
@@ -55,6 +74,8 @@ services:
     depends_on:
       - api
       - pg
+#      pg:
+#          condition: service_healthy
     environment:
       POSTGRES_HOST: pg
       POSTGRES_DB: ${POSTGRES_DB}

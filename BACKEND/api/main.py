@@ -8,7 +8,7 @@ env_file = BASE_DIR.parent.joinpath("deploy").joinpath(".env")
 if env_file.exists():
     load_dotenv(env_file)
 
-APP_PORT_API = os.getenv("API_APP_PORT", 9000)
+APP_PORT_API = os.getenv("APP_PORT_API", 9000)
 
 # CORE ...
 
@@ -18,6 +18,11 @@ app = FastAPI()
 @app.get("/")
 def read_root():
     return {"message": f"Welcome to the application! {APP_PORT_API=}"}
+
+
+@app.get("/health/")
+def health_check():
+    return {"status": "ok"}
 
 
 # initialization service
