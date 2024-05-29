@@ -206,7 +206,7 @@ def handle_uploaded_file(
         if settings.USE_DS_NUMBER_DETECTION:
             predict = get_num_auto_png_io(f.read())
         elif settings.APP_PORT_API and settings.APP_HOST_API:
-            url = f"http://{settings.APP_HOST_API}:{settings.APP_PORT_API}/plate_recognize/"
+            url = f"http://{settings.APP_HOST_API}:{settings.APP_PORT_API}/api/v1/plate_recognize/"
             files = {"file": f}
             r = requests.post(url, files=files)
             if r.status_code == requests.codes.ok:

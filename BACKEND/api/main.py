@@ -23,12 +23,12 @@ def read_root():
     return {"message": f"Welcome to the application! {APP_PORT_API=}"}
 
 
-@app.get("/health/")
+@app.get("/api/v1//health/")
 def health_check():
     return {"status": "ok"}
 
 
-@app.post("/plate_recognize/")
+@app.post("/api/v1/plate_recognize/")
 async def plate_recognize(file: UploadFile):
     try:
         print(f"plate_recognize : {file}")
