@@ -37,7 +37,7 @@ async def plate_recognize(file: UploadFile):
         # print(f"{result=}")
         return result
     except Exception as e:
-        # print({str(e)})
+        print({str(e)})
         raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
 
 

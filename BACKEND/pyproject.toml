@@ -13,6 +13,12 @@ fastapi = "^0.110.1"
 uvicorn = "^0.29.0"
 python-dotenv = "^1.0.1"
 python-multipart = "^0.0.9"
+numpy = "^1.26.4"
+opencv-python-headless = {version = "^4.9.0.80", platform = "linux"}
+opencv-python = {version = "^4.9.0.80", platform = "win32 || darwin"}
+matplotlib = "^3.8.4"
+tensorflow = "^2.16.1"
+keras = "^3.3.3"
 
 
 [build-system]

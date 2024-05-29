@@ -2,7 +2,7 @@ import os
 import io
 from pathlib import Path
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 
@@ -14,7 +14,13 @@ os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 # from keras import optimizers
 # from keras.models import Sequential
 # from keras.preprocessing.image import ImageDataGenerator
-from keras.models import load_model
+# from keras.models import load_model
+os.environ["KERAS_BACKEND"] = "tensorflow"
+
+# from keras.saving import load_model
+import keras
+
+# from keras.src import Model
 
 # from keras.layers import Dense, Flatten, MaxPooling2D, Dropout, Conv2D
 
@@ -32,7 +38,7 @@ full_path_models = str(models_path.joinpath(file_model))
 full_path_cascade = str(models_path.joinpath(file_cascade))
 
 # Завантаження моделі та каскадного класифікатора
-model = load_model(full_path_models)
+model = keras.saving.load_model(full_path_models)
 plate_cascade = cv2.CascadeClassifier(full_path_cascade)
 
 
@@ -177,8 +183,8 @@ def find_contours(dimensions, img, debug=False):
                 break
 
     # Return characters on ascending order with respect to the x-coordinate (most-left character first)
-    if debug:
-        plt.show()
+    # if debug:
+    #     plt.show()
     # arbitrary function that stores sorted list of character indeces
     indices = sorted(range(len(x_cntr_list)), key=lambda k: x_cntr_list[k])
     img_res_copy = []
@@ -281,7 +287,7 @@ def get_num_avto(img_avto):
             "num_img": num_img,
         }
     else:
-        return {}     
+        return {}
 
 
 def decode_io_file(f):
@@ -294,6 +300,7 @@ def decode_io_file(f):
 def get_num_auto_png_io(f) -> dict:
     img = decode_io_file(f)
     return get_num_auto_png(img)
+
 
 def get_num_auto_png(img) -> dict:
     """get_num_auto_png
@@ -310,7 +317,7 @@ def get_num_auto_png(img) -> dict:
     num_result = get_num_avto(img)
     img = num_result.get("num_img", None)
     is_success = img is not None
-    
+
     if is_success:
         try:
             is_success, im_buf_arr = cv2.imencode(
@@ -334,7 +341,6 @@ def get_num_auto_png(img) -> dict:
         num_result["num_img"] = None
         num_result["accuracy"] = 0
         print("num_result[num_img] = None")
-
 
     return num_result
 
