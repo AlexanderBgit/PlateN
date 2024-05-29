@@ -66,6 +66,8 @@ def format_full_tariff(
     short_format: bool = False,
     thousands: bool = False,
 ) -> str:
+    if not tariff:
+        return ""
     text_l = []
     result_h = format_currency(tariff.get("h"), short_format, thousands)
     result_d = format_currency(tariff.get("d"), short_format, thousands)
