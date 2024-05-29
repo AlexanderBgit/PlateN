@@ -30,7 +30,7 @@ from parking.models import ParkingSpace, Registration
 from cars.models import Car
 from datetime import datetime
 
-from .services import build_qrcode, build_base64_image, sign_text
+from .services import build_qrcode, build_base64_image, sign_text, decode_base64_image
 
 # from .repository import sign_text, build_qrcode
 
@@ -211,6 +211,9 @@ def handle_uploaded_file(
             r = requests.post(url, files=files)
             if r.status_code == requests.codes.ok:
                 predict = json.loads(r.content)
+                if predict:
+                    if predict.get("num_img"):
+                        predict["num_img"] = decode_base64_image(predict["num_img"])
             else:
                 predict = {
                     "num_avto_str": "ERROR",
