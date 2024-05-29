@@ -8,9 +8,9 @@ def build_base64_image(binary_image_data):
     return base64.b64encode(binary_image_data).decode("utf-8")
 
 
-def plate_recognize_tf(image):
+async def plate_recognize_tf(image):
     # image = BytesIO(image)
-    predict = get_num_auto_png_io(image)
+    predict = await get_num_auto_png_io(image)
     # print(f"{predict=}")
     image_size = len(image)
     if predict:

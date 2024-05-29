@@ -1,3 +1,4 @@
+import asyncio
 import os
 import io
 from pathlib import Path
@@ -239,7 +240,7 @@ def fix_dimension(img):
 
 
 # Predicting the output string number by contours
-def predict_result(ch_contours, model):
+async def predict_result(ch_contours, model):
     dic = {}
     characters = "#0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     for i, c in enumerate(characters):
@@ -254,7 +255,7 @@ def predict_result(ch_contours, model):
         img = fix_dimension(img_)
         img = img.reshape(1, 28, 28, 3)  # preparing image for the model
 
-        prediction = model.predict(img, verbose=0)
+        prediction = await asyncio.to_thread(model.predict, img, verbose=0)
 
         y_ = np.argmax(prediction, axis=-1)[0]  # predicting the class
 
@@ -271,14 +272,14 @@ def predict_result(ch_contours, model):
     return plate_number, total_accuracy
 
 
-def get_num_avto(img_avto):
+async def get_num_avto(img_avto):
     img = img_avto.copy()
     output_img, num_img = extract_plate(img, plate_cascade)
 
     if num_img is not None:
         chars = segment_to_contours(num_img)
 
-        predicted_str, total_accuracy = predict_result(chars, model)
+        predicted_str, total_accuracy = await predict_result(chars, model)
         num_avto_str = str.replace(predicted_str, "#", "")
 
         return {
@@ -297,12 +298,12 @@ def decode_io_file(f):
     return decode_img
 
 
-def get_num_auto_png_io(f) -> dict:
+async def get_num_auto_png_io(f) -> dict:
     img = decode_io_file(f)
-    return get_num_auto_png(img)
+    return await get_num_auto_png(img)
 
 
-def get_num_auto_png(img) -> dict:
+async def get_num_auto_png(img) -> dict:
     """get_num_auto_png
 
     :param img: _description_
@@ -314,7 +315,7 @@ def get_num_auto_png(img) -> dict:
             "num_img": num_img,
         }
     """
-    num_result = get_num_avto(img)
+    num_result = await get_num_avto(img)
     img = num_result.get("num_img", None)
     is_success = img is not None
 

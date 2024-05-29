@@ -31,9 +31,9 @@ def health_check():
 @app.post("/api/v1/plate_recognize/")
 async def plate_recognize(file: UploadFile):
     try:
-        print(f"plate_recognize : {file}")
+        # print(f"plate_recognize : {file}")
         image = await file.read()  # Read the file content as bytes
-        result = plate_recognize_tf(image)
+        result = await plate_recognize_tf(image)
         # print(f"{result=}")
         return result
     except Exception as e:
