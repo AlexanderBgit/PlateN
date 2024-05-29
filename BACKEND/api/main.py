@@ -1,10 +1,14 @@
-from fastapi import FastAPI, UploadFile, HTTPException, File
-from typing import Annotated
+import os
 from pathlib import Path
 from dotenv import load_dotenv
-import os
 
+from fastapi import FastAPI, UploadFile, HTTPException
+from fastapi.responses import JSONResponse
+
+
+from ds.predict_num import model_load_status
 from services import plate_recognize_tf
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 env_file = BASE_DIR.parent.joinpath("deploy").joinpath(".env")
@@ -23,9 +27,12 @@ def read_root():
     return {"message": f"Welcome to the application! {APP_PORT_API=}"}
 
 
-@app.get("/api/v1//health/")
+@app.get("/api/v1/health/")
 def health_check():
-    return {"status": "ok"}
+    if model_load_status is not None:
+        return JSONResponse(content={"status": "ok"})
+    else:
+        return JSONResponse(content={"status": "loading"}, status_code=500)
 
 
 @app.post("/api/v1/plate_recognize/")

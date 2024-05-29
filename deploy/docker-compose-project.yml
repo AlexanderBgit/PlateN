@@ -1,6 +1,4 @@
-# docker-compose  --file docker-compose-project.yml --env-file .env_prod  up -d 
-version: '3'
-
+# docker-compose  --file docker-compose-project.yml --env-file .env_prod  up -d
 name: fastparking${BRANCH:-}${PURPOSE:-}
 services:
   pg:
@@ -41,7 +39,7 @@ services:
       # timeout: 10s
       # retries: 5
       # #      start_period: 60s # Delay the first health check by 60 seconds
-      interval: 30s
+      interval: 15s
       timeout: 5s
       start_period: 0s
       start_interval: 5s

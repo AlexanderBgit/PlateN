@@ -16,12 +16,13 @@ os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 # from keras.models import Sequential
 # from keras.preprocessing.image import ImageDataGenerator
 # from keras.models import load_model
+
 os.environ["KERAS_BACKEND"] = "tensorflow"
 
 # from keras.saving import load_model
-import keras
+# import keras
 
-# from keras.src import Model
+from keras import models
 
 # from keras.layers import Dense, Flatten, MaxPooling2D, Dropout, Conv2D
 
@@ -35,12 +36,30 @@ models_path = Path(__file__).resolve().parent.joinpath("models")
 file_model = "ua-license-plate-recognition-model-37x.h5"
 file_cascade = "haarcascade_russian_plate_number.xml"
 
-full_path_models = str(models_path.joinpath(file_model))
+full_path_models = models_path.joinpath(file_model)
 full_path_cascade = str(models_path.joinpath(file_cascade))
 
+
+# Global variable to store model loading status
+model = None
+model_load_status = None
+
+
 # Завантаження моделі та каскадного класифікатора
-model = keras.saving.load_model(full_path_models)
+# model = keras.models.load_model(full_path_models)
 plate_cascade = cv2.CascadeClassifier(full_path_cascade)
+
+
+def load_keras_model(model_path):
+    global model, model_load_status
+    try:
+        models.load_model(full_path_models)
+        model_load_status = "Model loaded successfully"
+    except Exception as e:
+        model_load_status = f"Failed to load model: {str(e)}"
+
+
+load_keras_model(full_path_models)
 
 
 # зменшення зображення по висоті 720

@@ -244,7 +244,8 @@ CACHES = {
 # print(f"{CACHES=}")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-USE_DS_NUMBER_DETECTION = os.getenv("USE_DS_NUMBER_DETECTION", "1").strip() == "1"
+# USE_DS_NUMBER_DETECTION = os.getenv("USE_DS_NUMBER_DETECTION", "1").strip() == "1"
+USE_DS_NUMBER_DETECTION = False
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("MAIL_SERVER")
