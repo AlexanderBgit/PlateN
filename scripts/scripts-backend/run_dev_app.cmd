@@ -1,23 +1,15 @@
 @echo off
 cd %~dp0
 @REM call gen_static.cmd
-call migrate_dev_app.cmd
-PUSHD "..\"
-echo.
-echo Starting to check additional libraries...
-SETLOCAL
-SET "POPPER_BIN=%CD%\LIBS\poppler\Library\bin"
-IF EXIST "%POPPER_BIN%" (
-    SET "PATH=%POPPER_BIN%;%PATH%"
-    echo Found library: poppler
-) ELSE (
-    echo Folder with 'LIBS\poppler\Library\bin' does not exist. PDF function is limited in app.
-)
+@REM call migrate_dev_app.cmd
 
-PUSHD "FRONTEND\fastparking"
+
+
+PUSHD "..\..\BACKEND\api"
 
 setlocal enabledelayedexpansion
 set "ENV=..\..\deploy\.env"
+set APP_PORT_API=9000
 if exist %ENV% (
     :: Read the .env file and set environment variables
     for /f "tokens=* delims=" %%i in (%ENV%) do (
@@ -41,14 +33,14 @@ for /f "delims=" %%i in ('git rev-parse --short HEAD') do set "commit=%%i"
 echo %branch%%purpose%-%commit% > ..\git-version.txt
 :: Display the environment variables to verify
 echo BRANCH=%branch%, PURPOSE=%purpose%, commit=%commit%
-endlocal
+
 
 
 
 rem git rev-parse --short HEAD > ..\git-version.txt
 echo.
 echo Starting FastAPI web server...
-poetry run uvicorn main:app --port ${APP_PORT_API:-9000} --host 0.0.0.0 --reload
-POPD
+set TF_ENABLE_ONEDNN_OPTS=0
+poetry run uvicorn main:app --port %APP_PORT_API% --host 0.0.0.0 --reload
 ENDLOCAL
 POPD

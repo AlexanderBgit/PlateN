@@ -6,13 +6,16 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 
 COPY ${APP_BASE}requirements.txt requirements.txt
+
 RUN pip install -r requirements.txt
 
 
 COPY $APP_BASE  ./
 
-RUN apt update -q; apt install -y dos2unix
-RUN dos2unix ./*.sh 
+RUN apt update -q && apt install -y dos2unix
+
+# Convert line endings for all shell scripts
+RUN find . -name '*.sh' -exec dos2unix {} + -exec chmod +x {} +
 
 
 CMD [ "bash" , "./run.sh" ] 
