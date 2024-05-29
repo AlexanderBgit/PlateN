@@ -11,8 +11,11 @@ RUN pip install -r requirements.txt
 
 COPY $APP_BASE  ./
 
+RUN apt update -q; apt install -y dos2unix
+RUN dos2unix ./*.sh 
 
-CMD bash ./run.sh 
+
+CMD [ "bash" , "./run.sh" ] 
 
 #CMD bash
 

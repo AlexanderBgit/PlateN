@@ -24,8 +24,8 @@ services:
 
   api:
     build: ../BACKEND
-#    expose:
-#      - ${APP_PORT_API:-9000}
+    #    expose:
+    #      - ${APP_PORT_API:-9000}
     ports:
       - ${APP_PORT_API:-9000}:${APP_PORT_API:-9000}
 
@@ -35,19 +35,20 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl --fail http://127.0.0.1:${APP_PORT_API:-9000}/health/ | grep -q '\"status\": \"ok\"' || exit 1"
+          "curl --fail http://127.0.0.1:${APP_PORT_API:-9000}/health/ | grep -q '\"status\":\"ok\"' || exit 1"
         ]
-      interval: 120s
-      timeout: 10s
+      # interval: 120s
+      # timeout: 10s
+      # retries: 5
+      # #      start_period: 60s # Delay the first health check by 60 seconds
+      interval: 15s
+      timeout: 5s
+      start_period: 0s
+      start_interval: 5s
       retries: 5
-#      start_period: 60s # Delay the first health check by 60 seconds
 
     environment:
       APP_PORT_API: ${APP_PORT_API:-9000}
-    depends_on:
-      pg:
-        condition: service_healthy
-
 
   code:
     build: ../FRONTEND
@@ -72,10 +73,14 @@ services:
       retries: 5
       start_period: 60s # Delay the first health check by 60 seconds
     depends_on:
-      - api
-      - pg
-#      pg:
-#          condition: service_healthy
+      api:
+        condition: service_healthy
+        restart: true
+      pg:
+        condition: service_healthy
+        restart: true
+    #      pg:
+    #          condition: service_healthy
     environment:
       POSTGRES_HOST: pg
       POSTGRES_DB: ${POSTGRES_DB}
@@ -88,6 +93,7 @@ services:
       MAIL_PORT: ${MAIL_PORT}
       MAIL_SERVER: ${MAIL_SERVER}
       MAIL_FROM_NAME: ${MAIL_FROM_NAME}
+      USE_DS_NUMBER_DETECTION: ${USE_DS_NUMBER_DETECTION:-1}
       TELEGRAM_TOKEN: ${TELEGRAM_TOKEN:-}
       TELEGRAM_BOT_NAME: ${TELEGRAM_BOT_NAME:-}
       TELEGRAM_NEWS_NAME: ${TELEGRAM_NEWS_NAME:-}
