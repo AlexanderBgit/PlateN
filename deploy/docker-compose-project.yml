@@ -64,7 +64,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl --fail http://127.0.0.1:${APP_PORT:-8000}/health/ | grep -q '\"status\": \"ok\"' || exit 1"
+          "curl --fail http://127.0.0.1:8000/health/ | grep -q '\"status\": \"ok\"' || exit 1"
         ]
       interval: 120s
       timeout: 10s
