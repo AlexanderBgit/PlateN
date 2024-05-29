@@ -1,6 +1,9 @@
+import json
 import random
 from datetime import datetime, timezone
 from pathlib import Path
+
+import requests
 from django.conf import settings
 import pytz
 
@@ -202,6 +205,18 @@ def handle_uploaded_file(
         # analyze and calculate prediction of image
         if settings.USE_DS_NUMBER_DETECTION:
             predict = get_num_auto_png_io(f.read())
+        elif settings.APP_PORT_API and settings.APP_HOST_API:
+            url = f"http://{settings.APP_HOST_API}:{settings.APP_PORT_API}/plate_recognize/"
+            files = {"file": f}
+            r = requests.post(url, files=files)
+            if r.status_code == requests.codes.ok:
+                predict = json.loads(r.content)
+            else:
+                predict = {
+                    "num_avto_str": "ERROR",
+                    "accuracy": 0,
+                    "num_img": None,
+                }
         else:
             predict = {
                 "num_avto_str": "DISABLED",

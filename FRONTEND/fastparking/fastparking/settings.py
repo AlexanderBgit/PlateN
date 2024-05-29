@@ -261,6 +261,8 @@ TOTAL_DIGITS_ID = (6, "06")
 PAGE_ITEMS = 10
 
 DEMO_URL = os.getenv("DEMO_URL", None)
+APP_PORT_API = os.getenv("APP_PORT_API", None)
+APP_HOST_API = os.getenv("APP_HOST_API", None)
 
 
 # SQL LOG
