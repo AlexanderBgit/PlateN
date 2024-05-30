@@ -1,51 +1,41 @@
-import os
-from pathlib import Path
-from dotenv import load_dotenv
+import logging
 
-from fastapi import FastAPI, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
+from conf.config import settings
 
-from services.ds.predict_num import model_load_status
-from services.services import plate_recognize_tf
+from routes import main, plate
 
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-env_file = BASE_DIR.parent.joinpath("deploy").joinpath(".env")
-if env_file.exists():
-    load_dotenv(env_file)
-
-APP_PORT_API = os.getenv("APP_PORT_API", 9000)
+logger = logging.getLogger(f"{settings.app_name}")
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler()
+handler.setLevel(logging.INFO)
+logger.addHandler(handler)
 
 # CORE ...
 
 app = FastAPI()
 
+origins = [f"http://{settings.app_host_api}:{settings.app_port_api}"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+app.include_router(main.router, prefix="/api/v1")
+app.include_router(plate.router, prefix="/api/v1")
+
 
 @app.get("/")
 def read_root():
-    return {"message": f"Welcome to the application! {APP_PORT_API=}"}
-
-
-@app.get("/api/v1/health/")
-def health_check():
-    if model_load_status is not None:
-        return JSONResponse(content={"status": "ok"})
-    else:
-        return JSONResponse(content={"status": "loading"}, status_code=500)
-
-
-@app.post("/api/v1/plate_recognize/")
-async def plate_recognize(file: UploadFile):
-    try:
-        # print(f"plate_recognize : {file}")
-        image = await file.read()  # Read the file content as bytes
-        result = await plate_recognize_tf(image)
-        # print(f"{result=}")
-        return result
-    except Exception as e:
-        print({str(e)})
-        raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
+    return {"message": f"Welcome to the application! {settings.app_port_api=}"}
 
 
 # initialization service
@@ -54,7 +44,7 @@ if __name__ == "__main__":
 
     print("Run dev mode...")
     try:
-        uvicorn.run(app, host="0.0.0.0", port=APP_PORT_API)
+        uvicorn.run(app, host="0.0.0.0", port=settings.app_port_api)
     except KeyboardInterrupt:
         print("Pressed Ctrl-C, exiting...")
 else:
