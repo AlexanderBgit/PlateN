@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     app_name: str = "fastparking-api"
     app_host_api: str = "0.0.0.0"
     app_port_api: int = 9000
+    api_use_plate_ds: bool = False
 
     class Config:
         extra = "ignore"
