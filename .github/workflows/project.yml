@@ -15,8 +15,10 @@ jobs:
       matrix:
         python-version: ["3.11"]
         service: # Define different services to test against
-          - FRONTEND: WORKINGDIR: fastparking
-          - BACKEND: WORKINGDIR: api
+          - FRONTEND: 
+              WORKINGDIR: fastparking
+          - BACKEND: 
+              WORKINGDIR: api
     env:
       SERVICE_NAME: ${{ matrix.service }} # Make service name available
       WORKING_DIR: ${{ matrix.service.WORKINGDIR }}
