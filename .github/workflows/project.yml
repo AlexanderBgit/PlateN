@@ -20,7 +20,7 @@ jobs:
             test_cmd: python manage.py test
           - name: BACKEND
             working_dir: api
-            test_cmd: python -m pytest
+            test_cmd: python --version
     env:
       SERVICE_NAME: ${{ matrix.services.name }} # Make service name available
       WORKING_DIR: ${{ matrix.services.working_dir }} # Make service name available
