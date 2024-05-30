@@ -35,7 +35,9 @@ app.include_router(plate.router, prefix="/api/v1")
 
 @app.get("/")
 def read_root():
-    return {"message": f"Welcome to the application! {settings.app_port_api=}"}
+    return {
+        "message": f"Welcome to the {settings.app_name} application! on port={settings.app_port_api}"
+    }
 
 
 # initialization service
