@@ -14,21 +14,23 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: ["3.11"]
-        service: # Define different services to test against
-          - FRONTEND: 
-              WORKINGDIR: fastparking
-          - BACKEND: 
-              WORKINGDIR: api
+        services: # Define different services to test against
+          - name: FRONTEND
+            working_dir: fastparking
+            test_cmd: python manage.py test
+          - name: BACKEND
+            working_dir: api
+            test_cmd: python -m pytest
     env:
-      SERVICE_NAME: ${{ matrix.service }} # Make service name available
-      WORKING_DIR: ${{ matrix.service.WORKINGDIR }}
+      SERVICE_NAME: ${{ matrix.services.name }} # Make service name available
+      WORKING_DIR: ${{ matrix.services.working_dir }} # Make service name available
     steps:
       - uses: actions/checkout@v3
-      - name: Set up ${{ matrix.service }} Python ${{ matrix.python-version }}
+      - name: Set up ${{ matrix.services.name }} Python ${{ matrix.python-version }}
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install Dependencies ${{ matrix.service }} ${{ matrix.python-version }}
+      - name: Install Dependencies ${{ matrix.services.name }} ${{ matrix.python-version }}
         working-directory: ./${SERVICE_NAME}/${WORKING_DIR}
         run: |
           python -m pip install --upgrade pip
@@ -36,7 +38,7 @@ jobs:
           python -m venv .venv
           source .venv/bin/activate  
           pip install -r requirements.txt
-      - name: Run Tests ${{ matrix.service }} ${{ matrix.python-version }}
+      - name: Run Tests ${{ matrix.services.name }} ${{ matrix.python-version }}
         working-directory: ./${SERVICE_NAME}/${WORKING_DIR}
         env:
           PYTHONPATH: ./${SERVICE_NAME}/${WORKING_DIR}
@@ -50,12 +52,16 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.10", "3.11"]
-        service: # Define different services to test against
-          - FRONTEND: WORKINGDIR: fastparking
-          - BACKEND: WORKINGDIR: api
+        services: # Define different services to test against
+          - name: FRONTEND
+            working_dir: fastparking
+            test_cmd: python manage.py test
+          - name: BACKEND
+            working_dir: api
+            test_cmd: python -m pytest
     env:
-      SERVICE_NAME: ${{ matrix.service }} # Make service name available
-      WORKING_DIR: ${{ matrix.service.WORKINGDIR }} # Make service name available
+      SERVICE_NAME: ${{ matrix.services.name }} # Make service name available
+      WORKING_DIR: ${{ matrix.services.working_dir }} # Make service name available
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python environment
@@ -66,13 +72,13 @@ jobs:
         # ... (rest of your test setup steps)
 
 
-      - name: Run Tests ${{ matrix.service }}
+      - name: Run Tests ${{ matrix.services.name }}
         working-directory: ./${SERVICE_NAME}/${WORKING_DIR}
         env:
           PYTHONPATH: ./${SERVICE_NAME}/${WORKING_DIR}
         run: |
           pwd
-          python manage.py test
+          ${{ matrix.services.test_cmd }}
 
 
       # - name: Run tests against specific service
