@@ -31,65 +31,22 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Dependencies ${{ matrix.services.name }} ${{ matrix.python-version }}
-        working-directory: ./${SERVICE_NAME}/${WORKING_DIR}
+        working-directory: ${{ matrix.services.name }
         run: |
           python -m pip install --upgrade pip
-          pip install venv
-          python -m venv .venv
-          source .venv/bin/activate  
+          # pip install venv
+          # python -m venv .venv
+          # source .venv/bin/activate  
           pip install -r requirements.txt
       - name: Run Tests ${{ matrix.services.name }} ${{ matrix.python-version }}
-        working-directory: ./${SERVICE_NAME}/${WORKING_DIR}
+        working-directory: ${{ matrix.services.name }}/${{ matrix.services.working_dir }}
         env:
-          PYTHONPATH: ./${SERVICE_NAME}/${WORKING_DIR}
-        run: |
-          pwd
-          python manage.py test
-
-
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10", "3.11"]
-        services: # Define different services to test against
-          - name: FRONTEND
-            working_dir: fastparking
-            test_cmd: python manage.py test
-          - name: BACKEND
-            working_dir: api
-            test_cmd: python -m pytest
-    env:
-      SERVICE_NAME: ${{ matrix.services.name }} # Make service name available
-      WORKING_DIR: ${{ matrix.services.working_dir }} # Make service name available
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python environment
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}  # Or your desired version
-
-        # ... (rest of your test setup steps)
-
-
-      - name: Run Tests ${{ matrix.services.name }}
-        working-directory: ./${SERVICE_NAME}/${WORKING_DIR}
-        env:
-          PYTHONPATH: ./${SERVICE_NAME}/${WORKING_DIR}
+          PYTHONPATH: ${{ matrix.services.name }}/${{ matrix.services.working_dir }}
         run: |
           pwd
           ${{ matrix.services.test_cmd }}
 
 
-      # - name: Run tests against specific service
-      #   run: |
-      #     # Activate virtual environment (if applicable)
-      #     source venv/bin/activate  # Example
 
-      #     # Use environment variable to identify the service
-      #     SERVICE_URL="http://${SERVICE_NAME}:port"  # Replace with appropriate URL
-      #     python tests.py --service-url $SERVICE_URL
-
-      #     # ... (rest of your test execution logic)
 
 
