@@ -1,0 +1,87 @@
+name: PROJECT FASTPARKING CI
+
+on:
+  push:
+    branches: ["lexxai"]
+  # pull_request:
+  #   branches: ["dev"]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: ["3.11"]
+        service: # Define different services to test against
+          - FRONTEND: WORKINGDIR: fastparking
+          - BACKEND: WORKINGDIR: api
+    env:
+      SERVICE_NAME: ${{ matrix.service }} # Make service name available
+      WORKING_DIR: ${{ matrix.service.WORKINGDIR }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up ${{ matrix.service }} Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Dependencies ${{ matrix.service }} ${{ matrix.python-version }}
+        working-directory: ./${SERVICE_NAME}/${WORKING_DIR}
+        run: |
+          python -m pip install --upgrade pip
+          pip install venv
+          python -m venv .venv
+          source .venv/bin/activate  
+          pip install -r requirements.txt
+      - name: Run Tests ${{ matrix.service }} ${{ matrix.python-version }}
+        working-directory: ./${SERVICE_NAME}/${WORKING_DIR}
+        env:
+          PYTHONPATH: ./${SERVICE_NAME}/${WORKING_DIR}
+        run: |
+          pwd
+          python manage.py test
+
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
+        service: # Define different services to test against
+          - FRONTEND: WORKINGDIR: fastparking
+          - BACKEND: WORKINGDIR: api
+    env:
+      SERVICE_NAME: ${{ matrix.service }} # Make service name available
+      WORKING_DIR: ${{ matrix.service.WORKINGDIR }} # Make service name available
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python environment
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}  # Or your desired version
+
+        # ... (rest of your test setup steps)
+
+
+      - name: Run Tests ${{ matrix.service }}
+        working-directory: ./${SERVICE_NAME}/${WORKING_DIR}
+        env:
+          PYTHONPATH: ./${SERVICE_NAME}/${WORKING_DIR}
+        run: |
+          pwd
+          python manage.py test
+
+
+      # - name: Run tests against specific service
+      #   run: |
+      #     # Activate virtual environment (if applicable)
+      #     source venv/bin/activate  # Example
+
+      #     # Use environment variable to identify the service
+      #     SERVICE_URL="http://${SERVICE_NAME}:port"  # Replace with appropriate URL
+      #     python tests.py --service-url $SERVICE_URL
+
+      #     # ... (rest of your test execution logic)
+
+
