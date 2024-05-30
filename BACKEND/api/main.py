@@ -6,8 +6,8 @@ from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 
 
-from ds.predict_num import model_load_status
-from services import plate_recognize_tf
+from services.ds.predict_num import model_load_status
+from services.services import plate_recognize_tf
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent

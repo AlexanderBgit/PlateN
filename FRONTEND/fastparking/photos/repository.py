@@ -1,6 +1,5 @@
 import json
-import random
-from datetime import datetime, timezone
+from datetime import timezone
 from pathlib import Path
 
 import requests
@@ -10,13 +9,11 @@ import pytz
 # from django.utils import timezone
 
 if settings.USE_DS_NUMBER_DETECTION:
-    from ds.predict_num import get_num_auto_png_io
+    from services.ds.predict_num import get_num_auto_png_io
 
 from finance.repository import calculate_total_payments
 from parking.repository import number_present_on_parking
 from parking.services import (
-    compare_plates,
-    format_hours,
     format_currency,
     format_datetime,
     format_registration_id,

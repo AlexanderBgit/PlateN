@@ -1,7 +1,6 @@
 import base64
 
-from ds.predict_num import get_num_auto_png_io
-from io import BytesIO
+from services.ds.predict_num import get_num_auto_png_io
 
 
 def build_base64_image(binary_image_data):
