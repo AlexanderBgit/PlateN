@@ -31,7 +31,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Dependencies ${{ matrix.services.name }} ${{ matrix.python-version }}
-        working-directory: ${{ matrix.services.name }
+        working-directory: ${{ matrix.services.name }}
         run: |
           python -m pip install --upgrade pip
           # pip install venv
