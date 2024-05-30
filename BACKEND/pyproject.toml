@@ -29,6 +29,8 @@ keras = [
     { version = "~2", markers = "sys_platform == 'win32'" },
     { version = "^3.3.3", markers = "sys_platform == 'linux' or sys_platform == 'darwin'" }
 ]
+pydantic = "^2.7.2"
+pydantic-settings = "^2.2.1"
 
 
 [build-system]
