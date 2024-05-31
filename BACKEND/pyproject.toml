@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastparking-api"
-version = "1.5.29"
+version = "1.5.31"
 description = "GoIT DataScience Team Project - Fast Parking API module"
 authors = ["neuron_curva_bobr <info@neuron.curva.bobr.app>"]
 license = "MIT"
@@ -29,6 +29,10 @@ keras = [
     { version = "~2", markers = "sys_platform == 'win32'" },
     { version = "^3.3.3", markers = "sys_platform == 'linux' or sys_platform == 'darwin'" }
 ]
+pydantic = "^2.7.2"
+pydantic-settings = "^2.2.1"
+jinja2 = "^3.1.4"
+websockets = "^12.0"
 
 
 [build-system]

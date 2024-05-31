@@ -1,7 +1,10 @@
 import base64
+from conf.config import settings
 
-from ds.predict_num import get_num_auto_png_io
-from io import BytesIO
+if settings.api_use_plate_ds:
+    from services.ds.predict_num import get_num_auto_png_io, model_load_status
+else:
+    model_load_status = True
 
 
 def build_base64_image(binary_image_data):
@@ -10,7 +13,14 @@ def build_base64_image(binary_image_data):
 
 async def plate_recognize_tf(image):
     # image = BytesIO(image)
-    predict = await get_num_auto_png_io(image)
+    if settings.api_use_plate_ds:
+        predict = await get_num_auto_png_io(image)
+    else:
+        predict = {
+            "num_avto_str": "FASTAPI DISABLED DS",
+            "accuracy": 0.0,
+            "num_img": None,
+        }
     # print(f"{predict=}")
     image_size = len(image)
     if predict:
