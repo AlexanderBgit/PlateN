@@ -37,6 +37,7 @@ app.add_middleware(
 
 app.mount("/api/v1/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+STATIC_URL = "/api/v1/static/"
 
 app.include_router(main.router, prefix="/api/v1")
 app.include_router(plate.router, prefix="/api/v1")
@@ -58,11 +59,13 @@ def urlx_for(
     request: Request = context["request"]
     http_url = request.url_for(name, **path_params)
     if scheme := request.headers.get("X-Forwarded-Proto"):
+        print(f"{request.headers=}")
+        print(f"{request.base_url=}")
         print(f"{scheme=}")
-        return http_url.replace(scheme=scheme)
+        return str(http_url.replace(scheme=scheme))
     print(f"{request.base_url=}")
     # http_url = http_url.replace(scheme=scheme)
-    return http_url
+    return str(http_url)
 
 
 templates.env.globals["https_url_for"] = https_url_for
@@ -79,7 +82,12 @@ def read_root():
 @app.get("/api/v1/cam_client")
 async def cam_client(request: Request):
     ws_url = "/api/v1/face_detection"
-    context = {"request": request, "title": "Cam Client", "ws_url": ws_url}
+    context = {
+        "request": request,
+        "title": "Cam Client",
+        "ws_url": ws_url,
+        "static_url": STATIC_URL,
+    }
     return templates.TemplateResponse("cam_client/index.html", context=context)
 
 
