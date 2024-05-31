@@ -15,11 +15,25 @@
       crossorigin="anonymous"
     ></script>
     <title>{{title}}</title>
-    <link rel="icon" href="{{ url_for('static', path='/favicon.ico') }}" />
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', path='/apple-touch-icon.png') }}  " />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', path='/favicon-32x32.png') }}" />
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', path='/favicon-16x16.png') }} " />
-    <link rel="manifest" href="{{ url_for('static', path='/site.webmanifest') }}" />
+    <link rel="icon" href="{{relative_url(request, 'static', path='/favicon.ico') }}" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{{relative_url(request, 'static', path='/apple-touch-icon.png')  }}  "
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{{relative_url(request, 'static', path='/favicon-32x32.png') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{{relative_url(request, 'static', path='/favicon-16x16.png') }} "
+    />
+    <link rel="manifest" href="{{ relative_url(request, 'static', path='/site.webmanifest') }}" />
   </head>
 
   <body>
@@ -44,6 +58,6 @@
     <script>
       const WS_URL = "{{ ws_url }}";
     </script>
-    <script src="{{ url_for('static', path='cam_client/js/script.js') | relative_url }}"></script>
+    <script src="{{relative_url(request, 'static', path='cam_client/js/script.js') }}"></script>
   </body>
 </html>

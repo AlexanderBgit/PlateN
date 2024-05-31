@@ -21,7 +21,8 @@ async def face_detection(websocket: WebSocket):
     try:
         await face_detection_srv(websocket)
     except Exception as e:
-        logger.error(e)
+        # logger.error(e)
+        ...
 
 
 @router.on_event("startup")

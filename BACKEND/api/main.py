@@ -7,6 +7,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import pass_context
 from fastapi.responses import RedirectResponse
+from urllib.parse import urlparse
+
 
 from conf.config import settings
 
@@ -61,10 +63,20 @@ def url_x_for(
 
 def relative_url(request: Request, name: str, **path_params) -> str:
     absolute_url = str(request.url_for(name, **path_params))
-    return str(absolute_url.replace(str(request.base_url), "/"))
+    return absolute_url.replace(str(request.base_url), "/")
 
 
-templates.env.filters["relative_url"] = relative_url
+def relative_url_filter(absolute_url: str) -> str:
+    parsed_url = urlparse(absolute_url)
+    return parsed_url.path
+
+
+templates.env.globals["relative_url"] = relative_url
+
+# templates.env.filters["relative_url_filter"] = lambda url, request: relative_url_filter(
+#     url, str(request.base_url)
+# )
+templates.env.filters["relative_url_filter"] = relative_url_filter
 templates.env.globals["url_for"] = url_x_for
 
 

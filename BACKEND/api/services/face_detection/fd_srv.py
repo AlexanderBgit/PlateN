@@ -50,7 +50,7 @@ async def detect(websocket: WebSocket, queue: asyncio.Queue):
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
         faces = cascade_classifier.detectMultiScale(gray)
         if len(faces) > 0:
-            faces_output = Faces(faces=faces.tolist())
+            faces_output = Faces(faces=faces.tolist())  # type: ignore
         else:
             faces_output = Faces(faces=[])
         await websocket.send_json(faces_output.dict())
@@ -61,7 +61,6 @@ async def face_detection_srv(websocket: WebSocket):
     This is the endpoint that we will be sending request to from the
     frontend
     """
-    logger.debug("face_detection_srv")
     await websocket.accept()
     queue: asyncio.Queue = asyncio.Queue(maxsize=10)
     detect_task = asyncio.create_task(detect(websocket, queue))
@@ -79,6 +78,5 @@ async def startup_srv():
     so that we don't have to wait for the classifier to be loaded after making a request
     """
     cl = cascade_classifier.load(
-        cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+        cv2.data.haarcascades + "haarcascade_frontalface_default.xml"  # type: ignore
     )
-    logger.debug(f"startup_srv: {cl}")
