@@ -57,7 +57,7 @@ def urlx_for(
 ) -> str:
     request: Request = context["request"]
     http_url = request.url_for(name, **path_params)
-    if scheme := request.headers.get("x-forwarded-proto"):
+    if scheme := request.headers.get("X-Forwarded-Proto"):
         print(f"{scheme=}")
         return http_url.replace(scheme=scheme)
     print(f"{request.base_url=}")
