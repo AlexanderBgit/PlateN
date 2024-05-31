@@ -44,7 +44,7 @@ const drawFaceRectangles = (video, canvas, faces) => {
 const startFaceDetection = (video, canvas, deviceId) => {
   console.log("WS_URL:", WS_URL)
   if (!WS_URL) return;
-  ws_connect=getWebSocketUrl(WS_URL)
+  const ws_connect=getWebSocketUrl(WS_URL)
   console.log("ws_connect:", ws_connect)
   try {
     const socket = new WebSocket(ws_connect);
@@ -54,7 +54,10 @@ const startFaceDetection = (video, canvas, deviceId) => {
       debug(msg, "info")
     };
     socket.onerror = (error) => {
-      msg = "WebSocket connection error. "+ws_connect;
+      let msg = "WebSocket connection error. "+ws_connect;
+      if (error instanceof TimeoutError) {
+        msg = 'WebSocket connection timed out.';
+      }
       debug(msg, "warning")
 //      console.error('WebSocket connection error:', error);
     };
@@ -172,12 +175,22 @@ navigator.mediaDevices.getUserMedia({ audio: false, video: true })
     });
 
 
-  const button_stop = document.getElementById("button-stop");
   const button_start = document.getElementById("button-start");
+  const button_stop = document.getElementById("button-stop");
   if (button_stop){
     button_stop.addEventListener('click', (event) => {
       event.preventDefault();
-      button_start.classList.toggle("d-none");
+      // Close the WebSocket connection (if it exists)
+      if (socket) {
+        socket.close();
+        debug("WebSocket connection closed", "info");
+        socket = null; // Clear the socket reference
+      } else {
+        console.log("No WebSocket connection to close");
+      }
+      if (button_stop){
+        button_start.classList.toggle("d-none");
+      }
       if (button_stop){
         button_stop.classList.toggle("d-none");
       }
@@ -185,7 +198,7 @@ navigator.mediaDevices.getUserMedia({ audio: false, video: true })
    };
 
   // Start face detection on the selected camera on submit
-  document.getElementById('form-connect').addEventListener('submit', (event) => {
+  document.getElementById('form-connect')?.addEventListener('submit', (event) => {
     event.preventDefault();
 
     // Close previous socket is there is one
@@ -196,6 +209,14 @@ navigator.mediaDevices.getUserMedia({ audio: false, video: true })
     const deviceId = cameraSelect.selectedOptions[0]?.value;
     if (deviceId){
       socket = startFaceDetection(video, canvas, deviceId);
+      if (socket) {
+        if (button_start){
+         button_start.classList.toggle("d-none");
+        }
+        if (button_stop){
+          button_stop.classList.toggle("d-none");
+        }
+      }
     }else{
       debug("Not detected device ID");
     }

@@ -48,7 +48,7 @@ def read_root():
     }
 
 
-@app.get("/cam_client")
+@app.get("/api/v1/cam_client")
 async def cam_client(request: Request):
     ws_url = "/api/v1/face_detection"
     context = {"request": request, "title": "Cam Client", "ws_url": ws_url}
