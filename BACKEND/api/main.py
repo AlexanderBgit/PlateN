@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from fastapi import FastAPI, Path, Query, Depends, HTTPException, Request, status
+from fastapi import FastAPI, Path, Query, Depends, HTTPException, Request, status, 
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -59,6 +59,12 @@ def url_x_for(
     return str(http_url)
 
 
+def relative_url(request: Request, name: str, **path_params) -> str:
+    absolute_url = str(request.url_for(name, **path_params))
+    return str(absolute_url.replace(str(request.base_url), '/'))
+
+
+templates.env.filters['relative_url'] = relative_url
 templates.env.globals["url_for"] = url_x_for
 
 
