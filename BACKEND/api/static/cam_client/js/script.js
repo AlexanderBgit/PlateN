@@ -1,4 +1,29 @@
-const IMAGE_INTERVAL_MS = 42;
+const IMAGE_INTERVAL_MS = 500;
+
+function getWebSocketUrl(path = '') {
+  const currentUrl = new URL(window.location.href);
+
+  // Ensure protocol is 'ws:' (unencrypted)
+  currentUrl.protocol = 'ws:';
+
+  // Append the path if provided
+  if (path) {
+    currentUrl.pathname = path.trim(); // Trim leading/trailing slashes
+  }
+
+  return currentUrl.toString();
+}
+
+
+function debug(msg, level="danger"){
+  const debug = document.getElementById('debug');
+  if (debug) {
+    debug.className = "";
+    debug.classList.add("alert");
+    debug.classList.add("alert-"+level);
+    debug.innerText = msg;
+  }
+}
 
 const drawFaceRectangles = (video, canvas, faces) => {
   const ctx = canvas.getContext('2d');
@@ -19,21 +44,18 @@ const drawFaceRectangles = (video, canvas, faces) => {
 const startFaceDetection = (video, canvas, deviceId) => {
   console.log("WS_URL:", WS_URL)
   if (!WS_URL) return;
-  const debug = document.getElementById('debug');
+  ws_connect=getWebSocketUrl(WS_URL)
+  console.log("ws_connect:", ws_connect)
   try {
-    const socket = new WebSocket(WS_URL);
-
+    const socket = new WebSocket(ws_connect);
     socket.onopen = () => {
-      console.log('WebSocket connection opened!');
-      debug.innerText = "WebSocket connection opened!";
-      debug.classList.add("alert");
-      debug.classList.add("alert-info");
-
+      msg = 'WebSocket connection opened!'
+      console.log(msg);
+      debug(msg, "info")
     };
     socket.onerror = (error) => {
-      debug.innerText = "WebSocket connection error. "+WS_URL;
-      debug.classList.add("alert");
-      debug.classList.add("alert-warning");
+      msg = "WebSocket connection error. "+ws_connect;
+      debug(msg, "warning")
 //      console.error('WebSocket connection error:', error);
     };
 
@@ -87,11 +109,11 @@ const startFaceDetection = (video, canvas, deviceId) => {
     return socket;
   } catch (error) {
       if (error instanceof SyntaxError) {
-        debug.innerText = 'Invalid WebSocket URL format:' + error.message;
+        debug('Invalid WebSocket URL format:' + error.message);
         console.error('Invalid WebSocket URL format:', error.message);
       } else {
-        debug.innerText = 'WebSocket connection error:' + error.message;
-        console.error('A WebSocket connection error:', error);
+        debug('WebSocket connection error:' + error.message);
+        console.error('WebSocket connection error:', error);
       }
   }
 };
@@ -150,9 +172,17 @@ navigator.mediaDevices.getUserMedia({ audio: false, video: true })
     });
 
 
-
-
-
+  const button_stop = document.getElementById("button-stop");
+  const button_start = document.getElementById("button-start");
+  if (button_stop){
+    button_stop.addEventListener('click', (event) => {
+      event.preventDefault();
+      button_start.classList.toggle("d-none");
+      if (button_stop){
+        button_stop.classList.toggle("d-none");
+      }
+    });
+   };
 
   // Start face detection on the selected camera on submit
   document.getElementById('form-connect').addEventListener('submit', (event) => {
@@ -166,6 +196,8 @@ navigator.mediaDevices.getUserMedia({ audio: false, video: true })
     const deviceId = cameraSelect.selectedOptions[0]?.value;
     if (deviceId){
       socket = startFaceDetection(video, canvas, deviceId);
+    }else{
+      debug("Not detected device ID");
     }
   });
 
