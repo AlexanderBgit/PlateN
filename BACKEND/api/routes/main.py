@@ -5,9 +5,8 @@ from starlette.responses import JSONResponse
 from conf.config import settings
 from services.services import model_load_status
 
-router = APIRouter(prefix="", tags=["main"])
-
 logger = logging.getLogger(f"{settings.app_name}.{__name__}")
+router = APIRouter(prefix="", tags=["main"])
 
 
 @router.get("/health")

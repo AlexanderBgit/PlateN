@@ -8,13 +8,16 @@ from fastapi.responses import RedirectResponse
 
 from conf.config import settings
 
-from routes import main, plate
-
 logger = logging.getLogger(f"{settings.app_name}")
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 handler = logging.StreamHandler()
-handler.setLevel(logging.INFO)
+handler.setFormatter(formatter)
+handler.setLevel(logging.DEBUG)
 logger.addHandler(handler)
+
+from routes import main, plate, face_detection
+
 
 # CORE ...
 
@@ -35,6 +38,7 @@ templates = Jinja2Templates(directory="templates")
 
 app.include_router(main.router, prefix="/api/v1")
 app.include_router(plate.router, prefix="/api/v1")
+app.include_router(face_detection.router, prefix="/api/v1")
 
 
 @app.get("/")
@@ -45,14 +49,10 @@ def read_root():
 
 
 @app.get("/cam_client")
-async def read_root(request: Request):
+async def cam_client(request: Request):
     ws_url = f"ws://localhost:{settings.api_port_websocket}/face-detection"
     context = {"request": request, "title": "Cam Client", "ws_url": ws_url}
     return templates.TemplateResponse("cam_client/index.html", context=context)
-
-
-def read_root():
-    return RedirectResponse("static/cam_client/index.html")
 
 
 # initialization service
