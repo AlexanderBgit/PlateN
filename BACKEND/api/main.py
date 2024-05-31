@@ -1,8 +1,9 @@
 import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Path, Query, Depends, HTTPException, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 
 from conf.config import settings
@@ -30,6 +31,7 @@ app.add_middleware(
 )
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
 app.include_router(main.router, prefix="/api/v1")
 app.include_router(plate.router, prefix="/api/v1")
@@ -43,6 +45,12 @@ def read_root():
 
 
 @app.get("/cam_client")
+async def read_root(request: Request):
+    ws_url = f"ws://localhost:{settings.api_port_websocket}/face-detection"
+    context = {"request": request, "title": "Cam Client", "ws_url": ws_url}
+    return templates.TemplateResponse("cam_client/index.html", context=context)
+
+
 def read_root():
     return RedirectResponse("static/cam_client/index.html")
 
