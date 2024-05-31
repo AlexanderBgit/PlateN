@@ -2,11 +2,12 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 
 from conf.config import settings
 
 from routes import main, plate
-
 
 logger = logging.getLogger(f"{settings.app_name}")
 logger.setLevel(logging.INFO)
@@ -28,6 +29,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(main.router, prefix="/api/v1")
 app.include_router(plate.router, prefix="/api/v1")
@@ -38,6 +40,11 @@ def read_root():
     return {
         "message": f"Welcome to the {settings.app_name} application! on port={settings.app_port_api}"
     }
+
+
+@app.get("/cam_client")
+def read_root():
+    return RedirectResponse("static/cam_client/index.html")
 
 
 # initialization service
