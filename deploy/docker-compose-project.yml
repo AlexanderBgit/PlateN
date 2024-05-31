@@ -33,7 +33,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl --fail http://127.0.0.1:${APP_PORT_API:-9000}/api/v1/health/ | grep -q '\"status\":\"ok\"' || exit 1"
+          "curl --fail http://127.0.0.1:${APP_PORT_API:-9000}/api/v1/health | grep -q '\"status\":\"ok\"' || exit 1"
         ]
       # interval: 120s
       # timeout: 10s
@@ -43,7 +43,7 @@ services:
       timeout: 5s
       start_period: 0s
       start_interval: 5s
-      retries: 5
+      retries: 10
 
     environment:
       APP_PORT_API: ${APP_PORT_API:-9000}
