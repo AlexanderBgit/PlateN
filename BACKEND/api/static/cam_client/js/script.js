@@ -4,8 +4,11 @@ function getWebSocketUrl(path = '') {
   const currentUrl = new URL(window.location.href);
 
   // Ensure protocol is 'ws:' (unencrypted)
-  currentUrl.protocol = 'ws:';
-
+  if (currentUrl.protocol == "https:"){
+     currentUrl.protocol = 'wss:';
+  }else{
+     currentUrl.protocol = 'ws:';
+  }
   // Append the path if provided
   if (path) {
     currentUrl.pathname = path.trim(); // Trim leading/trailing slashes
