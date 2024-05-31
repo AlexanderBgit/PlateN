@@ -21,13 +21,14 @@ grpcio==1.64.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_p
 h11==0.14.0 ; python_version >= "3.10" and python_version < "3.12"
 h5py==3.11.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 idna==3.7 ; python_version >= "3.10" and python_version < "3.12"
+jinja2==3.1.4 ; python_version >= "3.10" and python_version < "3.12"
 keras==2.15.0 ; python_version >= "3.10" and python_version < "3.12" and sys_platform == "win32"
 keras==3.3.3 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin")
 kiwisolver==1.4.5 ; python_version >= "3.10" and python_version < "3.12"
 libclang==18.1.1 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 markdown-it-py==3.0.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin")
 markdown==3.6 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
-markupsafe==2.1.5 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
+markupsafe==2.1.5 ; python_version >= "3.10" and python_version < "3.12"
 matplotlib==3.9.0 ; python_version >= "3.10" and python_version < "3.12"
 mdurl==0.1.2 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin")
 ml-dtypes==0.3.2 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
