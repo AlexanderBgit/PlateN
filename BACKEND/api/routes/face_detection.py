@@ -18,7 +18,10 @@ async def face_detection(websocket: WebSocket):
     This is the endpoint that we will be sending request to from the
     frontend
     """
-    await face_detection_srv(websocket)
+    try:
+        await face_detection_srv(websocket)
+    except Exception as e:
+        logger.error(e)
 
 
 @router.on_event("startup")
