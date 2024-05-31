@@ -12,7 +12,7 @@ router = APIRouter(prefix="/face_detection", tags=["face_detection"])
 logger = logging.getLogger(f"{settings.app_name}.{__name__}")
 
 
-@router.websocket("/")
+@router.websocket("")
 async def face_detection(websocket: WebSocket):
     """
     This is the endpoint that we will be sending request to from the

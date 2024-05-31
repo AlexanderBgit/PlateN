@@ -31,7 +31,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
 
     };
     socket.onerror = (error) => {
-      debug.innerText = "WebSocket connection error.";
+      debug.innerText = "WebSocket connection error. "+WS_URL;
       debug.classList.add("alert");
       debug.classList.add("alert-warning");
 //      console.error('WebSocket connection error:', error);

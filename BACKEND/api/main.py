@@ -50,7 +50,7 @@ def read_root():
 
 @app.get("/cam_client")
 async def cam_client(request: Request):
-    ws_url = f"ws://localhost:{settings.api_port_websocket}/face-detection"
+    ws_url = f"ws://localhost:{settings.app_port_api}/api/v1/face_detection"
     context = {"request": request, "title": "Cam Client", "ws_url": ws_url}
     return templates.TemplateResponse("cam_client/index.html", context=context)
 

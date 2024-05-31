@@ -78,7 +78,7 @@ async def startup_srv():
     This tells fastapi to load the classifier upon app startup
     so that we don't have to wait for the classifier to be loaded after making a request
     """
-    logger.debug("startup_srv")
-    cascade_classifier.load(
+    cl = cascade_classifier.load(
         cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     )
+    logger.debug(f"startup_srv: {cl}")
