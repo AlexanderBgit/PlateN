@@ -44,32 +44,22 @@ app.include_router(plate.router, prefix="/api/v1")
 app.include_router(face_detection.router, prefix="/api/v1")
 
 
-def https_url_for(request: Request, name: str, **path_params) -> str:
-    http_url = request.url_for(name, **path_params)
-    # Replace 'http' with 'https'
-    return str(http_url.replace("http", "https", 1))
-
-
 @pass_context
-def urlx_for(
+def url_x_for(
     context: dict,
     name: str,
     **path_params: Any,
 ) -> str:
     request: Request = context["request"]
     http_url = request.url_for(name, **path_params)
-    if scheme := request.headers.get("X-Forwarded-Proto"):
-        print(f"{request.headers=}")
-        print(f"{request.base_url=}")
-        print(f"{scheme=}")
-        return str(http_url.replace(scheme=scheme))
-    print(f"{request.base_url=}")
-    # http_url = http_url.replace(scheme=scheme)
+    if scheme := request.headers.get("x-forwarded-proto"):
+        http_url = http_url.replace(scheme=scheme)
+    if forwarded_port := request.headers.get("x-forwarded-port"):
+        http_url = http_url.replace(port=int(forwarded_port))
     return str(http_url)
 
 
-templates.env.globals["https_url_for"] = https_url_for
-templates.env.globals["url_for"] = urlx_for
+templates.env.globals["url_for"] = url_x_for
 
 
 @app.get("/")
