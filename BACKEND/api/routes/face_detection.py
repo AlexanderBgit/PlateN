@@ -4,7 +4,7 @@ from starlette.responses import JSONResponse
 
 
 from conf.config import settings
-from services.face_detection.fd_srv import face_detection_srv, startup_srv
+from services.face_detection.cascade_classifier import face_detection_srv, startup_srv
 from services.services import model_load_status
 
 router = APIRouter(prefix="/face_detection", tags=["face_detection"])
