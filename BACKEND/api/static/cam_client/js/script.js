@@ -1,4 +1,5 @@
-const IMAGE_INTERVAL_MS = 500;
+const IMAGE_INTERVAL_MS = 250;
+let isStreaming = false; // Flag to track streaming state
 
 function getWebSocketUrl(path = '') {
   const currentUrl = new URL(window.location.href);
@@ -16,7 +17,6 @@ function getWebSocketUrl(path = '') {
 
   return currentUrl.toString();
 }
-
 
 function debug(msg, level="danger"){
   const debug = document.getElementById('debug');
@@ -57,11 +57,8 @@ const startFaceDetection = (video, canvas, deviceId) => {
       debug(msg, "info")
     };
     socket.onerror = (error) => {
-      let msg = "WebSocket connection error. "+ws_connect;
-      if (error instanceof TimeoutError) {
-        msg = 'WebSocket connection timed out.';
-      }
-      debug(msg, "warning")
+      const msg = "WebSocket connection error. "+ws_connect;
+      debug(msg)
 //      console.error('WebSocket connection error:', error);
     };
 
@@ -83,12 +80,13 @@ const startFaceDetection = (video, canvas, deviceId) => {
           // Adapt overlay canvas size to the video size
           canvas.width = video.videoWidth;
           canvas.height = video.videoHeight;
+          isStreaming = true;
 
           // Send an image in the WebSocket every 42 ms
           intervalId = setInterval(() => {
 
             // Create a virtual canvas to draw current video image
-            const canvas = document.createElement('canvas');
+//            const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
@@ -101,6 +99,9 @@ const startFaceDetection = (video, canvas, deviceId) => {
       });
     });
 
+
+
+
     // Listen for messages
     socket.addEventListener('message', function (event) {
       drawFaceRectangles(video, canvas, JSON.parse(event.data));
@@ -111,6 +112,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
       window.clearInterval(intervalId);
       video.pause();
     });
+
 
     return socket;
   } catch (error) {
@@ -124,16 +126,34 @@ const startFaceDetection = (video, canvas, deviceId) => {
   }
 };
 
-window.addEventListener('DOMContentLoaded', (event) => {
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  const cameraSelect = document.getElementById('camera-select');
-  let socket;
+// Function to stop the video stream and turn off the LED (if possible)
+const stopFaceDetection = (video, canvas) => {
+  if (1) {
+    if (canvas){
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    const mediaStream = video.srcObject;
+    if (mediaStream) {
+      const tracks = mediaStream.getTracks();
+      tracks.forEach(function (track) {
+        track.stop(); // Stop individual media track
+      });
+      video.srcObject = null; // Clear video source
+      isStreaming = false;
+      console.log("Video stream stopped");
+    }
+  } else {
+    console.log("Video stream already stopped");
+  }
+}
 
-
-navigator.mediaDevices.getUserMedia({ audio: false, video: true })
+const cam_detect = (cameraSelect) => {
+   navigator.mediaDevices.getUserMedia({ audio: false, video: true })
     .then((stream) => {
-    navigator.mediaDevices.enumerateDevices()
+      // stop LED use.
+      stream.getTracks().forEach(track => track.stop());
+      navigator.mediaDevices.enumerateDevices()
       .then((devices) => {
         // Check for available cameras
         // console.log('Check for available cameras',devices);
@@ -176,8 +196,17 @@ navigator.mediaDevices.getUserMedia({ audio: false, video: true })
           console.error('No cameras detected', err)
           cameraSelect.appendChild(noCameraOption);
     });
+  };
 
 
+
+// DOMContentLoaded
+window.addEventListener('DOMContentLoaded', (event) => {
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const cameraSelect = document.getElementById('camera-select');
+  let socket;
+  cam_detect(cameraSelect);
   const button_start = document.getElementById("button-start");
   const button_stop = document.getElementById("button-stop");
   if (button_stop){
@@ -185,6 +214,7 @@ navigator.mediaDevices.getUserMedia({ audio: false, video: true })
       event.preventDefault();
       // Close the WebSocket connection (if it exists)
       if (socket) {
+        stopFaceDetection(video, canvas);
         socket.close();
         debug("WebSocket connection closed", "info");
         socket = null; // Clear the socket reference
@@ -226,3 +256,4 @@ navigator.mediaDevices.getUserMedia({ audio: false, video: true })
   });
 
 });
+// DOMContentLoaded
