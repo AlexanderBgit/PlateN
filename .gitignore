@@ -167,3 +167,4 @@ FRONTEND/fastparking/static
 LIBS/poppler/*
 /FRONTEND/fastparking/*.json.gz
 /BACKEND/git-version.txt
+/img/test/*.pdf
