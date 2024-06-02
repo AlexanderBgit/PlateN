@@ -28,9 +28,12 @@ def get_version():
             config.read(PYPROJECT_FILE)
         except configparser.Error:
             ...
-        proj_name = config["tool.poetry"]["name"].strip('"')
-        proj_version = config["tool.poetry"]["version"].strip('"')
-        ver = "-".join([proj_version, git_version])
+        proj_name = config["tool.poetry"]["name"].strip('"').strip()
+        proj_version = config["tool.poetry"]["version"].strip('"').strip()
+        ver_list = [proj_version]
+        if git_version:
+            ver_list.append(git_version)
+        ver = "-".join(ver_list)
         context = {"name": proj_name, "version": ver}
     return context
 
