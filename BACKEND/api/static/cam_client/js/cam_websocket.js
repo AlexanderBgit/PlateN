@@ -70,8 +70,11 @@ const startFaceDetection = (video, canvas, deviceId) => {
     let skipped_frames = 0;
     let sent_frames = 0;
     let total_frames = 0;
-    let adaptive_interval_ms = 0;
+    let adaptive_interval_ms = IMAGE_INTERVAL_MS;
     let average_duration = 0;
+    let average_duration_time = 0;
+    let average_duration_fps = 0;
+    let avg_duration = 0;
     let average_duration_calc = 0;
     let avg_duration_calc = 0;
     let max_queue=0;
@@ -93,16 +96,18 @@ const startFaceDetection = (video, canvas, deviceId) => {
           canvas.height = video.videoHeight;
           isStreaming = true;
 
-          // Send an image in the WebSocket every 42 ms
-          intervalId = setInterval(() => {
+          // Send an image in the WebSocket every DEFINED ms
+           const sendImage = () => {
             total_frames += 1;
+            intervalId = setTimeout(sendImage, adaptive_interval_ms);
             if (!is_answered) {
               skipped_frames += 1;
               const sk_perc = (skipped_frames/total_frames*100).toFixed(2);
               const currentTime = new Date().toLocaleTimeString();
-              debug(`At ${currentTime}: skipped for the sending frame, not received in time. Total frames was skipped: ${skipped_frames} (${sk_perc}%)`, "info");
+              debug(`At ${currentTime}: skipped for the sending frame, not received in time. Total frames was skipped: ${skipped_frames} (${sk_perc}%) of ${total_frames}`, "info");
               return;
             }
+            is_answered = false;
             // On canvas to draw current video image
             if (!canvas) {
                console.error("No Canvas...")
@@ -115,33 +120,37 @@ const startFaceDetection = (video, canvas, deviceId) => {
             ctx.drawImage(video, 0, 0);
             // Convert it to JPEG and send it to the WebSocket
             interval_measure = performance.now();
-            is_answered = false;
             canvas_video_snap.toBlob((blob) => socket.send(blob), 'image/jpeg');
             sent_frames += 1;
-          }, IMAGE_INTERVAL_MS);
+          }
+          intervalId = setTimeout(sendImage, IMAGE_INTERVAL_MS);
         });
       });
     });
     // Listen for messages
+    const MEASURE_FRAMES = 50;
     socket.addEventListener('message', function (event) {
       is_answered = true;
       const duration = Math.round(performance.now() - interval_measure);
       average_duration += duration;
       message_data = JSON.parse(event.data)
       average_duration_calc += message_data?.duration_ms;
-      if (sent_frames % 50 == 0){
+      if (sent_frames % MEASURE_FRAMES == 0){
          if (average_duration > 0) {
-            adaptive_interval_ms = Math.round(average_duration/50.0);
+            avg_duration = Math.round(average_duration / MEASURE_FRAMES);
+            adaptive_interval_ms = Math.round(avg_duration * 1.15);
             average_duration = 0;
+            average_duration_fps = ((performance.now() - average_duration_time) / 1000.0 / MEASURE_FRAMES ).toFixed(1)
+            average_duration_time = performance.now();
          }
          if (average_duration_calc > 0) {
-            avg_duration_calc = Math.round(average_duration_calc/50.0);
+            avg_duration_calc = Math.round(average_duration_calc / MEASURE_FRAMES);
             average_duration_calc = 0;
          }
       }
       if (draw_detected) draw_detected(video, canvas, message_data);
       max_queue = Math.max(message_data.queue_id, max_queue);
-      info(`Queue: ${message_data?.queue_id}(max:${max_queue}). Sending interval: ${IMAGE_INTERVAL_MS} ms, Answer time: ${duration} (avr: ${adaptive_interval_ms}) ms. Calculate duration: ${message_data?.duration_ms} (avg:${avg_duration_calc}) ms.`)
+      info(`Queue: ${message_data?.queue_id}(max:${max_queue}). Sending adaptive interval: ${adaptive_interval_ms} ms, Answer time: ${duration} (avr: ${avg_duration}) ms. ${average_duration_fps} fps. Calculated API method duration: ${message_data?.duration_ms} (avg:${avg_duration_calc}) ms.`)
     });
     // Stop the interval and video reading on close
     socket.addEventListener('close', function () {
