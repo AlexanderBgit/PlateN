@@ -1,4 +1,4 @@
-const IMAGE_INTERVAL_MS = 250;
+const IMAGE_INTERVAL_MS = 90;
 let isStreaming = false; // Flag to track streaming state
 
 function getWebSocketUrl(path = '') {
@@ -19,37 +19,40 @@ function getWebSocketUrl(path = '') {
 }
 
 function debug(msg, level="danger"){
-  const debug = document.getElementById('debug');
-  if (debug) {
-    debug.className = "";
-    debug.classList.add("alert");
-    debug.classList.add("alert-"+level);
-    debug.innerText = msg;
+  const debug_div = document.getElementById('debug');
+  if (debug_div) {
+    debug_div.className = "";
+    debug_div.classList.add("alert");
+    debug_div.classList.add("alert-"+level);
+    debug_div.innerText = msg;
   }
 }
 
-const drawFaceRectangles = (video, canvas, faces) => {
-  const ctx = canvas.getContext('2d');
-
-  ctx.width = video.videoWidth;
-  ctx.height = video.videoHeight;
-
-  ctx.beginPath();
-  ctx.clearRect(0, 0, ctx.width, ctx.height);
-  for (const [x, y, width, height] of faces.faces) {
-    ctx.strokeStyle = "#49fb35";
-    ctx.beginPath();
-    ctx.rect(x, y, width, height);
-    ctx.stroke();
+function info(msg, level="info"){
+  const info_div = document.getElementById('info');
+  if (info_div) {
+//    info_div.className = "";
+//    info_div.classList.add("alert");
+//    info_div.classList.add("alert-"+level);
+    info_div.innerText = msg;
   }
-};
+}
+
+function info_toggle(){
+  const info_div = document.getElementById('info');
+  info_div.classList.toggle("d-none")
+}
+
 
 const startFaceDetection = (video, canvas, deviceId) => {
-  console.log("WS_URL:", WS_URL)
-  if (!WS_URL) return;
+  if (!WS_URL) {
+     console.error("WS_URL:", WS_URL)
+     return;
+  }
   const ws_connect=getWebSocketUrl(WS_URL)
   console.log("ws_connect:", ws_connect)
   try {
+    info_toggle();
     const socket = new WebSocket(ws_connect);
     socket.onopen = () => {
       msg = 'WebSocket connection opened!'
@@ -59,13 +62,14 @@ const startFaceDetection = (video, canvas, deviceId) => {
     socket.onerror = (error) => {
       const msg = "WebSocket connection error. "+ws_connect;
       debug(msg)
-//      console.error('WebSocket connection error:', error);
     };
-
     let intervalId;
+    let interval_measure;
+    let is_answered = true;
+    let skipped_frames = 0;
+    let sent_frames = 0;
     // Connection opened
     socket.addEventListener('open', function () {
-
       // Start reading video from device
       navigator.mediaDevices.getUserMedia({
         audio: false,
@@ -84,36 +88,43 @@ const startFaceDetection = (video, canvas, deviceId) => {
 
           // Send an image in the WebSocket every 42 ms
           intervalId = setInterval(() => {
-
-            // Create a virtual canvas to draw current video image
-//            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+            if (!is_answered) {
+              skipped_frames += 1;
+              const sk_perc = (sent_frames / skipped_frames).toFixed(2);
+              const currentTime = new Date().toLocaleTimeString();
+              debug(`At ${currentTime}: skipped for the sending frame, not received in time. Total frames was skipped: ${skipped_frames} (${sk_perc}%)`, "info");
+            }
+            // On canvas to draw current video image
+            if (!canvas) {
+               console.error("No Canvas...")
+               return;
+            }
+            const canvas_video_snap = document.createElement('canvas');
+            const ctx = canvas_video_snap.getContext('2d');
+            canvas_video_snap.width = video.videoWidth;
+            canvas_video_snap.height = video.videoHeight;
             ctx.drawImage(video, 0, 0);
-
             // Convert it to JPEG and send it to the WebSocket
-            canvas.toBlob((blob) => socket.send(blob), 'image/jpeg');
+            interval_measure = performance.now();
+            is_answered = false;
+            canvas_video_snap.toBlob((blob) => socket.send(blob), 'image/jpeg');
+            sent_frames += 1;
           }, IMAGE_INTERVAL_MS);
         });
       });
     });
-
-
-
-
     // Listen for messages
     socket.addEventListener('message', function (event) {
-      drawFaceRectangles(video, canvas, JSON.parse(event.data));
+      is_answered = true;
+      const duration = Math.round(performance.now() - interval_measure);
+      if (draw_detected) draw_detected(video, canvas, JSON.parse(event.data));
+      info(`Sending interval: ${IMAGE_INTERVAL_MS} ms, Answer time: ${duration} ms.`)
     });
-
     // Stop the interval and video reading on close
     socket.addEventListener('close', function () {
       window.clearInterval(intervalId);
       video.pause();
     });
-
-
     return socket;
   } catch (error) {
       if (error instanceof SyntaxError) {
@@ -143,6 +154,7 @@ const stopFaceDetection = (video, canvas) => {
       isStreaming = false;
       console.log("Video stream stopped");
     }
+    info_toggle();
   } else {
     console.log("Video stream already stopped");
   }

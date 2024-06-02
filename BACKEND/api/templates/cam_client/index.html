@@ -38,9 +38,9 @@
 
   <body>
     <div class="container">
-      <h1 class="my-3">Simple - Real time face detection</h1>
+      <h1 class="my-3 text-center">Simple - Real time face detection</h1>
       <div class="row">
-        <form class="col-6" id="form-connect">
+        <form class="col-6 mx-auto" id="form-connect">
           <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">Select cam device from list: </span>
             <select class="form-control" id="camera-select"></select>
@@ -50,14 +50,18 @@
         </form>
       </div>
       <div id="debug"></div>
-      <div class="position-relative">
-        <video id="video"></video>
-        <canvas id="canvas" class="position-absolute top-0 start-0"></canvas>
+      <div class="container text-center">
+        <div class="position-relative d-inline-block">
+          <video id="video"></video>
+          <canvas id="canvas" class="position-absolute top-0 start-0 w-100"></canvas>
+        </div>
       </div>
+      <div id="info" class="mt-2 alert alert-info d-none"></div>
     </div>
     <script>
       const WS_URL = "{{ ws_url }}";
     </script>
-    <script src="{{relative_url(request, 'static', path='cam_client/js/script.js') }}"></script>
+    <script src="{{relative_url(request, 'static', path='cam_client/js/cam_face_casc.js') }}"></script>
+    <script src="{{relative_url(request, 'static', path='cam_client/js/cam_websocket.js') }}"></script>
   </body>
 </html>
