@@ -68,6 +68,8 @@ const startFaceDetection = (video, canvas, deviceId) => {
     let is_answered = true;
     let skipped_frames = 0;
     let sent_frames = 0;
+    let adaptive_interval_ms = 0;
+    let average_duration = 0;
     // Connection opened
     socket.addEventListener('open', function () {
       // Start reading video from device
@@ -90,9 +92,10 @@ const startFaceDetection = (video, canvas, deviceId) => {
           intervalId = setInterval(() => {
             if (!is_answered) {
               skipped_frames += 1;
-              const sk_perc = (sent_frames / skipped_frames).toFixed(2);
+              const sk_perc = (skipped_frames/sent_frames*100 ).toFixed(2);
               const currentTime = new Date().toLocaleTimeString();
               debug(`At ${currentTime}: skipped for the sending frame, not received in time. Total frames was skipped: ${skipped_frames} (${sk_perc}%)`, "info");
+              return;
             }
             // On canvas to draw current video image
             if (!canvas) {
@@ -117,8 +120,16 @@ const startFaceDetection = (video, canvas, deviceId) => {
     socket.addEventListener('message', function (event) {
       is_answered = true;
       const duration = Math.round(performance.now() - interval_measure);
+      average_duration += duration;
+      if (sent_frames % 50 == 0){
+         if (average_duration > 0) {
+            adaptive_interval_ms = Math.round(average_duration/50.0 * 1.25);
+            average_duration = 0;
+         }
+
+      }
       if (draw_detected) draw_detected(video, canvas, JSON.parse(event.data));
-      info(`Sending interval: ${IMAGE_INTERVAL_MS} ms, Answer time: ${duration} ms.`)
+      info(`Sending interval: ${IMAGE_INTERVAL_MS} ms, Answer time: ${duration} (avr: ${adaptive_interval_ms}) ms.`)
     });
     // Stop the interval and video reading on close
     socket.addEventListener('close', function () {
