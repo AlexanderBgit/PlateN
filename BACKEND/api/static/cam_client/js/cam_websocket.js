@@ -1,5 +1,6 @@
 const IMAGE_INTERVAL_MS = 250;
 const SNAP_IMAGE_SCALE = 4;
+const ADAPTIVE_FACTOR = 1.5;
 let isStreaming = false; // Flag to track streaming state
 
 function getWebSocketUrl(path = '') {
@@ -135,7 +136,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
       });
     });
     // Listen for messages
-    const MEASURE_FRAMES = 50;
+    const MEASURE_FRAMES = 100;
     socket.addEventListener('message', function (event) {
       is_answered = true;
       const duration = Math.round(performance.now() - interval_measure);
@@ -145,7 +146,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
       if (sent_frames % MEASURE_FRAMES == 0){
          if (average_duration > 0) {
             avg_duration = Math.round(average_duration / MEASURE_FRAMES);
-            adaptive_interval_ms = Math.round(avg_duration * 1.15);
+            adaptive_interval_ms = Math.round(avg_duration * ADAPTIVE_FACTOR);
             average_duration = 0;
             average_duration_fps = (MEASURE_FRAMES / ((performance.now() - average_duration_time) / 1000.0)  ).toFixed(1)
             average_duration_time = performance.now();
