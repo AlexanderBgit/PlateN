@@ -1,4 +1,5 @@
 import logging
+from abc import abstractmethod
 from typing import List, Tuple
 import asyncio
 import cv2
@@ -11,18 +12,12 @@ from conf.config import settings
 logger = logging.getLogger(f"{settings.app_name}.{__name__}")
 
 
-class ImageProcessor:
-    image_processor = None
+class AbstractFun:
+    @abstractmethod
+    def get(self): ...
 
-    def __init__(self, func=None):
-        if func:
-            self.set(func)
-
-    def set(self, func):
-        self.image_processor = func
-
-    def get(self):
-        return self.image_processor
+    @abstractmethod
+    def load(self): ...
 
 
 class Faces(BaseModel):
@@ -36,10 +31,10 @@ class Faces(BaseModel):
 
 class ImageQueue:
 
-    img_proc: ImageProcessor | None = None
+    img_proc: AbstractFun | None = None
 
-    def __init__(self, fun):
-        self.img_proc = ImageProcessor(fun)
+    def __init__(self, img_proc):
+        self.img_proc = img_proc
 
     async def receive(self, websocket: WebSocket, queue: asyncio.Queue):
         """
