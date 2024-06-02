@@ -92,7 +92,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
           intervalId = setInterval(() => {
             if (!is_answered) {
               skipped_frames += 1;
-              const sk_perc = (skipped_frames/sent_frames*100 ).toFixed(2);
+              const sk_perc = (skipped_frames/sent_frames*100).toFixed(2);
               const currentTime = new Date().toLocaleTimeString();
               debug(`At ${currentTime}: skipped for the sending frame, not received in time. Total frames was skipped: ${skipped_frames} (${sk_perc}%)`, "info");
               return;

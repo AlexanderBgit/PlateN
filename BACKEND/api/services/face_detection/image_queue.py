@@ -20,13 +20,17 @@ class AbstractFun:
     def load(self): ...
 
 
-class Faces(BaseModel):
+class ABSDetectedObject(BaseModel):
+    boundary: Tuple[int, int, int, int]
+
+
+class ABSDetected(BaseModel):
     """This is a pydantic model to define the structure of the streaming data
     that we will be sending the the cv2 Classifier to make predictions
     It expects a List of a Tuple of 4 integers
     """
 
-    faces: List[Tuple[int, int, int, int]]
+    objects: List[ABSDetectedObject]
 
 
 class ImageQueue:
@@ -62,14 +66,8 @@ class ImageQueue:
             bytes = await queue.get()
             data = np.frombuffer(bytes, dtype=np.uint8)
             img = cv2.imdecode(data, 1)
-            gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-            # faces = cascade_classifier.detectMultiScale(gray)
-            faces = self.img_proc.get()(gray)
-            if len(faces) > 0:
-                faces_output = Faces(faces=faces.tolist())  # type: ignore
-            else:
-                faces_output = Faces(faces=[])
-            await websocket.send_json(faces_output.dict())
+            detected: dict = self.img_proc.get()(img)
+            await websocket.send_json(detected)
 
     async def loop(self, websocket: WebSocket):
         """
