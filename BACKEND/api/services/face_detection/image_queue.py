@@ -1,5 +1,6 @@
 import logging
 from abc import abstractmethod
+import time
 from typing import List, Tuple
 import asyncio
 import cv2
@@ -79,9 +80,12 @@ class ImageQueue:
             if not self.img_proc:
                 break
             bytes = await queue.get()
+            start_time = time.perf_counter_ns()
             data = np.frombuffer(bytes, dtype=np.uint8)
             img = cv2.imdecode(data, 1)
             detected: dict = self.img_proc.get()(img, queue_size)
+            duration = (time.perf_counter_ns() - start_time) // 1e6
+            detected["duration_ms"] = duration
             await websocket.send_json(detected)
 
     async def loop(self, websocket: WebSocket):

@@ -71,6 +71,8 @@ const startFaceDetection = (video, canvas, deviceId) => {
     let sent_frames = 0;
     let adaptive_interval_ms = 0;
     let average_duration = 0;
+    let average_duration_calc = 0;
+    let avg_duration_calc = 0;
     let max_queue=0;
     // Connection opened
     socket.addEventListener('open', function () {
@@ -123,17 +125,21 @@ const startFaceDetection = (video, canvas, deviceId) => {
       is_answered = true;
       const duration = Math.round(performance.now() - interval_measure);
       average_duration += duration;
+      message_data = JSON.parse(event.data)
+      average_duration_calc += message_data?.duration_ms;
       if (sent_frames % 50 == 0){
          if (average_duration > 0) {
-            adaptive_interval_ms = Math.round(average_duration/50.0 * 1.25);
+            adaptive_interval_ms = Math.round(average_duration/50.0);
             average_duration = 0;
          }
-
+         if (average_duration_calc > 0) {
+            avg_duration_calc = Math.round(average_duration_calc/50.0);
+            average_duration_calc = 0;
+         }
       }
-      message_data = JSON.parse(event.data)
       if (draw_detected) draw_detected(video, canvas, message_data);
       max_queue = Math.max(message_data.queue_id, max_queue);
-      info(`Queue: ${message_data.queue_id}(max:${max_queue}). Sending interval: ${IMAGE_INTERVAL_MS} ms, Answer time: ${duration} (avr: ${adaptive_interval_ms}) ms.`)
+      info(`Queue: ${message_data?.queue_id}(max:${max_queue}). Sending interval: ${IMAGE_INTERVAL_MS} ms, Answer time: ${duration} (avr: ${adaptive_interval_ms}) ms. Calculate duration: ${message_data?.duration_ms} (avg:${avg_duration_calc}) ms.`)
     });
     // Stop the interval and video reading on close
     socket.addEventListener('close', function () {
@@ -245,7 +251,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
         stopFaceDetection(video, canvas);
         socket.close();
         setTimeout(() => {debug("WebSocket connection closed","info")},600);
-
         socket = null; // Clear the socket reference
       } else {
         console.log("No WebSocket connection to close");
