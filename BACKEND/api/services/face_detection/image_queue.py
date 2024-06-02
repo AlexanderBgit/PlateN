@@ -12,14 +12,6 @@ from conf.config import settings
 logger = logging.getLogger(f"{settings.app_name}.{__name__}")
 
 
-class AbstractFun:
-    @abstractmethod
-    def get(self): ...
-
-    @abstractmethod
-    def load(self): ...
-
-
 class ABSDetectedObject(BaseModel):
     boundary: Tuple[int, int, int, int]
 
@@ -31,6 +23,27 @@ class ABSDetected(BaseModel):
     """
 
     objects: List[ABSDetectedObject]
+    queue_id: int | None = None
+
+
+class AbstractFun:
+    @abstractmethod
+    def get(self): ...
+
+    @abstractmethod
+    def load(self): ...
+
+    @abstractmethod
+    def detect(self, img, queue_id: int = None) -> dict:
+        detected = [(0, 0, 200, 100), (50, 10, 200, 100)]
+        if len(detected) > 0:
+            objects: List[ABSDetectedObject] = [
+                ABSDetectedObject(boundary=obj) for obj in detected
+            ]
+            objects_output = ABSDetected(objects=objects, queue_id=queue_id)
+        else:
+            objects_output = ABSDetected(objects=[], queue_id=queue_id)
+        return objects_output.dict()
 
 
 class ImageQueue:
@@ -53,7 +66,9 @@ class ImageQueue:
             logger.debug(err)
             ...
 
-    async def detect(self, websocket: WebSocket, queue: asyncio.Queue):
+    async def detect(
+        self, websocket: WebSocket, queue: asyncio.Queue, queue_size: int | None = None
+    ):
         """
         This function takes the received request and sends it to our classifier
         which then goes through the data to detect the presence of a human face
@@ -66,7 +81,7 @@ class ImageQueue:
             bytes = await queue.get()
             data = np.frombuffer(bytes, dtype=np.uint8)
             img = cv2.imdecode(data, 1)
-            detected: dict = self.img_proc.get()(img)
+            detected: dict = self.img_proc.get()(img, queue_size)
             await websocket.send_json(detected)
 
     async def loop(self, websocket: WebSocket):
@@ -76,7 +91,7 @@ class ImageQueue:
         """
         await websocket.accept()
         queue: asyncio.Queue = asyncio.Queue(maxsize=10)
-        detect_task = asyncio.create_task(self.detect(websocket, queue))
+        detect_task = asyncio.create_task(self.detect(websocket, queue, queue.qsize()))
         try:
             while True:
                 await self.receive(websocket, queue)

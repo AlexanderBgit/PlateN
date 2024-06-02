@@ -1,7 +1,6 @@
 
 
 const draw_detected = (video, canvas, detected) => {
-  console.log("detected: ",detected)
   const ctx = canvas.getContext('2d');
   ctx.width = video.videoWidth;
   ctx.height = video.videoHeight;

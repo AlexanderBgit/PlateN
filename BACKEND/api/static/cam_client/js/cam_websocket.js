@@ -40,7 +40,8 @@ function info(msg, level="info"){
 
 function info_toggle(){
   const info_div = document.getElementById('info');
-  info_div.classList.toggle("d-none")
+  info_div.classList.toggle("d-none");
+  info_div.innerText = "";
 }
 
 
@@ -70,6 +71,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
     let sent_frames = 0;
     let adaptive_interval_ms = 0;
     let average_duration = 0;
+    let max_queue=0;
     // Connection opened
     socket.addEventListener('open', function () {
       // Start reading video from device
@@ -128,8 +130,10 @@ const startFaceDetection = (video, canvas, deviceId) => {
          }
 
       }
-      if (draw_detected) draw_detected(video, canvas, JSON.parse(event.data));
-      info(`Sending interval: ${IMAGE_INTERVAL_MS} ms, Answer time: ${duration} (avr: ${adaptive_interval_ms}) ms.`)
+      message_data = JSON.parse(event.data)
+      if (draw_detected) draw_detected(video, canvas, message_data);
+      max_queue = Math.max(message_data.queue_id, max_queue);
+      info(`Queue: ${message_data.queue_id}(max:${max_queue}). Sending interval: ${IMAGE_INTERVAL_MS} ms, Answer time: ${duration} (avr: ${adaptive_interval_ms}) ms.`)
     });
     // Stop the interval and video reading on close
     socket.addEventListener('close', function () {
@@ -163,7 +167,8 @@ const stopFaceDetection = (video, canvas) => {
       });
       video.srcObject = null; // Clear video source
       isStreaming = false;
-      console.log("Video stream stopped");
+//      console.log("Video stream stopped");
+      setTimeout(() => {debug("Video stream stopped","info")},2000);
     }
     info_toggle();
   } else {
@@ -239,7 +244,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
       if (socket) {
         stopFaceDetection(video, canvas);
         socket.close();
-        debug("WebSocket connection closed", "info");
+        setTimeout(() => {debug("WebSocket connection closed","info")},600);
+
         socket = null; // Clear the socket reference
       } else {
         console.log("No WebSocket connection to close");
