@@ -1,4 +1,5 @@
 const IMAGE_INTERVAL_MS = 250;
+const SNAP_IMAGE_SCALE = 4;
 let isStreaming = false; // Flag to track streaming state
 
 function getWebSocketUrl(path = '') {
@@ -42,6 +43,11 @@ function info_toggle(){
   const info_div = document.getElementById('info');
   info_div.classList.toggle("d-none");
   info_div.innerText = "";
+}
+
+function handleOrientationChange(video) {
+    const angle = screen.orientation.angle || window.orientation;
+    video.style.transform = `rotate(${angle}deg)`;
 }
 
 
@@ -90,6 +96,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
         },
       }).then(function (stream) {
         video.srcObject = stream;
+        handleOrientationChange(video);
         video.play().then(() => {
           // Adapt overlay canvas size to the video size
           canvas.width = video.videoWidth;
@@ -115,9 +122,9 @@ const startFaceDetection = (video, canvas, deviceId) => {
             }
             const canvas_video_snap = document.createElement('canvas');
             const ctx = canvas_video_snap.getContext('2d');
-            canvas_video_snap.width = video.videoWidth;
-            canvas_video_snap.height = video.videoHeight;
-            ctx.drawImage(video, 0, 0);
+            canvas_video_snap.width = video.videoWidth / SNAP_IMAGE_SCALE;
+            canvas_video_snap.height = video.videoHeight / SNAP_IMAGE_SCALE;
+            ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight,0, 0, canvas_video_snap.width, canvas_video_snap.height);
             // Convert it to JPEG and send it to the WebSocket
             interval_measure = performance.now();
             canvas_video_snap.toBlob((blob) => socket.send(blob), 'image/jpeg');
@@ -148,7 +155,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
             average_duration_calc = 0;
          }
       }
-      if (draw_detected) draw_detected(video, canvas, message_data);
+      if (draw_detected) draw_detected(video, canvas, message_data, SNAP_IMAGE_SCALE);
       max_queue = Math.max(message_data.queue_id, max_queue);
       info(`Queue: ${message_data?.queue_id}(max:${max_queue}). Sending adaptive interval: ${adaptive_interval_ms} ms, Answer time: ${duration} (avr: ${avg_duration}) ms. ${average_duration_fps} fps. Calculated API method duration: ${message_data?.duration_ms} (avg:${avg_duration_calc}) ms.`)
     });

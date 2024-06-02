@@ -42,7 +42,7 @@
       <div class="row">
         <form class="mx-auto" id="form-connect">
           <div class="input-group mb-3">
-            <span class="input-group-text" id="basic-addon1">Select cam device from list: </span>
+            <span class="input-group-text" id="basic-addon1">Select cam: </span>
             <select class="form-control" id="camera-select"></select>
             <button class="btn btn-outline-danger d-none" type="button" id="button-stop">Stop</button>
             <button class="btn btn-outline-success" type="submit" id="button-start">Start</button>
@@ -52,7 +52,7 @@
       <div id="debug"></div>
       <div class="container text-center">
         <div class="position-relative d-inline-block">
-          <video id="video"></video>
+          <video id="video" style="max-width: 640px; width: 100%"></video>
           <canvas id="canvas" class="position-absolute top-0 start-0 w-100"></canvas>
         </div>
       </div>
