@@ -30,7 +30,8 @@ def get_version():
             ...
         proj_name = config["tool.poetry"]["name"].strip('"')
         proj_version = config["tool.poetry"]["version"].strip('"')
-        context = {"name": proj_name, "version": f"{proj_version}-{git_version}"}
+        ver = "-".join([proj_version, git_version])
+        context = {"name": proj_name, "version": ver}
     return context
 
 
