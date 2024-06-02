@@ -122,7 +122,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
             interval_measure = performance.now();
             canvas_video_snap.toBlob((blob) => socket.send(blob), 'image/jpeg');
             sent_frames += 1;
-          }
+          } // sendImage
           intervalId = setTimeout(sendImage, IMAGE_INTERVAL_MS);
         });
       });
