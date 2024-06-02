@@ -15,3 +15,8 @@ def health_check():
         return JSONResponse(content={"status": "ok"})
     else:
         return JSONResponse(content={"status": "loading"}, status_code=500)
+
+
+@router.get("/version")
+def version():
+    return JSONResponse(content=settings.version)

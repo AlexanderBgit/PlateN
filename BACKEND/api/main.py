@@ -93,8 +93,10 @@ async def cam_client(request: Request):
     context = {
         "request": request,
         "title": "Cam Client",
+        "api_method": "OpenCV Cascade Classifier",
         "ws_url": ws_url,
         "static_url": STATIC_URL,
+        "version": settings.version,
     }
     return templates.TemplateResponse("cam_client/index.html", context=context)
 

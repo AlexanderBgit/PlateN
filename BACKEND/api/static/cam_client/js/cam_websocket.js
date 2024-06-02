@@ -140,7 +140,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
             avg_duration = Math.round(average_duration / MEASURE_FRAMES);
             adaptive_interval_ms = Math.round(avg_duration * 1.15);
             average_duration = 0;
-            average_duration_fps = ((performance.now() - average_duration_time) / 1000.0 / MEASURE_FRAMES ).toFixed(1)
+            average_duration_fps = (MEASURE_FRAMES / ((performance.now() - average_duration_time) / 1000.0)  ).toFixed(1)
             average_duration_time = performance.now();
          }
          if (average_duration_calc > 0) {

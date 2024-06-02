@@ -38,9 +38,9 @@
 
   <body>
     <div class="container">
-      <h2 class="my-3 text-center">Simple - Real time face detection (OpenCV Cascade Classifier)</h2>
+      <h2 class="my-3 text-center">Real time face detection ({{api_method}})</h2>
       <div class="row">
-        <form class="col-6 mx-auto" id="form-connect">
+        <form class="mx-auto" id="form-connect">
           <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">Select cam device from list: </span>
             <select class="form-control" id="camera-select"></select>
@@ -57,6 +57,11 @@
         </div>
       </div>
       <div id="info" class="mt-2 alert alert-info d-none"></div>
+      <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">Version: {{version.version}}. Team: "Neuron Curved Bobr"</span>
+        </div>
+    </footer>
     </div>
     <script>
       const WS_URL = "{{ ws_url }}";

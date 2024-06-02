@@ -30,8 +30,12 @@ if GIT_VERSION_FILE.exists():
 proj_version = ""
 PYPROJECT_FILE = BASE_DIR.parent.joinpath("pyproject.toml")
 if PYPROJECT_FILE.exists():
+
     config = configparser.ConfigParser()
-    config.read(PYPROJECT_FILE)
+    try:
+        config.read(PYPROJECT_FILE)
+    except configparser.Error:
+        ...
     proj_version = config["tool.poetry"]["version"].strip('"')
 
 VERSION = f"{proj_version}-{git_version}"
