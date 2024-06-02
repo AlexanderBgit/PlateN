@@ -1,4 +1,4 @@
-const IMAGE_INTERVAL_MS = 90;
+const IMAGE_INTERVAL_MS = 250;
 let isStreaming = false; // Flag to track streaming state
 
 function getWebSocketUrl(path = '') {
@@ -69,6 +69,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
     let is_answered = true;
     let skipped_frames = 0;
     let sent_frames = 0;
+    let total_frames = 0;
     let adaptive_interval_ms = 0;
     let average_duration = 0;
     let average_duration_calc = 0;
@@ -94,9 +95,10 @@ const startFaceDetection = (video, canvas, deviceId) => {
 
           // Send an image in the WebSocket every 42 ms
           intervalId = setInterval(() => {
+            total_frames += 1;
             if (!is_answered) {
               skipped_frames += 1;
-              const sk_perc = (skipped_frames/sent_frames*100).toFixed(2);
+              const sk_perc = (skipped_frames/total_frames*100).toFixed(2);
               const currentTime = new Date().toLocaleTimeString();
               debug(`At ${currentTime}: skipped for the sending frame, not received in time. Total frames was skipped: ${skipped_frames} (${sk_perc}%)`, "info");
               return;
