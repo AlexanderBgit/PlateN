@@ -134,11 +134,11 @@ const startFaceDetection = (video, canvas, deviceId) => {
               const angle = screen.orientation.angle || window.orientation;
               if (angle === 90 || angle === -90) {
                 // Swap width and height for 90 degrees or -90 degrees rotation
-                canvas_video_snap.width = scaledHeight;
-                canvas_video_snap.height = scaledWidth;
-              
+                canvas_video_snap.width = scaledWidth;
+                canvas_video_snap.height = scaledHeight;
+
                 // Rotate by 270 degrees to display 90 degrees correctly, or by 90 degrees for -90 degrees
-                const radians = (angle === 90 ? 270 : 90) * Math.PI / 180;
+                const radians = ((angle === 90 ? 270 : 90) * Math.PI) / 180;
                 ctx.translate(canvas_video_snap.width / 2, canvas_video_snap.height / 2);
                 ctx.rotate(radians);
                 ctx.translate(-canvas_video_snap.height / 2, -canvas_video_snap.width / 2);
@@ -182,8 +182,9 @@ const startFaceDetection = (video, canvas, deviceId) => {
       }
       if (draw_detected) draw_detected(video, canvas, message_data, SNAP_IMAGE_SCALE);
       max_queue = Math.max(message_data.queue_id, max_queue);
+      const angle = screen.orientation.angle || window.orientation;
       info(
-        `Queue: ${message_data?.queue_id}(max:${max_queue}). Sending adaptive interval: ${adaptive_interval_ms} ms, Answer time: ${duration} (avr: ${avg_duration}) ms. ${average_duration_fps} fps. Calculated API method duration: ${message_data?.duration_ms} (avg:${avg_duration_calc}) ms.`
+        `Queue: ${message_data?.queue_id}(max:${max_queue}). Sending adaptive interval: ${adaptive_interval_ms} ms, Answer time: ${duration} (avr: ${avg_duration}) ms. ${average_duration_fps} fps. Calculated API method duration: ${message_data?.duration_ms} (avg:${avg_duration_calc}) ms. A:${angle}`
       );
     });
     // Stop the interval and video reading on close
