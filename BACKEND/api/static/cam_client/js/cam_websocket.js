@@ -132,13 +132,19 @@ const startFaceDetection = (video, canvas, deviceId) => {
               canvas_video_snap.width = scaledWidth;
               canvas_video_snap.height = scaledHeight;
               const angle = screen.orientation.angle || window.orientation;
-              if (angle != 0) {
+              if (angle === 90 || angle === -90) {
+                // Swap width and height for 90 degrees or -90 degrees rotation
                 canvas_video_snap.width = scaledHeight;
                 canvas_video_snap.height = scaledWidth;
-                const radians = ((angle + 180) * Math.PI) / 180;
+              
+                // Rotate by 270 degrees to display 90 degrees correctly, or by 90 degrees for -90 degrees
+                const radians = (angle === 90 ? 270 : 90) * Math.PI / 180;
                 ctx.translate(canvas_video_snap.width / 2, canvas_video_snap.height / 2);
                 ctx.rotate(radians);
-                ctx.translate(-canvas_video_snap.width / 2, -canvas_video_snap.height / 2);
+                ctx.translate(-canvas_video_snap.height / 2, -canvas_video_snap.width / 2);
+              } else {
+                canvas_video_snap.width = scaledWidth;
+                canvas_video_snap.height = scaledHeight;
               }
               ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, scaledWidth, scaledHeight);
               // Convert it to JPEG and send it to the WebSocket
