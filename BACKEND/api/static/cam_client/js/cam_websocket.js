@@ -127,19 +127,18 @@ const startFaceDetection = (video, canvas, deviceId) => {
               }
               const canvas_video_snap = document.createElement("canvas");
               const ctx = canvas_video_snap.getContext("2d");
-              canvas_video_snap.width = video.videoWidth / SNAP_IMAGE_SCALE;
-              canvas_video_snap.height = video.videoHeight / SNAP_IMAGE_SCALE;
-              ctx.drawImage(
-                video,
-                0,
-                0,
-                video.videoWidth,
-                video.videoHeight,
-                0,
-                0,
-                canvas_video_snap.width,
-                canvas_video_snap.height
-              );
+              const scaledWidth = video.videoWidth / SNAP_IMAGE_SCALE;
+              const scaledHeight = video.videoHeight / SNAP_IMAGE_SCALE;
+              canvas_video_snap.width = scaledWidth;
+              canvas_video_snap.height = scaledHeight;
+              const angle = screen.orientation.angle || window.orientation;
+              if (angle && angle != 0) {
+                const radians = (angle * Math.PI) / 180;
+                ctx.translate(canvas_video_snap.width / 2, canvas_video_snap.height / 2);
+                ctx.rotate(radians);
+                ctx.translate(-canvas_video_snap.width / 2, -canvas_video_snap.height / 2);
+              }
+              ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, scaledWidth, scaledHeight);
               // Convert it to JPEG and send it to the WebSocket
               interval_measure = performance.now();
               canvas_video_snap.toBlob((blob) => socket.send(blob), "image/jpeg");
