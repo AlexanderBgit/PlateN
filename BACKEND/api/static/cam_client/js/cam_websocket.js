@@ -132,8 +132,10 @@ const startFaceDetection = (video, canvas, deviceId) => {
               canvas_video_snap.width = scaledWidth;
               canvas_video_snap.height = scaledHeight;
               const angle = screen.orientation.angle || window.orientation;
-              if (angle && angle != 0) {
-                const radians = (angle * Math.PI) / 180;
+              if (angle != 0) {
+                canvas_video_snap.width = scaledHeight;
+                canvas_video_snap.height = scaledWidth;
+                const radians = ((angle + 180) * Math.PI) / 180;
                 ctx.translate(canvas_video_snap.width / 2, canvas_video_snap.height / 2);
                 ctx.rotate(radians);
                 ctx.translate(-canvas_video_snap.width / 2, -canvas_video_snap.height / 2);
