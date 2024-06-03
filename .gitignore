@@ -168,3 +168,4 @@ LIBS/poppler/*
 /FRONTEND/fastparking/*.json.gz
 /BACKEND/git-version.txt
 /img/test/*.pdf
+/BACKEND/api/services/face_detection/outputs/

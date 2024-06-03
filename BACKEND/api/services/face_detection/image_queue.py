@@ -3,12 +3,13 @@ from abc import abstractmethod
 import time
 from typing import List, Tuple
 import asyncio
+import aiofiles
 import cv2
 import numpy as np
 from pydantic import BaseModel
 from fastapi import WebSocket, WebSocketDisconnect
 
-from conf.config import settings
+from conf.config import settings, BASE_BACKEND
 
 logger = logging.getLogger(f"{settings.app_name}.{__name__}")
 
@@ -67,6 +68,15 @@ class ImageQueue:
             logger.debug(err)
             ...
 
+    async def save_image(self, image_bytes, counter: int = 0):
+        # Define the output file name
+        output_filename = BASE_BACKEND.joinpath(
+            "api/services/face_detection/outputs", f"output-{counter:06d}.jpg"
+        )
+        # Asynchronously write the bytes directly to a file
+        async with aiofiles.open(output_filename, "wb") as file:
+            await file.write(image_bytes)
+
     async def detect(
         self, websocket: WebSocket, queue: asyncio.Queue, queue_size: int | None = None
     ):
@@ -76,14 +86,19 @@ class ImageQueue:
         and returns the location of the face from the continous stream of visual data as a
         list of Tuple of 4 integers that will represent the 4 Sides of a rectangle
         """
+        counter = 0
         while True:
             if not self.img_proc:
                 break
             # get bytes from queue
             bytes = await queue.get()
+            counter += 1
             start_time = time.perf_counter_ns()
             data = np.frombuffer(bytes, dtype=np.uint8)
             img = cv2.imdecode(data, 1)
+            # if counter % 10 == 0:
+            #     # Save the image as a JPG file
+            #     await self.save_image(bytes, counter)
             # detection API
             detected: dict = self.img_proc.get()(img, queue_size)
             # duration

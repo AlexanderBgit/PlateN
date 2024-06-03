@@ -34,6 +34,14 @@
       href="{{relative_url(request, 'static', path='/favicon-16x16.png') }} "
     />
     <link rel="manifest" href="{{ relative_url(request, 'static', path='/site.webmanifest') }}" />
+    <style>
+        #video, #canvas {
+            max-width: 640px;
+            width: 100%;
+            height: auto;
+            /* transition: transform 0.5s; Smooth transition for the rotation */
+        }
+    </style>
   </head>
 
   <body>
@@ -52,8 +60,8 @@
       <div id="debug"></div>
       <div class="container text-center">
         <div class="position-relative d-inline-block">
-          <video id="video" style="max-width: 640px; width: 100%"></video>
-          <canvas id="canvas" class="position-absolute top-0 start-0 w-100"></canvas>
+          <video id="video"></video>
+          <canvas id="canvas" class="position-absolute top-0 start-0"></canvas>
         </div>
       </div>
       <div id="info" class="mt-2 alert alert-info d-none"></div>
