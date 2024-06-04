@@ -1,16 +1,15 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "FRONTEND"
-		}
-	],
-	"settings": {
-		"terminal.integrated.env.windows": {
-
-			"PYTHONPATH": "${workspaceFolder};${workspaceFolder}${pathSeparator}fastparking;${workspaceFolder}${pathSeparator}src;${workspaceFolder}${pathSeparator}tests;${workspaceFolder}${pathSeparator}${workspaceFolderBasename};${fileDirname}",
-		},
-	},
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "BACKEND"
+    }
+  ],
+  "settings": {
+    "terminal.integrated.env.windows": {
+      "PYTHONPATH": "${workspaceFolder};${workspaceFolder}${pathSeparator}fastparking;${workspaceFolder}${pathSeparator}src;${workspaceFolder}${pathSeparator}tests;${workspaceFolder}${pathSeparator}${workspaceFolderBasename};${fileDirname}"
+    }
+  }
 }

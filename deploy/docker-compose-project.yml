@@ -1,4 +1,4 @@
-# docker-compose  --file docker-compose-project.yml --env-file .env_prod  up -d 
+# docker-compose  --file docker-compose-project.yml --env-file .env_prod  up -d
 name: fastparking${BRANCH:-}${PURPOSE:-}
 services:
   pg:
@@ -20,6 +20,34 @@ services:
       timeout: 5s
       retries: 10
 
+  api:
+    build: ../BACKEND
+    #    expose:
+    #      - ${APP_PORT_API:-9000}
+    ports:
+      - ${APP_PORT_API:-9000}:${APP_PORT_API:-9000}
+
+    # Health check command
+    restart: always
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail http://127.0.0.1:${APP_PORT_API:-9000}/api/v1/health | grep -q '\"status\":\"ok\"' || exit 1"
+        ]
+      # interval: 120s
+      # timeout: 10s
+      # retries: 5
+      # #      start_period: 60s # Delay the first health check by 60 seconds
+      interval: 15s
+      timeout: 5s
+      start_period: 0s
+      start_interval: 5s
+      retries: 10
+
+    environment:
+      APP_PORT_API: ${APP_PORT_API:-9000}
+
   code:
     build: ../FRONTEND
     stdin_open: true # docker run -i
@@ -36,15 +64,21 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl --fail http://localhost:8000/health/ | grep -q '\"status\": \"ok\"' || exit 1"
+          "curl --fail http://127.0.0.1:8000/health/ | grep -q '\"status\": \"ok\"' || exit 1"
         ]
       interval: 120s
       timeout: 10s
       retries: 5
       start_period: 60s # Delay the first health check by 60 seconds
     depends_on:
+      api:
+        condition: service_healthy
+        restart: true
       pg:
         condition: service_healthy
+        restart: true
+    #      pg:
+    #          condition: service_healthy
     environment:
       POSTGRES_HOST: pg
       POSTGRES_DB: ${POSTGRES_DB}
@@ -57,6 +91,7 @@ services:
       MAIL_PORT: ${MAIL_PORT}
       MAIL_SERVER: ${MAIL_SERVER}
       MAIL_FROM_NAME: ${MAIL_FROM_NAME}
+      USE_DS_NUMBER_DETECTION: ${USE_DS_NUMBER_DETECTION:-1}
       TELEGRAM_TOKEN: ${TELEGRAM_TOKEN:-}
       TELEGRAM_BOT_NAME: ${TELEGRAM_BOT_NAME:-}
       TELEGRAM_NEWS_NAME: ${TELEGRAM_NEWS_NAME:-}
@@ -72,3 +107,5 @@ services:
       DISCORD_AVATAR_NEWS: ${DISCORD_AVATAR_NEWS:-}
       DISCORD_FEEDBACK: ${DISCORD_FEEDBACK:-}
       DEMO_URL: ${DEMO_URL:-}
+      APP_HOST_API: api
+      APP_PORT_API: ${APP_PORT_API:-9000}

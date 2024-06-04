@@ -1,0 +1,13 @@
+# docker-compose --file docker-compose-api.yml --env-file .env  up -d
+name: fastparking-backend
+services:
+  api:
+    build: ../BACKEND
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    ports:
+      - ${APP_PORT_API:-9000}:${APP_PORT_API:-9000}
+
+    environment:
+      APP_PORT_API: ${APP_PORT_API:-9000}
+

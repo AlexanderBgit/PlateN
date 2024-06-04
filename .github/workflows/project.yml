@@ -1,0 +1,52 @@
+name: PROJECT FASTPARKING CI
+
+on:
+  push:
+    branches: ["lexxai"]
+  # pull_request:
+  #   branches: ["dev"]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: ["3.11"]
+        services: # Define different services to test against
+          - name: FRONTEND
+            working_dir: fastparking
+            test_cmd: python manage.py test
+          - name: BACKEND
+            working_dir: api
+            test_cmd: python --version
+    env:
+      SERVICE_NAME: ${{ matrix.services.name }} # Make service name available
+      WORKING_DIR: ${{ matrix.services.working_dir }} # Make service name available
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up ${{ matrix.services.name }} Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Dependencies ${{ matrix.services.name }} ${{ matrix.python-version }}
+        working-directory: ${{ matrix.services.name }}
+        run: |
+          python -m pip install --upgrade pip
+          # pip install venv
+          # python -m venv .venv
+          # source .venv/bin/activate  
+          pip install -r requirements.txt
+      - name: Run Tests ${{ matrix.services.name }} ${{ matrix.python-version }}
+        working-directory: ${{ matrix.services.name }}/${{ matrix.services.working_dir }}
+        env:
+          PYTHONPATH: ${{ matrix.services.name }}/${{ matrix.services.working_dir }}
+        run: |
+          pwd
+          ${{ matrix.services.test_cmd }}
+
+
+
+
+

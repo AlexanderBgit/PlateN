@@ -30,8 +30,12 @@ if GIT_VERSION_FILE.exists():
 proj_version = ""
 PYPROJECT_FILE = BASE_DIR.parent.joinpath("pyproject.toml")
 if PYPROJECT_FILE.exists():
+
     config = configparser.ConfigParser()
-    config.read(PYPROJECT_FILE)
+    try:
+        config.read(PYPROJECT_FILE)
+    except configparser.Error:
+        ...
     proj_version = config["tool.poetry"]["version"].strip('"')
 
 VERSION = f"{proj_version}-{git_version}"
@@ -244,7 +248,8 @@ CACHES = {
 # print(f"{CACHES=}")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-USE_DS_NUMBER_DETECTION = os.getenv("USE_DS_NUMBER_DETECTION", "1").strip() == "1"
+# USE_DS_NUMBER_DETECTION = os.getenv("USE_DS_NUMBER_DETECTION", "1").strip() == "1"
+USE_DS_NUMBER_DETECTION = False
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("MAIL_SERVER")
@@ -261,6 +266,9 @@ TOTAL_DIGITS_ID = (6, "06")
 PAGE_ITEMS = 10
 
 DEMO_URL = os.getenv("DEMO_URL", None)
+APP_PORT_API = os.getenv("APP_PORT_API", None)
+APP_HOST_API = os.getenv("APP_HOST_API", None)
+API_PLATE_DETECTION = os.getenv("API_PLATE_DETECTION", "/api/v1/plate/detection")
 
 
 # SQL LOG

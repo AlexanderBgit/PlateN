@@ -4,7 +4,7 @@ script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "${script_dir}"
 
 ENV=../deploy/.env
-[ ! -f ${ENV} ] ||  export $(grep -E '^STATIC_DEPLOY|^BRANCH' ${ENV} | xargs) 
+[ ! -f ${ENV} ] ||  export $(grep -E '^STATIC_DEPLOY|^BRANCH' ${ENV} | xargs) &> /dev/null
 
 
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastparking"
-version = "0.5.28"
+version = "1.6.4"
 description = "GoIT DataScience Team Project - Fast Parking"
 authors = ["neuron_curva_bobr <info@neuron.curva.bobr.app>"]
 license = "MIT"
@@ -16,7 +16,8 @@ pytz = "^2024.1"
 qrcode = "^7.4.2"
 pillow = "^10.3.0"
 psycopg2-binary = "^2.9.9"
-tensorflow-io-gcs-filesystem = "~0.31"
+# tensorflow-io-gcs-filesystem = "~0.31"
+tensorflow-io-gcs-filesystem = {version = "~0.31", platform = "win32 || darwin"}
 tensorflow = "~2.15"
 opencv-python-headless = {version = "^4.9.0.80", platform = "linux"}
 opencv-python = {version = "^4.9.0.80", platform = "win32 || darwin"}

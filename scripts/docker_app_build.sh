@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/bash
 
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "${script_dir}"
@@ -9,11 +9,12 @@ if command -v dos2unix &> /dev/null; then
 fi
 
 ENV=../deploy/.env
-[ ! -f ${ENV} ] || export $(grep -E '^BRANCH|^PURPOSE' ${ENV} | xargs)
+[ ! -f ${ENV} ] || export $(grep -E '^BRANCH|^PURPOSE' ${ENV} | xargs) &> /dev/null
 
 pushd "../deploy"
 echo $(git branch --show-current)${PURPOSE}-$(git rev-parse --short HEAD) > ../FRONTEND/git-version.txt
+echo $(git branch --show-current)${PURPOSE}-$(git rev-parse --short HEAD) > ../BACKEND/git-version.txt
 echo "STARTING DEPLOY ${BRANCH}${PURPOSE}"
 
-docker-compose  --file docker-compose-project.yml --env-file .env build code
+docker-compose  --file docker-compose-project.yml --env-file .env build
 popd

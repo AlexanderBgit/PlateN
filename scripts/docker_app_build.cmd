@@ -24,7 +24,7 @@ echo %branch%%purpose%-%commit% > ..\FRONTEND\git-version.txt
 echo BRANCH=%branch%, PURPOSE=%purpose%, commit=%commit%
 endlocal
 
-docker-compose  --file docker-compose-project.yml --env-file .env build code 
+docker-compose  --file docker-compose-project.yml --env-file .env build  
 rem timeout 1
 rem docker attach fastparking-code-1
 
