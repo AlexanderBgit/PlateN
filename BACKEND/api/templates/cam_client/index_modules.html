@@ -41,12 +41,15 @@
             height: auto;
             /* transition: transform 0.5s; Smooth transition for the rotation */
         }
+<!--      #canvas {-->
+<!--            background-color: #ee000055;-->
+<!--      }-->
     </style>
   </head>
 
   <body>
     <div class="container">
-      <h2 class="my-3 text-center">Real time face detection ({{api_method}})</h2>
+      <h2 class="my-3 text-center">{{text_header}}</h2>
       <div class="row">
         <form class="mx-auto" id="form-connect">
           <div class="input-group mb-3">
@@ -65,6 +68,10 @@
         </div>
       </div>
       <div id="info" class="mt-2 alert alert-info d-none"></div>
+      {% for module in modules %}
+      <div>A:{{module}}</div>
+      <div>B:{{module["text_header"]}}</div>
+      {% endfor %}
       <footer class="footer mt-auto py-3 bg-light">
         <div class="container text-center">
             <span class="text-muted">Version: {{version.version}}. Team: "Neuron Curved Bobr"</span>
@@ -74,7 +81,11 @@
     <script>
       const WS_URL = "{{ ws_url }}";
     </script>
+    {% if js_module %}
+    <script src="{{relative_url(request, 'static', path='cam_client/js/' ~ js_module )}}"></script>
+    {% else %}
     <script src="{{relative_url(request, 'static', path='cam_client/js/cam_face_casc.js') }}"></script>
+    {% endif %}
     <script src="{{relative_url(request, 'static', path='cam_client/js/cam_websocket.js') }}"></script>
   </body>
 </html>

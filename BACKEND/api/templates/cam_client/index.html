@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <title>{{title}}</title>
+    <link rel="icon" href="{{relative_url(request, 'static', path='/favicon.ico') }}" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{{relative_url(request, 'static', path='/apple-touch-icon.png')  }}  "
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{{relative_url(request, 'static', path='/favicon-32x32.png') }}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{{relative_url(request, 'static', path='/favicon-16x16.png') }} "
+    />
+    <link rel="manifest" href="{{ relative_url(request, 'static', path='/site.webmanifest') }}" />
+    <style>
+        #video, #canvas {
+            max-width: 640px;
+            width: 100%;
+            height: auto;
+            /* transition: transform 0.5s; Smooth transition for the rotation */
+        }
+<!--      #canvas {-->
+<!--            background-color: #ee000055;-->
+<!--      }-->
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2 class="my-3 text-center">{{text_header}}</h2>
+      <div class="row">
+        <form class="mx-auto" id="form-connect">
+          <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">Select cam: </span>
+            <select class="form-control" id="camera-select"></select>
+            <button class="btn btn-outline-danger d-none" type="button" id="button-stop">Stop</button>
+            <button class="btn btn-outline-success" type="submit" id="button-start">Start</button>
+          </div>
+        </form>
+      </div>
+      <div id="debug"></div>
+      <div class="container text-center">
+        <div class="position-relative d-inline-block">
+          <video id="video"></video>
+          <canvas id="canvas" class="position-absolute top-0 start-0"></canvas>
+        </div>
+      </div>
+      <div id="info" class="mt-2 alert alert-info d-none"></div>
+      <footer class="footer mt-auto py-3 bg-light">
+        <div class="container text-center">
+            <span class="text-muted">Version: {{version.version}}. Team: "Neuron Curved Bobr"</span>
+        </div>
+    </footer>
+    </div>
+    <script>
+      const WS_URL = "{{ ws_url }}";
+    </script>
+    {% if js_module %}
+    <script src="{{relative_url(request, 'static', path='cam_client/js/' ~ js_module )}}"></script>
+    {% else %}
+    <script src="{{relative_url(request, 'static', path='cam_client/js/cam_face_casc.js') }}"></script>
+    {% endif %}
+    <script src="{{relative_url(request, 'static', path='cam_client/js/cam_websocket.js') }}"></script>
+  </body>
+</html>

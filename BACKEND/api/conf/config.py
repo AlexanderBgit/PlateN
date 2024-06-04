@@ -4,6 +4,7 @@ from pathlib import Path
 
 # from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
+from starlette.templating import Jinja2Templates
 
 BASE_BACKEND = Path(__file__).resolve().parent.parent.parent
 BASE_PATH = BASE_BACKEND.parent
@@ -38,6 +39,9 @@ def get_version():
     return context
 
 
+templates: Jinja2Templates = Jinja2Templates(directory="templates")
+
+
 class Settings(BaseSettings):
     app_name: str = "fastparking-api"
     app_host_api: str = "0.0.0.0"
@@ -45,6 +49,7 @@ class Settings(BaseSettings):
     api_port_websocket: int = 9090
     api_use_plate_ds: bool = True
     version: dict = get_version()
+    static_url: str = "/api/v1/static/"
 
     class Config:
         extra = "ignore"

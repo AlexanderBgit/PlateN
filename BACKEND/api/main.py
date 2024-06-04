@@ -1,16 +1,15 @@
 import logging
 from typing import Any
 
-from fastapi import FastAPI, Path, Query, Depends, HTTPException, Request, status
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import pass_context
-from fastapi.responses import RedirectResponse
 from urllib.parse import urlparse
 
 
-from conf.config import settings
+from conf.config import settings, templates
 
 logger = logging.getLogger(f"{settings.app_name}")
 logger.setLevel(logging.DEBUG)
@@ -20,8 +19,7 @@ handler.setFormatter(formatter)
 handler.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
-from routes import main, plate, face_detection
-
+from routes import main, plate, face_detection, cam_client
 
 # CORE ...
 
@@ -37,13 +35,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/api/v1/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
-STATIC_URL = "/api/v1/static/"
+app.mount(settings.static_url, StaticFiles(directory="static"), name="static")
+
 
 app.include_router(main.router, prefix="/api/v1")
 app.include_router(plate.router, prefix="/api/v1")
 app.include_router(face_detection.router, prefix="/api/v1")
+app.include_router(cam_client.router, prefix="/api/v1")
 
 
 @pass_context
@@ -85,20 +83,6 @@ def read_root():
     return {
         "message": f"Welcome to the {settings.app_name} application! on port={settings.app_port_api}"
     }
-
-
-@app.get("/api/v1/cam_client")
-async def cam_client(request: Request):
-    ws_url = "/api/v1/face_detection"
-    context = {
-        "request": request,
-        "title": "Cam Client",
-        "api_method": "OpenCV Cascade Classifier",
-        "ws_url": ws_url,
-        "static_url": STATIC_URL,
-        "version": settings.version,
-    }
-    return templates.TemplateResponse("cam_client/index_face_cc.html", context=context)
 
 
 # initialization service
