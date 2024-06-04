@@ -59,6 +59,9 @@ function resize_canvas(video, canvas){
 }
 
 function isFirefoxMobile() {
+    const url = new URL(window.location.href);
+    const detect_browser = url.searchParams.get('dct_br');
+    if (detect_browser==0) return false;
     const userAgent = navigator.userAgent?.toLowerCase();
     return userAgent?.includes('firefox') && userAgent?.includes('mobile');
 }
