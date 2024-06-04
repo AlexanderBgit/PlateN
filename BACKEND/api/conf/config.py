@@ -1,6 +1,9 @@
 import configparser
 from os import environ
 from pathlib import Path
+from typing import Optional
+
+from pydantic import AnyHttpUrl, field_validator, validator
 
 # from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
@@ -49,7 +52,22 @@ class Settings(BaseSettings):
     api_port_websocket: int = 9090
     api_use_plate_ds: bool = True
     version: dict = get_version()
-    static_url: str = "/api/v1/static/"
+    root_path: str = "/api"
+    api_version: str = "v1"
+
+    @property
+    def static_url(self) -> str:
+        url_list = []
+        if hasattr(self, "root_path") and self.root_path:
+            url_list.append(self.root_path)
+        else:
+            url_list.append("")
+        if hasattr(self, "api_version") and self.api_version:
+            url_list.append(self.api_version)
+        url_list.append("static/")
+        result = "/".join(url_list)
+        # print(result)
+        return result
 
     class Config:
         extra = "ignore"
@@ -58,6 +76,7 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
 
 if __name__ == "__main__":
     print(settings.Config.env_file)
