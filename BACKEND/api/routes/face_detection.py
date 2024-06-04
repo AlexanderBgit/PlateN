@@ -15,7 +15,7 @@ logger = logging.getLogger(f"{settings.app_name}.{__name__}")
 face_detection_image_queue: None | ImageQueue = None
 
 
-@router.websocket("")
+@router.websocket("", name="face_detection")
 async def face_detection(websocket: WebSocket):
     """
     This is the endpoint that we will be sending request to from the
