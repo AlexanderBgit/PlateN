@@ -27,7 +27,7 @@ CLIENT_MODULES = {
         "js_module": "cam_face_casc.js",
     },
     ClientModules.face_yn.value: {
-        "text_header": "Real time face detection (OpenCV FaceDetectorYN. Model 'yunet_2023mar')",
+        "text_header": "Real time face detection (OpenCV FaceDetectorYN. Model 'yunet_2023mar') (in development now it is just a plug)",
         "ws_url": "face_detection",  # route name
         "js_module": "cam_face_casc.js",
     },
@@ -59,8 +59,8 @@ async def cam_clients(request: Request):
     return templates.TemplateResponse("cam_client/index_modules.html", context=context)
 
 
+@router.get("")
 @router.get("/{module}", name="cam_client_module")
-@router.get("/")
 async def cam_client(request: Request, module: ClientModules = ClientModules.face_cc):
     client_module = CLIENT_MODULES.get(module)
     if not client_module:

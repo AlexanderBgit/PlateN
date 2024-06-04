@@ -49,7 +49,7 @@
 
   <body>
     <div class="container">
-      <h2 class="my-3 text-center"><a href="list" class="text-decoration-none">{{text_header}}</a></h2>
+      <h2 title="You can select other API modules."  class="my-3 text-center"><a href="{{ relative_url(request, name='cam_client_list') }} " class="text-decoration-none">{{text_header}}</a></h2>
       <div class="row">
         <form class="mx-auto" id="form-connect">
           <div class="input-group mb-3">
