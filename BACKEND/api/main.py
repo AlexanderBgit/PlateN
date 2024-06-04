@@ -98,7 +98,7 @@ async def cam_client(request: Request):
         "static_url": STATIC_URL,
         "version": settings.version,
     }
-    return templates.TemplateResponse("cam_client/index.html", context=context)
+    return templates.TemplateResponse("cam_client/index_face_cc.html", context=context)
 
 
 # initialization service

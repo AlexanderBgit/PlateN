@@ -75,7 +75,7 @@ def main(request):
         "version": version,
         "current_tariff": current_tariff_formatted,
     }
-    return render(request, "parking/index.html", context=context)
+    return render(request, "parking/index_face_cc.html", context=context)
 
 
 # def generate_report(request):
