@@ -62,7 +62,7 @@ async def cam_clients(request: Request):
 @router.get("")
 @router.get("/{module}", name="cam_client_module")
 async def cam_client(request: Request, module: ClientModules = ClientModules.face_cc):
-    client_module = CLIENT_MODULES.get(module)
+    client_module = CLIENT_MODULES.get(module.value)
     if not client_module:
         return HTTPException(status_code=403, detail=f"Module: '{module}' is undefined")
     ws_url = relative_url_filter(request.url_for(client_module.get("ws_url")))
