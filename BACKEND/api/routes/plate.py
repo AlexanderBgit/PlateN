@@ -8,7 +8,7 @@ router = APIRouter(prefix="/plate", tags=["plate"])
 logger = logging.getLogger(f"{settings.app_name}.{__name__}")
 
 
-@router.post("/detection")
+@router.post("/detection", description="Input image is UploadFile")
 async def plate_recognize(file: UploadFile):
     try:
         # print(f"plate_recognize : {file}")
