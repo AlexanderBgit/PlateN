@@ -42,12 +42,12 @@ class FaceCascadeClassierFun(AbstractFun):
     def correction_boundary(self, boundary):
         if self.img_scale == (1.0, 1.0):
             return boundary
-        x1, y1, x2, y2 = boundary
-        x1 = x1 * self.img_scale[0]
-        y1 = y1 * self.img_scale[1]
-        x2 = x2 * self.img_scale[0]
-        y2 = y2 * self.img_scale[1]
-        return x1, y1, x2, y2
+        x, y, width, height = boundary
+        x = x * self.img_scale[0]
+        y = y * self.img_scale[1]
+        width = width * self.img_scale[0]
+        height = height * self.img_scale[1]
+        return x, y, width, height
 
     def detect(self, img, queue_id: int = None) -> dict:
         gray = cv2.cvtColor(self.check_image_size(img), cv2.COLOR_RGB2GRAY)
