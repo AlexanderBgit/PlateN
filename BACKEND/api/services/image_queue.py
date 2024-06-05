@@ -16,6 +16,7 @@ logger.setLevel(logging.DEBUG)
 
 
 class ABSDetectedObject(BaseModel):
+    # x, y, width, height
     boundary: Tuple[int, int, int, int]
 
 
@@ -97,7 +98,8 @@ class ImageQueue:
             counter += 1
             start_time = time.perf_counter_ns()
             data = np.frombuffer(bytes, dtype=np.uint8)
-            img = cv2.imdecode(data, 1)
+            # image in BGR format
+            img = cv2.imdecode(data, cv2.IMREAD_COLOR)
             # if counter % 10 == 0:
             #     # Save the image as a JPG file
             #     await self.save_image(bytes, counter)
