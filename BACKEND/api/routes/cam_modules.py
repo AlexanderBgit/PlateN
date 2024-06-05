@@ -1,12 +1,9 @@
 import logging
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException
-from starlette.responses import JSONResponse
-
+from fastapi import APIRouter, WebSocket, HTTPException
 
 from conf.config import settings
-from services.face_detection.cascade_classifier import CascadeClassierFun
-from services.face_detection.image_queue import ImageQueue, AbstractFun
-from services.services import model_load_status
+from services.face_detection.face_cc import CascadeClassierFun
+from services.image_queue import ImageQueue
 
 router = APIRouter(prefix="/cam_modules", tags=["cam_modules"])
 

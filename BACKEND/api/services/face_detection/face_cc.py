@@ -1,10 +1,10 @@
 import logging
-from typing import List, Tuple
+from typing import List
 
 import cv2
 
 from conf.config import settings
-from services.face_detection.image_queue import (
+from services.image_queue import (
     AbstractFun,
     ABSDetected,
     ABSDetectedObject,
