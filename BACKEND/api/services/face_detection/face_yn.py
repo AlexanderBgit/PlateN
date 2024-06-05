@@ -22,16 +22,16 @@ class FaceYN:
         model_path,
         ninja_mask_path,
         input_size=(320, 320),
-        conf_threshold=0.9,
+        conf_threshold=0.8,
         nms_threshold=0.3,
         top_k=5000,
     ):
         self.face_detector = cv2.FaceDetectorYN.create(
             model_path, "", input_size, conf_threshold, nms_threshold, top_k
         )
-        self.ninja_mask = cv2.imread(ninja_mask_path, cv2.IMREAD_UNCHANGED)
-        self.ninja_mask = self.scale_image(self.ninja_mask)
-
+        # self.ninja_mask = cv2.imread(ninja_mask_path, cv2.IMREAD_UNCHANGED)
+        # self.ninja_mask = self.scale_image(self.ninja_mask)
+        self.ninja_mask = None
         # Hardcoded normalized eye locations in the mask
         self.ninja_eye_left = (0.35, 0.9)
         self.ninja_eye_right = (0.65, 0.9)
@@ -196,7 +196,7 @@ class Faces(ABSDetected):
 
 class FaceYNFun(AbstractFun):
     yn: FaceYN
-    max_size = (640 // 2, 480 // 2)
+    max_size = (320 // 2, 320 // 2)  # for DNN model size
     img_scale = (1.0, 1.0)
 
     def __init__(self):
@@ -207,7 +207,7 @@ class FaceYNFun(AbstractFun):
         self.yn = FaceYN(
             model_path=str(model_path),
             ninja_mask_path=str(ninja_mask_path),
-            input_size=input_size,
+            input_size=self.max_size,
         )
 
     def check_image_size(self, img: cv2.Mat):
@@ -215,7 +215,11 @@ class FaceYNFun(AbstractFun):
         # logger.debug(f"{w=}, {h=}")
         if w > self.max_size[0] or h > self.max_size[1]:
             self.img_scale = (w / self.max_size[0], h / self.max_size[1])
-            return cv2.resize(img, self.max_size)
+            return cv2.resize(
+                img,
+                self.max_size,
+                interpolation=cv2.INTER_AREA,
+            )
         return img
 
     def correction_boundary(self, boundary):
@@ -229,7 +233,11 @@ class FaceYNFun(AbstractFun):
         return x1, y1, x2, y2
 
     def detect(self, img, queue_id: int = None) -> dict:
+        """
+        img is BGR
+        """
         try:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             img = self.check_image_size(img)
             detected_faces = self.yn.run(img)
             # Decode result
