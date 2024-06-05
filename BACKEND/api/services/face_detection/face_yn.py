@@ -12,6 +12,7 @@ from services.image_queue import (
 )
 
 logger = logging.getLogger(f"{settings.app_name}.{__name__}")
+logger.setLevel(logging.DEBUG)
 
 
 class FaceYN:
@@ -176,7 +177,11 @@ class FaceYN:
         return faces
 
 
-class DetectedObject(ABSDetectedObject): ...
+class DetectedObject(ABSDetectedObject):
+    score: float
+    landmarks: list[tuple[int, int]]
+    eye_left: tuple[int, int]
+    eye_right: tuple[int, int]
 
 
 class Faces(ABSDetected):
@@ -221,19 +226,33 @@ class FaceYNFun(AbstractFun):
         return x1, y1, x2, y2
 
     def detect(self, img, queue_id: int = None) -> dict:
-        img = self.check_image_size(img)
-        face_detector = self.yn.face_detector
-        face_detector.setInputSize((img.shape[1], img.shape[0]))
-        _, detected_faces = face_detector.detect(img)
+        try:
+            img = self.check_image_size(img)
+            detected_faces = self.yn.run(img)
+            # Decode result
+            if len(detected_faces) > 0:
+                # logger.debug(f"{detected_faces=}")
+                objects: List[DetectedObject] = []
+                for face in detected_faces:
+                    boundary = face[:4].astype(int)
+                    score = float(f"{face[-1]:.2f}")
+                    landmarks = face[4:14].reshape(5, 2).astype(int)
+                    eye_left, eye_right = landmarks[0], landmarks[1]
+                    detected_object = DetectedObject(
+                        boundary=boundary,
+                        score=score,
+                        landmarks=landmarks,
+                        eye_left=eye_left,
+                        eye_right=eye_right,
+                    )
+                    objects.append(detected_object)
+                    logger.debug(f"{detected_object=}")
 
-        # Decode result
-        if len(detected_faces) > 0:
-            objects: List[DetectedObject] = [
-                DetectedObject(boundary=self.correction_boundary(obj)) for obj in detected_faces.tolist()  # type: ignore
-            ]
-            objects_output = Faces(objects=objects, queue_id=queue_id)
-        else:
-            objects_output = Faces(objects=[], queue_id=queue_id)
+                objects_output = Faces(objects=objects, queue_id=queue_id)
+            else:
+                objects_output = Faces(objects=[], queue_id=queue_id)
+        except Exception as err:
+            objects_output = Faces(objects=[], queue_id=queue_id, error=str(err))
         return objects_output.dict()
 
     def get(self):
