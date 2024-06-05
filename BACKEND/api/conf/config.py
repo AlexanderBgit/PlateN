@@ -57,11 +57,11 @@ class Settings(BaseSettings):
 
     @property
     def static_url(self) -> str:
-        url_list = []
-        if hasattr(self, "root_path") and self.root_path:
-            url_list.append(self.root_path)
-        else:
-            url_list.append("")
+        url_list = [""]
+        # if hasattr(self, "root_path") and self.root_path:
+        #     url_list.append(self.root_path)
+        # else:
+        #     url_list.append("")
         if hasattr(self, "api_version") and self.api_version:
             url_list.append(self.api_version)
         url_list.append("static/")
