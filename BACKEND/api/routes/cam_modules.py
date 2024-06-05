@@ -32,7 +32,7 @@ async def face_cc(websocket: WebSocket):
     try:
         await face_cc_image_queue.loop(websocket)
     except Exception as e:
-        # logger.error(e)
+        logger.error(e)
         ...
 
 
@@ -52,7 +52,7 @@ async def face_yn(websocket: WebSocket):
     try:
         await face_yn_image_queue.loop(websocket)
     except Exception as e:
-        # logger.error(e)
+        logger.error(e)
         ...
 
 
