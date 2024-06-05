@@ -23,7 +23,7 @@ class Faces(ABSDetected):
     """
 
 
-class CascadeClassierFun(AbstractFun):
+class FaceCascadeClassierFun(AbstractFun):
     cascade_classifier: cv2.CascadeClassifier
     max_size = (640 // 2, 480 // 2)
     img_scale = (1.0, 1.0)

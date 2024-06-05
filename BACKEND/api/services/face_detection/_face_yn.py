@@ -1,20 +1,12 @@
-import logging
-from pathlib import Path
-from typing import List
-
 import cv2
-
-from conf.config import settings
-from services.image_queue import (
-    AbstractFun,
-    ABSDetected,
-    ABSDetectedObject,
-)
-
-logger = logging.getLogger(f"{settings.app_name}.{__name__}")
+import numpy as np
+import os
 
 
-class FaceYN:
+# https://github.com/Tony-Luna/100-Days-Of-Computer-Vision/blob/main/Day%2026/face_filters.py
+
+
+class FaceFilter:
     def __init__(
         self,
         model_path,
@@ -176,71 +168,46 @@ class FaceYN:
         return faces
 
 
-class DetectedObject(ABSDetectedObject): ...
+def main():
+    model_path = "models/face_detection_yunet_2023mar.onnx"
+    ninja_mask_path = "data/glasses.png"
+    face_filter = FaceFilter(model_path, ninja_mask_path)
+
+    # Ensure the output directory exists
+    output_dir = "outputs"
+    os.makedirs(output_dir, exist_ok=True)
+    output_path = os.path.join(output_dir, "output_video.mp4")
+
+    cap = cv2.VideoCapture(0)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    out = cv2.VideoWriter(output_path, fourcc, fps, (int(cap.get(3)), int(cap.get(4))))
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        tm = cv2.TickMeter()
+        tm.start()
+        faces = face_filter.run(frame)
+        tm.stop()
+
+        if faces is not None:
+            frame = face_filter.visualize(frame, faces, fps=tm.getFPS())
+
+        # Write the frame to the output video file
+        out.write(frame)
+
+        cv2.imshow("Face Detection with Ninja Mask", frame)
+
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+
+    cap.release()
+    out.release()
+    cv2.destroyAllWindows()
 
 
-class Faces(ABSDetected):
-    """This is a pydantic model to define the structure of the streaming data
-    that we will be sending the the cv2 Classifier to make predictions
-    It expects a List of a Tuple of 4 integers
-    """
-
-
-class FaceYNFun(AbstractFun):
-    yn: FaceYN
-    max_size = (640 // 2, 480 // 2)
-    img_scale = (1.0, 1.0)
-
-    def __init__(self):
-        BASE_PATH = Path(__file__).resolve().parent
-        model_path = BASE_PATH.joinpath("models", "face_detection_yunet_2023mar.onnx")
-        ninja_mask_path = BASE_PATH.joinpath("data", "glasses.png")
-        input_size = self.max_size
-        self.yn = FaceYN(
-            model_path=str(model_path),
-            ninja_mask_path=str(ninja_mask_path),
-            input_size=input_size,
-        )
-
-    def check_image_size(self, img: cv2.Mat):
-        h, w = img.shape[:2]
-        # logger.debug(f"{w=}, {h=}")
-        if w > self.max_size[0] or h > self.max_size[1]:
-            self.img_scale = (w / self.max_size[0], h / self.max_size[1])
-            return cv2.resize(img, self.max_size)
-        return img
-
-    def correction_boundary(self, boundary):
-        if self.img_scale == (1.0, 1.0):
-            return boundary
-        x1, y1, x2, y2 = boundary
-        x1 = x1 * self.img_scale[0]
-        y1 = y1 * self.img_scale[1]
-        x2 = x2 * self.img_scale[0]
-        y2 = y2 * self.img_scale[1]
-        return x1, y1, x2, y2
-
-    def detect(self, img, queue_id: int = None) -> dict:
-        img = self.check_image_size(img)
-        face_detector = self.yn.face_detector
-        face_detector.setInputSize((img.shape[1], img.shape[0]))
-        _, detected_faces = face_detector.detect(img)
-
-        # Decode result
-        if len(detected_faces) > 0:
-            objects: List[DetectedObject] = [
-                DetectedObject(boundary=self.correction_boundary(obj)) for obj in detected_faces.tolist()  # type: ignore
-            ]
-            objects_output = Faces(objects=objects, queue_id=queue_id)
-        else:
-            objects_output = Faces(objects=[], queue_id=queue_id)
-        return objects_output.dict()
-
-    def get(self):
-        return self.detect
-
-    def load(self):
-        # self.yn.load(
-        #     cv2.data.haarcascades + "haarcascade_frontalface_default.xml"  # type: ignore
-        # )
-        ...
+if __name__ == "__main__":
+    main()

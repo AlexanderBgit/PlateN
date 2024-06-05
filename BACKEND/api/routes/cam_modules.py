@@ -2,7 +2,8 @@ import logging
 from fastapi import APIRouter, WebSocket, HTTPException
 
 from conf.config import settings
-from services.face_detection.face_cc import CascadeClassierFun
+from services.face_detection.face_cc import FaceCascadeClassierFun
+from services.face_detection.face_yn import FaceYNFun
 from services.image_queue import ImageQueue
 
 router = APIRouter(prefix="/cam_modules", tags=["cam_modules"])
@@ -63,7 +64,8 @@ async def startup(queues: dict[str, ImageQueue] = None):
     """
     if queues is None:
         queues = image_queues
-    cc_func = CascadeClassierFun()
+    cc_func = FaceCascadeClassierFun()
     cc_func.load()
+    yn_func = FaceYNFun()
     queues["face_cc"] = ImageQueue(cc_func)
-    queues["face_yn"] = ImageQueue(cc_func)
+    queues["face_yn"] = ImageQueue(yn_func)
