@@ -216,10 +216,19 @@ const startFaceDetection = (video, canvas, deviceId) => {
       max_queue = Math.max(message_data.queue_id, max_queue);
       const angle = screen.orientation.angle || window.orientation;
 //      const sr = video.getAttribute("skip_rotate");
-      info(
-        `Queue: ${message_data?.queue_id}(max:${max_queue}). Sending adaptive interval: ${adaptive_interval_ms} ms, Answer time: ${duration} (avr: ${avg_duration}) ms. ${average_duration_fps} fps. Calculated API method duration: ${message_data?.duration_ms} (avg:${avg_duration_calc}) ms. A:${angle}.`
-      );
-    });
+      let info_text = `Queue: ${message_data?.queue_id}`;
+      if (max_queue) info_text += ` (max:${max_queue})`;
+      info_text += `. Sending adaptive interval: ${adaptive_interval_ms} ms.`;
+      info_text += ` Answer time: ${duration}`;
+      if (avg_duration) info_text += ` (avg: ${avg_duration})`;
+      info_text += " ms."
+      if (average_duration_fps) info_text += ` ${average_duration_fps} fps.`;
+      info_text += ` Calculated API method duration: ${message_data?.duration_ms}`;
+      if (avg_duration_calc) info_text += ` (avg:${avg_duration_calc})`;
+      info_text += " ms."
+      if (angle !== undefined) info_text += ` Rotation: ${angle} degree.`;
+      info(info_text);
+    }); //on_message
     // Stop the interval and video reading on close
     socket.addEventListener("close", function () {
       window.clearInterval(intervalId);
