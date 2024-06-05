@@ -17,7 +17,7 @@ handler.setFormatter(formatter)
 handler.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
-from routes import main, plate, face_detection, cam_client
+from routes import main, plate, cam_modules, cam_client
 
 # CORE ...
 
@@ -38,7 +38,7 @@ app.mount(settings.static_url, StaticFiles(directory="static"), name="static")
 
 app.include_router(main.router, prefix=f"/{settings.api_version}")
 app.include_router(plate.router, prefix=f"/{settings.api_version}")
-app.include_router(face_detection.router, prefix=f"/{settings.api_version}")
+app.include_router(cam_modules.router, prefix=f"/{settings.api_version}")
 app.include_router(cam_client.router, prefix=f"/{settings.api_version}")
 
 

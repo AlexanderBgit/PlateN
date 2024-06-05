@@ -23,12 +23,12 @@ class ClientModules(str, Enum):
 CLIENT_MODULES = {
     ClientModules.face_cc.value: {
         "text_header": "Real time face detection (OpenCV Cascade Classifier)",
-        "ws_url": "face_detection",  # route name
+        "ws_url": "cam_modules",  # route name
         "js_module": "cam_face_casc.js",
     },
     ClientModules.face_yn.value: {
         "text_header": "Real time face detection (OpenCV FaceDetectorYN. Model 'yunet_2023mar') (in development now it is just a plug)",
-        "ws_url": "face_detection",  # route name
+        "ws_url": "cam_modules",  # route name
         "js_module": "cam_face_casc.js",
     },
 }
