@@ -12,6 +12,7 @@ from fastapi import WebSocket, WebSocketDisconnect
 from conf.config import settings, BASE_BACKEND
 
 logger = logging.getLogger(f"{settings.app_name}.{__name__}")
+logger.setLevel(logging.DEBUG)
 
 
 class ABSDetectedObject(BaseModel):
@@ -26,6 +27,7 @@ class ABSDetected(BaseModel):
 
     objects: List[ABSDetectedObject]
     queue_id: int | None = None
+    error: str | None = None
 
 
 class AbstractFun:
@@ -101,6 +103,9 @@ class ImageQueue:
             #     await self.save_image(bytes, counter)
             # detection API
             detected: dict = self.img_proc.get()(img, queue_size)
+            # logger.debug(f"{detected=}")
+            if detected.get("error"):
+                logger.error(detected.get("error"))
             # duration
             duration_ms = (time.perf_counter_ns() - start_time) // 1e6
             detected["duration_ms"] = duration_ms
