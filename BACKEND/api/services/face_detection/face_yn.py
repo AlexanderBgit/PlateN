@@ -191,6 +191,8 @@ class Faces(ABSDetected):
     It expects a List of a Tuple of 4 integers
     """
 
+    objects: List[DetectedObject]
+
 
 class FaceYNFun(AbstractFun):
     yn: FaceYN
