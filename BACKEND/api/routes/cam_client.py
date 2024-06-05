@@ -1,5 +1,5 @@
 import logging
-from enum import Enum
+from enum import StrEnum
 
 from fastapi import HTTPException, APIRouter, Query
 from starlette.requests import Request
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/cam_client", tags=["cam_client"])
 logger = logging.getLogger(f"{settings.app_name}.{__name__}")
 
 
-class ClientModules(str, Enum):
+class ClientModules(StrEnum):
     face_cc = "face_cc"
     face_yn = "face_yn"
 
@@ -23,13 +23,13 @@ class ClientModules(str, Enum):
 CLIENT_MODULES = {
     ClientModules.face_cc.value: {
         "text_header": "Real time face detection (OpenCV Cascade Classifier)",
-        "ws_url": "cam_modules",  # route name
-        "js_module": "cam_face_casc.js",
+        "ws_url": "face_cc",  # route name
+        "js_module": "cam_face_cc.js",
     },
     ClientModules.face_yn.value: {
         "text_header": "Real time face detection (OpenCV FaceDetectorYN. Model 'yunet_2023mar') (in development now it is just a plug)",
-        "ws_url": "cam_modules",  # route name
-        "js_module": "cam_face_casc.js",
+        "ws_url": "face_yn",  # route name
+        "js_module": "cam_face_cc.js",
     },
 }
 
