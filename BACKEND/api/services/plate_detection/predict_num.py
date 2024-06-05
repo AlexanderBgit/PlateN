@@ -8,7 +8,11 @@ import numpy as np
 import cv2
 from keras import saving
 
-from services.ds.image_ops import extract_plate, segment_to_contours, fix_dimension
+from services.plate_detection.image_ops import (
+    extract_plate,
+    segment_to_contours,
+    fix_dimension,
+)
 
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 models_path = Path(__file__).resolve().parent.joinpath("models")
