@@ -105,7 +105,7 @@ class ImageQueue:
             detected: dict = self.img_proc.get()(img, queue_size)
             # logger.debug(f"{detected=}")
             if detected.get("error"):
-                logger.error(detected.get("error"))
+                logger.error(f"method detect function: {detected.get('error')}")
             # duration
             duration_ms = (time.perf_counter_ns() - start_time) // 1e6
             detected["duration_ms"] = duration_ms

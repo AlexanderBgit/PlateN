@@ -1,4 +1,6 @@
 import logging
+from enum import StrEnum
+
 from fastapi import APIRouter, WebSocket, HTTPException
 
 from conf.config import settings
@@ -10,9 +12,29 @@ router = APIRouter(prefix="/cam_modules", tags=["cam_modules"])
 
 logger = logging.getLogger(f"{settings.app_name}.{__name__}")
 
+
+class ClientModules(StrEnum):
+    face_cc = "face_cc"
+    face_yn = "face_yn"
+
+
+CLIENT_MODULES = {
+    ClientModules.face_cc.value: {
+        "text_header": "Real time face detection (OpenCV Cascade Classifier)",
+        "ws_url": "face_cc",  # route name
+        "js_module": "cam_face_cc.js",
+    },
+    ClientModules.face_yn.value: {
+        "text_header": "Real time face detection (OpenCV FaceDetectorYN. Model 'yunet_2023mar')",
+        "ws_url": "face_yn",  # route name
+        "js_module": "cam_face_yn.js",
+    },
+}
+
+
 image_queues: dict[str, ImageQueue | None] = {
-    "face_cc": None,
-    "face_yn": None,
+    ClientModules.face_cc: None,
+    ClientModules.face_yn: None,
 }
 
 

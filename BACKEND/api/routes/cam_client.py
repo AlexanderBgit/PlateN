@@ -1,10 +1,10 @@
 import logging
-from enum import StrEnum
 
-from fastapi import HTTPException, APIRouter, Query
+from fastapi import HTTPException, APIRouter
 from starlette.requests import Request
 from conf.config import settings, templates
-from services.utils import relative_url, relative_url_filter
+from routes.cam_modules import ClientModules, CLIENT_MODULES
+from services.utils import relative_url_filter
 
 
 router = APIRouter(prefix="/cam_client", tags=["cam_client"])
@@ -12,26 +12,7 @@ router = APIRouter(prefix="/cam_client", tags=["cam_client"])
 logger = logging.getLogger(f"{settings.app_name}.{__name__}")
 
 
-class ClientModules(StrEnum):
-    face_cc = "face_cc"
-    face_yn = "face_yn"
-
-
 # url = router.url_path_for(route_name, item_id=item_id)
-
-
-CLIENT_MODULES = {
-    ClientModules.face_cc.value: {
-        "text_header": "Real time face detection (OpenCV Cascade Classifier)",
-        "ws_url": "face_cc",  # route name
-        "js_module": "cam_face_cc.js",
-    },
-    ClientModules.face_yn.value: {
-        "text_header": "Real time face detection (OpenCV FaceDetectorYN. Model 'yunet_2023mar')",
-        "ws_url": "face_yn",  # route name
-        "js_module": "cam_face_cc.js",
-    },
-}
 
 
 def get_modules() -> list[dict]:

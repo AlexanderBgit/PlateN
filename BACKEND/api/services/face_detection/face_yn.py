@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from types import NoneType
 from typing import List
 
 import cv2
@@ -230,7 +231,7 @@ class FaceYNFun(AbstractFun):
             img = self.check_image_size(img)
             detected_faces = self.yn.run(img)
             # Decode result
-            if len(detected_faces) > 0:
+            if detected_faces is not None and len(detected_faces) > 0:
                 # logger.debug(f"{detected_faces=}")
                 objects: List[DetectedObject] = []
                 for face in detected_faces:
@@ -246,7 +247,7 @@ class FaceYNFun(AbstractFun):
                         eye_right=eye_right,
                     )
                     objects.append(detected_object)
-                    logger.debug(f"{detected_object=}")
+                    # logger.debug(f"{detected_object=}")
 
                 objects_output = Faces(objects=objects, queue_id=queue_id)
             else:
