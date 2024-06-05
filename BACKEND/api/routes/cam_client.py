@@ -27,7 +27,7 @@ CLIENT_MODULES = {
         "js_module": "cam_face_cc.js",
     },
     ClientModules.face_yn.value: {
-        "text_header": "Real time face detection (OpenCV FaceDetectorYN. Model 'yunet_2023mar') (in development now it is just a plug)",
+        "text_header": "Real time face detection (OpenCV FaceDetectorYN. Model 'yunet_2023mar')",
         "ws_url": "face_yn",  # route name
         "js_module": "cam_face_cc.js",
     },
