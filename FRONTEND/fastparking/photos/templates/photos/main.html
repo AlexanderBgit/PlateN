@@ -9,26 +9,28 @@
             </div>
         </div> -->
     <div class="col-md-4">
-      <div class="card bg-primary">
+      <div class="card" style="background-color: #fbf6f1;}">
         <div class="card-body mx-auto text-center">
-          <a href="{% url 'photos:upload' %}?type=0" class="btn btn-primary btn-lg btn-block">
+          <a href="{% url 'photos:upload' %}?type=0" class="btn btn-outline-primary btn-lg btn-block p-3">
             <img style="width: 100%; max-width: 270px;"
               src="{% static 'photos/button_in_01_270x270.gif' %}"
               title="Upload IN photo of car"
               alt="Upload IN photo of car"
+              class="rounded"
           /></a>
           <p><i class="bi bi-cloud-arrow-up fs-4"></i> Upload IN photo of car</p>
         </div>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card bg-success">
+      <div class="card" style="background-color: #fbf6f1;}">
         <div class="card-body mx-auto text-center">
-          <a href="{% url 'photos:upload' %}?type=1" class="btn btn-secondary btn-lg btn-block"
+          <a href="{% url 'photos:upload' %}?type=1" class="btn btn-outline-secondary btn-lg btn-block p-3"
             ><img style="width: 100%; max-width: 270px;"
               src="{% static 'photos/button_out_01_270x270.gif' %}"
               title="Upload OUT photo of car"
               alt="Upload OUT photo of car"
+              class="rounded"
           /></a>
           <p><i class="bi bi-cloud-arrow-up fs-4"></i> Upload OUT photo of car</p>
         </div>
@@ -37,15 +39,28 @@
   </div>
   <div class="row mt-4">
     <div class="col-md-4">
-      <div class="card bg-info">
+      <div class="card"  style="background-color: #fbf6f1;}">
         <div class="card-body mx-auto text-center">
-          <a href="{% url 'photos:scan_qr' %}" class="btn btn-info btn-lg btn-block"
+          <a href="{% url 'photos:scan_qr' %}" class="btn btn-outline-primary btn-lg btn-block"
             ><img style="width: 100%; max-width: 270px;"
               src="{% static 'photos/button_qr_scan.png'%}"
               title="Scan QR code"
               alt="Scan QR code"
           /></a>
           <p>Scan QR code</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card" style="background-color: #fbf6f1;}">
+        <div class="card-body mx-auto text-center">
+          <a href="/api/v1/cam_client/list" target="_blank" class="btn btn-outline-primary btn-lg btn-block"
+            ><img style="width: 100%; max-width: 270px;"
+              src="{% static 'photos/button_cam_01.png'%}"
+              title="Web Cam (dev)"
+              alt="Web Cam (dev)"
+          /></a>
+          <p>Web Cam (dev)</p>
         </div>
       </div>
     </div>
