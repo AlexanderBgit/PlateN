@@ -19,4 +19,5 @@ echo $(git branch --show-current)${PURPOSE}-$(git rev-parse --short HEAD) > ../B
 echo "STARTING ${BRANCH}${PURPOSE}"
 docker-compose  --file docker-compose-project.yml --env-file .env up -d
 popd
+sleep 5
 ./rsync_static.sh

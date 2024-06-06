@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from jinja2 import pass_context
 
 from conf.config import settings, templates
-from services.utils import relative_url, relative_url_filter
+from services.utils import relative_url, relative_url_filter, url_add_ver
 
 logger = logging.getLogger(f"{settings.app_name}")
 logger.setLevel(logging.DEBUG)
@@ -17,7 +17,7 @@ handler.setFormatter(formatter)
 handler.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
-from routes import main, plate, face_detection, cam_client
+from routes import main, plate, cam_modules, cam_client
 
 # CORE ...
 
@@ -38,7 +38,7 @@ app.mount(settings.static_url, StaticFiles(directory="static"), name="static")
 
 app.include_router(main.router, prefix=f"/{settings.api_version}")
 app.include_router(plate.router, prefix=f"/{settings.api_version}")
-app.include_router(face_detection.router, prefix=f"/{settings.api_version}")
+app.include_router(cam_modules.router, prefix=f"/{settings.api_version}")
 app.include_router(cam_client.router, prefix=f"/{settings.api_version}")
 
 
@@ -59,6 +59,7 @@ def url_x_for(
 
 templates.env.globals["relative_url"] = relative_url
 templates.env.filters["relative_url_filter"] = relative_url_filter
+templates.env.filters["url_add_ver"] = url_add_ver
 templates.env.globals["url_for"] = url_x_for
 
 

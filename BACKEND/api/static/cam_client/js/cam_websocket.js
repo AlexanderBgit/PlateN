@@ -1,6 +1,11 @@
 const IMAGE_INTERVAL_MS = 250;
-const SNAP_IMAGE_SCALE = 4;
+const SNAP_IMAGE_SCALE = 4; // down scale for sending image to api server
+const MAX_CAM_SIZE = {
+  width: 640,
+  height: 480,
+};
 const ADAPTIVE_FACTOR = 1.15;
+
 let isStreaming = false; // Flag to track streaming state
 
 function getWebSocketUrl(path = "") {
@@ -45,41 +50,41 @@ function info_toggle() {
   info_div.innerText = "";
 }
 
-function resize_canvas(video, canvas){
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-//    canvas.style.position = 'absolute';
-//    canvas.style.top = '0';
-//    canvas.style.left = '0';
-//    canvas.width = video.videoHeight;
-//    canvas.height = video.videoWidth;
-//    canvas.style.left = video.style.left;
-//    canvas.style.top = video.style.top;
-
+function resize_canvas(video, canvas) {
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  //    canvas.style.position = 'absolute';
+  //    canvas.style.top = '0';
+  //    canvas.style.left = '0';
+  //    canvas.width = video.videoHeight;
+  //    canvas.height = video.videoWidth;
+  //    canvas.style.left = video.style.left;
+  //    canvas.style.top = video.style.top;
 }
 
 function isFirefoxMobile() {
-    const url = new URL(window.location.href);
-    const detect_browser = url.searchParams.get('dct_br');
-    if (detect_browser==0) return false;
-    const userAgent = navigator.userAgent?.toLowerCase();
-    return userAgent?.includes('firefox') && userAgent?.includes('mobile');
+  const url = new URL(window.location.href);
+  const detect_browser = url.searchParams.get("dct_br");
+  if (detect_browser == 0) return false;
+  const userAgent = navigator.userAgent?.toLowerCase();
+  return userAgent?.includes("firefox") && userAgent?.includes("mobile");
 }
 
 function handleOrientationChange(video, canvas) {
   let angle = screen.orientation.angle || window.orientation;
-  if (angle !== undefined ){
+  if (angle !== undefined) {
     const skip_rotate = !isFirefoxMobile();
     if (skip_rotate) {
-     angle = 0;
+      angle = 0;
     }
     video.setAttribute("skip_rotate", skip_rotate);
     video.style.transform = `rotate(${angle}deg)`;
   }
   resize_canvas(video, canvas);
-  setTimeout(() =>{resize_canvas(video, canvas)}, 600);
+  setTimeout(() => {
+    resize_canvas(video, canvas);
+  }, 600);
 }
-
 
 const startFaceDetection = (video, canvas, deviceId) => {
   if (!WS_URL) {
@@ -122,8 +127,8 @@ const startFaceDetection = (video, canvas, deviceId) => {
           audio: false,
           video: {
             deviceId,
-            width: { max: 640 },
-            height: { max: 480 },
+            width: { max: MAX_CAM_SIZE.width },
+            height: { max: MAX_CAM_SIZE.height },
           },
         })
         .then(function (stream) {
@@ -162,19 +167,39 @@ const startFaceDetection = (video, canvas, deviceId) => {
 
               const angle = screen.orientation.angle || window.orientation;
               if (angle === 90 || angle === 270) {
-                  if (video.getAttribute("skip_rotate") === "true") {
-                    canvas_video_snap.width = scaledWidth;
-                    canvas_video_snap.height = scaledHeight;
-                    ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, canvas_video_snap.width, canvas_video_snap.height);
-                  }else{
-                    canvas_video_snap.height = scaledWidth;
-                    canvas_video_snap.width = scaledHeight;
-                    const radians = ((angle) * Math.PI) / 180;
-                    ctx.translate(scaledWidth/2, scaledHeight/2);
-                    ctx.rotate(radians);
-                    ctx.drawImage(video, 0,0, video.videoWidth, video.videoHeight,  -scaledWidth/2, - scaledHeight/2,scaledWidth, scaledHeight);
-                  }
-              }else{
+                if (video.getAttribute("skip_rotate") === "true") {
+                  canvas_video_snap.width = scaledWidth;
+                  canvas_video_snap.height = scaledHeight;
+                  ctx.drawImage(
+                    video,
+                    0,
+                    0,
+                    video.videoWidth,
+                    video.videoHeight,
+                    0,
+                    0,
+                    canvas_video_snap.width,
+                    canvas_video_snap.height
+                  );
+                } else {
+                  canvas_video_snap.height = scaledWidth;
+                  canvas_video_snap.width = scaledHeight;
+                  const radians = (angle * Math.PI) / 180;
+                  ctx.translate(scaledWidth / 2, scaledHeight / 2);
+                  ctx.rotate(radians);
+                  ctx.drawImage(
+                    video,
+                    0,
+                    0,
+                    video.videoWidth,
+                    video.videoHeight,
+                    -scaledWidth / 2,
+                    -scaledHeight / 2,
+                    scaledWidth,
+                    scaledHeight
+                  );
+                }
+              } else {
                 canvas_video_snap.width = scaledWidth;
                 canvas_video_snap.height = scaledHeight;
                 ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, scaledWidth, scaledHeight);
@@ -215,11 +240,20 @@ const startFaceDetection = (video, canvas, deviceId) => {
       if (draw_detected) draw_detected(video, canvas, message_data, SNAP_IMAGE_SCALE);
       max_queue = Math.max(message_data.queue_id, max_queue);
       const angle = screen.orientation.angle || window.orientation;
-//      const sr = video.getAttribute("skip_rotate");
-      info(
-        `Queue: ${message_data?.queue_id}(max:${max_queue}). Sending adaptive interval: ${adaptive_interval_ms} ms, Answer time: ${duration} (avr: ${avg_duration}) ms. ${average_duration_fps} fps. Calculated API method duration: ${message_data?.duration_ms} (avg:${avg_duration_calc}) ms. A:${angle}.`
-      );
-    });
+      //      const sr = video.getAttribute("skip_rotate");
+      let info_text = `Queue: ${message_data?.queue_id}`;
+      if (max_queue) info_text += ` (max:${max_queue})`;
+      info_text += `. Sending adaptive interval: ${adaptive_interval_ms} ms.`;
+      info_text += ` Answer time: ${duration}`;
+      if (avg_duration) info_text += ` (avg: ${avg_duration})`;
+      info_text += " ms.";
+      if (average_duration_fps) info_text += ` ${average_duration_fps} fps.`;
+      info_text += ` Calculated API method duration: ${message_data?.duration_ms}`;
+      if (avg_duration_calc) info_text += ` (avg:${avg_duration_calc})`;
+      info_text += " ms.";
+      if (angle !== undefined) info_text += ` Rotation: ${angle} degree.`;
+      info(info_text);
+    }); //on_message
     // Stop the interval and video reading on close
     socket.addEventListener("close", function () {
       window.clearInterval(intervalId);
@@ -317,13 +351,12 @@ const cam_detect = (cameraSelect) => {
 
 // Add event listeners for resize and orientation change
 window.addEventListener("resize", (event) => {
-    const video = document.getElementById('video')
-    const canvas = document.getElementById("canvas");
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
 
-//    video.pause();
-    handleOrientationChange(video,canvas);
+  //    video.pause();
+  handleOrientationChange(video, canvas);
 });
-
 
 // DOMContentLoaded
 window.addEventListener("DOMContentLoaded", (event) => {
@@ -382,10 +415,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
     }
   });
 
-  video.addEventListener('loadedmetadata', function() {
-//    console.log("loadedmetadata");
+  video.addEventListener("loadedmetadata", function () {
+    //    console.log("loadedmetadata");
     resize_canvas(video, canvas);
-});
-
+  });
 });
 // DOMContentLoaded

@@ -9,7 +9,7 @@ import pytz
 # from django.utils import timezone
 
 if settings.USE_DS_NUMBER_DETECTION:
-    from services.ds.predict_num import get_num_auto_png_io
+    from services.plate_detection.predict_num import get_num_auto_png_io
 
 from finance.repository import calculate_total_payments
 from parking.repository import number_present_on_parking

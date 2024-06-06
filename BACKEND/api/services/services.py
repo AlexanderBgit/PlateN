@@ -2,7 +2,10 @@ import base64
 from conf.config import settings
 
 if settings.api_use_plate_ds:
-    from services.ds.predict_num import get_num_auto_png_io, model_load_status
+    from services.plate_detection.predict_num import (
+        get_num_auto_png_io,
+        model_load_status,
+    )
 else:
     model_load_status = True
 

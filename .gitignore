@@ -170,5 +170,4 @@ LIBS/poppler/*
 /img/test/*.pdf
 /BACKEND/api/services/face_detection/outputs/
 deploy/key.pem
-
-
+.DS_Store

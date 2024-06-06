@@ -78,10 +78,10 @@
       const WS_URL = "{{ ws_url }}";
     </script>
     {% if js_module %}
-    <script src="{{relative_url(request, 'static', path='cam_client/js/' ~ js_module )}}"></script>
+    <script src="{{relative_url(request, 'static', path='cam_client/js/' ~ js_module ) | url_add_ver}}"></script>
     {% else %}
-    <script src="{{relative_url(request, 'static', path='cam_client/js/cam_face_casc.js') }}"></script>
+    <script src="{{relative_url(request, 'static', path='cam_client/js/cam_face_casc.js') | url_add_ver }}"></script>
     {% endif %}
-    <script src="{{relative_url(request, 'static', path='cam_client/js/cam_websocket.js') }}"></script>
+    <script src="{{relative_url(request, 'static', path='cam_client/js/cam_websocket.js') | url_add_ver}}"></script>
   </body>
 </html>

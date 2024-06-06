@@ -10,6 +10,7 @@
   "settings": {
     "terminal.integrated.env.windows": {
       "PYTHONPATH": "${workspaceFolder};${workspaceFolder}${pathSeparator}fastparking;${workspaceFolder}${pathSeparator}src;${workspaceFolder}${pathSeparator}tests;${workspaceFolder}${pathSeparator}${workspaceFolderBasename};${fileDirname}"
-    }
+    },
+    "prettier.printWidth": 120
   }
 }
