@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from jinja2 import pass_context
 
 from conf.config import settings, templates
-from services.utils import relative_url, relative_url_filter
+from services.utils import relative_url, relative_url_filter, url_add_ver
 
 logger = logging.getLogger(f"{settings.app_name}")
 logger.setLevel(logging.DEBUG)
@@ -59,6 +59,7 @@ def url_x_for(
 
 templates.env.globals["relative_url"] = relative_url
 templates.env.filters["relative_url_filter"] = relative_url_filter
+templates.env.filters["url_add_ver"] = url_add_ver
 templates.env.globals["url_for"] = url_x_for
 
 

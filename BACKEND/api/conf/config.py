@@ -37,8 +37,11 @@ def get_version():
         ver_list = [proj_version]
         if git_version:
             ver_list.append(git_version)
+            g_hash = git_version.split("-")[-1]
+        else:
+            g_hash = None
         ver = "-".join(ver_list)
-        context = {"name": proj_name, "version": ver}
+        context = {"name": proj_name, "version": ver, "hash": g_hash}
     return context
 
 
@@ -58,10 +61,6 @@ class Settings(BaseSettings):
     @property
     def static_url(self) -> str:
         url_list = [""]
-        # if hasattr(self, "root_path") and self.root_path:
-        #     url_list.append(self.root_path)
-        # else:
-        #     url_list.append("")
         if hasattr(self, "api_version") and self.api_version:
             url_list.append(self.api_version)
         url_list.append("static/")
