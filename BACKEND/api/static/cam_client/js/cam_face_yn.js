@@ -87,6 +87,12 @@ function draw_box(ctx, scaledBox, titleText) {
 
 
 const draw_detected = (video, canvas, detected, scale = 1.0) => {
+  if (detected.error) {
+    return {error: detected.error};
+  };
+  if (detected.objects === undefined ) {
+  return
+  };
   const ctx = canvas.getContext("2d");
   ctx.width = video.videoWidth;
   ctx.height = video.videoHeight;

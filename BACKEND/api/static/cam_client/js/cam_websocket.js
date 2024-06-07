@@ -10,7 +10,28 @@ const MAX_CAM_SIZE = {
 };
 const ADAPTIVE_FACTOR = 1.15;
 
+const COMMAND_SIZE = 4;
+
 let isStreaming = false; // Flag to track streaming state
+
+
+function packMessage(imageData, commandId=0) {
+  const totalSize = COMMAND_SIZE + imageData.size;
+  if (!COMMAND_SIZE) return imageData;
+  // Create the buffer and view
+  const buffer = new ArrayBuffer(totalSize);
+  const dataView = new DataView(buffer);
+
+  // Write command ID (assuming 32-bit integer)
+  dataView.setUint32(0, commandId, true); // Little-endian
+
+  // Copy image data into the buffer
+  const uint8Array = new Uint8Array(buffer, COMMAND_SIZE, imageData.length);
+  uint8Array.set(imageData);
+
+  return buffer;
+}
+
 
 function getWebSocketUrl(path = "") {
   const currentUrl = new URL(window.location.href);
@@ -210,7 +231,15 @@ const startFaceDetection = (video, canvas, deviceId) => {
               }
               // Convert it to JPEG and send it to the WebSocket
               interval_measure = performance.now();
-              canvas_video_snap.toBlob((blob) => socket.send(blob), "image/jpeg");
+              let commandId = 1;
+              canvas_video_snap.toBlob((blob) => {
+                if (blob) {
+                  // Send the image data and command ID
+                  return socket.send(packMessage(blob, commandId));
+                } else {
+                  console.error("Failed to capture image data!");
+                }
+              }, "image/jpeg");
               sent_frames += 1;
             }; // sendImage
             intervalId = setTimeout(sendImage, IMAGE_INTERVAL_MS);
@@ -241,7 +270,10 @@ const startFaceDetection = (video, canvas, deviceId) => {
           average_duration_calc = 0;
         }
       }
-      if (draw_detected) draw_detected(video, canvas, message_data, SNAP_IMAGE_SCALE);
+      if (draw_detected) {
+        result = draw_detected(video, canvas, message_data, SNAP_IMAGE_SCALE);
+        if (result && result.error) debug(result.error);
+      }
       max_queue = Math.max(message_data.queue_id, max_queue);
       const angle = screen.orientation.angle || window.orientation;
       //      const sr = video.getAttribute("skip_rotate");
