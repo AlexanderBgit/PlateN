@@ -25,14 +25,21 @@ class QrWeChat:
     ):
         # INITIALIZATION.
         # Instantiate QR Code detector object.
-        logger.debug(str(model_path.joinpath("detect.prototxt")))
+        detector_prototxt_path = model_path.joinpath("detect.prototxt")
+        detector_caffe_model_path = model_path.joinpath("detect.caffemodel")
+        super_resolution_prototxt_path = model_path.joinpath("sr.prototxt")
+        super_resolution_caffe_model_path = model_path.joinpath("sr.caffemodel")
         try:
-            self.detector = (cv2.wechat_qrcode.WeChatQRCode(
-                detector_prototxt_path = str(model_path.joinpath("detect.prototxt")),
-                detector_caffe_model_path = str(model_path.joinpath("detect.caffemodel")),
-                super_resolution_prototxt_path = str(model_path.joinpath("sr.prototxt")),
-                super_resolution_caffe_model_path = str(model_path.joinpath("sr.caffemodel")),
-            ))
+            if not detector_prototxt_path.exists():
+                raise AssertionError(f"models path not found {detector_prototxt_path}")
+            self.detector = cv2.wechat_qrcode.WeChatQRCode(
+                detector_prototxt_path=str(detector_prototxt_path),
+                detector_caffe_model_path=str(detector_caffe_model_path),
+                super_resolution_prototxt_path=str(super_resolution_prototxt_path),
+                super_resolution_caffe_model_path=str(
+                    super_resolution_caffe_model_path
+                ),
+            )
         except Exception as err:
             logger.error(err)
 
@@ -48,22 +55,13 @@ class QrWeChat:
         return image
 
     def run(self, frame):
-        t1 = time.time()
         # Detect and decode.
         res, points = self.detector.detectAndDecode(frame)
-        t2 = time.time()
-        # Detected outputs.
-        if len(res) > 0:
-            print("Time Taken : ", round(1000 * (t2 - t1), 1), " ms")
-            print("Output : ", res[0])
-            print("Bounding Box : ", points)
-        else:
-            print("QRCode not detected")
-        return points
+        return points, res
 
 
 class DetectedObject(ABSDetectedObject):
-    ...
+    text: str
 
 
 class Faces(ABSDetected):
@@ -77,12 +75,12 @@ class Faces(ABSDetected):
 
 class QrWeChatFun(AbstractFun):
     qr_wechat: QrWeChat
-    max_size = (320 // 2, 320 // 2)  # for DNN model size
+    max_size = (320, 320)  # for DNN model size
     img_scale = (1.0, 1.0)
 
     def __init__(self):
         BASE_PATH = Path(__file__).resolve().parent
-        model_path = BASE_PATH.joinpath("models")
+        model_path = BASE_PATH.joinpath("models", "wechat_cv")
         input_size = self.max_size
         self.qr_wechat = QrWeChat(
             model_path=model_path,
@@ -115,17 +113,21 @@ class QrWeChatFun(AbstractFun):
         img is BGR
         """
         try:
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img = cv2.cvtColor(self.check_image_size(img), cv2.COLOR_BGR2GRAY)
             img = self.check_image_size(img)
-            detected_faces = self.qr_wechat.run(img)
+            detected_faces, detected_texts = self.qr_wechat.run(img)
             # Decode result
             if detected_faces is not None and len(detected_faces) > 0:
                 # logger.debug(f"{detected_faces=}")
                 objects: List[DetectedObject] = []
-                for face in detected_faces:
-                    boundary = face[:4].astype(int)
+                for i, face in enumerate(detected_faces):
+                    boundary_lines = face.astype(int)
+                    x, y = boundary_lines[0]
+                    width = boundary_lines[2][0] - x
+                    height = boundary_lines[2][1] - y
+                    boundary = (x, y, width, height)
                     detected_object = DetectedObject(
-                        boundary=boundary,
+                        boundary=boundary, text=detected_texts[i]
                     )
                     objects.append(detected_object)
                     # logger.debug(f"{detected_object=}")
@@ -140,6 +142,4 @@ class QrWeChatFun(AbstractFun):
     def get(self):
         return self.detect
 
-    def load(self):
-
-        ...
+    def load(self): ...
