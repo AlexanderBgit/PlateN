@@ -8,6 +8,7 @@ import cv2
 import numpy as np
 from pydantic import BaseModel
 from fastapi import WebSocket, WebSocketDisconnect
+from starlette.websockets import WebSocketState
 
 from conf.config import settings, BASE_BACKEND
 
@@ -126,4 +127,10 @@ class ImageQueue:
                 await self.receive(websocket, queue)
         except WebSocketDisconnect:
             detect_task.cancel()
-            await websocket.close()
+        finally:
+            try:
+                if not websocket.client_state == WebSocketState.DISCONNECTED:
+                    await websocket.close()
+            except Exception as err:
+                ...
+            detect_task.cancel()
