@@ -367,6 +367,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
   cam_detect(cameraSelect);
   const button_start = document.getElementById("button-start");
   const button_stop = document.getElementById("button-stop");
+  const button_snap = document.getElementById("button-snap");
   if (button_stop) {
     button_stop.addEventListener("click", (event) => {
       event.preventDefault();
@@ -386,6 +387,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
       }
       if (button_stop) {
         button_stop.classList.toggle("d-none");
+      }
+      if (button_snap) {
+        button_snap.classList.toggle("d-none");
       }
     });
   }
@@ -408,6 +412,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
         }
         if (button_stop) {
           button_stop.classList.toggle("d-none");
+        }
+        if (button_snap) {
+          button_snap.classList.toggle("d-none");
         }
       }
     } else {
