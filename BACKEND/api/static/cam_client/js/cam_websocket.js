@@ -8,7 +8,6 @@ const MAX_CAM_SIZE = {
   width: cam_size_array ? cam_size_array[0] : 640,
   height: cam_size_array ? cam_size_array[1] : 480,
 };
-console.log(MAX_CAM_SIZE)
 const ADAPTIVE_FACTOR = 1.15;
 
 let isStreaming = false; // Flag to track streaming state
