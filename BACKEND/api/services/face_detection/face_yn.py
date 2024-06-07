@@ -22,13 +22,16 @@ class FaceYN:
         model_path,
         ninja_mask_path,
         input_size=(320, 320),
-        conf_threshold=0.8,
+        conf_threshold=0.5,
         nms_threshold=0.3,
         top_k=5000,
     ):
-        self.face_detector = cv2.FaceDetectorYN.create(
-            model_path, "", input_size, conf_threshold, nms_threshold, top_k
-        )
+        try:
+            self.face_detector = cv2.FaceDetectorYN.create(
+                model_path, "", input_size, conf_threshold, nms_threshold, top_k
+            )
+        except Exception as err:
+            logger.error(err)
         # self.ninja_mask = cv2.imread(ninja_mask_path, cv2.IMREAD_UNCHANGED)
         # self.ninja_mask = self.scale_image(self.ninja_mask)
         self.ninja_mask = None

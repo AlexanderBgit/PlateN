@@ -29,7 +29,10 @@ class FaceCascadeClassierFun(AbstractFun):
     img_scale = (1.0, 1.0)
 
     def __init__(self):
-        self.cascade_classifier = cv2.CascadeClassifier()
+        try:
+            self.cascade_classifier = cv2.CascadeClassifier()
+        except Exception as err:
+            logger.error(err)
 
     def check_image_size(self, img: cv2.Mat):
         h, w = img.shape[:2]
@@ -50,16 +53,19 @@ class FaceCascadeClassierFun(AbstractFun):
         return x, y, width, height
 
     def detect(self, img, queue_id: int = None) -> dict:
-        gray = cv2.cvtColor(self.check_image_size(img), cv2.COLOR_RGB2GRAY)
-        detected_faces = self.cascade_classifier.detectMultiScale(gray)
-        # Decode result
-        if len(detected_faces) > 0:
-            objects: List[DetectedObject] = [
-                DetectedObject(boundary=self.correction_boundary(obj)) for obj in detected_faces.tolist()  # type: ignore
-            ]
-            objects_output = Faces(objects=objects, queue_id=queue_id)
-        else:
-            objects_output = Faces(objects=[], queue_id=queue_id)
+        try:
+            gray = cv2.cvtColor(self.check_image_size(img), cv2.COLOR_RGB2GRAY)
+            detected_faces = self.cascade_classifier.detectMultiScale(gray)
+            # Decode result
+            if len(detected_faces) > 0:
+                objects: List[DetectedObject] = [
+                    DetectedObject(boundary=self.correction_boundary(obj)) for obj in detected_faces.tolist()  # type: ignore
+                ]
+                objects_output = Faces(objects=objects, queue_id=queue_id)
+            else:
+                objects_output = Faces(objects=[], queue_id=queue_id)
+        except Exception as err:
+            objects_output = Faces(objects=[], queue_id=queue_id, error=str(err))
         return objects_output.dict()
 
     def get(self):

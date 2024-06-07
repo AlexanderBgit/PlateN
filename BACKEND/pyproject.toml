@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastparking-api"
-version = "1.6.5"
+version = "1.6.7"
 description = "GoIT DataScience Team Project - Fast Parking API module"
 authors = ["neuron_curva_bobr <info@neuron.curva.bobr.app>"]
 license = "MIT"
@@ -14,8 +14,9 @@ uvicorn = "^0.29.0"
 python-dotenv = "^1.0.1"
 python-multipart = "^0.0.9"
 numpy = "^1.26.4"
-opencv-python-headless = {version = "^4.9.0.80", platform = "linux"}
-opencv-python = {version = "^4.9.0.80", platform = "win32 || darwin"}
+opencv-python-headless = {version = "^4.10.0.82", platform = "linux"}
+opencv-python = {version = "^4.10.0.82", platform = "win32 || darwin"}
+opencv-contrib-python-headless = "^4.10.0.82"
 matplotlib = "^3.8.4"
 tensorflow-io-gcs-filesystem = [
     { version = "^0.31", markers = "sys_platform == 'win32'" },
