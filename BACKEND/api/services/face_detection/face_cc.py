@@ -29,7 +29,10 @@ class FaceCascadeClassierFun(AbstractFun):
     img_scale = (1.0, 1.0)
 
     def __init__(self):
-        self.cascade_classifier = cv2.CascadeClassifier()
+        try:
+            self.cascade_classifier = cv2.CascadeClassifier()
+        except Exception as err:
+            logger.error(err)
 
     def check_image_size(self, img: cv2.Mat):
         h, w = img.shape[:2]
