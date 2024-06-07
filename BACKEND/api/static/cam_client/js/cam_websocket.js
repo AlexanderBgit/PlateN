@@ -1,9 +1,14 @@
 const IMAGE_INTERVAL_MS = 250;
-const SNAP_IMAGE_SCALE = 4; // down scale for sending image to api server
+const SNAP_IMAGE_SCALE = CAM_DOWNSCALE ? CAM_DOWNSCALE : 4; // down scale for sending image to api server
+let cam_size_array=undefined;
+if (CAM_SIZE) {
+  cam_size_array=JSON.parse(CAM_SIZE);
+}
 const MAX_CAM_SIZE = {
-  width: 640,
-  height: 480,
+  width: cam_size_array ? cam_size_array[0] : 640,
+  height: cam_size_array ? cam_size_array[1] : 480,
 };
+console.log(MAX_CAM_SIZE)
 const ADAPTIVE_FACTOR = 1.15;
 
 let isStreaming = false; // Flag to track streaming state

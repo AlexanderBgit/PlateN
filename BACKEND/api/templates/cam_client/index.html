@@ -77,6 +77,16 @@
     </div>
     <script>
       const WS_URL = "{{ ws_url }}";
+      {% if  cam_size %}
+      const CAM_SIZE = "{{ cam_size }}";
+      {% else %}
+      const CAM_SIZE = undefined
+      {% endif %}
+      {% if cam_downscale %}
+      const CAM_DOWNSCALE = "{{ cam_downscale }}";
+      {% else %}
+      const CAM_DOWNSCALE = undefined
+      {% endif %}
     </script>
     {% if js_module %}
     <script src="{{relative_url(request, 'static', path='cam_client/js/' ~ js_module ) | url_add_ver}}"></script>
