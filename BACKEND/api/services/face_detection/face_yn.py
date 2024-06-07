@@ -22,7 +22,7 @@ class FaceYN:
         model_path,
         ninja_mask_path,
         input_size=(320, 320),
-        conf_threshold=0.4,
+        conf_threshold=0.0,
         nms_threshold=0.3,
         top_k=5000,
     ):
