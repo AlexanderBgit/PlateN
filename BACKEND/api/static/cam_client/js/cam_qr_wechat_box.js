@@ -41,8 +41,9 @@ function draw_detected(video, canvas, detected, scale = 1.0){
   const ctx = canvas.getContext("2d");
   ctx.width = video.videoWidth;
   ctx.height = video.videoHeight;
-  ctx.beginPath();
   ctx.clearRect(0, 0, ctx.width, ctx.height);
+  if (detected.objects === undefined) return;
+  ctx.beginPath();
   for (obj of detected.objects) {
     const [boxX, boxY, boxWidth, boxHeight] = obj.boundary;
     // Efficient scaling using destructuring and spread operator

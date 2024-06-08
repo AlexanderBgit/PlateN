@@ -13,15 +13,22 @@ function draw_lines(ctx, points, titleText) {
 
   if (!titleText) return; //skip if title not present
 
+  // const scaledBox = {
+  //   x: Math.min(points[3].x, points[2].x, points[1].x, points[0].x),
+  //   y: Math.min(points[3].y, points[2].y, points[1].y, points[0].y),
+  //   width:
+  //     Math.max(points[3].x, points[2].x, points[1].x, points[0].x) -
+  //     Math.min(points[3].x, points[2].x, points[1].x, points[0].x),
+  //   height:
+  //     Math.max(points[3].y, points[2].y, points[1].y, points[0].y) -
+  //     Math.min(points[3].y, points[2].y, points[1].y, points[0].y),
+  // };
+
   const scaledBox = {
-    x: Math.min(points[3].x, points[2].x, points[1].x, points[0].x),
-    y: Math.min(points[3].y, points[2].y, points[1].y, points[0].y),
-    width:
-      Math.max(points[3].x, points[2].x, points[1].x, points[0].x) -
-      Math.min(points[3].x, points[2].x, points[1].x, points[0].x),
-    height:
-      Math.max(points[3].y, points[2].y, points[1].y, points[0].y) -
-      Math.min(points[3].y, points[2].y, points[1].y, points[0].y),
+    x: Math.min(...points.map((point) => point.x)),
+    y: Math.min(...points.map((point) => point.y)),
+    width: Math.max(...points.map((point) => point.x)) - Math.min(...points.map((point) => point.x)),
+    height: Math.max(...points.map((point) => point.y)) - Math.min(...points.map((point) => point.y)),
   };
 
   // Title text properties
@@ -60,7 +67,6 @@ function createPoints(boundary, scale = 1.0) {
 }
 
 function draw_detected(video, canvas, detected, scale = 1.0) {
-  console.log(detected);
   const ctx = canvas.getContext("2d");
   ctx.width = video.videoWidth;
   ctx.height = video.videoHeight;
