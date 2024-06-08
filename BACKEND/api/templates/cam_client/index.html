@@ -29,7 +29,7 @@
     />
     <link
       rel="icon"
-      type="image/png"
+      type="image/png" 
       sizes="16x16"
       href="{{relative_url(request, 'static', path='/favicon-16x16.png') }} "
     />
@@ -68,6 +68,7 @@
           <canvas id="canvas" class="position-absolute top-0 start-0"></canvas>
         </div>
       </div>
+      <div id="controls" class="d-flex flex-row align-items-center gap-3"></div>
       <div id="info" class="mt-2 alert alert-info d-none"></div>
       <footer class="footer mt-auto py-3 bg-light">
         <div class="container text-center">
@@ -77,16 +78,8 @@
     </div>
     <script>
       const WS_URL = "{{ ws_url }}";
-      {% if  cam_size %}
-      const CAM_SIZE = "{{ cam_size }}";
-      {% else %}
-      const CAM_SIZE = undefined
-      {% endif %}
-      {% if cam_downscale %}
-      const CAM_DOWNSCALE = "{{ cam_downscale }}";
-      {% else %}
-      const CAM_DOWNSCALE = undefined
-      {% endif %}
+      const CAM_SIZE = {% if cam_size %}"{{ cam_size }}"{% else %}undefined{% endif %};
+      const CAM_DOWNSCALE = {% if cam_downscale %}"{{ cam_downscale }}"{% else %}undefined{% endif %};
     </script>
     {% if js_module %}
     <script src="{{relative_url(request, 'static', path='cam_client/js/' ~ js_module ) | url_add_ver}}"></script>
