@@ -2,7 +2,7 @@ import logging
 import time
 from pathlib import Path
 from types import NoneType
-from typing import List
+from typing import List, Tuple
 
 import cv2
 
@@ -61,13 +61,14 @@ class QrWeChat:
 
 
 class DetectedObject(ABSDetectedObject):
+    boundary: List[Tuple[int, int]]
     text: str
 
 
-class Faces(ABSDetected):
+class QrData(ABSDetected):
     """This is a pydantic model to define the structure of the streaming data
     that we will be sending the the cv2 Classifier to make predictions
-    It expects a List of a Tuple of 4 integers
+    It expects a List of a Tuple of 8 integers
     """
 
     objects: List[DetectedObject]
@@ -122,21 +123,21 @@ class QrWeChatFun(AbstractFun):
                 objects: List[DetectedObject] = []
                 for i, face in enumerate(detected_faces):
                     boundary_lines = face.astype(int)
-                    x, y = boundary_lines[0]
-                    width = boundary_lines[2][0] - x
-                    height = boundary_lines[2][1] - y
-                    boundary = (x, y, width, height)
+                    # x, y = boundary_lines[0]
+                    # width = boundary_lines[2][0] - x
+                    # height = boundary_lines[2][1] - y
+                    # # boundary = (x, y, width, height)
                     detected_object = DetectedObject(
-                        boundary=boundary, text=detected_texts[i]
+                        boundary=boundary_lines, text=detected_texts[i]
                     )
                     objects.append(detected_object)
                     # logger.debug(f"{detected_object=}")
 
-                objects_output = Faces(objects=objects, queue_id=queue_id)
+                objects_output = QrData(objects=objects, queue_id=queue_id)
             else:
-                objects_output = Faces(objects=[], queue_id=queue_id)
+                objects_output = QrData(objects=[], queue_id=queue_id)
         except Exception as err:
-            objects_output = Faces(objects=[], queue_id=queue_id, error=str(err))
+            objects_output = QrData(objects=[], queue_id=queue_id, error=str(err))
         return objects_output.dict()
 
     def get(self):

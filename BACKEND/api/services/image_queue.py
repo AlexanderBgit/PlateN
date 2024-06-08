@@ -73,8 +73,8 @@ class ImageQueue:
 
     def unpack_message(self, data):
 
-        for i, byte in enumerate(data[:10]):
-            logger.debug(f"data [{i}]: {hex(byte)}")
+        # for i, byte in enumerate(data[:10]):
+        #     logger.debug(f"data [{i}]: {hex(byte)}")
 
         # Read the header length (1 byte)
         header_length = data[0]
@@ -86,8 +86,8 @@ class ImageQueue:
         # Extract the binary payload
         binary_data = data[1 + header_length :]
 
-        for i, byte in enumerate(binary_data[:5]):
-            logger.debug(f"binary_data [{i}]: {hex(byte)}")
+        # for i, byte in enumerate(binary_data[:5]):
+        #     logger.debug(f"binary_data [{i}]: {hex(byte)}")
 
         return file_type, int(command_id), binary_data
 
@@ -129,12 +129,12 @@ class ImageQueue:
             try:
                 # get bytes from queue
                 bytes = await queue.get()
-                logger.debug(f"receive {len(bytes)=}, {queue.qsize()=}")
+                # logger.debug(f"receive {len(bytes)=}, {queue.qsize()=}")
                 # decode command form bytes
                 image_type, command_id, image_data = self.unpack_message(bytes)
-                logger.debug(
-                    f"receive {len(bytes)=}  {len(image_data)=}, {command_id=}, {image_type=}"
-                )
+                # logger.debug(
+                #     f"receive {len(bytes)=}  {len(image_data)=}, {command_id=}, {image_type=}"
+                # )
                 counter += 1
                 start_time = time.perf_counter_ns()
                 data = np.frombuffer(image_data, dtype=np.uint8)
@@ -153,6 +153,10 @@ class ImageQueue:
             # duration
             duration_ms = (time.perf_counter_ns() - start_time) // 1e6
             detected["duration_ms"] = duration_ms
+            if detected.get("error") is None:
+                del detected["error"]
+            if detected.get("objects") is None or (len(detected["objects"]) == 0):
+                del detected["objects"]
             await websocket.send_json(detected)
 
     async def loop(self, websocket: WebSocket):

@@ -37,7 +37,7 @@ function draw_box(ctx, scaledBox, titleText) {
   ); // Center text on top of the box
 }
 
-const draw_detected = (video, canvas, detected, scale = 1.0) => {
+function draw_detected(video, canvas, detected, scale = 1.0){
   const ctx = canvas.getContext("2d");
   ctx.width = video.videoWidth;
   ctx.height = video.videoHeight;
