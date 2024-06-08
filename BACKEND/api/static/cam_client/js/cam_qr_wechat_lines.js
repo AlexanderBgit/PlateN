@@ -41,10 +41,10 @@ function draw_lines(ctx, points, titleText) {
   const textHeight = titleFontSize; // Assuming font height is equal to font size
 
   // Adjust padding as needed
-  const padding = { x: 5, y: 7 };
+  const padding = { x: 10, y: 6 };
   const background = {
     x: scaledBox.x + scaledBox.width / 2 - textWidth / 2 - padding.x,
-    y: scaledBox.y - titleYOffset - textHeight - padding.y,
+    y: scaledBox.y - titleYOffset - textHeight - padding.y / 2,
     width: textWidth + padding.x * 2,
     height: textHeight + padding.y * 2,
   };
