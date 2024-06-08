@@ -21,6 +21,9 @@ const CAM_COMMANDS = {
 
 let isStreaming = false; // Flag to track streaming state
 
+let button_stop;
+let intervalId;
+
 function packMessage_0(imageData, commandId = 0) {
   const totalSize = COMMAND_SIZE + imageData.size;
   if (!COMMAND_SIZE) return imageData;
@@ -119,6 +122,20 @@ function info(msg, level = "info") {
     info_div.innerText = msg;
   }
 }
+function show_result(msg) {
+  const result_div = document.getElementById("result");
+  if (result_div) {
+    result_div.classList.remove("d-none");
+    result_div.innerText = msg;
+  }
+}
+
+function hide_result() {
+  const result_div = document.getElementById("result");
+  if (result_div) {
+    result_div.classList.add("d-none");
+  }
+}
 
 function info_toggle() {
   const info_div = document.getElementById("info");
@@ -172,6 +189,23 @@ function get_command_id() {
   return command_id;
 }
 
+const commands_processor = (message) => {
+  switch (message?.command_id) {
+    case CAM_COMMANDS?.snap:
+      cam_control.snap.checked = false;
+      console.warn("CAM_COMMANDS.snap command");
+      if (typeof get_snap_result === "function") {
+        result = get_snap_result(message);
+        if (result) {
+          window.clearInterval(intervalId);
+          button_stop?.click();
+          show_result(result);
+        }
+      }
+      break;
+  }
+};
+
 const startDetection = (video, canvas, deviceId) => {
   if (!WS_URL) {
     console.error("WS_URL:", WS_URL);
@@ -191,7 +225,6 @@ const startDetection = (video, canvas, deviceId) => {
       const msg = "WebSocket connection error. " + ws_connect;
       debug(msg);
     };
-    let intervalId;
     let interval_measure;
     let is_answered = true;
     let skipped_frames = 0;
@@ -308,6 +341,7 @@ const startDetection = (video, canvas, deviceId) => {
           });
         });
     });
+
     // Listen for messages
     const MEASURE_FRAMES = 100;
     socket.addEventListener("message", function (event) {
@@ -334,7 +368,7 @@ const startDetection = (video, canvas, deviceId) => {
       }
       if (draw_detected) {
         result = draw_detected(video, canvas, message_data, SNAP_IMAGE_SCALE);
-        if (result && result.error) debug(result.error);
+        if (result?.error) debug(result.error);
       }
       max_queue = Math.max(message_data.queue_id, max_queue);
       const angle = screen.orientation.angle || window.orientation;
@@ -351,7 +385,9 @@ const startDetection = (video, canvas, deviceId) => {
       info_text += " ms.";
       if (angle !== undefined) info_text += ` Rotation: ${angle} degree.`;
       info(info_text);
+      commands_processor(message_data);
     }); //on_message
+
     // Stop the interval and video reading on close
     socket.addEventListener("close", function () {
       window.clearInterval(intervalId);
@@ -469,7 +505,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
   let socket;
   cam_detect(cameraSelect);
   const button_start = document.getElementById("button-start");
-  const button_stop = document.getElementById("button-stop");
+  button_stop = document.getElementById("button-stop");
   const button_snap = document.getElementById("button-snap");
   if (button_stop) {
     button_stop.addEventListener("click", (event) => {
@@ -492,7 +528,9 @@ window.addEventListener("DOMContentLoaded", (event) => {
         button_stop.classList.toggle("d-none");
       }
       if (button_snap) {
-        button_snap.classList.toggle("d-none");
+        if (typeof get_snap_result === "function") {
+          button_snap.classList.toggle("d-none");
+        }
       }
     });
   }
@@ -517,8 +555,11 @@ window.addEventListener("DOMContentLoaded", (event) => {
           button_stop.classList.toggle("d-none");
         }
         if (button_snap) {
-          button_snap.classList.toggle("d-none");
+          if (typeof get_snap_result === "function") {
+            button_snap.classList.toggle("d-none");
+          }
         }
+        hide_result();
       }
     } else {
       debug("Not detected device ID");

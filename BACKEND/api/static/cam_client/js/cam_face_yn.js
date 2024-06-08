@@ -123,6 +123,14 @@ const draw_detected = (video, canvas, detected, scale = 1.0) => {
   }
 };
 
+function get_snap_result(message) {
+  if (message?.objects) {
+    detected = message.objects.length;
+    scores = message?.objects.map((obj) => obj.score, obj);
+    return `Detected objects: ${detected}, scores: ${scores}`;
+  }
+}
+
 function init_controls(controls) {
   glasses_img.src = "/api/v1/static/cam_client/glasses.png";
   if (!controls) return;
