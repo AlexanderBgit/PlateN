@@ -1,8 +1,8 @@
 const IMAGE_INTERVAL_MS = 250;
 const SNAP_IMAGE_SCALE = CAM_DOWNSCALE ? CAM_DOWNSCALE : 4; // down scale for sending image to api server
-let cam_size_array=undefined;
+let cam_size_array = undefined;
 if (CAM_SIZE) {
-  cam_size_array=JSON.parse(CAM_SIZE);
+  cam_size_array = JSON.parse(CAM_SIZE);
 }
 const MAX_CAM_SIZE = {
   width: cam_size_array ? cam_size_array[0] : 640,
@@ -14,8 +14,7 @@ const COMMAND_SIZE = 4;
 
 let isStreaming = false; // Flag to track streaming state
 
-
-function packMessage_0(imageData, commandId=0) {
+function packMessage_0(imageData, commandId = 0) {
   const totalSize = COMMAND_SIZE + imageData.size;
   if (!COMMAND_SIZE) return imageData;
   // Create the buffer and view
@@ -34,16 +33,16 @@ function packMessage_0(imageData, commandId=0) {
 
 function packMessage(commandId, binaryData) {
   if (!(binaryData instanceof Blob)) {
-    throw new Error("binaryData must be a Blob. Type: " + typeof(binaryData));
+    throw new Error("binaryData must be a Blob. Type: " + typeof binaryData);
   }
 
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = function(event) {
+    reader.onload = function (event) {
       const arrayBuffer = event.target.result;
       const binaryArray = new Uint8Array(arrayBuffer);
       const encoder = new TextEncoder();
-      const fileType = binaryData.type.split('/')[1];
+      const fileType = binaryData.type.split("/")[1];
       const header = `${fileType},${commandId}`;
       const headerBytes = encoder.encode(header);
       const headerLength = headerBytes.length;
@@ -60,7 +59,7 @@ function packMessage(commandId, binaryData) {
       resolve(buffer);
     };
 
-    reader.onerror = function(event) {
+    reader.onerror = function (event) {
       reject(new Error("Error reading the Blob: " + event.target.error));
     };
 
@@ -72,7 +71,7 @@ async function sendPackedMessage(socket, commandId, blob) {
   try {
     const packedData = await packMessage(commandId, blob);
     socket.send(packedData);
-//    console.log("Packed message sent over WebSocket");
+    //    console.log("Packed message sent over WebSocket");
   } catch (error) {
     console.error("Error packing or sending message:", error);
   }
@@ -281,7 +280,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
                 if (blob) {
                   // Send the image data and command ID
                   // return socket.send(packMessage(commandId, blob));
-                  return sendPackedMessage(socket, commandId, blob)
+                  return sendPackedMessage(socket, commandId, blob);
                 } else {
                   console.error("Failed to capture image data!");
                 }
@@ -445,6 +444,10 @@ window.addEventListener("DOMContentLoaded", (event) => {
   const video = document.getElementById("video");
   const canvas = document.getElementById("canvas");
   const cameraSelect = document.getElementById("camera-select");
+  const controls = document.getElementById("controls");
+  if (typeof init_controls === "function") {
+    init_controls(controls);
+  }
   let socket;
   cam_detect(cameraSelect);
   const button_start = document.getElementById("button-start");

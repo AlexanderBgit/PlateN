@@ -1,3 +1,5 @@
+const control = {};
+
 function draw_lines(ctx, points, titleText) {
   if (points.length != 4) return; //skip if points not present
   // Draw the box (replace with line drawing)
@@ -75,7 +77,39 @@ function draw_detected(video, canvas, detected, scale = 1.0) {
   ctx.beginPath();
   for (obj of detected.objects) {
     const points = createPoints(obj.boundary, scale);
-    const titleText = `QR: ${obj.text}`;
+    const titleText = control?.text.checked ? `QR: ${obj.text}` : undefined;
     draw_lines(ctx, points, titleText);
+  }
+}
+
+function init_controls(controls) {
+  if (!controls) return;
+  const controlConfigs = [{ label: "Decoded text", id: "text_id", name: "text" }];
+  const elements = [];
+
+  controlConfigs.forEach((config) => {
+    const formCheckDiv = document.createElement("div");
+    formCheckDiv.className = "form-check";
+
+    const checkboxElement = document.createElement("input");
+    checkboxElement.setAttribute("type", "checkbox");
+    checkboxElement.setAttribute("id", config.id);
+    checkboxElement.className = "form-check-input";
+    checkboxElement.checked = true;
+    if (config?.name) control[config.name] = checkboxElement;
+
+    const labelElement = document.createElement("label");
+    labelElement.setAttribute("for", config.id);
+    labelElement.className = "form-check-label";
+    labelElement.innerText = config.label;
+
+    formCheckDiv.appendChild(checkboxElement);
+    formCheckDiv.appendChild(labelElement);
+
+    controls.appendChild(formCheckDiv);
+  });
+
+  for (const element of elements) {
+    controls.appendChild(element);
   }
 }
