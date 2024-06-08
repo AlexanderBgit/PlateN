@@ -162,6 +162,16 @@ function handleOrientationChange(video, canvas) {
   }, 600);
 }
 
+function get_command_id() {
+  let command_id = undefined;
+  if (cam_control?.snap?.checked) {
+    command_id = CAM_COMMANDS?.snap;
+    // command_id = key in CAM_COMMANDS ? CAM_COMMANDS[key] : CAM_COMMANDS.default;
+  }
+  command_id = command_id ? command_id : CAM_COMMANDS.default;
+  return command_id;
+}
+
 const startDetection = (video, canvas, deviceId) => {
   if (!WS_URL) {
     console.error("WS_URL:", WS_URL);
@@ -282,7 +292,7 @@ const startDetection = (video, canvas, deviceId) => {
               }
               // Convert it to JPEG and send it to the WebSocket
               interval_measure = performance.now();
-              let commandId = 1;
+              const commandId = get_command_id();
               canvas_video_snap.toBlob((blob) => {
                 if (blob) {
                   // Send the image data and command ID
