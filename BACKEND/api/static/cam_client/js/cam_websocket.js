@@ -12,6 +12,13 @@ const ADAPTIVE_FACTOR = 1.15;
 
 const COMMAND_SIZE = 4;
 
+const cam_control = {};
+
+const CAM_COMMANDS = {
+  default: 0,
+  snap: 1,
+};
+
 let isStreaming = false; // Flag to track streaming state
 
 function packMessage_0(imageData, commandId = 0) {
@@ -155,7 +162,7 @@ function handleOrientationChange(video, canvas) {
   }, 600);
 }
 
-const startFaceDetection = (video, canvas, deviceId) => {
+const startDetection = (video, canvas, deviceId) => {
   if (!WS_URL) {
     console.error("WS_URL:", WS_URL);
     return;
@@ -353,7 +360,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
 };
 
 // Function to stop the video stream and turn off the LED (if possible)
-const stopFaceDetection = (video, canvas) => {
+const stopDetection = (video, canvas) => {
   if (1) {
     if (canvas) {
       const ctx = canvas.getContext("2d");
@@ -448,6 +455,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
   if (typeof init_controls === "function") {
     init_controls(controls);
   }
+  cam_control["snap"] = document.getElementById("checkbox-snap");
   let socket;
   cam_detect(cameraSelect);
   const button_start = document.getElementById("button-start");
@@ -458,7 +466,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
       event.preventDefault();
       // Close the WebSocket connection (if it exists)
       if (socket) {
-        stopFaceDetection(video, canvas);
+        stopDetection(video, canvas);
         socket.close();
         setTimeout(() => {
           debug("WebSocket connection closed", "info");
@@ -490,7 +498,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
 
     const deviceId = cameraSelect.selectedOptions[0]?.value;
     if (deviceId) {
-      socket = startFaceDetection(video, canvas, deviceId);
+      socket = startDetection(video, canvas, deviceId);
       if (socket) {
         if (button_start) {
           button_start.classList.toggle("d-none");
