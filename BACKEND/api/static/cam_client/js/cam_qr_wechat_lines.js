@@ -82,6 +82,14 @@ function draw_detected(video, canvas, detected, scale = 1.0) {
   }
 }
 
+function get_snap_result(message) {
+  if (message?.objects) {
+    detected = message.objects.length;
+    text = message?.objects.map((obj) => obj.text, obj);
+    return `Detected QR code objects: ${detected}, text: ${text}`;
+  }
+}
+
 function init_controls(controls) {
   if (!controls) return;
   const controlConfigs = [{ label: "Decoded text", id: "text_id", name: "text" }];

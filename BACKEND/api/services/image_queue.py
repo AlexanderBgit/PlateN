@@ -122,6 +122,7 @@ class ImageQueue:
         list of Tuple of 4 integers that will represent the 4 Sides of a rectangle
         """
         counter = 0
+        command_id = None
         while True:
             if not self.img_proc:
                 break
@@ -157,6 +158,10 @@ class ImageQueue:
                 del detected["error"]
             if detected.get("objects") is None or (len(detected["objects"]) == 0):
                 del detected["objects"]
+            else:
+                if command_id:
+                    detected["command_id"] = command_id
+
             await websocket.send_json(detected)
 
     async def loop(self, websocket: WebSocket):
