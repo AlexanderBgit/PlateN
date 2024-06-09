@@ -15,5 +15,6 @@ echo $(git branch --show-current)${PURPOSE}-$(git rev-parse --short HEAD) > ../.
 
 echo -e "\nStarting FastAPI web server in dev mode with reload..."
 pushd  "../../BACKEND/api" > /dev/null
-poetry run uvicorn main:app --port ${APP_PORT_API:-9000} --host 0.0.0.0 --reload
+#poetry run uvicorn main:app --port ${APP_PORT_API:-9000} --host 0.0.0.0 --reload
+PYTHONPATH=. poetry run fastapi dev main.py --app=app --port ${APP_PORT_API:-9000} --host 0.0.0.0 --reload
 popd > /dev/null
