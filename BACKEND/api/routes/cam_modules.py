@@ -35,8 +35,8 @@ CLIENT_MODULES = {
         "text_header": "Real time QR code detection (OpenCV WeChatQRCode. Model '2021-3487ef7')",
         "ws_url": "qr_wechat",  # route name
         "js_module": "cam_qr_wechat_lines.js",
-        "cam_size": [512, 512],
-        "cam_downscale": 4,
+        "cam_size": [640, 640],
+        "cam_downscale": 1,
     },
 }
 

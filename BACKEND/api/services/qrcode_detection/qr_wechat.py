@@ -76,7 +76,7 @@ class QrData(ABSDetected):
 
 class QrWeChatFun(AbstractFun):
     qr_wechat: QrWeChat
-    max_size = (512, 512)  # for DNN model size
+    max_size = (1024, 1024)  # for DNN model size
     img_scale = (1.0, 1.0)
 
     def __init__(self):
