@@ -1,5 +1,33 @@
 const control = {};
 
+// const scaledBox = {
+//   x: Math.min(points[3].x, points[2].x, points[1].x, points[0].x),
+//   y: Math.min(points[3].y, points[2].y, points[1].y, points[0].y),
+//   width:
+//     Math.max(points[3].x, points[2].x, points[1].x, points[0].x) -
+//     Math.min(points[3].x, points[2].x, points[1].x, points[0].x),
+//   height:
+//     Math.max(points[3].y, points[2].y, points[1].y, points[0].y) -
+//     Math.min(points[3].y, points[2].y, points[1].y, points[0].y),
+// };
+function getBoundaryFromPoints(points) {
+  return {
+    x: Math.min(...points.map((point) => point.x)),
+    y: Math.min(...points.map((point) => point.y)),
+    width: Math.max(...points.map((point) => point.x)) - Math.min(...points.map((point) => point.x)),
+    height: Math.max(...points.map((point) => point.y)) - Math.min(...points.map((point) => point.y)),
+  };
+}
+
+function applyScale(boundary, scale) {
+  return boundary.map((point) => {
+    for (key of point) {
+      point[key] *= scale;
+    }
+    return point;
+  });
+}
+
 function draw_lines(ctx, points, titleText) {
   if (points.length != 4) return; //skip if points not present
   // Draw the box (replace with line drawing)
@@ -15,23 +43,7 @@ function draw_lines(ctx, points, titleText) {
 
   if (!titleText) return; //skip if title not present
 
-  // const scaledBox = {
-  //   x: Math.min(points[3].x, points[2].x, points[1].x, points[0].x),
-  //   y: Math.min(points[3].y, points[2].y, points[1].y, points[0].y),
-  //   width:
-  //     Math.max(points[3].x, points[2].x, points[1].x, points[0].x) -
-  //     Math.min(points[3].x, points[2].x, points[1].x, points[0].x),
-  //   height:
-  //     Math.max(points[3].y, points[2].y, points[1].y, points[0].y) -
-  //     Math.min(points[3].y, points[2].y, points[1].y, points[0].y),
-  // };
-
-  const scaledBox = {
-    x: Math.min(...points.map((point) => point.x)),
-    y: Math.min(...points.map((point) => point.y)),
-    width: Math.max(...points.map((point) => point.x)) - Math.min(...points.map((point) => point.x)),
-    height: Math.max(...points.map((point) => point.y)) - Math.min(...points.map((point) => point.y)),
-  };
+  const scaledBox = getBoundaryFromPoints(points);
 
   // Title text properties
   const titleFontSize = 16;
@@ -61,11 +73,15 @@ function draw_lines(ctx, points, titleText) {
 
 // Function to create point objects from boundary coordinates
 function createPoints(boundary, scale = 1.0) {
-  const points = [];
-  for (point of boundary) {
-    points.push({ x: point[0] * scale, y: point[1] * scale });
-  }
-  return points;
+  // const points = [];
+  // for (point of boundary) {
+  //   points.push({ x: point[0] * scale, y: point[1] * scale });
+  // }
+  return boundary.map((point) => {
+    return { x: point[0] * scale, y: point[1] * scale };
+  });
+
+  // return points;
 }
 
 function draw_detected(video, canvas, detected, scale = 1.0) {
@@ -82,11 +98,22 @@ function draw_detected(video, canvas, detected, scale = 1.0) {
   }
 }
 
-function get_snap_result(message) {
+function get_snap_result(message, scale = 1.0) {
   if (message?.objects) {
-    detected = message.objects.length;
-    text = message?.objects.map((obj) => obj.text, obj);
-    return `Detected QR code objects: ${detected}, text: ${text}`;
+    const detected_obj = message.objects.length;
+    const result = [];
+    for (obj of message.objects) {
+      const boundary_points = createPoints(obj.boundary, scale);
+      const titleText = obj.text;
+      const boundary = getBoundaryFromPoints(boundary_points);
+      result.push({
+        points: boundary_points,
+        text: titleText,
+        boundary: boundary,
+      });
+    }
+    const result_formated = JSON.stringify(result).replace(/,/g, ", ");
+    return `Detected QR code objects: ${detected_obj}.  Objects: ` + result_formated;
   }
 }
 

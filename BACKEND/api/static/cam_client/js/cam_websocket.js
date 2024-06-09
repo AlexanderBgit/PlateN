@@ -143,6 +143,16 @@ function info_toggle() {
   info_div.innerText = "";
 }
 
+function video_canvas_toggle() {
+  const div = document.getElementById("video_canvas");
+  div.classList.toggle("d-none");
+}
+
+function snap_container_toggle() {
+  const div = document.getElementById("snap-container");
+  div.classList.toggle("d-none");
+}
+
 function resize_canvas(video, canvas) {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
@@ -189,22 +199,63 @@ function get_command_id() {
   return command_id;
 }
 
-const commands_processor = (message) => {
+const commands_processor = (message, scale = 1.0) => {
   switch (message?.command_id) {
     case CAM_COMMANDS?.snap:
       cam_control.snap.checked = false;
       console.warn("CAM_COMMANDS.snap command");
       if (typeof get_snap_result === "function") {
-        result = get_snap_result(message);
-        if (result) {
+        result = get_snap_result(message, scale);
+        if (result?.result) {
           window.clearInterval(intervalId);
-          button_stop?.click();
-          show_result(result);
+          // button_stop?.click();
+          show_result(result?.describe);
+          return result?.result;
         }
       }
       break;
   }
 };
+
+function commands_post_processor(result_processor, video) {
+  const images = [];
+  let id = 0;
+  for (const result of result_processor) {
+    id += 1;
+    const crop_boundary = result?.boundary;
+    if (!crop_boundary) return;
+    const canvas_crop = document.createElement("canvas");
+    canvas_crop.id = "canvas_crop_" + id;
+    const ctx_crop = canvas_crop.getContext("2d");
+    canvas_crop.width = crop_boundary.width;
+    canvas_crop.height = crop_boundary.height;
+    ctx_crop.drawImage(
+      video,
+      crop_boundary.x,
+      crop_boundary.y,
+      crop_boundary.width,
+      crop_boundary.height,
+      0,
+      0,
+      crop_boundary.width,
+      crop_boundary.height
+    );
+
+    const dataURL = canvas_crop.toDataURL("image/png");
+    // Create img element and set its source to the data URL
+    const imgElement = document.createElement("img");
+    imgElement.setAttribute("id", "result-img_" + id);
+    imgElement.src = dataURL;
+    images.push(imgElement);
+  }
+  const imageContainer = document.getElementById("snap-container");
+  imageContainer.innerHTML = ""; // Clear previous images
+
+  for (const image of images) {
+    // Append the img element to the container
+    imageContainer.appendChild(image);
+  }
+}
 
 const startDetection = (video, canvas, deviceId) => {
   if (!WS_URL) {
@@ -215,6 +266,8 @@ const startDetection = (video, canvas, deviceId) => {
   console.log("ws_connect:", ws_connect);
   try {
     info_toggle();
+    video_canvas_toggle();
+    snap_container_toggle();
     const socket = new WebSocket(ws_connect);
     socket.onopen = () => {
       msg = "WebSocket connection opened!";
@@ -385,7 +438,11 @@ const startDetection = (video, canvas, deviceId) => {
       info_text += " ms.";
       if (angle !== undefined) info_text += ` Rotation: ${angle} degree.`;
       info(info_text);
-      commands_processor(message_data);
+      const result_processor = commands_processor(message_data, SNAP_IMAGE_SCALE);
+      if (result_processor) {
+        commands_post_processor(result_processor, video);
+        button_stop?.click();
+      }
     }); //on_message
 
     // Stop the interval and video reading on close
@@ -407,28 +464,26 @@ const startDetection = (video, canvas, deviceId) => {
 
 // Function to stop the video stream and turn off the LED (if possible)
 const stopDetection = (video, canvas) => {
-  if (1) {
-    if (canvas) {
-      const ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-    const mediaStream = video.srcObject;
-    if (mediaStream) {
-      const tracks = mediaStream.getTracks();
-      tracks.forEach(function (track) {
-        track.stop(); // Stop individual media track
-      });
-      video.srcObject = null; // Clear video source
-      isStreaming = false;
-      //      console.log("Video stream stopped");
-      setTimeout(() => {
-        debug("Video stream stopped", "info");
-      }, 2000);
-    }
-    info_toggle();
-  } else {
-    console.log("Video stream already stopped");
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
+  const mediaStream = video.srcObject;
+  if (mediaStream) {
+    const tracks = mediaStream.getTracks();
+    tracks.forEach(function (track) {
+      track.stop(); // Stop individual media track
+    });
+    video.srcObject = null; // Clear video source
+    isStreaming = false;
+    //      console.log("Video stream stopped");
+    setTimeout(() => {
+      debug("Video stream stopped", "info");
+    }, 2000);
+  }
+  info_toggle();
+  video_canvas_toggle();
+  snap_container_toggle();
 };
 
 const cam_detect = (cameraSelect) => {

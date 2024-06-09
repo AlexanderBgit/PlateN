@@ -41,9 +41,7 @@
             height: auto;
             /* transition: transform 0.5s; Smooth transition for the rotation */
         }
-<!--      #canvas {-->
-<!--            background-color: #ee000055;-->
-<!--      }-->
+
     </style>
   </head>
 
@@ -63,11 +61,12 @@
         </form>
       </div>
       <div id="debug"></div>
-      <div class="container text-center">
-        <div class="position-relative d-inline-block">
+      <div class="container text-center" style="background-color: blue;">
+        <div id="video_canvas" class="position-relative d-inline-block d-none">
           <video id="video"></video>
           <canvas id="canvas" class="position-absolute top-0 start-0"></canvas>
-        </div>
+          </div>
+        <div id="snap-container"></div>
       </div>
       <div id="controls" class="d-flex flex-row align-items-center gap-3"></div>
       <div id="result" class="mt-2 alert alert-info d-none"></div>

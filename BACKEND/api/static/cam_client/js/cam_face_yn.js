@@ -32,6 +32,20 @@ function apply_mask(ctx, eye_right, eye_left) {
   }
 }
 
+function apply_scale(boundary, scale) {
+  const keys = Object.keys(boundary);
+  for (const key of keys) {
+    boundary[key] *= scale;
+  }
+  return boundary;
+}
+
+function apply_scale_array(boundary, scale) {
+  return boundary.map((point) => {
+    return apply_scale(point);
+  });
+}
+
 function draw_landmarks(ctx, landmarks, scale) {
   for (const landmark of landmarks) {
     // Set drawing properties
@@ -123,11 +137,44 @@ const draw_detected = (video, canvas, detected, scale = 1.0) => {
   }
 };
 
-function get_snap_result(message) {
+// function get_snap_result(message) {
+//   if (message?.objects) {
+//     detected = message.objects.length;
+//     scores = message?.objects.map((obj) => obj.scores, obj);
+//     return `Detected objects: ${detected}, scores: ${scores}`;
+//   }
+// }
+
+function describe_boundary(boundary) {
+  if (boundary?.length != 4) {
+    return boundary;
+  }
+  return {
+    x: boundary[0],
+    y: boundary[1],
+    width: boundary[2],
+    height: boundary[3],
+  };
+}
+
+function get_snap_result(message, scale = 1.0) {
+  console.log("get_snap_result", scale);
   if (message?.objects) {
-    detected = message.objects.length;
-    scores = message?.objects.map((obj) => obj.score, obj);
-    return `Detected objects: ${detected}, scores: ${scores}`;
+    const detected_obj = message.objects.length;
+    const result = [];
+    for (obj of message.objects) {
+      const boundary = apply_scale(describe_boundary(obj.boundary), scale);
+      const score = obj.scores;
+      result.push({
+        score: score,
+        boundary: boundary,
+      });
+    }
+    const result_formated = JSON.stringify(result).replace(/,/g, ", ");
+    return {
+      result: result,
+      describe: `Detected Face objects: ${detected_obj}.  Objects: ` + result_formated,
+    };
   }
 }
 

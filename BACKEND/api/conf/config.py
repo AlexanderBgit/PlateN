@@ -18,7 +18,7 @@ BASE_PATH = BASE_BACKEND.parent
 def get_version():
     git_version = ""
     proj_name = ""
-    print(f"{BASE_BACKEND=}")
+    # print(f"{BASE_BACKEND=}")
     GIT_VERSION_FILE = BASE_BACKEND.joinpath("git-version.txt")
     if GIT_VERSION_FILE.exists():
         git_version = GIT_VERSION_FILE.read_text().strip()
