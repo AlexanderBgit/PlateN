@@ -4,34 +4,40 @@ annotated-types==0.7.0 ; python_version >= "3.10" and python_version < "3.12"
 anyio==4.4.0 ; python_version >= "3.10" and python_version < "3.12"
 astunparse==1.6.3 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 cachetools==5.3.3 ; python_version >= "3.10" and python_version < "3.12" and sys_platform == "win32"
-certifi==2024.6.2 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin" or sys_platform == "win32")
+certifi==2024.6.2 ; python_version >= "3.10" and python_version < "3.12"
 charset-normalizer==3.3.2 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin" or sys_platform == "win32")
 click==8.1.7 ; python_version >= "3.10" and python_version < "3.12"
-colorama==0.4.6 ; python_version >= "3.10" and python_version < "3.12" and platform_system == "Windows"
+colorama==0.4.6 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or platform_system == "Windows")
 contourpy==1.2.1 ; python_version >= "3.10" and python_version < "3.12"
 cycler==0.12.1 ; python_version >= "3.10" and python_version < "3.12"
+dnspython==2.6.1 ; python_version >= "3.10" and python_version < "3.12"
+email-validator==2.1.1 ; python_version >= "3.10" and python_version < "3.12"
 exceptiongroup==1.2.1 ; python_version >= "3.10" and python_version < "3.11"
-fastapi==0.110.3 ; python_version >= "3.10" and python_version < "3.12"
+fastapi-cli==0.0.4 ; python_version >= "3.10" and python_version < "3.12"
+fastapi==0.111.0 ; python_version >= "3.10" and python_version < "3.12"
 flatbuffers==24.3.25 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 fonttools==4.53.0 ; python_version >= "3.10" and python_version < "3.12"
 gast==0.5.4 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 google-auth-oauthlib==1.2.0 ; python_version >= "3.10" and python_version < "3.12" and sys_platform == "win32"
-google-auth==2.29.0 ; python_version >= "3.10" and python_version < "3.12" and sys_platform == "win32"
+google-auth==2.30.0 ; python_version >= "3.10" and python_version < "3.12" and sys_platform == "win32"
 google-pasta==0.2.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 grpcio==1.64.1 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 h11==0.14.0 ; python_version >= "3.10" and python_version < "3.12"
 h5py==3.11.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
+httpcore==1.0.5 ; python_version >= "3.10" and python_version < "3.12"
+httptools==0.6.1 ; python_version >= "3.10" and python_version < "3.12"
+httpx==0.27.0 ; python_version >= "3.10" and python_version < "3.12"
 idna==3.7 ; python_version >= "3.10" and python_version < "3.12"
 jinja2==3.1.4 ; python_version >= "3.10" and python_version < "3.12"
 keras==2.15.0 ; python_version >= "3.10" and python_version < "3.12" and sys_platform == "win32"
 keras==3.3.3 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin")
 kiwisolver==1.4.5 ; python_version >= "3.10" and python_version < "3.12"
 libclang==18.1.1 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
-markdown-it-py==3.0.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin")
+markdown-it-py==3.0.0 ; python_version >= "3.10" and python_version < "3.12"
 markdown==3.6 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 markupsafe==2.1.5 ; python_version >= "3.10" and python_version < "3.12"
 matplotlib==3.9.0 ; python_version >= "3.10" and python_version < "3.12"
-mdurl==0.1.2 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin")
+mdurl==0.1.2 ; python_version >= "3.10" and python_version < "3.12"
 ml-dtypes==0.3.2 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 namex==0.0.8 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin")
 numpy==1.26.4 ; python_version >= "3.10" and python_version < "3.12"
@@ -41,6 +47,7 @@ opencv-python-headless==4.10.0.82 ; python_version >= "3.10" and python_version 
 opencv-python==4.10.0.82 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "darwin")
 opt-einsum==3.3.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 optree==0.11.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin")
+orjson==3.10.3 ; python_version >= "3.10" and python_version < "3.12"
 packaging==24.0 ; python_version >= "3.10" and python_version < "3.12"
 pillow==10.3.0 ; python_version >= "3.10" and python_version < "3.12"
 protobuf==4.25.3 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
@@ -49,16 +56,18 @@ pyasn1==0.6.0 ; python_version >= "3.10" and python_version < "3.12" and sys_pla
 pydantic-core==2.18.4 ; python_version >= "3.10" and python_version < "3.12"
 pydantic-settings==2.3.1 ; python_version >= "3.10" and python_version < "3.12"
 pydantic==2.7.3 ; python_version >= "3.10" and python_version < "3.12"
-pygments==2.18.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin")
+pygments==2.18.0 ; python_version >= "3.10" and python_version < "3.12"
 pyparsing==3.1.2 ; python_version >= "3.10" and python_version < "3.12"
 python-dateutil==2.9.0.post0 ; python_version >= "3.10" and python_version < "3.12"
 python-dotenv==1.0.1 ; python_version >= "3.10" and python_version < "3.12"
 python-multipart==0.0.9 ; python_version >= "3.10" and python_version < "3.12"
+pyyaml==6.0.1 ; python_version >= "3.10" and python_version < "3.12"
 requests-oauthlib==2.0.0 ; python_version >= "3.10" and python_version < "3.12" and sys_platform == "win32"
 requests==2.32.3 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin" or sys_platform == "win32")
-rich==13.7.1 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin")
+rich==13.7.1 ; python_version >= "3.10" and python_version < "3.12"
 rsa==4.9 ; python_version >= "3.10" and python_version < "3.12" and sys_platform == "win32"
 setuptools==70.0.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
+shellingham==1.5.4 ; python_version >= "3.10" and python_version < "3.12"
 six==1.16.0 ; python_version >= "3.10" and python_version < "3.12"
 sniffio==1.3.1 ; python_version >= "3.10" and python_version < "3.12"
 starlette==0.37.2 ; python_version >= "3.10" and python_version < "3.12"
@@ -73,9 +82,14 @@ tensorflow-io-gcs-filesystem==0.37.0 ; python_version >= "3.10" and python_versi
 tensorflow==2.15.1 ; python_version >= "3.10" and python_version < "3.12" and sys_platform == "win32"
 tensorflow==2.16.1 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin")
 termcolor==2.4.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
-typing-extensions==4.12.1 ; python_version >= "3.10" and python_version < "3.12"
+typer==0.12.3 ; python_version >= "3.10" and python_version < "3.12"
+typing-extensions==4.12.2 ; python_version >= "3.10" and python_version < "3.12"
+ujson==5.10.0 ; python_version >= "3.10" and python_version < "3.12"
 urllib3==2.2.1 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin" or sys_platform == "win32")
-uvicorn==0.29.0 ; python_version >= "3.10" and python_version < "3.12"
+uvicorn==0.30.1 ; python_version >= "3.10" and python_version < "3.12"
+uvicorn[standard]==0.30.1 ; python_version >= "3.10" and python_version < "3.12"
+uvloop==0.19.0 ; (sys_platform != "win32" and sys_platform != "cygwin") and platform_python_implementation != "PyPy" and python_version >= "3.10" and python_version < "3.12"
+watchfiles==0.22.0 ; python_version >= "3.10" and python_version < "3.12"
 websockets==12.0 ; python_version >= "3.10" and python_version < "3.12"
 werkzeug==3.0.3 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 wheel==0.43.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")

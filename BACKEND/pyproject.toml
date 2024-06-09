@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastparking-api"
-version = "1.6.8"
+version = "1.6.9"
 description = "GoIT DataScience Team Project - Fast Parking API module"
 authors = ["neuron_curva_bobr <info@neuron.curva.bobr.app>"]
 license = "MIT"
@@ -9,32 +9,32 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.12"
-fastapi = "^0.110.1"
-uvicorn = "^0.29.0"
-python-dotenv = "^1.0.1"
-python-multipart = "^0.0.9"
-numpy = "^1.26.4"
-opencv-python-headless = {version = "^4.10.0.82", platform = "linux"}
-opencv-python = {version = "^4.10.0.82", platform = "win32 || darwin"}
-opencv-contrib-python-headless = "^4.10.0.82"
-matplotlib = "^3.8.4"
+fastapi = "*"
+uvicorn = "*"
+python-dotenv = "*"
+python-multipart = "*"
+numpy = "*"
+opencv-python-headless = {version = "*", platform = "linux"}
+opencv-python = {version = "*", platform = "win32 || darwin"}
+opencv-contrib-python-headless = "*"
+matplotlib = "*"
 tensorflow-io-gcs-filesystem = [
     { version = "^0.31", markers = "sys_platform == 'win32'" },
-    { version = "~0.37", markers = "sys_platform == 'linux' or sys_platform == 'darwin'" }
+    { version = "*", markers = "sys_platform == 'linux' or sys_platform == 'darwin'" }
 ]
 tensorflow = [
     { version = "~2.15", markers = "sys_platform == 'win32'" },
-    { version = "^2.16.1", markers = "sys_platform == 'linux' or sys_platform == 'darwin'" }
+    { version = "*", markers = "sys_platform == 'linux' or sys_platform == 'darwin'" }
 ]
 keras = [
     { version = "~2", markers = "sys_platform == 'win32'" },
-    { version = "^3.3.3", markers = "sys_platform == 'linux' or sys_platform == 'darwin'" }
+    { version = "*", markers = "sys_platform == 'linux' or sys_platform == 'darwin'" }
 ]
-pydantic = "^2.7.2"
-pydantic-settings = "^2.2.1"
-jinja2 = "^3.1.4"
-websockets = "^12.0"
-aiofiles = "^23.2.1"
+pydantic = "*"
+pydantic-settings = "*"
+jinja2 = "*"
+websockets = "*"
+aiofiles = "*"
 
 
 [build-system]
