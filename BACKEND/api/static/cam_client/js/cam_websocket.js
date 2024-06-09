@@ -1,12 +1,91 @@
 const IMAGE_INTERVAL_MS = 250;
-const SNAP_IMAGE_SCALE = 4; // down scale for sending image to api server
+const SNAP_IMAGE_SCALE = CAM_DOWNSCALE ? CAM_DOWNSCALE : 4; // down scale for sending image to api server
+let cam_size_array = undefined;
+if (CAM_SIZE) {
+  cam_size_array = JSON.parse(CAM_SIZE);
+}
 const MAX_CAM_SIZE = {
-  width: 640,
-  height: 480,
+  width: cam_size_array ? cam_size_array[0] : 640,
+  height: cam_size_array ? cam_size_array[1] : 480,
 };
 const ADAPTIVE_FACTOR = 1.15;
 
+const COMMAND_SIZE = 4;
+
+const cam_control = {};
+
+const CAM_COMMANDS = {
+  default: 0,
+  snap: 1,
+};
+
 let isStreaming = false; // Flag to track streaming state
+
+let button_stop;
+let intervalId;
+
+function packMessage_0(imageData, commandId = 0) {
+  const totalSize = COMMAND_SIZE + imageData.size;
+  if (!COMMAND_SIZE) return imageData;
+  // Create the buffer and view
+  const buffer = new ArrayBuffer(totalSize);
+  const dataView = new DataView(buffer);
+
+  // Write command ID (assuming 32-bit integer)
+  dataView.setUint32(0, commandId, true); // Little-endian
+
+  // Copy image data into the buffer
+  const uint8Array = new Uint8Array(buffer, COMMAND_SIZE, imageData.length);
+  uint8Array.set(imageData);
+
+  return buffer;
+}
+
+function packMessage(commandId, binaryData) {
+  if (!(binaryData instanceof Blob)) {
+    throw new Error("binaryData must be a Blob. Type: " + typeof binaryData);
+  }
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const arrayBuffer = event.target.result;
+      const binaryArray = new Uint8Array(arrayBuffer);
+      const encoder = new TextEncoder();
+      const fileType = binaryData.type.split("/")[1];
+      const header = `${fileType},${commandId}`;
+      const headerBytes = encoder.encode(header);
+      const headerLength = headerBytes.length;
+      // Total size: 1 byte for header length + header + binary data
+      const totalSize = 1 + headerLength + binaryArray.length;
+      const buffer = new ArrayBuffer(totalSize);
+      const dataView = new DataView(buffer);
+      // Write the header length (1 byte)
+      dataView.setUint8(0, headerLength);
+      // Write the header
+      new Uint8Array(buffer, 1, headerLength).set(headerBytes);
+      // Write the binary data
+      new Uint8Array(buffer, 1 + headerLength, binaryArray.length).set(binaryArray);
+      resolve(buffer);
+    };
+
+    reader.onerror = function (event) {
+      reject(new Error("Error reading the Blob: " + event.target.error));
+    };
+
+    reader.readAsArrayBuffer(binaryData);
+  });
+}
+
+async function sendPackedMessage(socket, commandId, blob) {
+  try {
+    const packedData = await packMessage(commandId, blob);
+    socket.send(packedData);
+    //    console.log("Packed message sent over WebSocket");
+  } catch (error) {
+    console.error("Error packing or sending message:", error);
+  }
+}
 
 function getWebSocketUrl(path = "") {
   const currentUrl = new URL(window.location.href);
@@ -41,6 +120,20 @@ function info(msg, level = "info") {
     //    info_div.classList.add("alert");
     //    info_div.classList.add("alert-"+level);
     info_div.innerText = msg;
+  }
+}
+function show_result(msg) {
+  const result_div = document.getElementById("result");
+  if (result_div) {
+    result_div.classList.remove("d-none");
+    result_div.innerText = msg;
+  }
+}
+
+function hide_result() {
+  const result_div = document.getElementById("result");
+  if (result_div) {
+    result_div.classList.add("d-none");
   }
 }
 
@@ -86,7 +179,34 @@ function handleOrientationChange(video, canvas) {
   }, 600);
 }
 
-const startFaceDetection = (video, canvas, deviceId) => {
+function get_command_id() {
+  let command_id = undefined;
+  if (cam_control?.snap?.checked) {
+    command_id = CAM_COMMANDS?.snap;
+    // command_id = key in CAM_COMMANDS ? CAM_COMMANDS[key] : CAM_COMMANDS.default;
+  }
+  command_id = command_id ? command_id : CAM_COMMANDS.default;
+  return command_id;
+}
+
+const commands_processor = (message) => {
+  switch (message?.command_id) {
+    case CAM_COMMANDS?.snap:
+      cam_control.snap.checked = false;
+      console.warn("CAM_COMMANDS.snap command");
+      if (typeof get_snap_result === "function") {
+        result = get_snap_result(message);
+        if (result) {
+          window.clearInterval(intervalId);
+          button_stop?.click();
+          show_result(result);
+        }
+      }
+      break;
+  }
+};
+
+const startDetection = (video, canvas, deviceId) => {
   if (!WS_URL) {
     console.error("WS_URL:", WS_URL);
     return;
@@ -105,7 +225,6 @@ const startFaceDetection = (video, canvas, deviceId) => {
       const msg = "WebSocket connection error. " + ws_connect;
       debug(msg);
     };
-    let intervalId;
     let interval_measure;
     let is_answered = true;
     let skipped_frames = 0;
@@ -206,13 +325,23 @@ const startFaceDetection = (video, canvas, deviceId) => {
               }
               // Convert it to JPEG and send it to the WebSocket
               interval_measure = performance.now();
-              canvas_video_snap.toBlob((blob) => socket.send(blob), "image/jpeg");
+              const commandId = get_command_id();
+              canvas_video_snap.toBlob((blob) => {
+                if (blob) {
+                  // Send the image data and command ID
+                  // return socket.send(packMessage(commandId, blob));
+                  return sendPackedMessage(socket, commandId, blob);
+                } else {
+                  console.error("Failed to capture image data!");
+                }
+              }, "image/jpeg");
               sent_frames += 1;
             }; // sendImage
             intervalId = setTimeout(sendImage, IMAGE_INTERVAL_MS);
           });
         });
     });
+
     // Listen for messages
     const MEASURE_FRAMES = 100;
     socket.addEventListener("message", function (event) {
@@ -237,7 +366,10 @@ const startFaceDetection = (video, canvas, deviceId) => {
           average_duration_calc = 0;
         }
       }
-      if (draw_detected) draw_detected(video, canvas, message_data, SNAP_IMAGE_SCALE);
+      if (draw_detected) {
+        result = draw_detected(video, canvas, message_data, SNAP_IMAGE_SCALE);
+        if (result?.error) debug(result.error);
+      }
       max_queue = Math.max(message_data.queue_id, max_queue);
       const angle = screen.orientation.angle || window.orientation;
       //      const sr = video.getAttribute("skip_rotate");
@@ -253,7 +385,9 @@ const startFaceDetection = (video, canvas, deviceId) => {
       info_text += " ms.";
       if (angle !== undefined) info_text += ` Rotation: ${angle} degree.`;
       info(info_text);
+      commands_processor(message_data);
     }); //on_message
+
     // Stop the interval and video reading on close
     socket.addEventListener("close", function () {
       window.clearInterval(intervalId);
@@ -272,7 +406,7 @@ const startFaceDetection = (video, canvas, deviceId) => {
 };
 
 // Function to stop the video stream and turn off the LED (if possible)
-const stopFaceDetection = (video, canvas) => {
+const stopDetection = (video, canvas) => {
   if (1) {
     if (canvas) {
       const ctx = canvas.getContext("2d");
@@ -363,16 +497,22 @@ window.addEventListener("DOMContentLoaded", (event) => {
   const video = document.getElementById("video");
   const canvas = document.getElementById("canvas");
   const cameraSelect = document.getElementById("camera-select");
+  const controls = document.getElementById("controls");
+  if (typeof init_controls === "function") {
+    init_controls(controls);
+  }
+  cam_control["snap"] = document.getElementById("checkbox-snap");
   let socket;
   cam_detect(cameraSelect);
   const button_start = document.getElementById("button-start");
-  const button_stop = document.getElementById("button-stop");
+  button_stop = document.getElementById("button-stop");
+  const button_snap = document.getElementById("button-snap");
   if (button_stop) {
     button_stop.addEventListener("click", (event) => {
       event.preventDefault();
       // Close the WebSocket connection (if it exists)
       if (socket) {
-        stopFaceDetection(video, canvas);
+        stopDetection(video, canvas);
         socket.close();
         setTimeout(() => {
           debug("WebSocket connection closed", "info");
@@ -386,6 +526,11 @@ window.addEventListener("DOMContentLoaded", (event) => {
       }
       if (button_stop) {
         button_stop.classList.toggle("d-none");
+      }
+      if (button_snap) {
+        if (typeof get_snap_result === "function") {
+          button_snap.classList.toggle("d-none");
+        }
       }
     });
   }
@@ -401,7 +546,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
 
     const deviceId = cameraSelect.selectedOptions[0]?.value;
     if (deviceId) {
-      socket = startFaceDetection(video, canvas, deviceId);
+      socket = startDetection(video, canvas, deviceId);
       if (socket) {
         if (button_start) {
           button_start.classList.toggle("d-none");
@@ -409,6 +554,12 @@ window.addEventListener("DOMContentLoaded", (event) => {
         if (button_stop) {
           button_stop.classList.toggle("d-none");
         }
+        if (button_snap) {
+          if (typeof get_snap_result === "function") {
+            button_snap.classList.toggle("d-none");
+          }
+        }
+        hide_result();
       }
     } else {
       debug("Not detected device ID");

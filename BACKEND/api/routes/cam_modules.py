@@ -7,6 +7,7 @@ from conf.config import settings
 from services.face_detection.face_cc import FaceCascadeClassierFun
 from services.face_detection.face_yn import FaceYNFun
 from services.image_queue import ImageQueue
+from services.qrcode_detection.qr_wechat import QrWeChatFun
 
 router = APIRouter(prefix="/cam_modules", tags=["cam_modules"])
 
@@ -16,6 +17,7 @@ logger = logging.getLogger(f"{settings.app_name}.{__name__}")
 class ClientModules(StrEnum):
     face_cc = "face_cc"
     face_yn = "face_yn"
+    qr_wechat = "qr_wechat"
 
 
 CLIENT_MODULES = {
@@ -28,6 +30,13 @@ CLIENT_MODULES = {
         "text_header": "Real time face detection (OpenCV FaceDetectorYN. Model 'yunet_2023mar')",
         "ws_url": "face_yn",  # route name
         "js_module": "cam_face_yn.js",
+    },
+    ClientModules.qr_wechat.value: {
+        "text_header": "Real time QR code detection (OpenCV WeChatQRCode. Model '2021-3487ef7')",
+        "ws_url": "qr_wechat",  # route name
+        "js_module": "cam_qr_wechat_lines.js",
+        "cam_size": [512, 512],
+        "cam_downscale": 4,
     },
 }
 
@@ -78,6 +87,26 @@ async def face_yn(websocket: WebSocket):
         ...
 
 
+@router.websocket("qr_wechat", name="qr_wechat")
+async def qr_wechat(websocket: WebSocket):
+    """
+    This is the endpoint that we will be sending request to from the
+    frontend
+    """
+    qr_wechat_image_queue = image_queues.get("qr_wechat")
+    if qr_wechat_image_queue is None:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error not ready qr_wechat_image_queue.",
+        )
+
+    try:
+        await qr_wechat_image_queue.loop(websocket)
+    except Exception as e:
+        logger.error(e)
+        ...
+
+
 @router.on_event("startup")
 async def startup(queues: dict[str, ImageQueue] = None):
     """
@@ -89,5 +118,7 @@ async def startup(queues: dict[str, ImageQueue] = None):
     cc_func = FaceCascadeClassierFun()
     cc_func.load()
     yn_func = FaceYNFun()
+    qr_wechat_func = QrWeChatFun()
     queues["face_cc"] = ImageQueue(cc_func)
     queues["face_yn"] = ImageQueue(yn_func)
+    queues["qr_wechat"] = ImageQueue(qr_wechat_func)

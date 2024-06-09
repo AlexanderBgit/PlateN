@@ -29,7 +29,7 @@
     />
     <link
       rel="icon"
-      type="image/png"
+      type="image/png" 
       sizes="16x16"
       href="{{relative_url(request, 'static', path='/favicon-16x16.png') }} "
     />
@@ -55,7 +55,9 @@
           <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">Select cam: </span>
             <select class="form-control" id="camera-select"></select>
-            <button class="btn btn-outline-danger d-none" type="button" id="button-stop">Stop</button>
+            <input type="checkbox" class="btn-check" id="checkbox-snap" autocomplete="off">
+            <label class="btn btn-outline-primary d-none" for="checkbox-snap" id="button-snap" title="Do snapshot of frame">Snap</label>
+            <button class="btn btn-outline-danger rounded-end d-none" type="button" id="button-stop">Stop</button>
             <button class="btn btn-outline-success" type="submit" id="button-start">Start</button>
           </div>
         </form>
@@ -67,6 +69,8 @@
           <canvas id="canvas" class="position-absolute top-0 start-0"></canvas>
         </div>
       </div>
+      <div id="controls" class="d-flex flex-row align-items-center gap-3"></div>
+      <div id="result" class="mt-2 alert alert-info d-none"></div>
       <div id="info" class="mt-2 alert alert-info d-none"></div>
       <footer class="footer mt-auto py-3 bg-light">
         <div class="container text-center">
@@ -76,6 +80,8 @@
     </div>
     <script>
       const WS_URL = "{{ ws_url }}";
+      const CAM_SIZE = {% if cam_size %}"{{ cam_size }}"{% else %}undefined{% endif %};
+      const CAM_DOWNSCALE = {% if cam_downscale %}"{{ cam_downscale }}"{% else %}undefined{% endif %};
     </script>
     {% if js_module %}
     <script src="{{relative_url(request, 'static', path='cam_client/js/' ~ js_module ) | url_add_ver}}"></script>
