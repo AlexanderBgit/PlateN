@@ -164,13 +164,15 @@ function get_snap_result(message, scale = 1.0) {
     const result = [];
     for (obj of message.objects) {
       const boundary = apply_scale(describe_boundary(obj.boundary), scale);
-      const score = obj.scores;
+      const score = obj.score;
       result.push({
+        title: `${score * 100}%`,
         score: score,
         boundary: boundary,
       });
     }
-    const result_formated = JSON.stringify(result).replace(/,/g, ", ");
+    const replacer = (key, value) => (key === "title" ? undefined : value);
+    const result_formated = JSON.stringify(result, replacer).replace(/,/g, ", ");
     return {
       result: result,
       describe: `Detected Face objects: ${detected_obj}.  Objects: ` + result_formated,

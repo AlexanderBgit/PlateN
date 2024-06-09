@@ -9,18 +9,14 @@ const MAX_CAM_SIZE = {
   height: cam_size_array ? cam_size_array[1] : 480,
 };
 const ADAPTIVE_FACTOR = 1.15;
-
 const COMMAND_SIZE = 4;
-
 const cam_control = {};
-
 const CAM_COMMANDS = {
   default: 0,
   snap: 1,
 };
 
 let isStreaming = false; // Flag to track streaming state
-
 let button_stop;
 let intervalId;
 
@@ -45,7 +41,6 @@ function packMessage(commandId, binaryData) {
   if (!(binaryData instanceof Blob)) {
     throw new Error("binaryData must be a Blob. Type: " + typeof binaryData);
   }
-
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = function (event) {
@@ -68,11 +63,9 @@ function packMessage(commandId, binaryData) {
       new Uint8Array(buffer, 1 + headerLength, binaryArray.length).set(binaryArray);
       resolve(buffer);
     };
-
     reader.onerror = function (event) {
       reject(new Error("Error reading the Blob: " + event.target.error));
     };
-
     reader.readAsArrayBuffer(binaryData);
   });
 }
@@ -156,13 +149,6 @@ function snap_container_toggle() {
 function resize_canvas(video, canvas) {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
-  //    canvas.style.position = 'absolute';
-  //    canvas.style.top = '0';
-  //    canvas.style.left = '0';
-  //    canvas.width = video.videoHeight;
-  //    canvas.height = video.videoWidth;
-  //    canvas.style.left = video.style.left;
-  //    canvas.style.top = video.style.top;
 }
 
 function isFirefoxMobile() {
@@ -203,7 +189,7 @@ const commands_processor = (message, scale = 1.0) => {
   switch (message?.command_id) {
     case CAM_COMMANDS?.snap:
       cam_control.snap.checked = false;
-      console.warn("CAM_COMMANDS.snap command");
+      // console.log("CAM_COMMANDS.snap command");
       if (typeof get_snap_result === "function") {
         result = get_snap_result(message, scale);
         if (result?.result) {
@@ -243,17 +229,33 @@ function commands_post_processor(result_processor, video) {
 
     const dataURL = canvas_crop.toDataURL("image/png");
     // Create img element and set its source to the data URL
-    const imgElement = document.createElement("img");
-    imgElement.setAttribute("id", "result-img_" + id);
-    imgElement.src = dataURL;
-    images.push(imgElement);
+    // imgElement.setAttribute("id", "result-img_" + id);
+    images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
+    images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
+    images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
+    images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
+    images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
   }
   const imageContainer = document.getElementById("snap-container");
   imageContainer.innerHTML = ""; // Clear previous images
 
   for (const image of images) {
     // Append the img element to the container
-    imageContainer.appendChild(image);
+    const divElement = document.createElement("div");
+    divElement.className = "card p-2 pb-0";
+    divElement.style = "width: 160px;";
+    const imgElement = document.createElement("img");
+    imgElement.className = "shadow rounded mx-auto";
+    imgElement.src = image.src;
+    imgElement.style = `max-width: ${image.width};max-height: ${image.height};`;
+    divElement.appendChild(imgElement);
+    const divBodylement = document.createElement("div");
+    divBodylement.className = "card-body pb-0";
+    const cardtitle = document.createElement("h6");
+    cardtitle.innerText = image.title ? image.title : "";
+    divBodylement.appendChild(cardtitle);
+    divElement.appendChild(divBodylement);
+    imageContainer.appendChild(divElement);
   }
 }
 

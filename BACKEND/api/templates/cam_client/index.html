@@ -41,7 +41,15 @@
             height: auto;
             /* transition: transform 0.5s; Smooth transition for the rotation */
         }
-
+        /* .snap-container {
+            display: flex;         
+            gap: 10px;        
+            justify-content: center;
+        } */
+        /* #snap-container img {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7); 
+            border-radius: 5px;      
+        } */
     </style>
   </head>
 
@@ -66,7 +74,7 @@
           <video id="video"></video>
           <canvas id="canvas" class="position-absolute top-0 start-0"></canvas>
           </div>
-        <div id="snap-container"></div>
+        <div id="snap-container" class="row row-cols-auto justify-content-evenly mb-2 g-2"></div>
       </div>
       <div id="controls" class="d-flex flex-row align-items-center gap-3"></div>
       <div id="result" class="mt-2 alert alert-info d-none"></div>
