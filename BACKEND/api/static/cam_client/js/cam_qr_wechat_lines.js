@@ -102,18 +102,23 @@ function get_snap_result(message, scale = 1.0) {
   if (message?.objects) {
     const detected_obj = message.objects.length;
     const result = [];
-    for (obj of message.objects) {
+    for (const obj of message.objects) {
       const boundary_points = createPoints(obj.boundary, scale);
       const titleText = obj.text;
       const boundary = getBoundaryFromPoints(boundary_points);
       result.push({
+        title: titleText,
         points: boundary_points,
         text: titleText,
         boundary: boundary,
       });
     }
-    const result_formated = JSON.stringify(result).replace(/,/g, ", ");
-    return `Detected QR code objects: ${detected_obj}.  Objects: ` + result_formated;
+    const replacer = (key, value) => (key === "title" ? undefined : value);
+    const result_formated = JSON.stringify(result, replacer).replace(/,/g, ", ");
+    return {
+      result: result,
+      describe: `Detected QR code objects: ${detected_obj}.  Objects: ` + result_formated,
+    };
   }
 }
 

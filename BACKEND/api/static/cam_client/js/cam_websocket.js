@@ -231,10 +231,10 @@ function commands_post_processor(result_processor, video) {
     // Create img element and set its source to the data URL
     // imgElement.setAttribute("id", "result-img_" + id);
     images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
-    images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
-    images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
-    images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
-    images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
+    // images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
+    // images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
+    // images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
+    // images.push({ src: dataURL, title: result?.title, width: crop_boundary.width, height: crop_boundary.height });
   }
   const imageContainer = document.getElementById("snap-container");
   imageContainer.innerHTML = ""; // Clear previous images
@@ -243,16 +243,17 @@ function commands_post_processor(result_processor, video) {
     // Append the img element to the container
     const divElement = document.createElement("div");
     divElement.className = "card p-2 pb-0";
-    divElement.style = "width: 160px;";
+    divElement.style = "width: 180px;";
     const imgElement = document.createElement("img");
     imgElement.className = "shadow rounded mx-auto";
     imgElement.src = image.src;
-    imgElement.style = `max-width: ${image.width};max-height: ${image.height};`;
+    imgElement.style = `width: 100%; height: 100%; max-width: ${image.width}px;max-height: ${image.height}px;`;
     divElement.appendChild(imgElement);
     const divBodylement = document.createElement("div");
     divBodylement.className = "card-body pb-0";
     const cardtitle = document.createElement("h6");
     cardtitle.innerText = image.title ? image.title : "";
+    imgElement.title = image.title ? image.title : "";
     divBodylement.appendChild(cardtitle);
     divElement.appendChild(divBodylement);
     imageContainer.appendChild(divElement);

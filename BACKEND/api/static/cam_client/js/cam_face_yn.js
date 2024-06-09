@@ -162,7 +162,7 @@ function get_snap_result(message, scale = 1.0) {
   if (message?.objects) {
     const detected_obj = message.objects.length;
     const result = [];
-    for (obj of message.objects) {
+    for (const obj of message.objects) {
       const boundary = apply_scale(describe_boundary(obj.boundary), scale);
       const score = obj.score;
       result.push({
