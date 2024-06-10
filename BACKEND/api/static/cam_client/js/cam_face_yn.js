@@ -165,8 +165,9 @@ function get_snap_result(message, scale = 1.0) {
     for (const obj of message.objects) {
       const boundary = apply_scale(describe_boundary(obj.boundary), scale);
       const score = obj.score;
+      const title = `${Math.round(score * 100)}%`;
       result.push({
-        title: `${score * 100}%`,
+        title: title,
         score: score,
         boundary: boundary,
       });
