@@ -257,13 +257,14 @@ function canvas_transformations() {
         return;
       }
     } else {
-      // if video need to rotate by +-90 degree
+      // if video need to rotate by +-90 degree, it firefox mobile in genreral
       // swap h <-> w
       canvas_video.height = scaledWidth_video;
       canvas_video.width = scaledHeight_video;
       const radians = (angle * Math.PI) / 180;
+      ctx_video.save();
       ctx_video.translate(scaledWidth_video / 2, scaledHeight_video / 2);
-      ctx.rotate(radians);
+      ctx_video.rotate(radians);
       ctx_video.drawImage(
         video,
         0,
@@ -275,11 +276,12 @@ function canvas_transformations() {
         scaledWidth_video,
         scaledHeight_video
       );
+      ctx_video.restore();
       // just copy with downscale
-      canvas_video_snap.height = scaledHeight;
-      canvas_video_snap.width = scaledWidth;
+      canvas_video_snap.height = scaledWidth;
+      canvas_video_snap.width = scaledHeight;
       try {
-        ctx.drawImage(canvas_video, 0, 0, canvas_video.width, canvas_video.height, 0, 0, scaledWidth, scaledHeight);
+        ctx.drawImage(canvas_video, 0, 0, canvas_video.height, canvas_video.width, 0, 0, scaledWidth, scaledHeight);
       } catch (error) {
         console.error("Error ctx.drawImage:");
         return;
@@ -289,6 +291,7 @@ function canvas_transformations() {
     // if video declared as not roatated
     canvas_video.width = scaledWidth_video;
     canvas_video.height = scaledHeight_video;
+    ctx_video.clearRect(0, 0, canvas_video.width, canvas_video.height);
     ctx_video.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, scaledWidth_video, scaledHeight_video);
     canvas_video_snap.width = scaledWidth;
     canvas_video_snap.height = scaledHeight;
