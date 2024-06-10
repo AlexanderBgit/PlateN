@@ -37,6 +37,7 @@ CLIENT_MODULES = {
         "js_module": "cam_qr_wechat_lines.js",
         "cam_size": [640, 640],
         "cam_downscale": 1,
+        "cam_upscale": 1,
     },
 }
 

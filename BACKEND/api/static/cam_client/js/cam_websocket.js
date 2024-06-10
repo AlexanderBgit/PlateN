@@ -19,6 +19,8 @@ const CAM_COMMANDS = {
 let isStreaming = false; // Flag to track streaming state
 let button_stop;
 let intervalId;
+let canvas_video_snap;
+let canvas_video;
 
 function packMessage_0(imageData, commandId = 0) {
   const totalSize = COMMAND_SIZE + imageData.size;
@@ -306,7 +308,7 @@ const startDetection = (video, canvas, deviceId) => {
             height: { max: MAX_CAM_SIZE.height },
           },
         })
-        .then(function (stream) {
+        .then((stream) => {
           video.srcObject = stream;
           handleOrientationChange(video, canvas);
           video.play().then(() => {
@@ -335,7 +337,18 @@ const startDetection = (video, canvas, deviceId) => {
                 console.error("No Canvas...");
                 return;
               }
-              const canvas_video_snap = document.createElement("canvas");
+              if (!canvas_video) {
+                canvas_video = document.createElement("canvas");
+                canvas_video.id = "canvas_video";
+              }
+              if (!canvas_video_snap) {
+                canvas_video_snap = document.createElement("canvas");
+                canvas_video_snap.id = "canvas_video_snap";
+              }
+              const ctx_video = canvas_video.getContext("2d");
+              const scaledWidth_video = video.videoWidth;
+              const scaledHeight_video = video.videoHeight;
+
               const ctx = canvas_video_snap.getContext("2d");
               const scaledWidth = video.videoWidth / SNAP_IMAGE_SCALE;
               const scaledHeight = video.videoHeight / SNAP_IMAGE_SCALE;
@@ -343,14 +356,27 @@ const startDetection = (video, canvas, deviceId) => {
               const angle = screen.orientation.angle || window.orientation;
               if (angle === 90 || angle === 270) {
                 if (video.getAttribute("skip_rotate") === "true") {
+                  canvas_video.width = scaledWidth_video;
+                  canvas_video.height = scaledHeight_video;
                   canvas_video_snap.width = scaledWidth;
                   canvas_video_snap.height = scaledHeight;
-                  ctx.drawImage(
+                  ctx_video.drawImage(
                     video,
                     0,
                     0,
                     video.videoWidth,
                     video.videoHeight,
+                    0,
+                    0,
+                    canvas_video.width,
+                    canvas_video.height
+                  );
+                  ctx.drawImage(
+                    canvas_video,
+                    0,
+                    0,
+                    canvas_video.width,
+                    canvas_video.height,
                     0,
                     0,
                     canvas_video_snap.width,
@@ -375,9 +401,32 @@ const startDetection = (video, canvas, deviceId) => {
                   );
                 }
               } else {
+                canvas_video.width = scaledWidth_video;
+                canvas_video.height = scaledHeight_video;
+                ctx_video.drawImage(
+                  video,
+                  0,
+                  0,
+                  video.videoWidth,
+                  video.videoHeight,
+                  0,
+                  0,
+                  scaledWidth_video,
+                  scaledHeight_video
+                );
                 canvas_video_snap.width = scaledWidth;
                 canvas_video_snap.height = scaledHeight;
-                ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, scaledWidth, scaledHeight);
+                ctx.drawImage(
+                  canvas_video,
+                  0,
+                  0,
+                  scaledWidth_video,
+                  scaledHeight_video,
+                  0,
+                  0,
+                  scaledWidth,
+                  scaledHeight
+                );
               }
               // Convert it to JPEG and send it to the WebSocket
               interval_measure = performance.now();
@@ -443,7 +492,8 @@ const startDetection = (video, canvas, deviceId) => {
       info(info_text);
       const result_processor = commands_processor(message_data, SNAP_IMAGE_SCALE);
       if (result_processor) {
-        commands_post_processor(result_processor, video);
+        console.log(canvas_video_snap);
+        commands_post_processor(result_processor, canvas_video);
         button_stop?.click();
       }
     }); //on_message
