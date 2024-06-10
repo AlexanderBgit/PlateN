@@ -493,8 +493,16 @@ const cam_detect = (cameraSelect) => {
   navigator.mediaDevices
     .getUserMedia({ audio: false, video: true })
     .then((stream) => {
-      // stop LED use.
-      stream.getTracks().forEach((track) => track.stop());
+      cam_capabilities = [];
+      for (track of stream.getTracks()) {
+        track.stop();
+        const capabilities = track.getCapabilities();
+        cam_capabilities.push({
+          maxWidth: capabilities.width.max,
+          maxHeight: capabilities.height.max,
+        });
+      }
+      // console.log(cam_capabilities);
       navigator.mediaDevices
         .enumerateDevices()
         .then((devices) => {
@@ -510,14 +518,20 @@ const cam_detect = (cameraSelect) => {
           }
 
           // Filter and populate options
+          let video_dev_id = 0;
           for (const device of devices) {
             if (device.kind === "videoinput") {
               const deviceOption = document.createElement("option");
               if (device.deviceId) {
                 deviceOption.value = device.deviceId;
                 deviceOption.innerText = device.label || `Camera ${devices.indexOf(device) + 1}`; // Use label or fallback
-                console.log("cameras detected");
+                if (cam_capabilities?.length > video_dev_id) {
+                  const cap = cam_capabilities[video_dev_id];
+                  deviceOption.innerText += `, max: ${cap.maxWidth}x${cap.maxHeight}`;
+                }
+                console.log("cameras detected", video_dev_id);
                 cameraSelect.appendChild(deviceOption);
+                video_dev_id += 1;
               } else {
                 console.log("cameras detected but empty");
                 deviceOption.value = "";
