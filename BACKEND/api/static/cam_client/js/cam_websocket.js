@@ -211,6 +211,97 @@ async function getCameraCapabilities(deviceId) {
   }
 }
 
+function canvas_transformations() {
+  const ctx_video = canvas_video.getContext("2d");
+  const scaledWidth_video = video.videoWidth;
+  const scaledHeight_video = video.videoHeight;
+
+  const ctx = canvas_video_snap.getContext("2d");
+  const scaledWidth = video.videoWidth / SNAP_IMAGE_SCALE;
+  const scaledHeight = video.videoHeight / SNAP_IMAGE_SCALE;
+
+  const angle = screen.orientation.angle || window.orientation;
+  if (angle === 90 || angle === 270) {
+    // if video declared as rotated
+    if (video.getAttribute("skip_rotate") === "true") {
+      // if video need to skip rotate
+      canvas_video.width = scaledWidth_video;
+      canvas_video.height = scaledHeight_video;
+      canvas_video_snap.width = scaledWidth;
+      canvas_video_snap.height = scaledHeight;
+      ctx_video.drawImage(
+        video,
+        0,
+        0,
+        video.videoWidth,
+        video.videoHeight,
+        0,
+        0,
+        canvas_video.width,
+        canvas_video.height
+      );
+      try {
+        ctx.drawImage(
+          canvas_video,
+          0,
+          0,
+          canvas_video.width,
+          canvas_video.height,
+          0,
+          0,
+          canvas_video_snap.width,
+          canvas_video_snap.height
+        );
+      } catch (error) {
+        console.error("Error ctx.drawImage:");
+        return;
+      }
+    } else {
+      // if video need to rotate by +-90 degree
+      // swap h <-> w
+      canvas_video.height = scaledWidth_video;
+      canvas_video.width = scaledHeight_video;
+      const radians = (angle * Math.PI) / 180;
+      ctx_video.translate(scaledWidth_video / 2, scaledHeight_video / 2);
+      ctx.rotate(radians);
+      ctx_video.drawImage(
+        video,
+        0,
+        0,
+        video.videoWidth,
+        video.videoHeight,
+        -scaledWidth_video / 2,
+        -scaledHeight_video / 2,
+        scaledWidth_video,
+        scaledHeight_video
+      );
+      // just copy with downscale
+      canvas_video_snap.height = scaledHeight;
+      canvas_video_snap.width = scaledWidth;
+      try {
+        ctx.drawImage(canvas_video, 0, 0, canvas_video.width, canvas_video.height, 0, 0, scaledWidth, scaledHeight);
+      } catch (error) {
+        console.error("Error ctx.drawImage:");
+        return;
+      }
+    }
+  } else {
+    // if video declared as not roatated
+    canvas_video.width = scaledWidth_video;
+    canvas_video.height = scaledHeight_video;
+    ctx_video.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, scaledWidth_video, scaledHeight_video);
+    canvas_video_snap.width = scaledWidth;
+    canvas_video_snap.height = scaledHeight;
+    try {
+      ctx.drawImage(canvas_video, 0, 0, scaledWidth_video, scaledHeight_video, 0, 0, scaledWidth, scaledHeight);
+    } catch (error) {
+      console.error("Error ctx.drawImage:");
+      return;
+    }
+  }
+  return true;
+}
+
 const commands_processor = (message, scale = 1.0) => {
   switch (message?.command_id) {
     case CAM_COMMANDS?.snap:
@@ -369,117 +460,8 @@ const startDetection = (video, canvas, deviceId) => {
                 canvas_video_snap = document.createElement("canvas");
                 canvas_video_snap.id = "canvas_video_snap";
               }
-              const ctx_video = canvas_video.getContext("2d");
-              const scaledWidth_video = video.videoWidth;
-              const scaledHeight_video = video.videoHeight;
+              if (!canvas_transformations()) return;
 
-              const ctx = canvas_video_snap.getContext("2d");
-              const scaledWidth = video.videoWidth / SNAP_IMAGE_SCALE;
-              const scaledHeight = video.videoHeight / SNAP_IMAGE_SCALE;
-
-              const angle = screen.orientation.angle || window.orientation;
-              if (angle === 90 || angle === 270) {
-                if (video.getAttribute("skip_rotate") === "true") {
-                  canvas_video.width = scaledWidth_video;
-                  canvas_video.height = scaledHeight_video;
-                  canvas_video_snap.width = scaledWidth;
-                  canvas_video_snap.height = scaledHeight;
-                  ctx_video.drawImage(
-                    video,
-                    0,
-                    0,
-                    video.videoWidth,
-                    video.videoHeight,
-                    0,
-                    0,
-                    canvas_video.width,
-                    canvas_video.height
-                  );
-                  try {
-                    ctx.drawImage(
-                      canvas_video,
-                      0,
-                      0,
-                      canvas_video.width,
-                      canvas_video.height,
-                      0,
-                      0,
-                      canvas_video_snap.width,
-                      canvas_video_snap.height
-                    );
-                  } catch (error) {
-                    console.error("Error ctx.drawImage:");
-                    return;
-                  }
-                } else {
-                  canvas_video_snap.height = scaledWidth;
-                  canvas_video_snap.width = scaledHeight;
-                  canvas_video.height = scaledWidth_video;
-                  canvas_video.width = scaledHeight_video;
-                  const radians = (angle * Math.PI) / 180;
-                  ctx_video.translate(scaledWidth_video / 2, scaledHeight_video / 2);
-                  ctx.rotate(radians);
-                  ctx_video.drawImage(
-                    video,
-                    0,
-                    0,
-                    video.videoWidth,
-                    video.videoHeight,
-                    -scaledWidth_video / 2,
-                    -scaledHeight_video / 2,
-                    scaledWidth_video,
-                    scaledHeight_video
-                  );
-                  try {
-                    ctx.drawImage(
-                      canvas_video,
-                      0,
-                      0,
-                      scaledWidth_video,
-                      scaledHeight_video,
-                      0,
-                      0,
-                      scaledWidth,
-                      scaledHeight
-                    );
-                  } catch (error) {
-                    console.error("Error ctx.drawImage:");
-                    return;
-                  }
-                }
-              } else {
-                canvas_video.width = scaledWidth_video;
-                canvas_video.height = scaledHeight_video;
-                ctx_video.drawImage(
-                  video,
-                  0,
-                  0,
-                  video.videoWidth,
-                  video.videoHeight,
-                  0,
-                  0,
-                  scaledWidth_video,
-                  scaledHeight_video
-                );
-                canvas_video_snap.width = scaledWidth;
-                canvas_video_snap.height = scaledHeight;
-                try {
-                  ctx.drawImage(
-                    canvas_video,
-                    0,
-                    0,
-                    scaledWidth_video,
-                    scaledHeight_video,
-                    0,
-                    0,
-                    scaledWidth,
-                    scaledHeight
-                  );
-                } catch (error) {
-                  console.error("Error ctx.drawImage:");
-                  return;
-                }
-              }
               // Convert it to JPEG and send it to the WebSocket
               interval_measure = performance.now();
               const commandId = get_command_id();
