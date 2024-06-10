@@ -1,8 +1,11 @@
+import logging
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
 
 from starlette.requests import Request
 
-from conf.config import get_version
+from conf.config import get_version, settings
+
+logger = logging.getLogger(f"{settings.app_name}.{__name__}")
 
 
 def relative_url(request: Request, name: str, **path_params) -> str:
