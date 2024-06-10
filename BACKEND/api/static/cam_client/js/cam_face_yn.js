@@ -158,14 +158,14 @@ function describe_boundary(boundary) {
 }
 
 function get_snap_result(message, scale = 1.0) {
-  console.log("get_snap_result", scale);
+  // console.log("get_snap_result", scale);
   if (message?.objects) {
     const detected_obj = message.objects.length;
     const result = [];
     for (const obj of message.objects) {
       const boundary = apply_scale(describe_boundary(obj.boundary), scale);
       const score = obj.score;
-      const title = `${Math.round(score * 100)}%`;
+      const title = `Score: ${Math.round(score * 100)}%`;
       result.push({
         title: title,
         score: score,
