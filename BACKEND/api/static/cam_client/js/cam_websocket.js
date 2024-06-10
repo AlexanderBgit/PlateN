@@ -5,8 +5,8 @@ if (CAM_SIZE) {
   cam_size_array = JSON.parse(CAM_SIZE);
 }
 const MAX_CAM_SIZE = {
-  width: cam_size_array ? cam_size_array[0] : 640,
-  height: cam_size_array ? cam_size_array[1] : 480,
+  width: cam_size_array ? cam_size_array[0] : 1280,
+  height: cam_size_array ? cam_size_array[1] : 720,
 };
 const ADAPTIVE_FACTOR = 1.15;
 const COMMAND_SIZE = 4;
@@ -21,6 +21,9 @@ let button_stop;
 let intervalId;
 let canvas_video_snap;
 let canvas_video;
+let canvas_zoom = document.getElementById("canvas_zoom");
+let ctx_zoop = canvas.getContext("2d");
+let zoomFactor = 2;
 
 function packMessage_0(imageData, commandId = 0) {
   const totalSize = COMMAND_SIZE + imageData.size;
@@ -171,10 +174,10 @@ function handleOrientationChange(video, canvas) {
     video.setAttribute("skip_rotate", skip_rotate);
     video.style.transform = `rotate(${angle}deg)`;
   }
-  resize_canvas(video, canvas);
-  setTimeout(() => {
-    resize_canvas(video, canvas);
-  }, 600);
+  // resize_canvas(video, canvas);
+  // setTimeout(() => {
+  //   resize_canvas(video, canvas);
+  // }, 600);
 }
 
 function get_command_id() {
@@ -213,8 +216,8 @@ async function getCameraCapabilities(deviceId) {
 
 function canvas_transformations() {
   const ctx_video = canvas_video.getContext("2d");
-  const scaledWidth_video = video.videoWidth;
-  const scaledHeight_video = video.videoHeight;
+  const scaledWidth_video = canvas_zoom.width;
+  const scaledHeight_video = canvas_zoom.height;
 
   const ctx = canvas_video_snap.getContext("2d");
   const scaledWidth = video.videoWidth / SNAP_IMAGE_SCALE;
@@ -292,7 +295,17 @@ function canvas_transformations() {
     canvas_video.width = scaledWidth_video;
     canvas_video.height = scaledHeight_video;
     ctx_video.clearRect(0, 0, canvas_video.width, canvas_video.height);
-    ctx_video.drawImage(video, 0, 0, video.videoWidth, video.videoHeight, 0, 0, scaledWidth_video, scaledHeight_video);
+    ctx_video.drawImage(
+      canvas_zoom,
+      0,
+      0,
+      canvas_video.width,
+      canvas_video.height,
+      0,
+      0,
+      scaledWidth_video,
+      scaledHeight_video
+    );
     canvas_video_snap.width = scaledWidth;
     canvas_video_snap.height = scaledHeight;
     try {
@@ -303,6 +316,51 @@ function canvas_transformations() {
     }
   }
   return true;
+}
+
+function video_zoom(video) {
+  video.addEventListener("loadedmetadata", () => {
+    const videoWidth = video.videoWidth;
+    const videoHeight = video.videoHeight;
+    const cropWidth = videoWidth / zoomFactor;
+    const cropHeight = videoHeight / zoomFactor;
+    // Set canvas dimensions
+    canvas_zoom.width = cropWidth; // Adjust based on your needs
+    canvas_zoom.height = cropHeight; // Adjust based on your needs
+
+    function drawZoomedVideo() {
+      const videoWidth = video.videoWidth;
+      const videoHeight = video.videoHeight;
+
+      // Calculate the crop area
+      const cropWidth = videoWidth / zoomFactor;
+      const cropHeight = videoHeight / zoomFactor;
+      const cropX = (videoWidth - cropWidth) / 2;
+      const cropY = (videoHeight - cropHeight) / 2;
+
+      // Clear the canvas
+      ctx_zoop.clearRect(0, 0, canvas_zoom.width, canvas_zoom.height);
+
+      // Draw the zoomed and cropped area
+      ctx_zoop.drawImage(
+        video,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight, // Source rectangle
+        0,
+        0,
+        canvas_zoom.width,
+        canvas_zoom.height // Destination rectangle
+      );
+
+      // Continue drawing
+      requestAnimationFrame(drawZoomedVideo);
+    }
+
+    // Start drawing the video onto the canvas
+    drawZoomedVideo();
+  });
 }
 
 const commands_processor = (message, scale = 1.0) => {
@@ -428,11 +486,12 @@ const startDetection = (video, canvas, deviceId) => {
         })
         .then((stream) => {
           video.srcObject = stream;
+          video_zoom(video);
           handleOrientationChange(video, canvas);
           video.play().then(() => {
             // Adapt overlay canvas size to the video size
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+            canvas.width = canvas_zoom.width;
+            canvas.height = canvas_zoom.height;
             isStreaming = true;
 
             // Send an image in the WebSocket every DEFINED ms
@@ -651,6 +710,9 @@ window.addEventListener("resize", (event) => {
 window.addEventListener("DOMContentLoaded", (event) => {
   const video = document.getElementById("video");
   const canvas = document.getElementById("canvas");
+  canvas_video = document.getElementById("canvas_video");
+  canvas_zoom = document.getElementById("canvas_zoom");
+  ctx_zoop = canvas.getContext("2d");
   const cameraSelect = document.getElementById("camera-select");
   const controls = document.getElementById("controls");
   if (typeof init_controls === "function") {
@@ -723,7 +785,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
 
   video.addEventListener("loadedmetadata", function () {
     //    console.log("loadedmetadata");
-    resize_canvas(video, canvas);
+    // resize_canvas(video, canvas);
   });
 });
 // DOMContentLoaded

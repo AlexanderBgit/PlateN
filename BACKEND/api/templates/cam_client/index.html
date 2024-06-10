@@ -35,12 +35,12 @@
     />
     <link rel="manifest" href="{{ relative_url(request, 'static', path='/site.webmanifest') }}" />
     <style>
-        #video, #canvas {
-            max-width: 640px;
+        /* #video {
             width: 100%;
             height: auto;
+            visibility: hidden;
             /* transition: transform 0.5s; Smooth transition for the rotation */
-        }
+        } */
         /* .snap-container {
             display: flex;         
             gap: 10px;        
@@ -71,8 +71,9 @@
       <div id="debug"></div>
       <div class="container text-center"  >
         <div id="video_canvas" class="position-relative d-inline-block d-none">
-          <video id="video"></video>
-          <canvas id="canvas" class="position-absolute top-0 start-0"></canvas>
+          <canvas id="canvas_zoom" class="" style="z-index: 1;"></canvas>
+          <video id="video" class="position-absolute top-0 start-0 d-none" tyle="z-index: 0;"></video>
+          <canvas id="canvas" class="position-absolute top-0 start-0" style="z-index: 2;"></canvas>
           </div>
         <div id="snap-container" class="row row-cols-auto justify-content-evenly mb-2 g-2"></div>
       </div>
