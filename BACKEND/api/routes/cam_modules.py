@@ -48,7 +48,7 @@ image_queues: dict[str, ImageQueue | None] = {
 }
 
 
-@router.websocket("face_cc", name="face_cc")
+@router.websocket("/face_cc", name="face_cc")
 async def face_cc(websocket: WebSocket):
     """
     This is the endpoint that we will be sending request to from the
@@ -68,7 +68,7 @@ async def face_cc(websocket: WebSocket):
         ...
 
 
-@router.websocket("face_yn", name="face_yn")
+@router.websocket("/face_yn", name="face_yn")
 async def face_yn(websocket: WebSocket):
     """
     This is the endpoint that we will be sending request to from the
@@ -88,7 +88,7 @@ async def face_yn(websocket: WebSocket):
         ...
 
 
-@router.websocket("qr_wechat", name="qr_wechat")
+@router.websocket("/qr_wechat", name="qr_wechat")
 async def qr_wechat(websocket: WebSocket):
     """
     This is the endpoint that we will be sending request to from the
