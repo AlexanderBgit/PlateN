@@ -567,7 +567,8 @@ const cam_detect = (cameraSelect) => {
           let video_dev_id = 0;
           for (const device of videoDevices) {
             console.log("Check for available cameras");
-            const cam_cap = device.getCapabilities();
+            // const cam_cap = device.getCapabilities();
+            let cam_cap;
             const deviceOption = document.createElement("option");
             if (device.deviceId) {
               deviceOption.value = device.deviceId;
