@@ -187,6 +187,30 @@ function get_command_id() {
   return command_id;
 }
 
+// Function to start video stream and get capabilities
+async function getCameraCapabilities(deviceId) {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } });
+    const videoTrack = stream.getVideoTracks()[0];
+    let result;
+    // Check if getCapabilities is available
+    if (videoTrack.getCapabilities) {
+      result = videoTrack.getCapabilities();
+    } else {
+      const settings = videoTrack.getSettings();
+      result = {
+        width: { max: settings.width, min: 1 },
+        height: { max: settings.height, min: 1 },
+      };
+    }
+    // Stop the stream after checking capabilities
+    videoTrack.stop();
+    return result;
+  } catch (error) {
+    console.error("Error getting capabilities:", error);
+  }
+}
+
 const commands_processor = (message, scale = 1.0) => {
   switch (message?.command_id) {
     case CAM_COMMANDS?.snap:
@@ -371,34 +395,57 @@ const startDetection = (video, canvas, deviceId) => {
                     canvas_video.width,
                     canvas_video.height
                   );
-                  ctx.drawImage(
-                    canvas_video,
-                    0,
-                    0,
-                    canvas_video.width,
-                    canvas_video.height,
-                    0,
-                    0,
-                    canvas_video_snap.width,
-                    canvas_video_snap.height
-                  );
+                  try {
+                    ctx.drawImage(
+                      canvas_video,
+                      0,
+                      0,
+                      canvas_video.width,
+                      canvas_video.height,
+                      0,
+                      0,
+                      canvas_video_snap.width,
+                      canvas_video_snap.height
+                    );
+                  } catch (error) {
+                    console.error("Error ctx.drawImage:");
+                    return;
+                  }
                 } else {
                   canvas_video_snap.height = scaledWidth;
                   canvas_video_snap.width = scaledHeight;
+                  canvas_video.height = scaledWidth_video;
+                  canvas_video.width = scaledHeight_video;
                   const radians = (angle * Math.PI) / 180;
-                  ctx.translate(scaledWidth / 2, scaledHeight / 2);
+                  ctx_video.translate(scaledWidth_video / 2, scaledHeight_video / 2);
                   ctx.rotate(radians);
-                  ctx.drawImage(
+                  ctx_video.drawImage(
                     video,
                     0,
                     0,
                     video.videoWidth,
                     video.videoHeight,
-                    -scaledWidth / 2,
-                    -scaledHeight / 2,
-                    scaledWidth,
-                    scaledHeight
+                    -scaledWidth_video / 2,
+                    -scaledHeight_video / 2,
+                    scaledWidth_video,
+                    scaledHeight_video
                   );
+                  try {
+                    ctx.drawImage(
+                      canvas_video,
+                      0,
+                      0,
+                      scaledWidth_video,
+                      scaledHeight_video,
+                      0,
+                      0,
+                      scaledWidth,
+                      scaledHeight
+                    );
+                  } catch (error) {
+                    console.error("Error ctx.drawImage:");
+                    return;
+                  }
                 }
               } else {
                 canvas_video.width = scaledWidth_video;
@@ -416,17 +463,22 @@ const startDetection = (video, canvas, deviceId) => {
                 );
                 canvas_video_snap.width = scaledWidth;
                 canvas_video_snap.height = scaledHeight;
-                ctx.drawImage(
-                  canvas_video,
-                  0,
-                  0,
-                  scaledWidth_video,
-                  scaledHeight_video,
-                  0,
-                  0,
-                  scaledWidth,
-                  scaledHeight
-                );
+                try {
+                  ctx.drawImage(
+                    canvas_video,
+                    0,
+                    0,
+                    scaledWidth_video,
+                    scaledHeight_video,
+                    0,
+                    0,
+                    scaledWidth,
+                    scaledHeight
+                  );
+                } catch (error) {
+                  console.error("Error ctx.drawImage:");
+                  return;
+                }
               }
               // Convert it to JPEG and send it to the WebSocket
               interval_measure = performance.now();
@@ -550,7 +602,7 @@ const cam_detect = (cameraSelect) => {
       // console.log(cam_capabilities);
       navigator.mediaDevices
         .enumerateDevices()
-        .then((devices) => {
+        .then(async (devices) => {
           const videoDevices = devices.filter((device) => device.kind === "videoinput");
           // Check for available cameras
           // console.log('Check for available cameras',devices);
@@ -567,8 +619,8 @@ const cam_detect = (cameraSelect) => {
           let video_dev_id = 0;
           for (const device of videoDevices) {
             console.log("Check for available cameras");
-            // const cam_cap = device.getCapabilities();
-            let cam_cap;
+            const cam_cap = await getCameraCapabilities(device.deviceId);
+
             const deviceOption = document.createElement("option");
             if (device.deviceId) {
               deviceOption.value = device.deviceId;
