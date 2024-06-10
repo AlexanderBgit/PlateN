@@ -16,6 +16,8 @@ ENV=../deploy/.env
 pushd "../deploy"
 echo $(git branch --show-current)${PURPOSE}-$(git rev-parse --short HEAD) > ../FRONTEND/git-version.txt
 echo $(git branch --show-current)${PURPOSE}-$(git rev-parse --short HEAD) > ../BACKEND/git-version.txt
+cp ../BACKEND/git-version.txt ../FRONTEND/git-version-backend.txt
+grep -E "^\[tool.poetry\]$|^version" ../BACKEND/pyproject.toml > ../FRONTEND/backend-version.txt
 echo "STARTING ${BRANCH}${PURPOSE}"
 docker-compose  --file docker-compose-project.yml --env-file .env up -d
 popd

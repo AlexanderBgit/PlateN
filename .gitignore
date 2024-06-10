@@ -171,3 +171,5 @@ LIBS/poppler/*
 /BACKEND/api/services/face_detection/outputs/
 deploy/key.pem
 .DS_Store
+/FRONTEND/backend-version.txt
+/BACKEND/git-version-backend.txt
