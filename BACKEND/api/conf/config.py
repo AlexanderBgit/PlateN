@@ -57,6 +57,7 @@ class Settings(BaseSettings):
     version: dict = get_version()
     root_path: str = "/api"
     api_version: str = "v1"
+    api_debug_image_queue: bool = False
 
     @property
     def static_url(self) -> str:

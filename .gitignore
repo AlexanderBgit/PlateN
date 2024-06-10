@@ -173,3 +173,4 @@ deploy/key.pem
 .DS_Store
 /FRONTEND/backend-version.txt
 /BACKEND/git-version-backend.txt
+/BACKEND/api/tests/debug/

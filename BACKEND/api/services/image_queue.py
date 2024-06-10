@@ -106,11 +106,13 @@ class ImageQueue:
     async def save_image(self, image_bytes, counter: int = 0):
         # Define the output file name
         output_filename = BASE_BACKEND.joinpath(
-            "api/services/face_detection/outputs", f"output-{counter:06d}.jpg"
+            "api", "tests", "debug", "image_queues", f"ws-{counter:06d}.jpg"
         )
+        output_filename.parent.mkdir(parents=True, exist_ok=True)
         # Asynchronously write the bytes directly to a file
         async with aiofiles.open(output_filename, "wb") as file:
             await file.write(image_bytes)
+        logger.debug(output_filename)
 
     async def detect(
         self, websocket: WebSocket, queue: asyncio.Queue, queue_size: int | None = None
@@ -141,9 +143,10 @@ class ImageQueue:
                 data = np.frombuffer(image_data, dtype=np.uint8)
                 # image in BGR format
                 img = cv2.imdecode(data, cv2.IMREAD_COLOR)
-                # if counter % 10 == 0:
-                #     # Save the image as a JPG file
-                #     await self.save_image(bytes, counter)
+                if settings.api_debug_image_queue:
+                    if counter % 10 == 0:
+                        # Save the image as a JPG file
+                        await self.save_image(image_data, counter)
                 # detection API
                 detected: dict = self.img_proc.get()(img, queue_size)
                 # logger.debug(f"{detected=}")
