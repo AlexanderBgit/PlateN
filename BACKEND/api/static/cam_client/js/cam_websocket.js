@@ -18,12 +18,18 @@ const CAM_COMMANDS = {
 
 let isStreaming = false; // Flag to track streaming state
 let button_stop;
+let button_snap;
+let button_start;
 let intervalId;
 let canvas_video_snap;
 let canvas_video;
 let canvas_zoom;
+let cameraSelect;
 let ctx_zoom;
 let zoomFactor = 1;
+let video;
+let canvas;
+let socket;
 
 function packMessage_0(imageData, commandId = 0) {
   const totalSize = COMMAND_SIZE + imageData.size;
@@ -362,7 +368,7 @@ function video_zoom(video) {
   });
 }
 
-const commands_processor = (message, scale = 1.0) => {
+function commands_processor(message, scale = 1.0) {
   switch (message?.command_id) {
     case CAM_COMMANDS?.snap:
       cam_control.snap.checked = false;
@@ -378,7 +384,7 @@ const commands_processor = (message, scale = 1.0) => {
       }
       break;
   }
-};
+}
 
 function commands_post_processor(result_processor, video) {
   const images = [];
@@ -437,7 +443,7 @@ function commands_post_processor(result_processor, video) {
   }
 }
 
-const startDetection = (video, canvas, deviceId) => {
+function startDetection(video, canvas, deviceId) {
   if (!WS_URL) {
     console.error("WS_URL:", WS_URL);
     return;
@@ -608,10 +614,10 @@ const startDetection = (video, canvas, deviceId) => {
       console.error("WebSocket connection error:", error);
     }
   }
-};
+}
 
 // Function to stop the video stream and turn off the LED (if possible)
-const stopDetection = (video, canvas) => {
+function stopDetection(video, canvas) {
   if (canvas) {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -632,9 +638,9 @@ const stopDetection = (video, canvas) => {
   info_toggle();
   video_canvas_toggle();
   snap_container_toggle();
-};
+}
 
-const cam_detect = (cameraSelect) => {
+function cam_detect(cameraSelect) {
   navigator.mediaDevices
     .getUserMedia({ audio: false, video: true })
     .then((stream) => {
@@ -694,50 +700,46 @@ const cam_detect = (cameraSelect) => {
       console.error("No cameras detected", err);
       cameraSelect.appendChild(noCameraOption);
     });
-};
+}
 
-// Add event listeners for resize and orientation change
-window.addEventListener("resize", (event) => {
-  const video = document.getElementById("video");
-  const canvas = document.getElementById("canvas");
-
-  //    video.pause();
-  handleOrientationChange(video, canvas);
-});
-
-// DOMContentLoaded
-window.addEventListener("DOMContentLoaded", (event) => {
-  const video = document.getElementById("video");
-  const canvas = document.getElementById("canvas");
-  canvas_video = document.getElementById("canvas_video");
-  canvas_zoom = document.getElementById("canvas_zoom");
-  ctx_zoom = canvas_zoom.getContext("2d");
-  const cameraSelect = document.getElementById("camera-select");
-  const controls = document.getElementById("controls");
-  if (typeof init_controls === "function") {
-    init_controls(controls);
+function onClickButtonStop(event) {
+  event.preventDefault();
+  // Close the WebSocket connection (if it exists)
+  if (socket) {
+    stopDetection(video, canvas);
+    socket.close();
+    setTimeout(() => {
+      debug("WebSocket connection closed", "info");
+    }, 600);
+    socket = null; // Clear the socket reference
+  } else {
+    console.log("No WebSocket connection to close");
   }
-  cam_control["snap"] = document.getElementById("checkbox-snap");
-  let socket;
-  cam_detect(cameraSelect);
-  const button_start = document.getElementById("button-start");
-  button_stop = document.getElementById("button-stop");
-  const button_snap = document.getElementById("button-snap");
+  // buttons
   if (button_stop) {
-    button_stop.addEventListener("click", (event) => {
-      event.preventDefault();
-      // Close the WebSocket connection (if it exists)
-      if (socket) {
-        stopDetection(video, canvas);
-        socket.close();
-        setTimeout(() => {
-          debug("WebSocket connection closed", "info");
-        }, 600);
-        socket = null; // Clear the socket reference
-      } else {
-        console.log("No WebSocket connection to close");
-      }
-      if (button_stop) {
+    button_start.classList.toggle("d-none");
+  }
+  if (button_stop) {
+    button_stop.classList.toggle("d-none");
+  }
+  if (button_snap) {
+    if (typeof get_snap_result === "function") {
+      button_snap.classList.toggle("d-none");
+    }
+  }
+}
+
+function onClickButtonStart(event) {
+  event.preventDefault();
+  // Close previous socket is there is one
+  if (socket) {
+    socket.close();
+  }
+  const deviceId = cameraSelect?.selectedOptions[0]?.value;
+  if (deviceId) {
+    socket = startDetection(video, canvas, deviceId);
+    if (socket) {
+      if (button_start) {
         button_start.classList.toggle("d-none");
       }
       if (button_stop) {
@@ -748,43 +750,44 @@ window.addEventListener("DOMContentLoaded", (event) => {
           button_snap.classList.toggle("d-none");
         }
       }
-    });
+      hide_result();
+    }
+  } else {
+    debug("Not detected device ID");
   }
+}
 
-  // Start face detection on the selected camera on submit
-  document.getElementById("form-connect")?.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    // Close previous socket is there is one
-    if (socket) {
-      socket.close();
-    }
-
-    const deviceId = cameraSelect.selectedOptions[0]?.value;
-    if (deviceId) {
-      socket = startDetection(video, canvas, deviceId);
-      if (socket) {
-        if (button_start) {
-          button_start.classList.toggle("d-none");
-        }
-        if (button_stop) {
-          button_stop.classList.toggle("d-none");
-        }
-        if (button_snap) {
-          if (typeof get_snap_result === "function") {
-            button_snap.classList.toggle("d-none");
-          }
-        }
-        hide_result();
-      }
-    } else {
-      debug("Not detected device ID");
-    }
-  });
-
-  video.addEventListener("loadedmetadata", function () {
-    //    console.log("loadedmetadata");
-    // resize_canvas(video, canvas);
-  });
-});
 // DOMContentLoaded
+function onDOMLoaded(event) {
+  video = document.getElementById("video");
+  canvas = document.getElementById("canvas");
+  canvas_video = document.getElementById("canvas_video");
+  canvas_zoom = document.getElementById("canvas_zoom");
+  ctx_zoom = canvas_zoom.getContext("2d");
+  cameraSelect = document.getElementById("camera-select");
+  const controls = document.getElementById("controls");
+  if (typeof init_controls === "function") {
+    init_controls(controls);
+  }
+  cam_control["snap"] = document.getElementById("checkbox-snap");
+  cam_detect(cameraSelect);
+  button_start = document.getElementById("button-start");
+  button_stop = document.getElementById("button-stop");
+  button_snap = document.getElementById("button-snap");
+  button_stop?.addEventListener("click", onClickButtonStop); // click_btn_stop
+  // Start face detection on the selected camera on submit
+  button_start?.addEventListener("click", onClickButtonStart);
+
+  // video.addEventListener("loadedmetadata", function () {
+  //   //    console.log("loadedmetadata");
+  //   // resize_canvas(video, canvas);
+  // });
+}
+// DOMContentLoaded
+
+window.addEventListener("DOMContentLoaded", onDOMLoaded);
+// Add event listeners for resize and orientation change
+window.addEventListener("resize", (event) => {
+  //    video.pause();
+  handleOrientationChange(video, canvas);
+});
