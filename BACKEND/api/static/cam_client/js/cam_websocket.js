@@ -21,9 +21,9 @@ let button_stop;
 let intervalId;
 let canvas_video_snap;
 let canvas_video;
-let canvas_zoom = document.getElementById("canvas_zoom");
-let ctx_zoop = canvas.getContext("2d");
-let zoomFactor = 2;
+let canvas_zoom;
+let ctx_zoom;
+let zoomFactor = 1;
 
 function packMessage_0(imageData, commandId = 0) {
   const totalSize = COMMAND_SIZE + imageData.size;
@@ -294,7 +294,7 @@ function canvas_transformations() {
     // if video declared as not roatated
     canvas_video.width = scaledWidth_video;
     canvas_video.height = scaledHeight_video;
-    ctx_video.clearRect(0, 0, canvas_video.width, canvas_video.height);
+    // ctx_video.clearRect(0, 0, canvas_video.width, canvas_video.height);
     ctx_video.drawImage(
       canvas_zoom,
       0,
@@ -337,12 +337,11 @@ function video_zoom(video) {
       const cropHeight = videoHeight / zoomFactor;
       const cropX = (videoWidth - cropWidth) / 2;
       const cropY = (videoHeight - cropHeight) / 2;
-
       // Clear the canvas
-      ctx_zoop.clearRect(0, 0, canvas_zoom.width, canvas_zoom.height);
+      ctx_zoom.clearRect(0, 0, canvas_zoom.width, canvas_zoom.height);
 
       // Draw the zoomed and cropped area
-      ctx_zoop.drawImage(
+      ctx_zoom.drawImage(
         video,
         cropX,
         cropY,
@@ -712,7 +711,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
   const canvas = document.getElementById("canvas");
   canvas_video = document.getElementById("canvas_video");
   canvas_zoom = document.getElementById("canvas_zoom");
-  ctx_zoop = canvas.getContext("2d");
+  ctx_zoom = canvas_zoom.getContext("2d");
   const cameraSelect = document.getElementById("camera-select");
   const controls = document.getElementById("controls");
   if (typeof init_controls === "function") {
