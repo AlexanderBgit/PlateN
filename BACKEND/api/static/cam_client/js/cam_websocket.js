@@ -141,6 +141,13 @@ function hide_result() {
   }
 }
 
+function clear_snap_container() {
+  const result_div = document.getElementById("snap-container");
+  if (result_div) {
+    result_div.innerHTML = "";
+  }
+}
+
 function info_toggle() {
   const info_div = document.getElementById("info");
   info_div.classList.toggle("d-none");
@@ -751,6 +758,7 @@ async function onClickButtonStart(event) {
         }
       }
       hide_result();
+      clear_snap_container();
     }
   } else {
     debug("Not detected device ID");
