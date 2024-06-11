@@ -769,7 +769,7 @@ async function onClickButtonStart(event) {
 function add_zoom_controls(controls) {
   // Create a div to contain the form control
   const formGroupDivCol = document.createElement("div");
-  formGroupDivCol.className = "col-auto";
+  formGroupDivCol.className = "col-auto ps-0";
   const formGroupDiv = document.createElement("div");
   formGroupDiv.className = "input-group input-group-sm";
 
@@ -787,7 +787,7 @@ function add_zoom_controls(controls) {
   inputElement.className = "form-control";
   inputElement.value = zoomFactor; // Default zoom scale
   inputElement.min = 1; // Set the minimum value
-  inputElement.max = 4; // Set the minimum value
+  inputElement.max = 6; // Set the minimum value
   inputElement.step = 1; // Set the step value (increments/decrements)
 
   // Append label and input to the div
@@ -797,6 +797,9 @@ function add_zoom_controls(controls) {
 
   // Append the div to the parent controls element
   controls.appendChild(formGroupDivCol);
+  inputElement.addEventListener("change", (e) => {
+    zoomFactor = e.target.value;
+  });
 }
 
 // DOMContentLoaded
