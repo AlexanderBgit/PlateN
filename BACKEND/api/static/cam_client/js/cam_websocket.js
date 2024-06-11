@@ -30,6 +30,7 @@ let zoomFactor = 2;
 let video;
 let canvas;
 let socket;
+let controls;
 
 function packMessage_0(imageData, commandId = 0) {
   const totalSize = COMMAND_SIZE + imageData.size;
@@ -765,6 +766,39 @@ async function onClickButtonStart(event) {
   }
 }
 
+function add_zoom_controls(controls) {
+  // Create a div to contain the form control
+  const formGroupDivCol = document.createElement("div");
+  formGroupDivCol.className = "col-auto";
+  const formGroupDiv = document.createElement("div");
+  formGroupDiv.className = "input-group input-group-sm";
+
+  // Create a label for the input
+  const labelElement = document.createElement("span");
+  labelElement.setAttribute("for", "zoom_control");
+  labelElement.className = "input-group-text";
+  labelElement.textContent = "Zoom Scale";
+
+  // Create an input element for the zoom control
+  const inputElement = document.createElement("input");
+  inputElement.setAttribute("type", "number"); // Use "number" for numeric input
+  inputElement.setAttribute("id", "zoom_control");
+  inputElement.setAttribute("name", "zoom_control"); // Set a name for form submission if needed
+  inputElement.className = "form-control";
+  inputElement.value = zoomFactor; // Default zoom scale
+  inputElement.min = 1; // Set the minimum value
+  inputElement.max = 4; // Set the minimum value
+  inputElement.step = 1; // Set the step value (increments/decrements)
+
+  // Append label and input to the div
+  formGroupDiv.appendChild(labelElement);
+  formGroupDiv.appendChild(inputElement);
+  formGroupDivCol.appendChild(formGroupDiv);
+
+  // Append the div to the parent controls element
+  controls.appendChild(formGroupDivCol);
+}
+
 // DOMContentLoaded
 function onDOMLoaded(event) {
   video = document.getElementById("video");
@@ -773,7 +807,8 @@ function onDOMLoaded(event) {
   canvas_zoom = document.getElementById("canvas_zoom");
   ctx_zoom = canvas_zoom.getContext("2d");
   cameraSelect = document.getElementById("camera-select");
-  const controls = document.getElementById("controls");
+  controls = document.getElementById("controls");
+  add_zoom_controls(controls);
   if (typeof init_controls === "function") {
     init_controls(controls);
   }
