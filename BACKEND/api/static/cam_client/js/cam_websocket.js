@@ -26,7 +26,7 @@ let canvas_video;
 let canvas_zoom;
 let cameraSelect;
 let ctx_zoom;
-let zoomFactor = 1;
+let zoomFactor = 2;
 let video;
 let canvas;
 let socket;
@@ -443,7 +443,7 @@ function commands_post_processor(result_processor, video) {
   }
 }
 
-function startDetection(video, canvas, deviceId) {
+async function startDetection(video, canvas, deviceId) {
   if (!WS_URL) {
     console.error("WS_URL:", WS_URL);
     return;
@@ -477,16 +477,16 @@ function startDetection(video, canvas, deviceId) {
     let average_duration_calc = 0;
     let avg_duration_calc = 0;
     let max_queue = 0;
-    // Connection opened
-    socket.addEventListener("open", function () {
+    let cam_cap = await getCameraCapabilities(deviceId);
+    socket.addEventListener("open", () => {
       // Start reading video from device
       navigator.mediaDevices
         .getUserMedia({
           audio: false,
           video: {
             deviceId,
-            width: { max: MAX_CAM_SIZE.width },
-            height: { max: MAX_CAM_SIZE.height },
+            width: cam_cap.width,
+            height: cam_cap.height,
           },
         })
         .then((stream) => {
@@ -729,7 +729,7 @@ function onClickButtonStop(event) {
   }
 }
 
-function onClickButtonStart(event) {
+async function onClickButtonStart(event) {
   event.preventDefault();
   // Close previous socket is there is one
   if (socket) {
@@ -737,7 +737,7 @@ function onClickButtonStart(event) {
   }
   const deviceId = cameraSelect?.selectedOptions[0]?.value;
   if (deviceId) {
-    socket = startDetection(video, canvas, deviceId);
+    socket = await startDetection(video, canvas, deviceId);
     if (socket) {
       if (button_start) {
         button_start.classList.toggle("d-none");
