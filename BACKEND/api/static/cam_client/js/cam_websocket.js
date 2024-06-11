@@ -158,8 +158,8 @@ function snap_container_toggle() {
 }
 
 function resize_canvas(video, canvas) {
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
+  canvas.width = canvas_zoom.width;
+  canvas.height = canvas_zoom.height;
 }
 
 function isFirefoxMobile() {
@@ -226,8 +226,8 @@ function canvas_transformations() {
   const scaledHeight_video = canvas_zoom.height;
 
   const ctx = canvas_video_snap.getContext("2d");
-  const scaledWidth = video.videoWidth / SNAP_IMAGE_SCALE;
-  const scaledHeight = video.videoHeight / SNAP_IMAGE_SCALE;
+  const scaledWidth = canvas_zoom.width / SNAP_IMAGE_SCALE;
+  const scaledHeight = canvas_zoom.height / SNAP_IMAGE_SCALE;
 
   const angle = screen.orientation.angle || window.orientation;
   if (angle === 90 || angle === 270) {
@@ -242,8 +242,8 @@ function canvas_transformations() {
         video,
         0,
         0,
-        video.videoWidth,
-        video.videoHeight,
+        canvas_zoom.width,
+        canvas_zoom.height,
         0,
         0,
         canvas_video.width,
@@ -278,8 +278,8 @@ function canvas_transformations() {
         video,
         0,
         0,
-        video.videoWidth,
-        video.videoHeight,
+        canvas_zoom.width,
+        canvas_zoom.height,
         -scaledWidth_video / 2,
         -scaledHeight_video / 2,
         scaledWidth_video,
