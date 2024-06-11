@@ -4,12 +4,13 @@ from abc import abstractmethod
 import time
 from typing import List, Tuple
 import asyncio
-import aiofiles
+import anyio
 import cv2
 import numpy as np
 from pydantic import BaseModel
 from fastapi import WebSocket, WebSocketDisconnect
 from starlette.websockets import WebSocketState
+
 
 from conf.config import settings, BASE_BACKEND
 
@@ -54,12 +55,22 @@ class AbstractFun:
 
 
 class ImageQueue:
-
     img_proc: AbstractFun | None = None
     command_size: int = 4
 
-    def __init__(self, img_proc):
+    def __init__(self, img_proc, name: str | None = None):
         self.img_proc = img_proc
+        self.debug_images_path = anyio.Path(
+            BASE_BACKEND.joinpath("api", "tests", "debug", "image_queues")
+        )
+        if name:
+            self.debug_images_path = self.debug_images_path.joinpath(name)
+
+    async def startup(self):
+        if self.is_debug_mode():
+            logger.debug("startup")
+            await self.debug_images_path.mkdir(parents=True, exist_ok=True)
+            await self.clear_debug_folder()
 
     def encode_message(self, message: bytes):
         (command_id,) = struct.unpack(
@@ -103,14 +114,25 @@ class ImageQueue:
             logger.debug(err)
             ...
 
+    def is_debug_mode(self):
+        return settings.api_debug_image_queue
+
+    async def clear_debug_folder(self):
+        if self.is_debug_mode() and await self.debug_images_path.exists():
+            files_to_delete = [
+                file
+                async for file in self.debug_images_path.glob("**/*")
+                if await file.is_file()
+            ]
+            # Delete files concurrently using asyncio.gather
+            logger.debug(f"{self.debug_images_path=}")
+            await asyncio.gather(*[file.unlink() for file in files_to_delete])
+
     async def save_image(self, image_bytes, counter: int = 0):
         # Define the output file name
-        output_filename = BASE_BACKEND.joinpath(
-            "api", "tests", "debug", "image_queues", f"ws-{counter:06d}.jpg"
-        )
-        output_filename.parent.mkdir(parents=True, exist_ok=True)
+        output_filename = self.debug_images_path.joinpath(f"ws-{counter:06d}.jpg")
         # Asynchronously write the bytes directly to a file
-        async with aiofiles.open(output_filename, "wb") as file:
+        async with await output_filename.open("wb") as file:
             await file.write(image_bytes)
         logger.debug(output_filename)
 
@@ -143,7 +165,7 @@ class ImageQueue:
                 data = np.frombuffer(image_data, dtype=np.uint8)
                 # image in BGR format
                 img = cv2.imdecode(data, cv2.IMREAD_COLOR)
-                if settings.api_debug_image_queue:
+                if self.is_debug_mode():
                     if counter % 10 == 0:
                         # Save the image as a JPG file
                         await self.save_image(image_data, counter)
@@ -172,6 +194,7 @@ class ImageQueue:
         This is the endpoint that we will be sending request to from the
         frontend
         """
+        await self.clear_debug_folder()
         await websocket.accept()
         queue: asyncio.Queue = asyncio.Queue(maxsize=10)
         detect_task = asyncio.create_task(self.detect(websocket, queue, queue.qsize()))

@@ -1,5 +1,4 @@
 absl-py==2.1.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
-aiofiles==23.2.1 ; python_version >= "3.10" and python_version < "3.12"
 annotated-types==0.7.0 ; python_version >= "3.10" and python_version < "3.12"
 anyio==4.4.0 ; python_version >= "3.10" and python_version < "3.12"
 astunparse==1.6.3 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
@@ -47,14 +46,14 @@ opencv-python-headless==4.10.0.82 ; python_version >= "3.10" and python_version 
 opencv-python==4.10.0.82 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "darwin")
 opt-einsum==3.3.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 optree==0.11.0 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "linux" or sys_platform == "darwin")
-orjson==3.10.3 ; python_version >= "3.10" and python_version < "3.12"
-packaging==24.0 ; python_version >= "3.10" and python_version < "3.12"
+orjson==3.10.4 ; python_version >= "3.10" and python_version < "3.12"
+packaging==24.1 ; python_version >= "3.10" and python_version < "3.12"
 pillow==10.3.0 ; python_version >= "3.10" and python_version < "3.12"
 protobuf==4.25.3 ; python_version >= "3.10" and python_version < "3.12" and (sys_platform == "win32" or sys_platform == "linux" or sys_platform == "darwin")
 pyasn1-modules==0.4.0 ; python_version >= "3.10" and python_version < "3.12" and sys_platform == "win32"
 pyasn1==0.6.0 ; python_version >= "3.10" and python_version < "3.12" and sys_platform == "win32"
 pydantic-core==2.18.4 ; python_version >= "3.10" and python_version < "3.12"
-pydantic-settings==2.3.1 ; python_version >= "3.10" and python_version < "3.12"
+pydantic-settings==2.3.2 ; python_version >= "3.10" and python_version < "3.12"
 pydantic==2.7.3 ; python_version >= "3.10" and python_version < "3.12"
 pygments==2.18.0 ; python_version >= "3.10" and python_version < "3.12"
 pyparsing==3.1.2 ; python_version >= "3.10" and python_version < "3.12"

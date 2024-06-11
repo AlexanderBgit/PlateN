@@ -120,6 +120,7 @@ async def startup(queues: dict[str, ImageQueue] = None):
     cc_func.load()
     yn_func = FaceYNFun()
     qr_wechat_func = QrWeChatFun()
-    queues["face_cc"] = ImageQueue(cc_func)
-    queues["face_yn"] = ImageQueue(yn_func)
-    queues["qr_wechat"] = ImageQueue(qr_wechat_func)
+    queues["face_cc"] = ImageQueue(cc_func, name="face_cc")
+    queues["face_yn"] = ImageQueue(yn_func, name="face_yn")
+    queues["qr_wechat"] = ImageQueue(qr_wechat_func, name="qr_wechat")
+    [await v.startup() for v in queues.values()]
