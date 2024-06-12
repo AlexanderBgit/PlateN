@@ -165,9 +165,9 @@ function snap_container_toggle() {
   div.classList.toggle("d-none");
 }
 
-function resize_canvas(video, canvas) {
-  canvas.width = canvas_zoom.width;
-  canvas.height = canvas_zoom.height;
+function resize_canvas(src, dst) {
+  dst.width = src.clientWidth;
+  dst.height = src.clientHeight;
 }
 
 function isFirefoxMobile() {
@@ -188,10 +188,10 @@ function handleOrientationChange(video, canvas) {
     video.setAttribute("skip_rotate", skip_rotate);
     video.style.transform = `rotate(${angle}deg)`;
   }
-  // resize_canvas(video, canvas);
-  // setTimeout(() => {
-  //   resize_canvas(video, canvas);
-  // }, 600);
+  // resize_canvas(canvas_zoom, canvas);
+  setTimeout(() => {
+    resize_canvas(canvas_zoom, canvas);
+  }, 600);
 }
 
 function get_command_id() {
@@ -339,8 +339,16 @@ function video_zoom(video) {
     const cropWidth = videoWidth / zoomFactor;
     const cropHeight = videoHeight / zoomFactor;
     // Set canvas dimensions
-    canvas_zoom.width = cropWidth; // Adjust based on your needs
-    canvas_zoom.height = cropHeight; // Adjust based on your needs
+    console.log(
+      "canvas_zoom:",
+      canvas_zoom.width,
+      canvas_zoom.height,
+      canvas_zoom.clientWidth,
+      canvas_zoom.clientHeight
+    );
+    console.log("cropWidth, cropHeight:", cropWidth, cropHeight);
+    // canvas_zoom.width = cropWidth; // Adjust based on your needs
+    // canvas_zoom.height = cropHeight; // Adjust based on your needs
 
     function drawZoomedVideo() {
       const videoWidth = video.videoWidth;
@@ -500,7 +508,7 @@ async function startDetection(video, canvas, deviceId) {
         .then((stream) => {
           video.srcObject = stream;
           video_zoom(video);
-          handleOrientationChange(video, canvas);
+          handleOrientationChange(canvas_zoom, canvas);
           video.play().then(() => {
             // Adapt overlay canvas size to the video size
             canvas.width = canvas_zoom.width;
