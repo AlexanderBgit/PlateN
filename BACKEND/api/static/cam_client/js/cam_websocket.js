@@ -365,12 +365,27 @@ function canvas_transformations() {
   return true;
 }
 
+function scaleMaxAspect(sw, sh) {
+  if (!MAX_CAM_SIZE?.width) return [sw, sh];
+  const aspect_m = MAX_CAM_SIZE.width / MAX_CAM_SIZE.height;
+  const aspect_s = sw / sh;
+  const cond = aspect_s > 1 ? sw > sh : sw < sh;
+  if (cond) {
+    sh = Math.floor(sw * aspect_m);
+  } else {
+    sw = Math.floor(sh / aspect_m);
+  }
+  return [sw, sh];
+}
+
 function video_zoom(video) {
   video.addEventListener("loadedmetadata", () => {
     const videoWidth = video.videoWidth;
     const videoHeight = video.videoHeight;
-    const cropWidth = videoWidth / zoomFactor;
-    const cropHeight = videoHeight / zoomFactor;
+    let cropWidth = videoWidth / zoomFactor;
+    let cropHeight = videoHeight / zoomFactor;
+    [cropWidth, cropHeight] = scaleMaxAspect(cropWidth, cropHeight);
+
     // Set canvas dimensions
     console.log(
       "canvas_zoom:",
@@ -386,8 +401,10 @@ function video_zoom(video) {
     function drawZoomedVideo() {
       const videoWidth = video.videoWidth;
       const videoHeight = video.videoHeight;
-      const cropWidth = videoWidth / zoomFactor;
-      const cropHeight = videoHeight / zoomFactor;
+      let cropWidth = videoWidth / zoomFactor;
+      let cropHeight = videoHeight / zoomFactor;
+
+      [cropWidth, cropHeight] = scaleMaxAspect(cropWidth, cropHeight);
 
       // Calculate the crop area
       const cropX = (videoWidth - cropWidth) / 2;
