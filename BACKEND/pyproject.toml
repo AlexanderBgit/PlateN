@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastparking-api"
-version = "1.6.12"
+version = "1.6.13"
 description = "GoIT DataScience Team Project - Fast Parking API module"
 authors = ["neuron_curva_bobr <info@neuron.curva.bobr.app>"]
 license = "MIT"
