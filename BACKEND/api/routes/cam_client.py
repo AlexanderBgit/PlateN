@@ -56,5 +56,7 @@ async def cam_client(request: Request, module: ClientModules = ClientModules.fac
         "version": settings.version,
         "js_module": client_module.get("js_module"),
         "cam_size": client_module.get("cam_size"),
+        "cam_downscale": client_module.get("cam_downscale"),
+        "cam_upscale": client_module.get("cam_upscale"),
     }
     return templates.TemplateResponse("cam_client/index.html", context=context)

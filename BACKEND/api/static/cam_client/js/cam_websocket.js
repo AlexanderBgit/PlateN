@@ -9,7 +9,6 @@ const MAX_CAM_SIZE = {
   height: cam_size_array ? cam_size_array[1] : 720,
 };
 const ADAPTIVE_FACTOR = 1.15;
-const COMMAND_SIZE = 4;
 const cam_control = {};
 const CAM_COMMANDS = {
   default: 0,
@@ -26,28 +25,12 @@ let canvas_video;
 let canvas_zoom;
 let cameraSelect;
 let ctx_zoom;
-let zoomFactor = 2;
+let zoomFactor = CAM_UPSCALE ? CAM_UPSCALE : 1;
 let video;
+let canvas_block;
 let canvas;
 let socket;
 let controls;
-
-function packMessage_0(imageData, commandId = 0) {
-  const totalSize = COMMAND_SIZE + imageData.size;
-  if (!COMMAND_SIZE) return imageData;
-  // Create the buffer and view
-  const buffer = new ArrayBuffer(totalSize);
-  const dataView = new DataView(buffer);
-
-  // Write command ID (assuming 32-bit integer)
-  dataView.setUint32(0, commandId, true); // Little-endian
-
-  // Copy image data into the buffer
-  const uint8Array = new Uint8Array(buffer, COMMAND_SIZE, imageData.length);
-  uint8Array.set(imageData);
-
-  return buffer;
-}
 
 function packMessage(commandId, binaryData) {
   if (!(binaryData instanceof Blob)) {
@@ -84,6 +67,7 @@ function packMessage(commandId, binaryData) {
 
 async function sendPackedMessage(socket, commandId, blob) {
   try {
+    if (!socket) return;
     const packedData = await packMessage(commandId, blob);
     socket.send(packedData);
     //    console.log("Packed message sent over WebSocket");
@@ -166,8 +150,8 @@ function snap_container_toggle() {
 }
 
 function resize_canvas(src, dst) {
-  dst.width = src.clientWidth;
-  dst.height = src.clientHeight;
+  dst.width = src.width;
+  dst.height = src.height;
 }
 
 function isFirefoxMobile() {
@@ -188,10 +172,12 @@ function handleOrientationChange(video, canvas) {
     video.setAttribute("skip_rotate", skip_rotate);
     video.style.transform = `rotate(${angle}deg)`;
   }
-  // resize_canvas(canvas_zoom, canvas);
-  setTimeout(() => {
-    resize_canvas(canvas_zoom, canvas);
-  }, 600);
+  resize_canvas(canvas_zoom, canvas);
+  resize_canvas(canvas_zoom, canvas_block);
+  // setTimeout(() => {
+  //   resize_canvas(canvas_zoom, canvas);
+  //   resize_canvas(canvas_zoom, canvas_block);
+  // }, 600);
 }
 
 function get_command_id() {
@@ -206,10 +192,10 @@ function get_command_id() {
 
 // Function to start video stream and get capabilities
 async function getCameraCapabilities(deviceId) {
+  let result;
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } });
     const videoTrack = stream.getVideoTracks()[0];
-    let result;
     // Check if getCapabilities is available
     if (videoTrack.getCapabilities) {
       result = videoTrack.getCapabilities();
@@ -222,10 +208,22 @@ async function getCameraCapabilities(deviceId) {
     }
     // Stop the stream after checking capabilities
     videoTrack.stop();
-    return result;
   } catch (error) {
-    console.error("Error getting capabilities:", error);
+    result = {
+      width: { max: 640, min: 1 },
+      height: { max: 480, min: 1 },
+    };
+    console.error("Error getting capabilities:", error, "fallback:", result);
   }
+  // console.log("result", result);
+  // if (result.width.max > 1280) result.width.max = 1280;
+  // if (result.height.max > 720) result.height.max = 720;
+  // if (result.width.max) result.width.max = Math.round(result.width.max);
+  // if (result.height.max) result.height.max = Math.round(result.height.max);
+  return {
+    width: result.width,
+    height: result.height,
+  };
 }
 
 function canvas_transformations() {
@@ -234,8 +232,18 @@ function canvas_transformations() {
   const scaledHeight_video = canvas_zoom.height;
 
   const ctx = canvas_video_snap.getContext("2d");
-  const scaledWidth = canvas_zoom.width / SNAP_IMAGE_SCALE;
-  const scaledHeight = canvas_zoom.height / SNAP_IMAGE_SCALE;
+  let scaledWidth_snap = canvas_zoom.width / SNAP_IMAGE_SCALE;
+  let scaledHeight_snap = canvas_zoom.height / SNAP_IMAGE_SCALE;
+  if (scaledWidth_snap > MAX_CAM_SIZE.width) {
+    let aspect = scaledHeight_snap / scaledWidth_snap;
+    if (scaledWidth_snap > scaledHeight_snap) {
+      scaledWidth_snap = MAX_CAM_SIZE.width;
+      scaledHeight_snap = Math.round(MAX_CAM_SIZE.height * aspect);
+    } else {
+      scaledWidth_snap = Math.round(MAX_CAM_SIZE.width / aspect);
+      scaledHeight_snap = MAX_CAM_SIZE.height;
+    }
+  }
 
   const angle = screen.orientation.angle || window.orientation;
   if (angle === 90 || angle === 270) {
@@ -244,8 +252,9 @@ function canvas_transformations() {
       // if video need to skip rotate
       canvas_video.width = scaledWidth_video;
       canvas_video.height = scaledHeight_video;
-      canvas_video_snap.width = scaledWidth;
-      canvas_video_snap.height = scaledHeight;
+      canvas_video_snap.width = scaledWidth_snap;
+      canvas_video_snap.height = scaledHeight_snap;
+      resize_canvas(canvas_zoom, canvas_block);
       ctx_video.drawImage(
         video,
         0,
@@ -278,6 +287,7 @@ function canvas_transformations() {
       // swap h <-> w
       canvas_video.height = scaledWidth_video;
       canvas_video.width = scaledHeight_video;
+      resize_canvas(canvas_zoom, canvas_block);
       const radians = (angle * Math.PI) / 180;
       ctx_video.save();
       ctx_video.translate(scaledWidth_video / 2, scaledHeight_video / 2);
@@ -295,10 +305,21 @@ function canvas_transformations() {
       );
       ctx_video.restore();
       // just copy with downscale
-      canvas_video_snap.height = scaledWidth;
-      canvas_video_snap.width = scaledHeight;
+      canvas_video_snap.height = scaledWidth_snap;
+      canvas_video_snap.width = scaledHeight_snap;
+      resize_canvas(canvas_zoom, canvas_block);
       try {
-        ctx.drawImage(canvas_video, 0, 0, canvas_video.height, canvas_video.width, 0, 0, scaledWidth, scaledHeight);
+        ctx.drawImage(
+          canvas_video,
+          0,
+          0,
+          canvas_video.height,
+          canvas_video.width,
+          0,
+          0,
+          scaledWidth_snap,
+          scaledHeight_snap
+        );
       } catch (error) {
         console.error("Error ctx.drawImage:");
         return;
@@ -308,6 +329,8 @@ function canvas_transformations() {
     // if video declared as not roatated
     canvas_video.width = scaledWidth_video;
     canvas_video.height = scaledHeight_video;
+    resize_canvas(canvas_zoom, canvas_block);
+
     // ctx_video.clearRect(0, 0, canvas_video.width, canvas_video.height);
     ctx_video.drawImage(
       canvas_zoom,
@@ -320,10 +343,20 @@ function canvas_transformations() {
       scaledWidth_video,
       scaledHeight_video
     );
-    canvas_video_snap.width = scaledWidth;
-    canvas_video_snap.height = scaledHeight;
+    canvas_video_snap.width = scaledWidth_snap;
+    canvas_video_snap.height = scaledHeight_snap;
     try {
-      ctx.drawImage(canvas_video, 0, 0, scaledWidth_video, scaledHeight_video, 0, 0, scaledWidth, scaledHeight);
+      ctx.drawImage(
+        canvas_video,
+        0,
+        0,
+        scaledWidth_video,
+        scaledHeight_video,
+        0,
+        0,
+        scaledWidth_snap,
+        scaledHeight_snap
+      );
     } catch (error) {
       console.error("Error ctx.drawImage:");
       return;
@@ -347,16 +380,16 @@ function video_zoom(video) {
       canvas_zoom.clientHeight
     );
     console.log("cropWidth, cropHeight:", cropWidth, cropHeight);
-    // canvas_zoom.width = cropWidth; // Adjust based on your needs
-    // canvas_zoom.height = cropHeight; // Adjust based on your needs
+    canvas_zoom.width = cropWidth; // Adjust based on your needs
+    canvas_zoom.height = cropHeight; // Adjust based on your needs
 
     function drawZoomedVideo() {
       const videoWidth = video.videoWidth;
       const videoHeight = video.videoHeight;
-
-      // Calculate the crop area
       const cropWidth = videoWidth / zoomFactor;
       const cropHeight = videoHeight / zoomFactor;
+
+      // Calculate the crop area
       const cropX = (videoWidth - cropWidth) / 2;
       const cropY = (videoHeight - cropHeight) / 2;
       // Clear the canvas
@@ -470,16 +503,7 @@ async function startDetection(video, canvas, deviceId) {
     info_toggle();
     video_canvas_toggle();
     snap_container_toggle();
-    const socket = new WebSocket(ws_connect);
-    socket.onopen = () => {
-      msg = "WebSocket connection opened!";
-      console.log(msg);
-      debug(msg, "info");
-    };
-    socket.onerror = (error) => {
-      const msg = "WebSocket connection error. " + ws_connect;
-      debug(msg);
-    };
+
     let interval_measure;
     let is_answered = true;
     let skipped_frames = 0;
@@ -494,75 +518,94 @@ async function startDetection(video, canvas, deviceId) {
     let avg_duration_calc = 0;
     let max_queue = 0;
     let cam_cap = await getCameraCapabilities(deviceId);
-    socket.addEventListener("open", () => {
+    socket = new WebSocket(ws_connect);
+    socket.onerror = (error) => {
+      const msg = "WebSocket connection error. " + ws_connect;
+      debug(msg);
+    };
+    socket.onopen = () => {
+      msg = "WebSocket connection opened!";
+      console.log(msg);
+      debug(msg, "info");
       // Start reading video from device
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: false,
-          video: {
-            deviceId,
-            width: cam_cap.width,
-            height: cam_cap.height,
-          },
-        })
-        .then((stream) => {
-          video.srcObject = stream;
-          video_zoom(video);
-          handleOrientationChange(canvas_zoom, canvas);
-          video.play().then(() => {
-            // Adapt overlay canvas size to the video size
-            canvas.width = canvas_zoom.width;
-            canvas.height = canvas_zoom.height;
-            isStreaming = true;
+      console.log("cam_cap:", cam_cap);
+      try {
+        navigator.mediaDevices
+          .getUserMedia({
+            audio: false,
+            video: {
+              deviceId,
+              width: cam_cap.width.max,
+              height: cam_cap.height.max,
+            },
+          })
+          .then((stream) => {
+            video.srcObject = stream;
+            video_zoom(video);
+            handleOrientationChange(canvas_zoom, canvas);
+            video.play().then(() => {
+              // Adapt overlay canvas size to the video size
+              canvas.width = canvas_zoom.width;
+              canvas.height = canvas_zoom.height;
+              isStreaming = true;
 
-            // Send an image in the WebSocket every DEFINED ms
-            const sendImage = () => {
-              total_frames += 1;
-              intervalId = setTimeout(sendImage, adaptive_interval_ms);
-              if (!is_answered) {
-                skipped_frames += 1;
-                const sk_perc = ((skipped_frames / total_frames) * 100).toFixed(2);
-                const currentTime = new Date().toLocaleTimeString();
-                debug(
-                  `At ${currentTime}: skipped for the sending frame, not received in time. Total frames was skipped: ${skipped_frames} (${sk_perc}%) of ${total_frames}`,
-                  "info"
-                );
-                return;
-              }
-              is_answered = false;
-              // On canvas to draw current video image
-              if (!canvas) {
-                console.error("No Canvas...");
-                return;
-              }
-              if (!canvas_video) {
-                canvas_video = document.createElement("canvas");
-                canvas_video.id = "canvas_video";
-              }
-              if (!canvas_video_snap) {
-                canvas_video_snap = document.createElement("canvas");
-                canvas_video_snap.id = "canvas_video_snap";
-              }
-              if (!canvas_transformations()) return;
-
-              // Convert it to JPEG and send it to the WebSocket
-              interval_measure = performance.now();
-              const commandId = get_command_id();
-              canvas_video_snap.toBlob((blob) => {
-                if (blob) {
-                  // Send the image data and command ID
-                  // return socket.send(packMessage(commandId, blob));
-                  return sendPackedMessage(socket, commandId, blob);
-                } else {
-                  console.error("Failed to capture image data!");
+              // Send an image in the WebSocket every DEFINED ms
+              const sendImage = () => {
+                total_frames += 1;
+                intervalId = setTimeout(sendImage, adaptive_interval_ms);
+                if (!is_answered) {
+                  skipped_frames += 1;
+                  const sk_perc = ((skipped_frames / total_frames) * 100).toFixed(2);
+                  const currentTime = new Date().toLocaleTimeString();
+                  debug(
+                    `At ${currentTime}: skipped for the sending frame, not received in time. Total frames was skipped: ${skipped_frames} (${sk_perc}%) of ${total_frames}`,
+                    "info"
+                  );
+                  return;
                 }
-              }, "image/jpeg");
-              sent_frames += 1;
-            }; // sendImage
-            intervalId = setTimeout(sendImage, IMAGE_INTERVAL_MS);
+                is_answered = false;
+                // On canvas to draw current video image
+                if (!canvas) {
+                  console.error("No Canvas...");
+                  return;
+                }
+                if (!canvas_video) {
+                  canvas_video = document.createElement("canvas");
+                  canvas_video.id = "canvas_video";
+                }
+                if (!canvas_video_snap) {
+                  canvas_video_snap = document.createElement("canvas");
+                  canvas_video_snap.id = "canvas_video_snap";
+                }
+                if (!canvas_transformations()) return;
+
+                // Convert it to JPEG and send it to the WebSocket
+                interval_measure = performance.now();
+                const commandId = get_command_id();
+                canvas_video_snap.toBlob((blob) => {
+                  if (blob) {
+                    // Send the image data and command ID
+                    // return socket.send(packMessage(commandId, blob));
+                    return sendPackedMessage(socket, commandId, blob);
+                  } else {
+                    console.error("Failed to capture image data!");
+                  }
+                }, "image/jpeg");
+                sent_frames += 1;
+              }; // sendImage
+              intervalId = setTimeout(sendImage, IMAGE_INTERVAL_MS);
+            });
+          })
+          .catch((error) => {
+            msg = "WebSocket connection opened! But problem with stream.";
+            console.log(error);
+            debug(msg, "info");
           });
-        });
-    });
+        // console.log("Nothing");
+      } catch (err) {
+        console.log("startDetection mediaDevices", err);
+      }
+    };
 
     // Listen for messages
     const MEASURE_FRAMES = 100;
@@ -658,20 +701,20 @@ function stopDetection(video, canvas) {
 
 function cam_detect(cameraSelect) {
   navigator.mediaDevices
-    .getUserMedia({ audio: false, video: true })
+    ?.getUserMedia({ audio: false, video: true })
     .then((stream) => {
-      const tracks = stream.getTracks();
-      tracks.forEach(function (track) {
+      const tracks = stream?.getTracks();
+      tracks?.forEach(function (track) {
         track.stop(); // Stop individual media track
       });
       // console.log(cam_capabilities);
       navigator.mediaDevices
-        .enumerateDevices()
+        ?.enumerateDevices()
         .then(async (devices) => {
           const videoDevices = devices.filter((device) => device.kind === "videoinput");
           // Check for available cameras
           // console.log('Check for available cameras',devices);
-          if (!videoDevices.length) {
+          if (!videoDevices?.length) {
             const noCameraOption = document.createElement("option");
             noCameraOption.value = ""; // Set an empty value to avoid potential selection issues
             noCameraOption.innerText = "No cameras detected";
@@ -683,7 +726,7 @@ function cam_detect(cameraSelect) {
           // Filter and populate options
           let video_dev_id = 0;
           for (const device of videoDevices) {
-            console.log("Check for available cameras");
+            // console.log("Check for available cameras");
             const cam_cap = await getCameraCapabilities(device.deviceId);
 
             const deviceOption = document.createElement("option");
@@ -693,7 +736,7 @@ function cam_detect(cameraSelect) {
               if (cam_cap) {
                 deviceOption.innerText += `, max: ${cam_cap?.width.max}x${cam_cap?.height.max}`;
               }
-              console.log("cameras detected", video_dev_id);
+              // console.log("cameras detected", video_dev_id);
               cameraSelect.appendChild(deviceOption);
               video_dev_id += 1;
             } else {
@@ -813,6 +856,7 @@ function add_zoom_controls(controls) {
 // DOMContentLoaded
 function onDOMLoaded(event) {
   video = document.getElementById("video");
+  canvas_block = document.getElementById("canvas_block");
   canvas = document.getElementById("canvas");
   canvas_video = document.getElementById("canvas_video");
   canvas_zoom = document.getElementById("canvas_zoom");

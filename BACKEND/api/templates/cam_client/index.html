@@ -69,13 +69,16 @@
         </form>
       </div>
       <div id="debug"></div>
-      <div class="container text-center"  >
-        <div id="video_canvas" class="position-relative d-inline-block w-100 d-none">
-          <canvas id="canvas_zoom" class="" style="z-index: 1; max-width: 720px; max-height: 480px; width: 100%; height: 100%;"></canvas>
-          <video id="video" class="position-absolute top-0 start-0 d-none" tyle="z-index: 0;"></video>
-          <canvas id="canvas" class="position-absolute top-0 start-0" style="z-index: 2;"></canvas>
+      <div class="container text-center p-0">
+        <div class="mx-auto p-0">
+          <div id="video_canvas" class="position-relative d-inline-block p-0 d-none" style="max-width: 640px; max-height: 480px; width: 100%; height: 100%;">
+            <canvas id="canvas_block" class="w-100"></canvas>
+            <canvas id="canvas_zoom"  class="position-absolute top-0 start-0 w-100" style="z-index: 1;"></canvas>
+            <canvas id="canvas" class="position-absolute top-0 start-0 w-100" style="z-index: 2;"></canvas>
+            <video id="video" class="position-absolute top-0 start-0 d-none" tyle="z-index: 0;"></video>
           </div>
-        <div id="snap-container" class="row row-cols-auto justify-content-evenly mb-2 g-2"></div>
+          <div id="snap-container" class="row row-cols-auto justify-content-evenly mb-2 g-2"></div>
+        </div>
       </div>
       <div class="container">
        <div id="controls" class="row row-cols-auto align-items-baseline gap-3"></div>
@@ -92,6 +95,7 @@
       const WS_URL = "{{ ws_url }}";
       const CAM_SIZE = {% if cam_size %}"{{ cam_size }}"{% else %}undefined{% endif %};
       const CAM_DOWNSCALE = {% if cam_downscale %}"{{ cam_downscale }}"{% else %}undefined{% endif %};
+      const CAM_UPSCALE = {% if cam_upscale %}"{{ cam_upscale }}"{% else %}undefined{% endif %};
     </script>
     {% if js_module %}
     <script src="{{relative_url(request, 'static', path='cam_client/js/' ~ js_module ) | url_add_ver}}"></script>
